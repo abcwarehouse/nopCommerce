@@ -8,6 +8,8 @@
 
     // custom
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/jquery.jcarousel.min.js");
+
+    var youtubeImg = $"Plugins/NopAdvance.Plugin.ProductYouTubeVideo/Themes/DefaultClean/Content/images/youtube.png";
 }
 <div class="gallery">
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
@@ -36,11 +38,31 @@
                 <ul>
                     @foreach (var picture in Model.PictureModels)
                     {
-                        <li>
-                            <a class="jcarousel-item" href="@picture.FullSizeImageUrl" alt="@picture.AlternateText" title="@picture.Title">
-                                <img src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
-                            </a>
-                        </li>
+                        @if (picture.CustomProperties.Count > 0 && picture.CustomProperties.ContainsKey("VideoUrl"))
+                        {
+                            var videoUrl = picture.CustomProperties.Where(x => x.Key == "VideoUrl").Select(x => x.Value).FirstOrDefault();
+
+                            <li>
+                                <a class="jcarousel-item youthumb" href="@videoUrl.ToString()" alt="@picture.AlternateText" title="@picture.Title">
+                                    <img data-code="@videoUrl.ToString()" src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                    <img class="you-pic"
+                                         data-code="@videoUrl.ToString()"
+                                         src="@youtubeImg"
+                                         alt="@picture.AlternateText"
+                                         title="@picture.Title"
+                                         data-defaultsize="@picture.ImageUrl"
+                                         data-fullsize="@picture.FullSizeImageUrl" />
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a class="jcarousel-item" href="@picture.FullSizeImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+                                    <img src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                                </a>
+                            </li>
+                        }
                     }
                 </ul>
             </div>
@@ -187,6 +209,12 @@
         margin: 0 auto;
     }
 
+    .you-pic {
+        position: relative;
+        top: -56px;
+        left: 0;
+    }
+
     @@media screen and (min-width: 475px) {
         .jcarousel {
             width: 300px;
@@ -203,6 +231,10 @@
         .jcarousel {
             width: 200px;
         }
+
+        .you-pic {
+            left: 32px;
+        }
     }
 
     @@media screen and (min-width: 1001px) {
@@ -211,3 +243,14 @@
         }
     }
 </style>
+@*
+position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  transition: all 0.2s ease;
+*@
