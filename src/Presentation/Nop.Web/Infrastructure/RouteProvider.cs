@@ -691,6 +691,11 @@ namespace Nop.Web.Infrastructure
             endpointRouteBuilder.MapControllerRoute(name: "PageNotFound",
                 pattern: $"{lang}/page-not-found",
                 defaults: new { controller = "Common", action = "PageNotFound" });
+
+            //Opening Day Promo
+            endpointRouteBuilder.MapControllerRoute(name: "OpeningDayPromo",
+                pattern: $"{lang}/opening-day",
+                defaults: new { controller = "Common", action = "OpeningDayPromo" });
         }
 
         #endregion
