@@ -5405,30 +5405,18 @@ td:not(.shipment-id) label {
     padding: 5px 5px;
     color: #fff;
     border-right: none;
-    border-radius: 3px 0px 0px 3px;
-    box-shadow: #535353 4px 3px 9px;
 }
 .voyage hr {
     margin: 40px 0px;
 }
 .voyage .item-box .picture a:before {
-    padding-top: 100%;
+    padding-top: 110%;
 }
 .voyage .product-list .item-box+.item-box {
     margin-top: 0px;
 }
 .voyage span.open-box-price {
     color: #e42229;
-}
-.voyage span.price-sale-tag {
-    background: #fffd08;
-    font-weight: bold;
-    padding: 5px 5px;
-    color: #000;
-    margin-left: -3px;
-    border-left: none;
-    border-radius: 0px 3px 3px 0px;
-    box-shadow: #535353 4px 3px 9px;
 }
 .voyage span.price.actual-price {
     font-size: 26px;
@@ -5438,4 +5426,103 @@ td:not(.shipment-id) label {
 }
 .home-page-body.voyage .product-item.voyage .col-md-6 {
     width: 100%;
+}
+
+.voyage .product-list .ribbon-wrapper+.details {
+    margin: auto;
+    width: 100%;
+}
+body.voyage {
+	font-family: 'Poppins', sans-serif;
+}
+.product-item.voyage .product-title a {
+    font-size: 24px;
+    color: #000;
+    font-weight: bold;
+}
+
+.voyage a {
+    color: initial;
+}
+.side-2 a {
+    color: initial;
+}
+.voyage .product-list .item-box .product-item {
+    grid-template-columns: 25% auto;
+}
+.voyage hr {
+    margin: 15px 0;
+}
+.voyage .product-list .item-box .product-title {
+    margin-bottom: 5px;
+}
+.voyage .product-list .item-box .add-info {
+    display: block;
+    margin-top: 10px;
+}
+.voyage .product-box-description {
+    line-height: 1.5em;
+    height: auto;
+	margin-bottom: 5px;
+}
+.voyage .home-page .add-info p {
+    margin: 0;
+	font-size: 14px;
+}
+.voyage .home-page-product-grid .product-box-description {
+    line-height: 1.25em;
+}
+
+.voyage .home-page-product-grid .item-box .picture a:before {
+    padding-top: 0;
+}
+.voyage .home-page-product-grid .item-box .picture img {
+    position: initial;
+    margin: 0;
+}
+.voyage .home-page-product-grid .item-box .add-info {
+    display: block;
+}
+.home-page span.man-no {
+    display: block;
+}
+.voyage .home-page .product-grid .item-box {
+    padding: 5px;
+    max-width: 200px;
+}
+.voyage .carousel-item h2.product-title a {
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.voyage .carousel-item h2.product-title a .no-man {
+    font-weight: normal;
+}
+.voyage .home-page span.price.you-save {
+	padding: 0px 5px;
+}
+.voayge .home-page .item-box .prices {
+    height: 8.4rem;
+    padding: 0;
+    margin-bottom: 0;
+}
+.voayge .home-page span.price.you-save {
+    margin-right: 40px;
+}
+.voayge .home-page span.price-sale-tag {
+    font-weight: bold;
+    font-size: 22px;
+}
+.voayge .home-page .item-box .buttons-lower button span {
+    color: #fff !important;
+}
+.voayge .home-page .box-special-container {
+    height: 40px;
+}
+.voyage .home-page p.product-box-description {
+    height: 70px;
+}
+.voyage .home-page button.product-box-add-to-cart-button {
+    padding: 0;
+    height: 60px;
 }

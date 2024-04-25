@@ -39,6 +39,7 @@
 }
 
 @{
+    var hasDeliveryOptions = await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.Id);
     //prepare "Add to cart" AJAX link
     var addtocartlink = "";
     var shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart;
@@ -239,7 +240,7 @@
         }
 
         .item-box .buttons-lower button span {
-            color: #4F4F4F;
+            color: #fff;
         }
 
         /* Removes Product Sources from Item Desc. - since I can't seem to find how to programmatically remove. */
@@ -373,11 +374,6 @@
                         {
                             <p class="item-number item-number-style">#@itemNumberDisplay</p>
                         }
-                        else
-                        {
-                            <p class="item-number item-number-style">&nbsp;</p>
-                        }
-
                         
                     </div>
                     @if (Model.ReviewOverviewModel.AllowCustomerReviews)
@@ -395,7 +391,9 @@
                                 </div>
                             </div>
                         </div>
-                    }
+                    }      
+                    <!-- ABC: custom - adds widget zone for reviews -->
+                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductBoxAddinfoReviews, additionalData = Model })             
                 </div>
 
 
@@ -413,19 +411,13 @@
                                 savedPrice = decimal.Parse(Model.ProductPrice.OldPrice.Substring(1)) -
                                 decimal.Parse(Model.ProductPrice.Price.Substring(1));
                             }
-                            else
-                            {
-                                <span class="price old-price">&nbsp</span>
-                            }
+
                             @if (savedPrice.HasValue && savedPrice.Value > 0)
                             {
                                 var saveStr = "Save $" + savedPrice.Value.ToString().Replace(".00", "");
                                 <span class="price you-save">@saveStr</span>
                             }
-                            else
-                            {
-                                <span class="price you-save">&nbsp</span>
-                            }
+
                             @if (savedPrice.HasValue && savedPrice.Value > 0)
                             {
                                 <span class="price-sale-tag">Sale</span>
@@ -492,10 +484,6 @@
                                 additionalData = Model
                             })
                         <div class="prices">
-                            @if (!string.IsNullOrEmpty(Model.ProductPrice.OldPrice))
-                            {
-                                <span class="price old-price">@Model.ProductPrice.OldPrice</span>
-                            }
                             @if (Model.ProductPrice.DisplayTaxShippingInfo)
                             {
                                 var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
@@ -533,23 +521,6 @@
                 
 
                     <div class="buttons">
-                        @*<button type="button" class="button-1 product-box-detail-button"
-                        onclick="setLocation('@Url.RouteUrl("Product", new { SeName = Model.SeName
-                        })')">@T("Products.Details")</button>*@
-                        @if (!Model.ProductPrice.DisableBuyButton)
-                        {
-                            var addToCartText = T("ShoppingCart.AddToCart").Text;
-                            if (Model.ProductPrice.IsRental)
-                            {
-                                addToCartText = T("ShoppingCart.Rent").Text;
-                            }
-                            if (Model.ProductPrice.AvailableForPreOrder)
-                            {
-                                addToCartText = T("ShoppingCart.PreOrder").Text;
-                            }
-                            <button type="button" class="button-2 product-box-add-to-cart-button"
-                                onclick="AjaxCart.addproducttocart_catalog('@addtocartlink');return false;">@(addToCartText)</button>
-                        }
                         <span class="wrapper">
                             @if (!Model.ProductPrice.DisableWishlistButton)
                             {
@@ -565,6 +536,51 @@
                             }
                         </span>
                     </div>
+                    <div class="buttons-lower">
+            @if (productFlag != null && productFlag.IsInStoreOnly())
+            {
+                <form action="@productUrl">
+                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@T("ShoppingCart.InStoreOnly").Text</span></button>
+                </form>
+            }
+            else if (isMattress)
+            {
+                <form action="@productUrl">
+                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">Build Package</span></button>
+                    <input type="hidden" name="size" value="@mattressSize" /> 
+                </form>
+            }
+            else if (hasDeliveryOptions && !Model.ProductPrice.DisableBuyButton)
+            {
+                <button type="button"
+                        id="product-box-add-to-cart-button-@Model.Id"
+                        class="button-2 product-box-add-to-cart-button"
+                        onclick="addCartItemAsync(@Model.Id)"><span>@T("ShoppingCart.AddToCart").Text</span></button>
+            }
+            @* end custom *@
+            else if (!Model.ProductPrice.DisableBuyButton)
+            {
+                var addToCartText = T("ShoppingCart.AddToCart").Text;
+
+                if (Model.ProductPrice.IsRental)
+                {
+                    addToCartText = T("ShoppingCart.Rent").Text;
+                }
+                if (Model.ProductPrice.AvailableForPreOrder)
+                {
+                    addToCartText = T("ShoppingCart.PreOrder").Text;
+                }
+                <button type="button"
+                        id="product-box-add-to-cart-button-@Model.Id"
+                        class="button-2 product-box-add-to-cart-button"><span>@(addToCartText)</span></button>
+            }
+            else
+            {
+                <form action="@productUrl">
+                    <button type="submit" class="button-2 product-box-add-to-cart-button"><span class="no-cart-image">@T("ShoppingCart.SeeDetails")</span></button>
+                </form>
+            }
+        </div>
 
                     @if (isOpenBox)
                         {

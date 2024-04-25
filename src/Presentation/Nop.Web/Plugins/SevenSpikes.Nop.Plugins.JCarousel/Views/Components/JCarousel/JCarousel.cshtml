@@ -53,13 +53,11 @@
 
     var homePageProductGridClass = string.Empty;
 
-    if (carousel.DataSourceTypeClass == "product-grid")
-    {
+
         if (isHomePage)
         {
             homePageProductGridClass = "home-page-product-grid";
         }
-    }
 
     var loopItems = carousel.Settings.JCarouselEntitySettings.LoopItems;
     var numberOfItemsToShow = carousel.Settings.JCarouselEntitySettings.NumberOfVisibleItems < 1 ? 1 : carousel.Settings.JCarouselEntitySettings.NumberOfVisibleItems;
@@ -175,7 +173,7 @@
                             @switch (carousel.DataSourceTypeClass)
                             {
                                 case "product-grid":
-                                    @await Html.PartialAsync("_ProductBox", item.ProductOverviewModel)
+                                    @await Html.PartialAsync("_ProductBoxHome", item.ProductOverviewModel)
                                     break;
                                 case "category-grid":
                                     @await Component.InvokeAsync("JCarouselCategoryBox", item.CategoryModel)

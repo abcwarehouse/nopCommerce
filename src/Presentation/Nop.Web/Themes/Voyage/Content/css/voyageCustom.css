@@ -121,7 +121,7 @@
 
 .voyage .voyage .add-info p {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     font-size: 14px;
 }
 .voyage .description br {
@@ -181,4 +181,21 @@
 }
 .home-page-body.voyage .product-item.voyage .col-md-6 {
     width: 100%;
+}
+
+.voyage .product-list .ribbon-wrapper+.details {
+    margin: auto;
+    width: 100%;
+}
+
+.product-list .voyage .product-title a {
+    color: #000;
+    font-size: 24px;
+    font-weight: bold;
+}
+.product-list .voyage .product-title h2 {
+    margin-bottom: 10px;
+}
+.product-list .item-box .voyage .add-info {
+    margin-top: 10px;
 }
