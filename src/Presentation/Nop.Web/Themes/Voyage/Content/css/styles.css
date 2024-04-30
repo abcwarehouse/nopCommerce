@@ -5322,7 +5322,7 @@ td:not(.shipment-id) label {
     border: solid 2px #eee;
 }
 .voyage .details {
-    padding: 0px 10px;
+    padding: 0px 5px;
 }
 
 .voyage button.slick-next.slick-arrow {
@@ -5524,5 +5524,40 @@ body.voyage {
 }
 .voyage .home-page button.product-box-add-to-cart-button {
     padding: 0;
-    height: 60px;
+    height: 40px;
+	margin-top: 15px;
+}
+.voyage .ui-slider-range {
+    position: absolute;
+}
+.voyage .ui-slider {
+    position: relative;
+    width: auto;
+    height: 8px;
+    margin: 0 4px 10px;
+    background-color: #f3f3f3;
+}
+
+.voyage .ui-slider-handle {
+    position: absolute;
+    top: -3px;
+    width: 8px;
+    height: 14px;
+    margin-left: -4px;
+    outline: 2px solid #fff;
+    background-color: #000;
+    cursor: pointer;
+}
+.voyage span.price-sale-tag {
+    font-size: 26px;
+    font-weight: bold;
+}
+.voyage button.product-box-add-to-cart-button span {
+    color: #fff !important;
+    font-size: 13px;
+}
+.voyage .title.carousel-title.has-navigation button {
+    font-size: 19px;
+    font-family: 'Poppins';
+	line-height: 3;
 }

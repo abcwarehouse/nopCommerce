@@ -53,14 +53,6 @@
     var itemNumber = "";
     var itemNumberDisplay = "";
     ProductFlag productFlag = frontEndService.GetProductFlag(Model.Id);
-    bool isOpenBox = productFlag != null &&
-                     !(frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync()) || frontEndService.StoreIsHawthorneClearance(await storeContext.GetCurrentStoreAsync())) ?
-                        productFlag.IsOpenBox() : false;
-    decimal openBoxPrice = 0.0M;
-    if (isOpenBox)
-    {
-        openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.ProductPrice.PriceValue);
-    }
 
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
     string equalPaymentsModalStoreName = isHawthorne ? "Hawthorne" : "ABC Warehouse";
