@@ -30,8 +30,7 @@
     HomepageTopicLayout = await settingService.GetSettingByKeyAsync("VoyageThemeSettings.HomepageTopicLayout", "horizontal", storeId, true);
 }
 <div class="page home-page @HomepageTopicLayout">
-    <div class="page-body">
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
+    <div class="page-body"> 
         @await Component.InvokeAsync("HomepageCategories")
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
         @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })

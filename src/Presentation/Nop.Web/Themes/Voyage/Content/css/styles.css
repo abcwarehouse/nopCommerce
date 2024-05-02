@@ -5561,3 +5561,91 @@ body.voyage {
     font-family: 'Poppins';
 	line-height: 3;
 }
+.voyage .header ul {
+    margin-bottom: auto;
+}
+body.voyage {
+    margin-top: -15px;
+}
+.voyage .header-lower {
+	padding: 1% 2%;
+}
+.voyage .homepage-slider {
+    background: #cdcdcd;
+    padding: 20px;
+}
+.voyage .homepage-slider img {
+    border-radius: 15px;
+}
+.voyage .bottom-bricks .brick-item {
+    border-radius: 15px;
+}
+.voyage .banners-right img {
+    border-radius: 15px;
+	max-width: 100%;
+	width: 100%;
+}
+.voyage .banners-right img:first-child {
+    margin-bottom: 30px;
+}
+.voyage .slider-container {
+	flex: 0 0 auto;
+	width: 63%;
+}
+.voyage .banners-right {
+	flex: 0 0 auto;
+	width: 37%;
+}
+.voyage .brick-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 1%;
+    line-height: 0;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+  .voyage .brick-item {
+	background-color: #fff;
+	border: 1px solid #e9e9e9;
+	padding: 5px;
+	text-align: center;
+  }
+  
+  .voyage .brick-item:hover{
+	 opacity: 0.8;
+  }
+  
+  
+  @media (max-width: 1000px) {
+  
+.voyage .brick-container {
+	margin-top: auto;
+	margin-bottom: 25px;
+  }
+  
+  }
+  
+  
+  @media (max-width: 749px) {
+  
+	.voyage .brick-container {
+	grid-template-columns: auto auto;
+  }
+  
+  .voyage .brick-item {
+	padding: 3px;
+  }
+  
+  }
+  
+  @media (max-width: 350px) {
+  
+  .brick-container {
+	grid-template-columns: auto auto;
+  }
+  
+  .voyage .brick-item {
+	padding: 3px;
+  }
+  } 
+  

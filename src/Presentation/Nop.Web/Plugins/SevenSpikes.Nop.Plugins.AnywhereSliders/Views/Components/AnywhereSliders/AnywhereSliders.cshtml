@@ -70,25 +70,25 @@
 
     @if (slider.Slides.Count > 1)
     {
-        <div class="slider-wrapper @slider.CustomClass">
-            <div class="anywhere-slider anywhere-slick-slider" id="@sliderHtmlElementId"
-                 data-mobileBreakpoint="@slider.MobileBreakpoint"
-                 data-slick='@slickSettingsJson'>
-                @foreach (var slide in slider.Slides)
-                {
-                    if (slidesCounter++ == 0)
-                    {
-                        slide.IsFirstSlide = true;
-                    }
+                    <div class="slider-wrapper @slider.CustomClass">
+                        <div class="anywhere-slider anywhere-slick-slider" id="@sliderHtmlElementId"
+                            data-mobileBreakpoint="@slider.MobileBreakpoint"
+                            data-slick='@slickSettingsJson'>
+                            @foreach (var slide in slider.Slides)
+                            {
+                                if (slidesCounter++ == 0)
+                                {
+                                    slide.IsFirstSlide = true;
+                                }
 
-                    await Html.RenderPartialAsync(Views.Slide, slide,
-                        new ViewDataDictionary(ViewData) {
-                            { "PreLoadFirstImage", slider.PreLoadFirstImage },
-                            { "MobileBreakpoint", slider.MobileBreakpoint } });
-                }
-                <div class="slick-arrows">@*directional navigation container*@</div>
-            </div>
-        </div>
+                                await Html.RenderPartialAsync(Views.Slide, slide,
+                                    new ViewDataDictionary(ViewData) {
+                                        { "PreLoadFirstImage", slider.PreLoadFirstImage },
+                                        { "MobileBreakpoint", slider.MobileBreakpoint } });
+                            }
+                            <div class="slick-arrows">@*directional navigation container*@</div>
+                        </div>
+                    </div>
     }
     else if (slider.Slides.Count == 1)
     {

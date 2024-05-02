@@ -91,7 +91,20 @@
     </div>
     @if (isHomePage)
     {
-        @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_main_slider" })
+        <div class="homepage-slider">
+            <div class="row">
+                <div class="slider-container">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_main_slider" })
+                
+                    <div class="bottom-bricks">
+                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
+                    </div>
+                </div>
+                <div class="banners-right">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "home_banners_right" })
+                </div>    
+            </div>
+        </div>  
     }
     <div class="master-wrapper-content">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
