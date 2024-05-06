@@ -5614,17 +5614,59 @@ body.voyage {
   .voyage .brick-item:hover{
 	 opacity: 0.8;
   }
-  
+  .voyage .title.carousel-title.has-navigation strong {
+    font-family: 'Poppins';
+}
+.voyage ul.mega-menu {
+    float: right;
+}
+.voyage ul.mega-menu a {
+    text-decoration: none;
+}
+.voyage .header-menu .sublist-wrap {
+	padding: 0px 15px;
+}
+
+.voyage.home-page-body .prices span {
+    font-size: 16px;
+}
+
+
+
+
+
+
+
+
+
   
   @media (max-width: 1000px) {
+	.voyage .brick-container {
+		margin-top: auto;
+		margin-bottom: 25px;
+	}
+	.voyage .bottom-bricks {
+		margin-top: 20px;
+	}
+	.voyage .slider-container {
+		width: 100%;
+	}
+	.voyage .slider-container {
+		width: 100%;
+	}
+	.voyage .banners-right img:first-child {
+		margin-bottom: 15px;
+		margin-right: 2%;
+	}
+	.voyage .banners-right img {
+		width: 49% !important;
+		float: left;
+	}
   
-.voyage .brick-container {
-	margin-top: auto;
-	margin-bottom: 25px;
-  }
-  
-  }
-  
+}
+@media (max-width: 766px) {
+	
+}
   
   @media (max-width: 749px) {
   
@@ -5637,7 +5679,14 @@ body.voyage {
   }
   
   }
-  
+  @media (max-width: 450px) {
+	.voyage .banners-right img {
+		width: 100% !important;
+	}
+	.voyage .brick-container {
+        grid-template-columns: auto;
+    }
+  }
   @media (max-width: 350px) {
   
   .brick-container {
@@ -5648,4 +5697,4 @@ body.voyage {
 	padding: 3px;
   }
   } 
-  
+
