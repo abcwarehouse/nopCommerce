@@ -5647,7 +5647,11 @@ body.voyage {
 .voyage .shop-categories {
 	width: 14%;
 } 
-
+.voyage div#quickTabs a {
+    color: #66667f;
+    text-decoration: none;
+    font-weight: bold;
+}
 
 
 
@@ -5675,7 +5679,7 @@ body.voyage {
 		width: 49% !important;
 		float: left;
 	}
-	.voyage .shop-category p {
+	.voyage .shop-categories p {
 		font-size: 14px;
 		line-height: 1.25;
 	}
