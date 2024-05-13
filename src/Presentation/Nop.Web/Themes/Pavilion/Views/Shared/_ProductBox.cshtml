@@ -29,6 +29,7 @@
 @inject IAbcProductAttributeService abcProductAttributeService
 @inject IProductService productService
 @inject IStoreContext storeContext
+@inject IAbcCategoryService abcCategoryService
 
 @{
     var hasDeliveryOptions = await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.Id);
@@ -53,14 +54,6 @@
     var itemNumber = "";
     var itemNumberDisplay = "";
     ProductFlag productFlag = frontEndService.GetProductFlag(Model.Id);
-    bool isOpenBox = productFlag != null &&
-                     !(frontEndService.StoreIsClearance(await storeContext.GetCurrentStoreAsync()) || frontEndService.StoreIsHawthorneClearance(await storeContext.GetCurrentStoreAsync())) ?
-                        productFlag.IsOpenBox() : false;
-    decimal openBoxPrice = 0.0M;
-    if (isOpenBox)
-    {
-        openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.ProductPrice.PriceValue);
-    }
 
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
     string equalPaymentsModalStoreName = isHawthorne ? "Hawthorne" : "ABC Warehouse";
@@ -173,6 +166,25 @@
         man = Model.Name.Substring(0, index);
         manNo = Model.Name.Substring(index);
     }
+
+    var isClearance = false;
+    var productCategories = await abcCategoryService.GetProductCategoriesByProductIdAsync(Model.Id);
+    foreach (var productCategory in productCategories)
+    {
+        isClearance = await abcCategoryService.IsCategoryIdClearance(productCategory.CategoryId);
+        if (isClearance)
+        {
+            break;
+        }
+    }
+
+    bool isOpenBox = productFlag != null &&
+                     !isClearance ? productFlag.IsOpenBox() : false;
+    decimal openBoxPrice = 0.0M;
+    if (isOpenBox)
+    {
+        openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.ProductPrice.PriceValue);
+    }
 }
 
 @* ABC: both style and script should be moved *@
@@ -242,21 +254,48 @@
         <a href="@productUrl"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
     <div class="picture">
-        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
-            @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
-            {
-                @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+        <div class="image-container">
+            <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
                 {
-                    ("src", Model.DefaultPictureModel.ImageUrl),
-                    ("alt", Model.DefaultPictureModel.AlternateText),
-                    ("title", Model.DefaultPictureModel.Title)
-                })
-            }
-            else
-            {
-                <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
-            }
-        </a>
+                    @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                    {
+                        ("src", Model.DefaultPictureModel.ImageUrl),
+                        ("alt", Model.DefaultPictureModel.AlternateText),
+                        ("title", Model.DefaultPictureModel.Title)
+                    });
+
+                    if(Model.DefaultPictureModel.HoverImageUrl == "" || Model.DefaultPictureModel.HoverImageUrl == null)
+                        {
+                            <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                        }
+                }
+                else
+                {
+                    <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                }
+                <div class="hover-image">
+                    @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
+                    {
+                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                        {
+                            ("src", Model.DefaultPictureModel.HoverImageUrl),
+                            ("alt", Model.DefaultPictureModel.HoverAlternateText),
+                            ("title", Model.DefaultPictureModel.HoverTitle),
+                        });
+
+                        if(Model.DefaultPictureModel.HoverImageUrl == "" || Model.DefaultPictureModel.HoverImageUrl == null)
+                        {
+                            <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                        }
+                    }
+                    else
+                    {
+                        <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                    }
+                </div>
+            </a>
+        </div>
     </div>
     <div class="details">
         @if (Model.ReviewOverviewModel.AllowCustomerReviews)
@@ -334,6 +373,10 @@
                         <span class="price-sale-tag">Sale</span>
                     }
                     <span class="price actual-price">@priceStr</span>
+                    @if (isClearance)
+                    {
+                        <span class="or-less">OR LESS!</span>
+                    }
                     @if (usesPairPricing)
                     {
                         <span class="pair-price-disclaimer">*pair</span>

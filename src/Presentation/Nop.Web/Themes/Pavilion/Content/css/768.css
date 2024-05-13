@@ -897,3 +897,62 @@ div.rental-price {
 }
 
 }
+
+.hover-image img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0 !important;
+	transition: opacity 1s ease;
+  }
+  
+.image-container:hover .hover-image img {
+opacity: 1 !important;
+}
+  
+.image-container:hover a > img {
+	visibility: hidden;
+	opacity: 0 !important;
+	transition: opacity 1s ease;
+}
+
+.hover-image img {
+	opacity: 0 !important;
+}
+.header-links {
+	left: -20px !important;
+  }
+
+body .header-menu>ul>li>a {
+	padding: 5px 8px;
+}
+input.button-1.search-box-button {
+    z-index: 1;
+}
+.elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
+    margin-left: 20px;
+}
+body .header-menu>ul>li>a>span {
+	font-size: 13px;
+}
+
+@media screen and (max-width: 1024px) {
+	div#mobile-header-logo {
+		position: absolute;
+		top: 10px;
+		left: 0;
+	}
+	.header {
+		margin-bottom: 0px;
+	}
+	.header-middle {
+		background: #fff;
+		width: 100%;
+		text-align: center;
+	}
+	.elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
+		margin-left: auto;
+		margin-right: auto;
+		padding-bottom: 15px;
+	}
+}
