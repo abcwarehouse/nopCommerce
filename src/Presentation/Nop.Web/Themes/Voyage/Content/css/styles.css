@@ -5619,6 +5619,7 @@ body.voyage {
 }
 .voyage ul.mega-menu {
     float: right;
+	padding-left: 0px;
 }
 .voyage ul.mega-menu a {
     text-decoration: none;
@@ -5630,10 +5631,22 @@ body.voyage {
 .voyage.home-page-body .prices span {
     font-size: 16px;
 }
-
-
-
-
+.voyage .home-categories img {
+    max-width: 100px;
+}
+.voyage .home-categories {
+    text-align: center;
+}
+.voyage .home-categories a {
+    text-decoration: none;
+    font-weight: bold;
+}
+.voyage.home-page-body .prices {
+    height: 75px;
+}
+.voyage .shop-categories {
+	width: 14%;
+} 
 
 
 
@@ -5662,6 +5675,13 @@ body.voyage {
 		width: 49% !important;
 		float: left;
 	}
+	.voyage .shop-category p {
+		font-size: 14px;
+		line-height: 1.25;
+	}
+	.voyage .shop-categories {
+		width: 25%;
+	} 
   
 }
 @media (max-width: 766px) {
@@ -5683,6 +5703,13 @@ body.voyage {
 	.voyage .banners-right img {
 		width: 100% !important;
 	}
+	.voyage .banners-right {
+		width: 100%;
+	}
+	.voyage .shop-categories {
+		width: 50%;
+	} 
+	
 	.voyage .brick-container {
         grid-template-columns: auto;
     }

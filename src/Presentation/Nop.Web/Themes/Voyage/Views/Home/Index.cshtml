@@ -31,6 +31,59 @@
 }
 <div class="page home-page @HomepageTopicLayout">
     <div class="page-body"> 
+        <div class="home-categories">
+                <div class="row">
+                <div class="shop-category">
+                    <a href="/refrigeration">
+                        <img src="/images/Icon_Fridge-Red.png" alt="Refridgerators"/>
+                        <p>Shop<br/>
+                        Refridgerators</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/cooking">
+                        <img src="/images/Icon_Stove-Red.png" alt="Ranges"/>
+                        <p>Shop<br/>
+                        Ranges</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/dishwashers-3">
+                        <img src="/images/Icon_Dishwasher-Red.png" alt="Dishwashers"/>
+                        <p>Shop<br/>
+                        Dishwashers</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/laundry">
+                        <img src="/images/Icon_Laundry-Red.png" alt="Laundry"/>
+                        <p>Shop<br/>
+                        Laundry</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/tv-video">
+                        <img src="/images/Icon_TV-Red.png" alt="HDTV"/>
+                        <p>Shop<br/>
+                        HDTV</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/mattresses">
+                        <img src="/images/Icon_Mattress-Red.png" alt="Car Audio Video"/>
+                        <p>Shop<br/>
+                        Matresses</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/furniture">
+                        <img src="/images/Icon_Furniture-Red.png" alt="Furniture"/>
+                        <p>Shop<br/>
+                        Furniture</p>
+                    </a>
+                </div>
+            </div>
+        </div>
         @await Component.InvokeAsync("HomepageCategories")
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
         @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })
