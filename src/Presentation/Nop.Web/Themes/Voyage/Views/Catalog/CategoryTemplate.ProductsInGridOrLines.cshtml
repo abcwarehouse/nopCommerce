@@ -79,8 +79,9 @@
     // check if it's a leaf category
     $(function () {
         var isLeaf = @Html.Raw(!hasChildCategories ? "true" : "false");
-        var isFloorcareAccessoriesPage = @Html.Raw(isFloorcareAccessories ? "true" : "false");
-        if (isLeaf || isFloorcareAccessoriesPage) {
+        var isClearance = @Html.Raw(isClearance ? "true" : "false");
+		var categoryPanel = undefined;
+        if (isLeaf) {
             // show product display
             $('.product-selectors').show();
             $('.product-grid').show();
