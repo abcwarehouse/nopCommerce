@@ -24,6 +24,7 @@
 @inject IStoreContext storeContext
 @inject ISettingService _settingService
 @inject IProductAttributeService _productAttributeService
+@inject IAbcCategoryService abcCategoryService
 
 @{
     Layout = "_ColumnsOne";
@@ -125,7 +126,7 @@
 }
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page product-details-page @clearanceClass">
+<div class="page product-details-page">
     <div class="page-body">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
@@ -228,7 +229,7 @@
                         @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
                     }
                     <!--wishlist, compare, email a friend-->
-                    @if (isClearanceStore)
+                    @if (isClearance)
                     {
                         <button class="view-availability" type="button" onclick="location.href='#clearance_stock_widget'">View Availability</button>
                     }
