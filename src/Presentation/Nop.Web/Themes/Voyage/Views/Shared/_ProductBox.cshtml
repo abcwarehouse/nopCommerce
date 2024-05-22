@@ -312,43 +312,48 @@
 
 <div class="product-item product-item-@Model.Id voyage" data-productid="@Model.Id">
     <div class="picture">
-        @if (imagesInCarousel)
-        {
-            <div class="carousel product-box-image-carousel" id="productBoxImagesCarousel-@Model.Id"
-                data-slick="@slickSettingsJson">
-                @foreach (var image in images)
-                {
-                    <div class="slide product-box-image-slide">
-                        <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })"
-                            title="@Model.DefaultPictureModel.Title">
-                            <img class="picture-img"
-                                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-                                data-lazy="@image" />
-                        </a>
-                    </div>
-                }
-                <div class="navigation product-box-image-navigation"></div>
-            </div>
-        }
-        else
-        {
+        <div class="image-container">
             <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
-                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
                 {
-                    @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
-                             {
-            ("src", Model.DefaultPictureModel.ImageUrl),
-            ("alt", Model.DefaultPictureModel.AlternateText),
-            ("title", Model.DefaultPictureModel.Title)
-                             })
+                    @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                    {
+                        ("src", Model.DefaultPictureModel.ImageUrl),
+                        ("alt", Model.DefaultPictureModel.AlternateText),
+                        ("title", Model.DefaultPictureModel.Title)
+                    });
+
+                    if(Model.DefaultPictureModel.HoverImageUrl == "" || Model.DefaultPictureModel.HoverImageUrl == null)
+                        {
+                            <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                        }
                 }
                 else
                 {
-                    <img class="picture-img" alt="@Model.DefaultPictureModel.AlternateText"
-                        src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" />
+                    <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
                 }
+                <div class="hover-image">
+                    @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
+                    {
+                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                        {
+                            ("src", Model.DefaultPictureModel.HoverImageUrl),
+                            ("alt", Model.DefaultPictureModel.HoverAlternateText),
+                            ("title", Model.DefaultPictureModel.HoverTitle),
+                        });
+
+                        if(Model.DefaultPictureModel.HoverImageUrl == "" || Model.DefaultPictureModel.HoverImageUrl == null)
+                        {
+                            <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                        }
+                    }
+                    else
+                    {
+                        <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                    }
+                </div>
             </a>
-        }
+        </div>
         <div class="attribute-squares-wrapper color-attributes"></div>
     </div>
     <div class="details">
@@ -387,6 +392,14 @@
                         }
                         
                     </div>
+                    
+                    <!-- Temp for dev -->
+                    <div id="pr-reviewsnippet"></div>
+                    <div id="pr_snippet_product_72861" data-pr-component="CategorySnippet" data-pr-page_id="OLED55C3PUA" lang="en" data-pr-mounted="true">
+                    <span style="display: none" class="product-box-sku">OLED55C3PUA</span>
+                    <div class="p-w-r" style=""><section id="pr-category-snippets-OLED55C3PUA" class="" data-testid="category-snippet"><div class="pr-snippet pr-category-snippet"><div class="pr-category-snippet__rating pr-category-snippet__item"><div class="pr-snippet-stars pr-snippet-stars-png" role="img" aria-label="Rated 4.7 out of 5 stars"><div aria-hidden="true" class="pr-rating-stars"><div class="pr-star-v4 pr-star-v4-100-filled"></div><div class="pr-star-v4 pr-star-v4-100-filled"></div><div class="pr-star-v4 pr-star-v4-100-filled"></div><div class="pr-star-v4 pr-star-v4-100-filled"></div><div class="pr-star-v4 pr-star-v4-75-filled"></div></div><div aria-hidden="true" class="pr-snippet-rating-decimal">4.7</div></div></div><div class="pr-category-snippet__total pr-category-snippet__item">1587 Reviews</div></div></section></div></div>
+                    <!-- Temp for dev -->
+                    
                     @if (Model.ReviewOverviewModel.AllowCustomerReviews)
                     {
                         var ratingPercent = 0;
@@ -408,7 +421,7 @@
                 </div>
 
 
-                <div class="col-md-6">
+                <div class="col-md-6 right-column">
                     @if (!usesCartPricing)
                     {
                         <div class="prices">
