@@ -5437,7 +5437,7 @@ body.voyage {
 	font-family: 'Poppins', sans-serif;
 }
 .product-item.voyage .product-title a {
-    font-size: 24px;
+    font-size: 12px;
     color: #212529;
     font-weight: bold;
 }
@@ -5685,13 +5685,58 @@ opacity: 1 !important;
 .hover-image img {
 	opacity: 0 !important;
 }
-
-
+.voyage .header-links ul {
+    padding-left: 0;
+}
+.voyage form#small-search-box-form {
+    width: 100%;
+	margin-top: 17px;
+}
+.voyage .search-box .search-box-text {
+	width: 100%;
+	border: solid 2px #b3b3b3;
+    border-radius: 10px;
+}
+.voyage .header-logo.desktop {
+	flex: 0 1;
+}
+.voyage .top-menu li {
+    display: inline-block;
+    padding: 0px 10px;
+    font-size: 12px;
+    border-right: solid 1px #ccc;
+    margin-top: 9px;
+}
+.voyage a:hover {
+    color: #de1d25;
+}
+.voyage .header-links {
+	margin: 0;
+}
+.voyage .header-links li {
+    margin-top: 9px;
+}
+.voyage .header-links-wrapper {
+	flex: initial;
+}
+.voyage .header-links.nav-panel {
+    padding-left: 10px;
+}
+.voyage .header-upper a {
+    text-decoration: none;
+}
+.voyage .header-upper li.red a {
+    color: #de1d25;
+}
   
   @media (max-width: 1000px) {
 	.voyage .brick-container {
 		margin-top: auto;
 		margin-bottom: 25px;
+	}
+	.voyage .store-search-box {
+		margin: 0;
+		width: 100%;
 	}
 	.voyage .bottom-bricks {
 		margin-top: 20px;

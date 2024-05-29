@@ -372,6 +372,10 @@
                             @Model.Sku
                         </div>
                     }
+                    @if (!string.IsNullOrEmpty(itemNumberDisplay))
+                    {
+                        <p class="item-number item-number-style">#@itemNumberDisplay</p>
+                    }
 
                     <div class="add-info">
                         @await Component.InvokeAsync("Widget", new
@@ -385,10 +389,6 @@
                         @if (!string.IsNullOrEmpty(miniDesc))
                         {
                             <p class="product-box-description">@Html.Raw(miniDesc)</p>
-                        }
-                        @if (!string.IsNullOrEmpty(itemNumberDisplay))
-                        {
-                            <p class="item-number item-number-style">#@itemNumberDisplay</p>
                         }
                         
                     </div>

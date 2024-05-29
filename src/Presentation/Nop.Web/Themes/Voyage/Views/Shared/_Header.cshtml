@@ -36,7 +36,19 @@
             </div>
         }
         <div class="header-links-wrapper last">
-            @await Component.InvokeAsync("AdminHeaderLinks")
+            <div class="top-menu">
+                <ul>
+                    <li class="red">
+                        <a href="/sale-ad">SALE! Deal Drops</a>
+                    </li>
+                    <li class="red">
+                        <a href="/clearance">Clearance</a>
+                    </li>
+                    <li>
+                        <a href="/sale-ad">Weekly Ad</a>
+                    </li>
+                </ul>
+            </div>
             @await Component.InvokeAsync("HeaderLinks")
         </div>
     </div>
