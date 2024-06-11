@@ -691,6 +691,12 @@ namespace Nop.Web.Infrastructure
             endpointRouteBuilder.MapControllerRoute(name: "PageNotFound",
                 pattern: $"{lang}/page-not-found",
                 defaults: new { controller = "Common", action = "PageNotFound" });
+
+            //Mickey Sale Ad
+            endpointRouteBuilder.MapControllerRoute(
+            name: "SaleAd",
+            pattern: "sale-ad-temp",
+            defaults: new { controller = "SaleAd", action = "Index" });
         }
 
         #endregion

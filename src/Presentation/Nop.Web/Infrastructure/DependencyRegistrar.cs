@@ -108,6 +108,7 @@ namespace Nop.Web.Infrastructure
             services.AddScoped<Factories.ITopicModelFactory, Factories.TopicModelFactory>();
             services.AddScoped<Factories.IVendorModelFactory, Factories.VendorModelFactory>();
             services.AddScoped<Factories.IWidgetModelFactory, Factories.WidgetModelFactory>();
+            services.AddScoped<Services.Sales.IProductMickeySaleAdService, Services.Sales.ProductMickeySaleAdService>();
         }
 
         /// <summary>
