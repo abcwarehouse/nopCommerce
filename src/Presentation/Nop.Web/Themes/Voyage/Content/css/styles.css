@@ -2789,7 +2789,7 @@ table:not(.breakpoint) .footable-toggle {
 .add-to-cart-panel .add-to-cart-button {
 	width: 250px;
 	max-width: calc(100% - 100px);
-	height: 50px;
+	height: 45px;
 	background-color: #000;
 	padding: 0 15px;
 	font-size: 14px;
@@ -5388,17 +5388,22 @@ td:not(.shipment-id) label {
 
 
 .voyage button.product-box-add-to-cart-button {
-    background: #e42229;
-    width: 180px;
+    background: #fff;
+    width: 170px;
     padding: 10px 4px;
     border-radius: 8px;
-    color: #fff;
+    color: #e42229;
     text-decoration: none;
     margin-bottom: 10px;
+    border: solid 3px;
 }
 .voyage button.product-box-add-to-cart-button:hover {
-    background: #b95559;
+    background: #e42229;
     color: #fff;
+	border: solid 3px #e42229;
+}
+.voyage button.product-box-add-to-cart-button:hover span {
+	color: #fff !important;
 }
 .voyage span.price.you-save {
     background: #e42229;
@@ -5420,7 +5425,7 @@ td:not(.shipment-id) label {
     color: #e42229;
 }
 .voyage span.price.actual-price {
-    font-size: 26px;
+    font-size: 20px !important;
 }
 .voyage .short-description table {
     width: 100% !important;
@@ -5472,6 +5477,7 @@ body.voyage {
 .voyage .home-page .add-info p {
     margin: 0;
 	font-size: 14px;
+	color: #000;
 }
 .voyage .home-page-product-grid .product-box-description {
     line-height: 1.25em;
@@ -5491,7 +5497,7 @@ body.voyage {
     display: block;
 }
 .voyage .home-page .product-grid .item-box {
-    padding: 5px;
+    padding: 10px;
     max-width: 200px;
 }
 .voyage .carousel-item h2.product-title a {
@@ -5558,7 +5564,7 @@ body.voyage {
 	line-height: 2em;
 }
 .voyage button.product-box-add-to-cart-button span {
-    color: #fff !important;
+    color: #e42229 !important;
     font-size: 13px;
 }
 .voyage .title.carousel-title.has-navigation button {
@@ -5728,7 +5734,31 @@ opacity: 1 !important;
 .voyage .header-upper li.red a {
     color: #de1d25;
 }
-  
+.voyage .newsletter:before {
+    display: none;
+}
+.voyage .footer .newsletter strong, .voyage .footer .newsletter span {
+    font-family: 'Poppins', sans-serif !important;
+}
+.voyage button#newsletter-subscribe-button {
+    text-decoration: none;
+}
+.voyage .jcarousel li {
+    padding: 0px 5px;
+}
+.voyage .breadcrumb ul {
+    margin-top: 15px;
+}
+.voyage .buttons-lower {
+    text-align: center;
+}
+
+@media (min-width: 1261px) {
+    .voyage .store-search-box {
+        margin: auto 0 auto 0;
+    }
+}
+
   @media (max-width: 1000px) {
 	.voyage .brick-container {
 		margin-top: auto;

@@ -50,8 +50,7 @@
         addtocartlink = Url.RouteUrl("AddProductToCart-Catalog", new
         {
             productId = Model.Id,
-            shoppingCartTypeId =
-        shoppingCartTypeId,
+            shoppingCartTypeId = shoppingCartTypeId,
             quantity = quantity,
             forceredirection = Model.ProductPrice.ForceRedirectionAfterAddingToCart
         });
@@ -61,8 +60,7 @@
         addtocartlink = Url.RouteUrl("AddProductToCart-Catalog", new
         {
             productId = Model.Id,
-            shoppingCartTypeId =
-        shoppingCartTypeId,
+            shoppingCartTypeId = shoppingCartTypeId,
             quantity = quantity
         });
     }
@@ -70,8 +68,7 @@
     var addtowishlistlink = Url.RouteUrl("AddProductToCart-Catalog", new
     {
         productId = Model.Id,
-        shoppingCartTypeId =
-    (int)ShoppingCartType.Wishlist,
+        shoppingCartTypeId = (int)ShoppingCartType.Wishlist,
         quantity = quantity
     });
     var addtocomparelink = Url.RouteUrl("AddProductToCompare", new { productId = Model.Id });
