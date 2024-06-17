@@ -230,12 +230,6 @@ var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
                                     dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{variant.Id}";
                                     @await Html.PartialAsync("_ProductAttributes", variant, dataDictAttributes)
                                 }
-                                <!--rental info-->
-                                    @{
-                                        var dataDictRental = new ViewDataDictionary(ViewData);
-                                        dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{variant.Id}";
-                                        @await Html.PartialAsync("_RentalInfo", variant, dataDictRental)
-                                    }
                                 <!--gift card-->
                                 @{
                                     var dataDictGiftCard = new ViewDataDictionary(ViewData);
