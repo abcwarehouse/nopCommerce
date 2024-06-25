@@ -1,0 +1,100 @@
+@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Core.Domain.Seo
+
+@inject ISettingService settingService
+@inject IStoreContext storeContext
+@inject SeoSettings seoSettings
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    if (!string.IsNullOrEmpty(seoSettings.HomepageTitle))
+    {
+        Html.AddTitleParts(seoSettings.HomepageTitle);
+    }
+
+    //meta
+    if (!string.IsNullOrEmpty(seoSettings.HomepageDescription))
+    {
+        Html.AddMetaDescriptionParts(seoSettings.HomepageDescription);
+    }
+
+    //page class
+    Html.AppendPageCssClassParts("html-home-page");
+
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
+    var HomepageTopicLayout = string.Empty;
+    HomepageTopicLayout = await settingService.GetSettingByKeyAsync("VoyageThemeSettings.HomepageTopicLayout", "horizontal", storeId, true);
+}
+<div class="page home-page @HomepageTopicLayout">
+    <div class="page-body"> 
+        <div class="home-categories">
+                <div class="row">
+                <div class="shop-categories">
+                    <a href="/refrigeration">
+                        <img src="/images/Icon_Fridge-Red.png" alt="Refridgerators"/>
+                        <p>Shop<br/>
+                        Refridgerators</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/cooking">
+                        <img src="/images/Icon_Stove-Red.png" alt="Ranges"/>
+                        <p>Shop<br/>
+                        Ranges</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/dishwashers-3">
+                        <img src="/images/Icon_Dishwasher-Red.png" alt="Dishwashers"/>
+                        <p>Shop<br/>
+                        Dishwashers</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/laundry">
+                        <img src="/images/Icon_Laundry-Red.png" alt="Laundry"/>
+                        <p>Shop<br/>
+                        Laundry</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/tv-video">
+                        <img src="/images/Icon_TV-Red.png" alt="HDTV"/>
+                        <p>Shop<br/>
+                        HDTV</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/mattresses">
+                        <img src="/images/Icon_Mattress-Red.png" alt="Car Audio Video"/>
+                        <p>Shop<br/>
+                        Matresses</p>
+                    </a>
+                </div>
+                <div class="shop-categories">
+                    <a href="/furniture">
+                        <img src="/images/Icon_Furniture-Red.png" alt="Furniture"/>
+                        <p>Shop<br/>
+                        Furniture</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @await Component.InvokeAsync("HomepageCategories")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
+        @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeProducts })
+        @await Component.InvokeAsync("HomepageProducts")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeBestSellers })
+        @await Component.InvokeAsync("HomepageBestSellers")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeNews })
+        @await Component.InvokeAsync("HomepageNews")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforePoll })
+        @await Component.InvokeAsync("HomepagePolls")
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBottom })
+    </div>
+</div>
