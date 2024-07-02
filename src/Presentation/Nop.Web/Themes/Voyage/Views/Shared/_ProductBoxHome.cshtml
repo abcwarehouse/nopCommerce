@@ -278,7 +278,9 @@
             <!-- ABC: adds mini description to product box -->
             @if (!string.IsNullOrEmpty(miniDesc))
             {
-                <p class="product-box-description">@Html.Raw(miniDesc)</p>
+                <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+                    <p class="product-box-description">@Html.Raw(miniDesc)</p>
+                </a>
             }
             else
             {

@@ -61,7 +61,7 @@
             </div>
             <div class="footer-block">
                 <div class="title">
-                    <strong>@T("SevenSpikes.Themes.Voyage.Footer.Offers")</strong>
+                    <strong>Shop</strong>
                 </div>
                 <ul class="list">
                     @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn3).ToList())
@@ -79,10 +79,6 @@
                     @if (Model.CompareProductsEnabled && Model.DisplayCompareProductsFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("CompareProducts")">@T("Products.Compare.List")</a></li>
-                    }
-                    @if (Model.SearchEnabled && Model.DisplayProductSearchFooterItem)
-                    {
-                        <li><a href="@Url.RouteUrl("ProductSearch")">@T("Search")</a> </li>
                     }
                 </ul>
             </div>

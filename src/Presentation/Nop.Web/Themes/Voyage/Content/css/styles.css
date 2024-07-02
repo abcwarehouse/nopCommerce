@@ -2201,18 +2201,6 @@ table:not(.breakpoint) .footable-toggle {
 	font-size: 20px;
 	transition: 0.2s ease;
 }
-.pager li:after {
-    content: "";
-    position: absolute;
-    top: 3px; right: -3px;
-    bottom: -3px; left: 3px;
-    z-index: -1; opacity: 0;
-    border: 1px solid #e43d51;
-	transition: 0.5s ease;
-}
-.pager .current-page:after {
-    opacity: 1;
-}
 .pager li:hover a {
 	color: #e43d51;
 }
@@ -5750,7 +5738,32 @@ opacity: 1 !important;
     margin-top: 15px;
 }
 .voyage .buttons-lower {
+    text-align: right;
+}
+.voyage .view-all {
     text-align: center;
+    padding-top: 15px;
+}
+.voyage .view-all a {
+	text-decoration: none;
+}
+.voyage .item-box .old-price.actual-price {
+    color: #000;
+}
+.voyage .add-info a {
+    text-decoration: none;
+    color: #000;
+}
+.voyage .add-info a p {
+    color: #000;
+}
+.voyage .search-box.store-search-box.nav-panel {
+    width: 88%;
+    display: inline-block;
+}
+.voyage div#flyout-cart {
+    width: 10%;
+    display: inline-block;
 }
 
 @media (min-width: 1261px) {
