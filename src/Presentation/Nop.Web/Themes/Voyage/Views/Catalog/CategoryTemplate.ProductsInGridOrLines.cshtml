@@ -82,6 +82,10 @@
         var isClearance = @Html.Raw(isClearance ? "true" : "false");
 		var categoryPanel = undefined;
         if (isLeaf) {
+			// Hide the block category navigation
+			$('.block-category-navigation').hide();
+			$('.block-manufacturer-navigation').hide();
+
             // show product display
             $('.product-selectors').show();
             $('.product-grid').show();
@@ -175,10 +179,6 @@
 
 				// Now move categories below price range
 				$(categoryPanel).insertAfter(".priceRangeFilterPanel7Spikes");
-
-				// And finally hide the block category navigation
-				$('.block-category-navigation').hide();
-				$('.block-manufacturer-navigation').hide();
 			}
         }
         else {
