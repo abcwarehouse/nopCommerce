@@ -5684,7 +5684,7 @@ opacity: 1 !important;
 }
 .voyage form#small-search-box-form {
     width: 100%;
-	margin-top: 17px;
+	margin-top: 0px;
 }
 .voyage .search-box .search-box-text {
 	width: 100%;
@@ -5760,11 +5760,16 @@ opacity: 1 !important;
 .voyage .search-box.store-search-box.nav-panel {
     width: 88%;
     display: inline-block;
+	margin-top: -2px;
 }
 .voyage div#flyout-cart {
     width: 10%;
     display: inline-block;
 }
+.voyage .product-selectors option {
+    font-size: 12px;
+}
+
 
 @media (min-width: 1261px) {
     .voyage .store-search-box {
@@ -5847,4 +5852,22 @@ opacity: 1 !important;
 	padding: 3px;
   }
   } 
+
+
+.widget-1000 {
+    display: none;
+}
+@media (min-width: 1001px) {
+	.widget-1000 {
+        display: block;
+    }
+}
+@media (min-width: 481px) and (max-width: 768px) {
+    .widget-480 {
+        display: block;
+    }
+}
+.widget-480 {
+    display: none;
+}
 
