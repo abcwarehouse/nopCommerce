@@ -5690,6 +5690,7 @@ opacity: 1 !important;
 	width: 100%;
 	border: solid 2px #b3b3b3;
     border-radius: 10px;
+	margin-top: 9px;
 }
 .voyage .header-logo.desktop {
 	flex: 0 1;
