@@ -185,4 +185,6 @@
   <WidgetZone>topic_page_after_body</WidgetZone>
   <WidgetZone>home_banners_right</WidgetZone>
   <WidgetZone>store_hours</WidgetZone>
+  <WidgetZone>pre_footer</WidgetZone>
+  <WidgetZone>home_review</WidgetZone>
 </SupportedWidgetZones>

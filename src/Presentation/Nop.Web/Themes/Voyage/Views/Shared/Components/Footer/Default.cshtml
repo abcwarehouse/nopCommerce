@@ -8,12 +8,23 @@
 @inject IWorkContext workContext
 @inject ISettingService settingService
 @inject IThemeContext themeContext
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
 
 @{
     var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     var removeCopyright = await settingService.GetSettingByKeyAsync("voyagethemesettings.removecopyright", false, storeId, true);
     var removeDesignedBy = await settingService.GetSettingByKeyAsync("voyagethemesettings.removedesignedby", false, storeId, true);
 }
+<div class="html-widget-pre-footer">
+    <div class="master-wrapper-content">
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.PreFooter })
+    </div>
+</div>
+<div class="master-wrapper-content">
+    <div class ="home-page-review">
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomeReview })
+    </div>
+</div>
 
 <div class="footer">
     <div class="footer-upper">
