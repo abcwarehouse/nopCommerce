@@ -9,7 +9,10 @@
                 <a href="@Url.RouteUrl("Logout")" class="finish-impersonation" title="@T("Account.ImpersonatedAs.Finish.Hint")">@T("Account.ImpersonatedAs.Finish")</a>
             </div>
         }
-        @if (Model.DisplayAdminLink)
+        <ul>
+            <li><a href=""></a></li>
+        </ul>
+        @if(false)// (Model.DisplayAdminLink)
         {
             <a href="@Url.Content("~/Admin")" class="administration">@T("Account.Administration")</a>
         }
