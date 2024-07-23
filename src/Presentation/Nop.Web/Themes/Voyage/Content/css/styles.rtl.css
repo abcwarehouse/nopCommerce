@@ -4114,11 +4114,6 @@ table:not(.breakpoint) .footable-toggle {
 	z-index: 1;
 	color: #888;
 }
-.order-progress li:after {
-    content: "";
-	margin-top: 3px;
-    left: -3px; right: 3px;
-}
 .order-progress .active-step:before {
 	content: "\e918";
 	border-color: #000;

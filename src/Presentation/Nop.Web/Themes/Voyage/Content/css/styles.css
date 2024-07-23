@@ -4092,11 +4092,6 @@ table:not(.breakpoint) .footable-toggle {
 	z-index: 1;
 	color: #888;
 }
-.order-progress li:after {
-    content: "";
-	margin-top: 3px;
-    left: 3px; right: -3px;
-}
 .order-progress .active-step:before {
 	content: "\e918";
 	border-color: #000;
@@ -5784,6 +5779,16 @@ opacity: 1 !important;
 }
 .voyage .home-page-review {
     margin-bottom: 60px;
+}
+.voyage .header-links.nav-panel li a {
+    text-transform: CAPITALIZE;
+}
+@media (min-width: 1261px) {
+    .voyage .header-links li+li, .voyage .admin-header-links a+a, .voyage .admin-header-links+.header-links {
+        margin-left: 10px;
+        border-left: 1px solid #ccc;
+        padding-left: 10px;
+    }
 }
 
 @media (min-width: 1261px) {
