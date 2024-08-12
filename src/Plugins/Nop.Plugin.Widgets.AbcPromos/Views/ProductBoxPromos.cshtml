@@ -5,15 +5,14 @@
 @{
     Html.AddCssFileParts("~/Plugins/Widgets.AbcPromos/styles/product-box.css");
 }
-
-@for (int i = 0; i < 2; i++)
-{
-    var promo = Model[i];
-    if (promo != null) {
-        <a class="product-box-specials" href="@promo.GetPopupCommand()">@promo.Description</a>
-    }
-    else
+<div class="box-special-container">
+    @for (int i = 0; i < 2; i++)
     {
-        <a class="product-box-specials">&nbsp;</a>
+        var promo = Model[i];
+        if (promo != null) {
+            
+                <a class="product-box-specials" href="@promo.GetPopupCommand()">@promo.Description</a>
+            
+        }
     }
-}
+</div>

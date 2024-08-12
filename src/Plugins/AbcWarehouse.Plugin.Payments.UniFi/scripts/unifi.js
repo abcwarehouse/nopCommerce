@@ -4,7 +4,14 @@ $(document).ready(function () {
 	$('.payment-info-next-step-button').hide();
 
     window.addEventListener("message",function(event) {
-		if ((typeof event.data == 'string' || typeof event.data == 'object') && (event.data == 'Close Model' || event.data == 'Return To Merchant Shipping' || event.data == 'Close' || event.data.action == 'setPayCloseModal' || event.data.event == 'return-to-partner')) {
+		console.log(`event data type is: ${typeof event.data}`);
+		console.log(`event data is: ${event.data}`);
+		if ((typeof event.data == 'string' || typeof event.data == 'object')
+			 && (event.data == 'Unifi Modal Close' ||
+				 event.data == 'Return To Merchant Shipping' ||
+				 event.data == 'Close' ||
+				 event.data.action == 'setPayCloseModal' ||
+				 event.data.event == 'return-to-partner')) {
 				var transactionToken = document.getElementById('transactionToken').value;
 				$.ajax({
 					cache: false,

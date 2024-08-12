@@ -92,5 +92,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string ProductDetailsDescriptionTabTop => "productdetails_description_tab_top";
 
         public static string PromoProductsBelowBanner => "promo_products_below_banner";
+        public static string PreFooter => "pre_footer";
+        public static string HomeReview => "home_review";
     }
 }
