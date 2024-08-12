@@ -50,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         private readonly IBackendStockService _backendStockService;
         private readonly IShopService _shopService;
         private readonly IProductService _productService;
+        private readonly IWorkContext _workContext;
 
         public CustomShoppingCartService(
             CatalogSettings catalogSettings,
@@ -110,6 +111,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _shopService = shopService;
             _productAttributeParser = productAttributeParser;
             _productService = productService;
+            _workContext = workContext;
         }
 
         public override async Task MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes)
@@ -352,5 +354,50 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
 
             return baseResult;
         }
+
+        // TODO: Tabling this for now
+        // private async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> ProcessCustomDiscountAsync(
+        //     decimal unitPrice,
+        //     decimal discountAmount,
+        //     List<Discount> appliedDiscounts
+        // )
+        // {
+        //     if (discountAmount == 0 || !appliedDiscounts.Any()) return (unitPrice, discountAmount, appliedDiscounts);
+
+        //     var buyOneGetDiscountGrouped = appliedDiscounts.FirstOrDefault(d => d.Name == "BuyOneGetDiscountGrouped");
+        //     if (buyOneGetDiscountGrouped == null) return (unitPrice, discountAmount, appliedDiscounts);
+            
+        //     var groupedProductIds = (await _productService.GetProductsWithAppliedDiscountAsync(buyOneGetDiscountGrouped.Id)).Select(p => p.Id);
+        //     var customer = await _workContext.GetCurrentCustomerAsync();
+        //     var cart = await GetShoppingCartAsync(customer);
+        //     var cartProductIds = cart.Select(sci => sci.ProductId);
+        //     var commonProductIds = groupedProductIds.Intersect(cartProductIds);
+
+        //     // If this is not the second item (via quantity or multi product), remove discount
+        //     if (commonProductIds.Count() == 1)
+        //     {
+        //         var sci = cart.FirstOrDefault(sci => sci.ProductId == commonProductIds.First());
+        //         if (sci.Quantity == 1)
+        //         {
+        //             unitPrice += discountAmount;
+        //             discountAmount = 0;
+        //             appliedDiscounts.Remove(buyOneGetDiscountGrouped);
+        //         }
+        //     }
+
+        //     // TODO: With 2 or more cart items, need to determine lowest price item
+        //     if (commonProductIds.Count() > 1)
+        //     {
+        //         var eligibleScis = cart.Where(sci => commonProductIds.Contains(sci.ProductId));
+        //         foreach (var sci in eligibleScis)
+        //         {
+        //             var a = 1;
+        //         }
+            
+        //     // TODO: If matching prices, mark sci as discounted
+        //     }
+
+        //     return (unitPrice, discountAmount, appliedDiscounts);
+        // }
     }
 }

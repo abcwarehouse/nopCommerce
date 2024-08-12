@@ -187,4 +187,5 @@
   <WidgetZone>store_hours</WidgetZone>
   <WidgetZone>pre_footer</WidgetZone>
   <WidgetZone>home_review</WidgetZone>
+  <WidgetZone>cart_popup</WidgetZone>
 </SupportedWidgetZones>
