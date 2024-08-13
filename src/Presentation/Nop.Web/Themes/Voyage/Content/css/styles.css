@@ -5783,6 +5783,89 @@ opacity: 1 !important;
 .voyage .header-links.nav-panel li a {
     text-transform: CAPITALIZE;
 }
+.voyage .add-to-cart {
+    text-align: right;
+}
+.add-to-cart .add-to-cart-panel {
+    display: initial;
+}
+.voyage .tv-trade {
+    border: solid 2px #f3b5b5;
+    padding: 10px 15px;
+    text-align: center;
+}
+
+
+.voyage .overview .additional-details {
+	display: inline-block;
+}
+.voyage .manufacturers {
+    display: inline-block;
+	padding-right: 25px;
+}
+.voyage .trade-text {
+    display: inline-block;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 18px;
+}
+.voayge .credit-text {
+    display: inline-block;
+}
+.voyage .up-to {
+    display: inline-block;
+    line-height: 1;
+    text-transform: uppercase;
+}
+.voyage .trade-button {
+    display: inline-block;
+    background: #e91d24;
+    color: #fff;
+    padding: 4px 15px;
+    vertical-align: middle;
+	margin-right: 10px;
+}
+.voyage button.add-to-cart-button {
+    width: auto;
+    padding: 10px 50px;
+    height: auto;
+    color: #e91d24;
+    background: #fff;
+    border: solid 3px;
+    border-radius: 10px;
+}
+.voyage button.add-to-cart-button:hover {
+    background: #e91d24;
+    color: #fff;
+}
+.voyage .credit-text {
+    display: inline-block;
+}
+.voyage .trade-learn {
+    margin-left: 10px;
+	display: inline-block;
+}
+.voyage .overview .short-description {
+    color: #000;
+}
+.voyage .overview-buttons {
+    display: inline-block;
+    text-align: right;
+    margin-top: 25px;
+	width: 100%;
+}
+.voyage .add-to-wishlist {
+    display: inline-block;
+	margin-right: 10px;
+}
+.voyage .compare-products {
+    display: inline-block;
+	margin-right: 10px;
+}
+.voyage .add-to-cart {
+    display: inline-block;
+}
+
 @media (min-width: 1261px) {
     .voyage .header-links li+li, .voyage .admin-header-links a+a, .voyage .admin-header-links+.header-links {
         margin-left: 10px;
