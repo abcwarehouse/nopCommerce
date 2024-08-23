@@ -805,8 +805,7 @@ namespace Nop.Services.Customers
             var firstName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.FirstNameAttribute);
             var lastName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute);
 
-            //Remove Symbols from First Name Feild
-            firstName = System.Text.RegularExpressions.Regex.Replace(firstName, "[@,\\.\";'\\\\]", string.Empty);
+            
 
             var fullName = string.Empty;
             if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName))
@@ -814,6 +813,8 @@ namespace Nop.Services.Customers
             else
             {
                 if (!string.IsNullOrWhiteSpace(firstName))
+                    //Remove Symbols from First Name Feild
+                    firstName = System.Text.RegularExpressions.Regex.Replace(firstName, "[@,\\.\";'\\\\]", string.Empty);
                     fullName = firstName;
 
                 if (!string.IsNullOrWhiteSpace(lastName))
