@@ -806,7 +806,7 @@ namespace Nop.Services.Customers
             var lastName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute);
 
             //Remove Symbols from First Name Feild
-            firstName = firstName.Replace("[@,\\.;'\\\\]", string.Empty);
+            firstName = firstName.Replace("[@,\\.;'\\\\]", "");
 
             var fullName = string.Empty;
             if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName))
