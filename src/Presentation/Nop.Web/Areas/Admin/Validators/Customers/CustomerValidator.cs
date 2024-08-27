@@ -14,6 +14,12 @@ namespace Nop.Web.Areas.Admin.Validators.Customers
 {
     public partial class CustomerValidator : BaseNopValidator<CustomerModel>
     {
+        public CustomerValidator(ILocalizationService localizationService)
+        {
+            RuleFor(x => x.FirstName)
+                .NotEmpty().WithMessage(localizationService.GetResource("Account.Fields.FirstName.Required"))
+                .Matches("^[a-zA-Z]*$").WithMessage("First name cannot contain symbols or numbers.");
+        }
         public CustomerValidator(CustomerSettings customerSettings,
             ICustomerService customerService,
             ILocalizationService localizationService,
