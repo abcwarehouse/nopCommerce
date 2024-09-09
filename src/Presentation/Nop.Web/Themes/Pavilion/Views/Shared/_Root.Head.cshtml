@@ -34,6 +34,9 @@
     var iosFixFilePath = "~/Plugins/SevenSpikes.Core/Scripts/iOS-12-array-reverse-fix.min.js";
     var iosFixContentFilePath = CommonHelper.DefaultFileProvider.MapPath(iosFixFilePath);
 
+    var currentStore = await storeContext.GetCurrentStoreAsync();
+    string storeId = "storeId" + currentStore.Id.ToString();
+
     if (System.IO.File.Exists(iosFixContentFilePath))
     {
         Html.AppendScriptParts(ResourceLocation.Footer, iosFixFilePath);
@@ -127,7 +130,7 @@
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
     <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0122/3303.js" async="async" ></script>
 </head>
-<body class="@isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
+<body class="@storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
     @* ABC: A bunch of custom styles *@
     <style>
         .flyout-cart-wrapper:hover .flyout-cart {

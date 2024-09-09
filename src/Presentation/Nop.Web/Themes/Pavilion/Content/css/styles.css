@@ -6257,6 +6257,12 @@ img.hawthorne-logo {
 .hawthorne-lower input#sli_search_1 {
     font-size: 14px;
 }
+.header-lower.hawthorne-lower .mega-menu-categories {
+    width: 60px;
+}
+.storeId8 .mobile-header-content-row {
+    background-color: #02463b;
+}
 
 @media screen and (max-width: 570px) {
 .content__Block-sc-3iczmu-0.cFzLkk {

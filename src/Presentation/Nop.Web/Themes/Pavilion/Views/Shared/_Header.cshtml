@@ -15,6 +15,8 @@
     bool isHomeSliderFullWidth = await settingService.GetSettingByKeyAsync("pavilionthemesettings.ishomepagemainsliderfullwidth", false, storeId, true);
     bool stickyCategoryMenuFlyout = await settingService.GetSettingByKeyAsync("pavilionthemesettings.StickyCategoryMenuFlyout", true, storeId, true);
     bool showCategoriesInSideMenu = await settingService.GetSettingByKeyAsync("pavilionthemesettings.ShowCategoriesInSideMenu", true, storeId, true);
+
+    var menuHtml = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
 }
     @if (storeId == 8 )
     {
@@ -75,6 +77,22 @@
                 @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
             </div>
 
+            <div class="header-menu-parent">
+                    <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
+                        <div class="close-menu">
+                            <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
+                        </div>
+                        @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
+                        {
+                            @menuHtml
+                        }
+                        else
+                        {
+                            @await Component.InvokeAsync("TopMenu")
+                        }
+                    </div>
+                </div>
+
             <div class="search-cart-wrapper">
                 <div class="search-box store-search-box nav-panel">
                     <div class="close-button close-search">
@@ -120,7 +138,9 @@
             </div>
         </div>
 
-        <div class="header-middle">
+        
+    } 
+<div class="header-middle">
             <div class="center">
                 <div class="header-logo">
                     @await Component.InvokeAsync("Logo")
@@ -134,9 +154,6 @@
                         <div class="close-menu">
                             <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
                         </div>
-                        @{
-                            var menuHtml = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
-                        }
                         @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
                         {
                             @menuHtml
@@ -151,7 +168,7 @@
             </div>
         </div>
 
-        <div class="header-lower">
+    <div class="header-lower">
             <div class="center">
                 @if (showCategoriesInSideMenu)
                 {
@@ -171,7 +188,6 @@
                 </div>
             </div>
         </div>
-    } 
 </div>
 
 @if (isHomePage && storeId != 8)
