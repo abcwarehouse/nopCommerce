@@ -6270,6 +6270,9 @@ img.hawthorne-logo {
 	.storeId8 .header-lower.secondary-bar {
 		display: none;
 	}
+	.storeId8 .header-menu-parent {
+		display: none;
+	}
 }
 
 
