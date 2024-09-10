@@ -6274,6 +6274,14 @@ img.hawthorne-logo {
 		display: none;
 	}
 }
+@media screen and (max-width: 1024px) {
+	.storeId8 ul.top-menu {
+		margin-top: 75px;
+	}
+	.storeId8 .header-menu .mobile-sidebar-title {
+		top: 50px;
+	}
+}
 
 
 @media screen and (max-width: 570px) {
