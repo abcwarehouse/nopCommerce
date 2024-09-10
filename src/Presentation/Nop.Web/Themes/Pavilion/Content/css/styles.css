@@ -6263,7 +6263,7 @@ img.hawthorne-logo {
 .storeId8 .mobile-header-content-row {
     background-color: #02463b;
 }
-@media screen and (max-width: 1024px) {
+@media screen and (min-width: 1024px) {
 	.storeId8 .header-middle {
 		display: none;
 	}
