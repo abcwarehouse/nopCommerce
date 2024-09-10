@@ -6257,6 +6257,32 @@ img.hawthorne-logo {
 .hawthorne-lower input#sli_search_1 {
     font-size: 14px;
 }
+.header-lower.hawthorne-lower .mega-menu-categories {
+    width: 60px;
+}
+.storeId8 .mobile-header-content-row {
+    background-color: #02463b;
+}
+@media screen and (min-width: 1024px) {
+	.storeId8 .header-middle {
+		display: none;
+	}
+	.storeId8 .header-lower.secondary-bar {
+		display: none;
+	}
+	.storeId8 .header-menu-parent {
+		display: none;
+	}
+}
+@media screen and (max-width: 1024px) {
+	.storeId8 ul.top-menu {
+		margin-top: 75px;
+	}
+	.storeId8 .header-menu .mobile-sidebar-title {
+		top: 50px;
+	}
+}
+
 
 @media screen and (max-width: 570px) {
 .content__Block-sc-3iczmu-0.cFzLkk {
