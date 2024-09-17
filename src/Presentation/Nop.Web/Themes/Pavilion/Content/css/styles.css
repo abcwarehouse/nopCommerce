@@ -6199,6 +6199,9 @@ img.hawthorne-logo {
 .hawthorne-lower .search-cart-wrapper {
     width: 70%;
 }
+.header-menu.nav-panel {
+    width: 10%;
+}
 .header-logo.desktop {
     width: 19%;
 }
