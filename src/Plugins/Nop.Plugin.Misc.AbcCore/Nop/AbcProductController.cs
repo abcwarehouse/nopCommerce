@@ -60,6 +60,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         private readonly ShoppingCartSettings _shoppingCartSettings;
         private readonly ShippingSettings _shippingSettings;
 
+        private readonly IStoreService _storeService;
+
         public AbcProductController(CaptchaSettings captchaSettings,
             CatalogSettings catalogSettings,
             IAclService aclService,
@@ -85,7 +87,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IWorkflowMessageService workflowMessageService,
             LocalizationSettings localizationSettings,
             ShoppingCartSettings shoppingCartSettings,
-            ShippingSettings shippingSettings) :
+            ShippingSettings shippingSettings,
+            IStoreService storeService) :
             base(
                 captchaSettings,
             catalogSettings,
@@ -141,6 +144,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             _localizationSettings = localizationSettings;
             _shoppingCartSettings = shoppingCartSettings;
             _shippingSettings = shippingSettings;
+
+            _storeService = storeService;
         }
 
         // Copied from Nop.Web.Controllers.ProductController
@@ -163,7 +168,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             //We should allows him (her) to use "Preview" functionality
             var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts);
             if (notAvailable && !hasAdminAccess)
-                return CheckOtherStore();
+                return await CheckOtherStoreAsync(product);
 
             //visible individually?
             if (!product.VisibleIndividually)
@@ -220,9 +225,17 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             return View(productTemplateViewPath, model);
         }
 
-        protected virtual IActionResult CheckOtherStore()
+        protected async Task<IActionResult> CheckOtherStoreAsync(Product product)
         {
-            // TODO: Check if the provided product has another store mapping, if so, redirect to the other store
+            var activeStore = await _storeContext.GetCurrentStoreAsync();
+            var storeMappings = await _storeMappingService.GetStoreMappingsAsync(product);
+            foreach (var storeMapping in storeMappings.Where(sm => sm.Id != activeStore.Id))
+            {
+                var store = await _storeService.GetStoreByIdAsync(storeMapping.StoreId);
+                var url = store.Url;
+                var slug = await _urlRecordService.GetActiveSlugAsync(product.Id, "Product", 0);
+                return Redirect($"{url}/{slug}");
+            }
 
             return InvokeHttp404();
         } 
