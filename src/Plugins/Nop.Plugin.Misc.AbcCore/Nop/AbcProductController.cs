@@ -61,6 +61,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         private readonly ShippingSettings _shippingSettings;
 
         private readonly IStoreService _storeService;
+        private readonly CoreSettings _abcCoreSettings;
+        private readonly ILogger _logger;
 
         public AbcProductController(CaptchaSettings captchaSettings,
             CatalogSettings catalogSettings,
@@ -88,7 +90,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             LocalizationSettings localizationSettings,
             ShoppingCartSettings shoppingCartSettings,
             ShippingSettings shippingSettings,
-            IStoreService storeService) :
+            IStoreService storeService,
+            CoreSettings abcCoreSettings,
+            ILogger logger) :
             base(
                 captchaSettings,
             catalogSettings,
@@ -146,6 +150,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             _shippingSettings = shippingSettings;
 
             _storeService = storeService;
+            _abcCoreSettings = abcCoreSettings;
+            _logger = logger;
         }
 
         // Copied from Nop.Web.Controllers.ProductController
@@ -166,8 +172,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
                 !_productService.ProductIsAvailable(product);
             //Check whether the current user has a "Manage products" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts);
-            if (notAvailable && !hasAdminAccess)
+            // ABC: removing this functionality
+            //var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts);
+            if (notAvailable)// && !hasAdminAccess)
                 return await CheckOtherStoreAsync(product);
 
             //visible individually?
@@ -234,7 +241,12 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
                 var store = await _storeService.GetStoreByIdAsync(storeMapping.StoreId);
                 var url = store.Url;
                 var slug = await _urlRecordService.GetActiveSlugAsync(product.Id, "Product", 0);
-                return Redirect($"{url}/{slug}");
+                var redirectUrl = $"{url}{slug}";
+                if (_abcCoreSettings.IsDebugMode)
+                {
+                    await _logger.InformationAsync($"Found product {product.Name} in store {store.Name}, redirecting to {redirectUrl}");
+                }
+                return RedirectPermanent(redirectUrl);
             }
 
             return InvokeHttp404();
