@@ -335,7 +335,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 deliveryOnlyPriceFormatted,
                 map.HasMailInRebate());
 
-            var existingDeliveryOnlyPav = existingValues.Where(pav => pav.Name.Contains("Home Delivery (")).SingleOrDefault();
+            var existingDeliveryOnlyPavs = existingValues.Where(pav => pav.Name.Contains("Home Delivery ("));
+            if (existingDeliveryOnlyPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing delivery only pavs");
+            }
+            var existingDeliveryOnlyPav = existingDeliveryOnlyPavs.FirstOrDefault();
             var newDeliveryOnlyPav = map.DeliveryOnly != 0 ? new ProductAttributeValue()
             {
                 ProductAttributeMappingId = deliveryOptionsPam.Id,
@@ -355,7 +360,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 await _abcDeliveryService.GetAbcDeliveryItemByItemNumberAsync(map.DeliveryInstall.ToString());
             var deliveryInstallPriceFormatted = await _priceFormatter.FormatPriceAsync(deliveryInstallItem.Price);
 
-            var existingDeliveryInstallPav = existingValues.Where(pav => pav.Name.Contains("Home Delivery and Installation (")).SingleOrDefault();
+            var existingDeliveryInstallPavs = existingValues.Where(pav => pav.Name.Contains("Home Delivery and Installation ("));
+            if (existingDeliveryInstallPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing delivery install pavs");
+            }
+            var existingDeliveryInstallPav = existingDeliveryInstallPavs.FirstOrDefault();
             var newDeliveryInstallPav = map.DeliveryInstall != 0 ? new ProductAttributeValue()
             {
                 ProductAttributeMappingId = deliveryOptionsPam.Id,
@@ -370,7 +380,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             if (resultDeliveryInstallPav != null) { results.Add(resultDeliveryInstallPav); }
 
             // Pickup
-            var existingPickupPav = existingValues.Where(pav => pav.Name.Contains("Pickup In-Store")).SingleOrDefault();
+            var existingPickupPavs = existingValues.Where(pav => pav.Name.Contains("Pickup In-Store"));
+            if (existingPickupPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing pickup pavs");
+            }
+            var existingPickupPav = existingPickupPavs.FirstOrDefault();
             ProductAttributeValue newPickupPav = null;
             var pams = await _abcProductAttributeService.GetProductAttributeMappingsByProductIdAsync(deliveryOptionsPam.ProductId);
             var legacyPickupPam = await pams.WhereAwait(
@@ -393,7 +408,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             if (resultPickupPav != null) { results.Add(resultPickupPav); }
 
             // FedEx
-            var existingFedExPav = existingValues.Where(pav => pav.Name.Contains("FedEx")).SingleOrDefault();
+            var existingFedExPavs = existingValues.Where(pav => pav.Name.Contains("FedEx"));
+            if (existingFedExPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing pickup pavs");
+            }
+            var existingFedExPav = existingFedExPavs.FirstOrDefault();
             var newFedExPav = map.FedEx != 0 ? new ProductAttributeValue()
             {
                 ProductAttributeMappingId = deliveryOptionsPam.Id,
