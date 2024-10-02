@@ -67,8 +67,6 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<ICheckoutModelFactory, AbcCheckoutModelFactory>();
             services.AddScoped<IShoppingCartModelFactory, AbcShoppingCartModelFactory>();
             services.AddScoped<IAbcCategoryService, AbcCategoryService>();
-
-            services.AddScoped<AbcSlugRouteTransformer>();
         }
     }
 }

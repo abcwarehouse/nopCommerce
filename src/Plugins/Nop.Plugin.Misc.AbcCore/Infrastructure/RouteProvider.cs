@@ -6,7 +6,7 @@ using Nop.Web.Infrastructure;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
-    public class RouteProvider : BaseRouteProvider, IRouteProvider
+    public class RouteProvider : IRouteProvider
     {
         public int Priority
         {
@@ -44,15 +44,6 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             endpointRouteBuilder.MapControllerRoute("CartSlideout_GetAddCartItemInfo",
                             "AddToCart/GetAddCartItemInfo",
                             new { controller = "CartSlideout", action = "GetAddCartItemInfo"});
-
-            var lang = GetLanguageRoutePattern();
-            var genericPattern = $"{lang}/{{SeName}}";
-
-            endpointRouteBuilder.MapDynamicControllerRoute<AbcSlugRouteTransformer>(genericPattern);
-
-            endpointRouteBuilder.MapControllerRoute(name: "AbcProduct",
-                pattern: genericPattern,
-                defaults: new { controller = "AbcProduct", action = "ProductDetails" });
         }
     }
 }
