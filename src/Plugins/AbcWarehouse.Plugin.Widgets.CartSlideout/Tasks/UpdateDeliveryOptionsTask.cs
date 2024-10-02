@@ -167,6 +167,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             }
 
             await RemoveDuplicatePamsAsync();
+            await RemoveDuplicatePavsAsync();
 
             if (hasErrors)
             {
@@ -210,6 +211,43 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 delete FROM Product_ProductAttribute_Mapping
                 Where Id IN (Select Id from #dupePams)
                 and ID NOT IN (Select Id from #pamsToKeep)
+            ");
+        }
+
+        private async System.Threading.Tasks.Task RemoveDuplicatePavsAsync()
+        {
+            await _nopDataProvider.ExecuteNonQueryAsync(@"
+                IF OBJECT_ID('tempdb..#pavsWithMultiples') IS NOT NULL
+                DROP TABLE #pavsWithMultiples;
+                IF OBJECT_ID('tempdb..#dupePavs') IS NOT NULL
+                DROP TABLE #dupePavs;
+                IF OBJECT_ID('tempdb..#pavsToKeep') IS NOT NULL
+                DROP TABLE #pavsToKeep;
+
+                select ProductAttributeMappingId, Name
+                into #pavsWithMultiples
+                from ProductAttributeValue
+                group by ProductAttributeMappingId, Name
+                having Count(ProductAttributeMappingId) > 1
+
+                SELECT Id, ProductAttributeMappingId, Name
+                INTO #dupePavs
+                FROM ProductAttributeValue pav
+                WHERE EXISTS
+                (
+                    SELECT * FROM #pavsWithMultiples pdm
+                    WHERE pav.ProductAttributeMappingId = pdm.ProductAttributeMappingId
+                    and pav.Name = pdm.Name
+                )
+
+                Select MIN(Id) as Id
+                INTO #pavsToKeep
+                FROM #dupePavs
+                GROUP BY ProductAttributeMappingId, Name
+
+                delete FROM ProductAttributeValue
+                Where Id IN (Select Id from #dupePavs)
+                and ID NOT IN (Select Id from #pavsToKeep)
             ");
         }
 
