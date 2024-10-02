@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Nop.Web.Framework.Mvc.Routing;
-using Nop.Plugin.Misc.AbcCore.Nop;
-using Nop.Web.Infrastructure;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
