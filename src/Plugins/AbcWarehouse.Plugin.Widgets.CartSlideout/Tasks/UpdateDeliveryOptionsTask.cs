@@ -14,6 +14,7 @@ using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Nop.Data;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
 {
@@ -28,6 +29,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
         private readonly ICategoryService _categoryService;
         private readonly ILogger _logger;
         private readonly IPriceFormatter _priceFormatter;
+        private readonly INopDataProvider _nopDataProvider;
 
         private ProductAttribute _deliveryPickupOptionsProductAttribute;
         private ProductAttribute _haulAwayDeliveryProductAttribute;
@@ -44,7 +46,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             IAbcProductAttributeService abcProductAttributeService,
             ICategoryService categoryService,
             ILogger logger,
-            IPriceFormatter priceFormatter)
+            IPriceFormatter priceFormatter,
+            INopDataProvider nopDataProvider)
         {
             _coreSettings = coreSettings;
             _abcDeliveryService = abcDeliveryService;
@@ -53,6 +56,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             _categoryService = categoryService;
             _logger = logger;
             _priceFormatter = priceFormatter;
+            _nopDataProvider = nopDataProvider;
         }
 
         // Suppress to allow synchronous task runs to prevent collision issues
@@ -162,10 +166,51 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 }
             }
 
+            await RemoveDuplicatePamsAsync();
+
             if (hasErrors)
             {
                 throw new NopException("Failures occured when updating product delivery options.");
             }
+        }
+
+        private async System.Threading.Tasks.Task RemoveDuplicatePamsAsync()
+        {
+            await _nopDataProvider.ExecuteNonQueryAsync(@"
+                IF OBJECT_ID('tempdb..#productsWithDupeMappings') IS NOT NULL
+                DROP TABLE #productsWithDupeMappings;
+                IF OBJECT_ID('tempdb..#dupePams') IS NOT NULL
+                DROP TABLE #dupePams;
+                IF OBJECT_ID('tempdb..#pamsToKeep') IS NOT NULL
+                DROP TABLE #pamsToKeep;
+
+                select ProductId, ProductAttributeId
+                into #productsWithDupeMappings
+                FROM Product_ProductAttribute_Mapping pam
+                JOIN ProductAttribute pa on pa.Id = pam.ProductAttributeId
+                JOIN Product p on p.Id = pam.ProductId and p.Published = 1 and p.Deleted = 0
+                GROUP BY ProductId, ProductAttributeId
+                HAVING COUNT(*) > 1
+
+                SELECT Id, ProductAttributeId, ProductId
+                INTO #dupePams
+                FROM Product_ProductAttribute_Mapping pam
+                WHERE EXISTS
+                (
+                    SELECT * FROM #productsWithDupeMappings pdm
+                    WHERE pam.ProductId = pdm.ProductId
+                    and pam.ProductAttributeId = pdm.ProductAttributeId
+                )
+
+                Select MAX(Id) as Id
+                INTO #pamsToKeep
+                FROM #dupePams
+                GROUP BY ProductAttributeId, ProductId
+
+                delete FROM Product_ProductAttribute_Mapping
+                Where Id IN (Select Id from #dupePams)
+                and ID NOT IN (Select Id from #pamsToKeep)
+            ");
         }
 
         // Should I try making this synchronous?
