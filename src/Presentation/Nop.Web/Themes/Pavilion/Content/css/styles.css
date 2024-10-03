@@ -6267,6 +6267,15 @@ img.hawthorne-logo {
 .storeId8 .mobile-header-content-row {
     background-color: #02463b;
 }
+.storeId8 .header-middle {
+    display: none;
+}
+.storeId8 .header-middle {
+    display: none;
+}
+.storeId8 .header-lower.secondary-bar {
+    display: none;
+}
 @media screen and (min-width: 1024px) {
 	.storeId8 .header-middle {
 		display: none;
@@ -6277,6 +6286,9 @@ img.hawthorne-logo {
 	.storeId8 .header-menu-parent {
 		display: none;
 	}
+	.storeId8 .header-middle {
+		display: block;
+	}
 }
 @media screen and (max-width: 1024px) {
 	.storeId8 ul.top-menu {
@@ -6284,6 +6296,9 @@ img.hawthorne-logo {
 	}
 	.storeId8 .header-menu .mobile-sidebar-title {
 		top: 50px;
+	}
+	.storeId8 .header-middle {
+		display: block;
 	}
 }
 
