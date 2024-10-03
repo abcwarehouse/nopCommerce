@@ -6286,9 +6286,6 @@ img.hawthorne-logo {
 	.storeId8 .header-menu-parent {
 		display: none;
 	}
-	.storeId8 .header-middle {
-		display: block;
-	}
 }
 @media screen and (max-width: 1024px) {
 	.storeId8 ul.top-menu {
@@ -6301,7 +6298,6 @@ img.hawthorne-logo {
 		display: block;
 	}
 }
-
 
 @media screen and (max-width: 570px) {
 .content__Block-sc-3iczmu-0.cFzLkk {
