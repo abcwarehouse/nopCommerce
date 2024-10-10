@@ -63,6 +63,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
         [SuppressMessage("Await.Warning", "CS4014:Await.Warning")]
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            await _logger.Information("Updating product delivery options.");
+
             _deliveryPickupOptionsProductAttribute =
                 await _abcProductAttributeService.GetProductAttributeByNameAsync(AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
             _haulAwayDeliveryProductAttribute =
@@ -173,6 +175,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             {
                 throw new NopException("Failures occured when updating product delivery options.");
             }
+
+            await _logger.Information("Product delivery options updated.");
         }
 
         private async System.Threading.Tasks.Task RemoveDuplicatePamsAsync()
