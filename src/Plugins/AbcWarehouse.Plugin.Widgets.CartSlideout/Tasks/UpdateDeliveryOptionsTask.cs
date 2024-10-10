@@ -93,7 +93,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                         {
                             var deliveryOptionPavs = await UpdateDeliveryOptionsPavAsync(deliveryOptionsPam, map);
 
-                            var deliveryOnlyPav = deliveryOptionPavs.SingleOrDefault(pav => pav.Name.Contains("Home Delivery ("));
+                            var deliveryOnlyPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Home Delivery ("));
                             if (deliveryOnlyPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateHaulawayAsync(productId, map.DeliveryHaulway, _haulAwayDeliveryProductAttribute.Id, deliveryOptionsPam.Id, deliveryOnlyPav)).GetAwaiter().GetResult();
@@ -106,7 +106,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                                     "Recommended Accessories")).GetAwaiter().GetResult();
                             }
 
-                            var deliveryInstallPav = deliveryOptionPavs.SingleOrDefault(pav => pav.Name.Contains("Home Delivery and Installation ("));
+                            var deliveryInstallPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Home Delivery and Installation ("));
                             if (deliveryInstallPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateHaulawayAsync(productId, map.DeliveryHaulwayInstall, _haulAwayDeliveryInstallProductAttribute.Id, deliveryOptionsPam.Id, deliveryInstallPav)).GetAwaiter().GetResult();
@@ -119,7 +119,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                                     "Required Accessories")).GetAwaiter().GetResult();
                             }
 
-                            var pickupPav = deliveryOptionPavs.SingleOrDefault(pav => pav.Name.Contains("Pickup In-Store Or Curbside ("));
+                            var pickupPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Pickup In-Store Or Curbside ("));
                             if (pickupPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateAccessoriesAsync(
@@ -203,7 +203,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                     and pam.ProductAttributeId = pdm.ProductAttributeId
                 )
 
-                Select MAX(Id) as Id
+                Select MIN(Id) as Id
                 INTO #pamsToKeep
                 FROM #dupePams
                 GROUP BY ProductAttributeId, ProductId
@@ -292,7 +292,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 foreach (var accessory in abcDeliveryAccessories)
                 {
                     var item = await _abcDeliveryService.GetAbcDeliveryItemByItemNumberAsync(accessory.AccessoryItemNumber);
-                    var existingPav = (await _abcProductAttributeService.GetProductAttributeValuesAsync(resultPam.Id)).SingleOrDefault(
+                    var existingPav = (await _abcProductAttributeService.GetProductAttributeValuesAsync(resultPam.Id)).FirstOrDefault(
                         pav => int.Parse(pav.Cost.ToString("F0")) == item.Id
                     );
                     var newPav = new ProductAttributeValue()
