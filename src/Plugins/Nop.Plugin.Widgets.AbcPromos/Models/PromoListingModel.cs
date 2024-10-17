@@ -29,7 +29,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Models
             public int StoreId { get; set; }
         }
         public class HawthornePromoModel {
-            public int AbcPromoId { get; set; }
+            public int HawthornePromoId { get; set; }
             public int ProductId { get; set; }
             public int StoreId { get; set; }
         }
