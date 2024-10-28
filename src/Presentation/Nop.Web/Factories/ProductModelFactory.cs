@@ -1214,7 +1214,7 @@ namespace Nop.Web.Factories
                 var exampleVideoThumbnail = new PictureModel();
                 exampleVideoThumbnail.Title = "Example Video";
                 exampleVideoThumbnail.ThumbImageUrl = "https://picsum.photos/100";
-                exampleVideoThumbnail.FullSizeImageUrl = "https://www.youtube.com/embed/BBZ6WAg4Mbk?si=EP-KDgZFZGc3m94x";
+                exampleVideoThumbnail.FullSizeImageUrl = "https://www.youtube.com/watch?v=YGQBm9Mnad8";
                 pictureModels.Add(exampleVideoThumbnail);
 
                 return new { DefaultPictureModel = defaultPictureModel, PictureModels = pictureModels };
