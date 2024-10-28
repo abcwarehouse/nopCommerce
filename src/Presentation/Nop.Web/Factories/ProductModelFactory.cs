@@ -1604,6 +1604,12 @@ namespace Nop.Web.Factories
                 }
             }
 
+            // now add any videos available
+            var exampleVideoThumbnail = new PictureModel();
+            exampleVideoThumbnail.Title = "Example Video";
+            exampleVideoThumbnail.ThumbImageUrl = "http://127.0.0.1:5000/images/thumbs/1451329_lg-wm3400cw.jpeg";
+            model.PictureModels.Add(exampleVideoThumbnail);
+
             return model;
         }
 
