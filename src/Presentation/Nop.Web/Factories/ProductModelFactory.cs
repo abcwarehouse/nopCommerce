@@ -1210,6 +1210,13 @@ namespace Nop.Web.Factories
                     pictureModels.Add(pictureModel);
                 }
 
+                // ABC: Need to add product videos
+                var exampleVideoThumbnail = new PictureModel();
+                exampleVideoThumbnail.Title = "Example Video";
+                exampleVideoThumbnail.ThumbImageUrl = "https://picsum.photos/100";
+                exampleVideoThumbnail.FullSizeImageUrl = "https://www.youtube.com/embed/BBZ6WAg4Mbk?si=EP-KDgZFZGc3m94x";
+                pictureModels.Add(exampleVideoThumbnail);
+
                 return new { DefaultPictureModel = defaultPictureModel, PictureModels = pictureModels };
             });
 
@@ -1603,12 +1610,6 @@ namespace Nop.Web.Factories
                         model.AssociatedProducts.Add(await PrepareProductDetailsModelAsync(associatedProduct, null, true));
                 }
             }
-
-            // now add any videos available
-            var exampleVideoThumbnail = new PictureModel();
-            exampleVideoThumbnail.Title = "Example Video";
-            exampleVideoThumbnail.ThumbImageUrl = "http://127.0.0.1:5000/images/thumbs/1451329_lg-wm3400cw.jpeg";
-            model.PictureModels.Add(exampleVideoThumbnail);
 
             return model;
         }
