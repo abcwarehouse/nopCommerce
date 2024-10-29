@@ -13,5 +13,6 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
         public string Manufacturer { get; set; }
         public string Slug { get; set; }
         public int ProductCount { get; set; }
+        public int PromoStoreId { get; set; }
     }
 }

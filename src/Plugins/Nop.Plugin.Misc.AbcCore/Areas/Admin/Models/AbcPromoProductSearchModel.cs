@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Nop.Web.Framework.Models;
 
 namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
@@ -7,5 +7,6 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
     {
         public int AbcPromoId { get; set; }
         public string AbcPromoName { get; set; }
+        public int PromoStoreId { get; set; }
     }
 }

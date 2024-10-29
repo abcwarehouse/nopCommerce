@@ -1,4 +1,4 @@
-using Nop.Core;
+﻿using Nop.Core;
 using Nop.Core.Domain.Seo;
 using Nop.Core.Infrastructure;
 using Nop.Services.Logging;
@@ -16,6 +16,7 @@ namespace Nop.Plugin.Misc.AbcCore.Domain
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int? ManufacturerId { get; set; }
+        public int PromoStoreId {  get; set; }
 
         public bool IsActive()
         {

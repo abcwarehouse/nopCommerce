@@ -95,7 +95,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
         {
             var html = $"<h2 class=\"abc-rebate-promo-title\">" +
-                        "Promos</h2><div class=\"abc-container abc-promo-container\">";
+                        "Promos test</h2><div class=\"abc-container abc-promo-container\">";
 
             var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
                             (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Web.Framework;
@@ -10,6 +10,9 @@ using Nop.Web.Areas.Admin.Controllers;
 using Nop.Services.Seo;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Nop.Core.Domain.Catalog;
+using Nop.Services.Stores;
 
 namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
 {
@@ -19,18 +22,22 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IUrlRecordService _urlRecordService;
+        private readonly IProductService _productService;
+        private readonly IStoreMappingService _storeMappingService;
 
         public AbcPromoController(
             IAbcPromoService abcPromoService,
             IManufacturerService manufacturerService,
             IProductAbcDescriptionService productAbcDescriptionService,
-            IUrlRecordService urlRecordService
+            IUrlRecordService urlRecordService,
+            IProductService productService
         )
         {
             _abcPromoService = abcPromoService;
             _manufacturerService = manufacturerService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _urlRecordService = urlRecordService;
+            _productService = productService;
         }
 
         public IActionResult List()
@@ -48,7 +55,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             var model = new AbcPromoListModel().PrepareToGrid(searchModel, promos, () =>
             {
                 //fill in model values from the entity
-                return promos.Select(promo =>
+                return promos.Select(async promo =>
                 {
                     //fill in model values from the entity
                     var manufacturerName =
@@ -62,6 +69,9 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
                     var products = _abcPromoService.GetProductsByPromoIdAsync(promo.Id).GetAwaiter().GetResult();
                     var productCount = products.Count();
 
+                    Task<int> promoStoreId = GetPromoStoreIdAsync(products?.FirstOrDefault()) ?? Task.FromResult(default(int));
+
+
                     var abcPromoModel = new AbcPromoModel()
                     {
                         Id = promo.Id,
@@ -72,7 +82,8 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
                         IsActive = promo.IsActive(),
                         Manufacturer = manufacturerName,
                         Slug = slug,
-                        ProductCount = productCount
+                        ProductCount = productCount,
+                        PromoStoreId = promoStoreId.Id 
                     };
 
                     return abcPromoModel;
@@ -82,13 +93,21 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             return Json(model);
         }
 
+        public async Task<int> GetPromoStoreIdAsync(Product products)
+        {
+            
+            var firstPromoProduct = await _productService.GetProductByIdAsync(products.Id);
+            return firstPromoProduct.Id;
+        }
+
         public async Task<IActionResult> Products(int abcPromoId)
         {
             var abcPromo = await _abcPromoService.GetPromoByIdAsync(abcPromoId);
             var model = new AbcPromoProductSearchModel()
             {
                 AbcPromoId = abcPromo.Id,
-                AbcPromoName = abcPromo.Name
+                AbcPromoName = abcPromo.Name,
+                PromoStoreId = abcPromo.PromoStoreId
             };
 
             return View(
