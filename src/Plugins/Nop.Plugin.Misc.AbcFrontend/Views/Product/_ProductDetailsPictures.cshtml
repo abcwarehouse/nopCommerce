@@ -36,9 +36,10 @@
                 <ul>
                     @foreach (var picture in Model.PictureModels)
                     {
+                        var typeClass = picture.Title.Contains("video") ? "mfp-iframe" : "mfp-image";
                         <li>
-                            <a class="jcarousel-item" href="@picture.FullSizeImageUrl" alt="@picture.AlternateText" title="@picture.Title">
-                                <img src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
+                            <a class="jcarousel-item @typeClass" href="@picture.FullSizeImageUrl" alt="@picture.AlternateText" title="@picture.Title">
+                                <img class="@typeClass" src="@picture.ThumbImageUrl" alt="@picture.AlternateText" title="@picture.Title" data-defaultsize="@picture.ImageUrl" data-fullsize="@picture.FullSizeImageUrl" />
                             </a>
                         </li>
                     }
@@ -50,7 +51,7 @@
             $(document).ready(function() {
                 $('.jcarousel').magnificPopup(
                     {
-                        type: 'iframe',
+                        type: 'image',
                         delegate: 'a',
                         removalDelay: 300,
                         gallery: {
@@ -105,6 +106,10 @@
                 $(document).ready(function() {
                     $('.jcarousel-item img').on('click',
                         function() {
+                            if ($(this).className.includes("mfp-iframe")) {
+                                return;
+                            }
+
                             $('#main-product-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
                             $('#main-product-img-@Model.Id').attr('title', $(this).attr('title'));
                             $('#main-product-img-@Model.Id').attr('alt', $(this).attr('alt'));
