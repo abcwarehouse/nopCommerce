@@ -106,10 +106,6 @@
                 $(document).ready(function() {
                     $('.jcarousel-item img').on('click',
                         function() {
-                            if ($(this).className.includes("mfp-iframe")) {
-                                return;
-                            }
-
                             $('#main-product-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
                             $('#main-product-img-@Model.Id').attr('title', $(this).attr('title'));
                             $('#main-product-img-@Model.Id').attr('alt', $(this).attr('alt'));
