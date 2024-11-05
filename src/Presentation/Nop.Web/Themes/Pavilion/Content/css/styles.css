@@ -6413,6 +6413,14 @@ div#video-popup {
     top: 0;
     z-index: 99999;
 }
+@media (max-width: 1024px) {
+    .responsive-nav-wrapper-parent {
+		height: 85px !important;
+	}
+	.mobile-header-content-row {
+		background-color: #ff0314 !important;
+	}
+}
 /* End Black Friday */
 
 /* Bootstrap */
