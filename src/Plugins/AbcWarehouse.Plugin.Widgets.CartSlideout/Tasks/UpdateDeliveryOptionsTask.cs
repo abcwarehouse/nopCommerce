@@ -14,6 +14,7 @@ using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Nop.Data;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
 {
@@ -28,6 +29,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
         private readonly ICategoryService _categoryService;
         private readonly ILogger _logger;
         private readonly IPriceFormatter _priceFormatter;
+        private readonly INopDataProvider _nopDataProvider;
 
         private ProductAttribute _deliveryPickupOptionsProductAttribute;
         private ProductAttribute _haulAwayDeliveryProductAttribute;
@@ -44,7 +46,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             IAbcProductAttributeService abcProductAttributeService,
             ICategoryService categoryService,
             ILogger logger,
-            IPriceFormatter priceFormatter)
+            IPriceFormatter priceFormatter,
+            INopDataProvider nopDataProvider)
         {
             _coreSettings = coreSettings;
             _abcDeliveryService = abcDeliveryService;
@@ -53,12 +56,15 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             _categoryService = categoryService;
             _logger = logger;
             _priceFormatter = priceFormatter;
+            _nopDataProvider = nopDataProvider;
         }
 
         // Suppress to allow synchronous task runs to prevent collision issues
         [SuppressMessage("Await.Warning", "CS4014:Await.Warning")]
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            await _logger.InformationAsync("Updating product delivery options.");
+
             _deliveryPickupOptionsProductAttribute =
                 await _abcProductAttributeService.GetProductAttributeByNameAsync(AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
             _haulAwayDeliveryProductAttribute =
@@ -89,7 +95,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                         {
                             var deliveryOptionPavs = await UpdateDeliveryOptionsPavAsync(deliveryOptionsPam, map);
 
-                            var deliveryOnlyPav = deliveryOptionPavs.SingleOrDefault(pav => pav.Name.Contains("Home Delivery ("));
+                            var deliveryOnlyPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Home Delivery ("));
                             if (deliveryOnlyPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateHaulawayAsync(productId, map.DeliveryHaulway, _haulAwayDeliveryProductAttribute.Id, deliveryOptionsPam.Id, deliveryOnlyPav)).GetAwaiter().GetResult();
@@ -102,7 +108,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                                     "Recommended Accessories")).GetAwaiter().GetResult();
                             }
 
-                            var deliveryInstallPav = deliveryOptionPavs.SingleOrDefault(pav => pav.Name.Contains("Home Delivery and Installation ("));
+                            var deliveryInstallPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Home Delivery and Installation ("));
                             if (deliveryInstallPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateHaulawayAsync(productId, map.DeliveryHaulwayInstall, _haulAwayDeliveryInstallProductAttribute.Id, deliveryOptionsPam.Id, deliveryInstallPav)).GetAwaiter().GetResult();
@@ -115,7 +121,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                                     "Required Accessories")).GetAwaiter().GetResult();
                             }
 
-                            var pickupPav = deliveryOptionPavs.SingleOrDefault(pav => pav.Name.Contains("Pickup In-Store Or Curbside ("));
+                            var pickupPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Pickup In-Store Or Curbside ("));
                             if (pickupPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateAccessoriesAsync(
@@ -162,10 +168,91 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 }
             }
 
+            await RemoveDuplicatePamsAsync();
+            await RemoveDuplicatePavsAsync();
+
             if (hasErrors)
             {
                 throw new NopException("Failures occured when updating product delivery options.");
             }
+
+            await _logger.InformationAsync("Product delivery options updated.");
+        }
+
+        private async System.Threading.Tasks.Task RemoveDuplicatePamsAsync()
+        {
+            await _nopDataProvider.ExecuteNonQueryAsync(@"
+                IF OBJECT_ID('tempdb..#productsWithDupeMappings') IS NOT NULL
+                DROP TABLE #productsWithDupeMappings;
+                IF OBJECT_ID('tempdb..#dupePams') IS NOT NULL
+                DROP TABLE #dupePams;
+                IF OBJECT_ID('tempdb..#pamsToKeep') IS NOT NULL
+                DROP TABLE #pamsToKeep;
+
+                select ProductId, ProductAttributeId
+                into #productsWithDupeMappings
+                FROM Product_ProductAttribute_Mapping pam
+                JOIN ProductAttribute pa on pa.Id = pam.ProductAttributeId
+                JOIN Product p on p.Id = pam.ProductId and p.Published = 1 and p.Deleted = 0
+                GROUP BY ProductId, ProductAttributeId
+                HAVING COUNT(*) > 1
+
+                SELECT Id, ProductAttributeId, ProductId
+                INTO #dupePams
+                FROM Product_ProductAttribute_Mapping pam
+                WHERE EXISTS
+                (
+                    SELECT * FROM #productsWithDupeMappings pdm
+                    WHERE pam.ProductId = pdm.ProductId
+                    and pam.ProductAttributeId = pdm.ProductAttributeId
+                )
+
+                Select MIN(Id) as Id
+                INTO #pamsToKeep
+                FROM #dupePams
+                GROUP BY ProductAttributeId, ProductId
+
+                delete FROM Product_ProductAttribute_Mapping
+                Where Id IN (Select Id from #dupePams)
+                and ID NOT IN (Select Id from #pamsToKeep)
+            ");
+        }
+
+        private async System.Threading.Tasks.Task RemoveDuplicatePavsAsync()
+        {
+            await _nopDataProvider.ExecuteNonQueryAsync(@"
+                IF OBJECT_ID('tempdb..#pavsWithMultiples') IS NOT NULL
+                DROP TABLE #pavsWithMultiples;
+                IF OBJECT_ID('tempdb..#dupePavs') IS NOT NULL
+                DROP TABLE #dupePavs;
+                IF OBJECT_ID('tempdb..#pavsToKeep') IS NOT NULL
+                DROP TABLE #pavsToKeep;
+
+                select ProductAttributeMappingId, Name
+                into #pavsWithMultiples
+                from ProductAttributeValue
+                group by ProductAttributeMappingId, Name
+                having Count(ProductAttributeMappingId) > 1
+
+                SELECT Id, ProductAttributeMappingId, Name
+                INTO #dupePavs
+                FROM ProductAttributeValue pav
+                WHERE EXISTS
+                (
+                    SELECT * FROM #pavsWithMultiples pdm
+                    WHERE pav.ProductAttributeMappingId = pdm.ProductAttributeMappingId
+                    and pav.Name = pdm.Name
+                )
+
+                Select MIN(Id) as Id
+                INTO #pavsToKeep
+                FROM #dupePavs
+                GROUP BY ProductAttributeMappingId, Name
+
+                delete FROM ProductAttributeValue
+                Where Id IN (Select Id from #dupePavs)
+                and ID NOT IN (Select Id from #pavsToKeep)
+            ");
         }
 
         // Should I try making this synchronous?
@@ -209,7 +296,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 foreach (var accessory in abcDeliveryAccessories)
                 {
                     var item = await _abcDeliveryService.GetAbcDeliveryItemByItemNumberAsync(accessory.AccessoryItemNumber);
-                    var existingPav = (await _abcProductAttributeService.GetProductAttributeValuesAsync(resultPam.Id)).SingleOrDefault(
+                    var existingPav = (await _abcProductAttributeService.GetProductAttributeValuesAsync(resultPam.Id)).FirstOrDefault(
                         pav => int.Parse(pav.Cost.ToString("F0")) == item.Id
                     );
                     var newPav = new ProductAttributeValue()
@@ -335,7 +422,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 deliveryOnlyPriceFormatted,
                 map.HasMailInRebate());
 
-            var existingDeliveryOnlyPav = existingValues.Where(pav => pav.Name.Contains("Home Delivery (")).SingleOrDefault();
+            var existingDeliveryOnlyPavs = existingValues.Where(pav => pav.Name.Contains("Home Delivery ("));
+            if (existingDeliveryOnlyPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing delivery only pavs");
+            }
+            var existingDeliveryOnlyPav = existingDeliveryOnlyPavs.FirstOrDefault();
             var newDeliveryOnlyPav = map.DeliveryOnly != 0 ? new ProductAttributeValue()
             {
                 ProductAttributeMappingId = deliveryOptionsPam.Id,
@@ -355,7 +447,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                 await _abcDeliveryService.GetAbcDeliveryItemByItemNumberAsync(map.DeliveryInstall.ToString());
             var deliveryInstallPriceFormatted = await _priceFormatter.FormatPriceAsync(deliveryInstallItem.Price);
 
-            var existingDeliveryInstallPav = existingValues.Where(pav => pav.Name.Contains("Home Delivery and Installation (")).SingleOrDefault();
+            var existingDeliveryInstallPavs = existingValues.Where(pav => pav.Name.Contains("Home Delivery and Installation ("));
+            if (existingDeliveryInstallPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing delivery install pavs");
+            }
+            var existingDeliveryInstallPav = existingDeliveryInstallPavs.FirstOrDefault();
             var newDeliveryInstallPav = map.DeliveryInstall != 0 ? new ProductAttributeValue()
             {
                 ProductAttributeMappingId = deliveryOptionsPam.Id,
@@ -370,7 +467,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             if (resultDeliveryInstallPav != null) { results.Add(resultDeliveryInstallPav); }
 
             // Pickup
-            var existingPickupPav = existingValues.Where(pav => pav.Name.Contains("Pickup In-Store")).SingleOrDefault();
+            var existingPickupPavs = existingValues.Where(pav => pav.Name.Contains("Pickup In-Store"));
+            if (existingPickupPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing pickup pavs");
+            }
+            var existingPickupPav = existingPickupPavs.FirstOrDefault();
             ProductAttributeValue newPickupPav = null;
             var pams = await _abcProductAttributeService.GetProductAttributeMappingsByProductIdAsync(deliveryOptionsPam.ProductId);
             var legacyPickupPam = await pams.WhereAwait(
@@ -393,7 +495,12 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
             if (resultPickupPav != null) { results.Add(resultPickupPav); }
 
             // FedEx
-            var existingFedExPav = existingValues.Where(pav => pav.Name.Contains("FedEx")).SingleOrDefault();
+            var existingFedExPavs = existingValues.Where(pav => pav.Name.Contains("FedEx"));
+            if (existingFedExPavs.Count() > 1)
+            {
+                throw new NopException("found multiple existing pickup pavs");
+            }
+            var existingFedExPav = existingFedExPavs.FirstOrDefault();
             var newFedExPav = map.FedEx != 0 ? new ProductAttributeValue()
             {
                 ProductAttributeMappingId = deliveryOptionsPam.Id,

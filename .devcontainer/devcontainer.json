@@ -1,6 +1,11 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/dotnet-mssql
 {
+	"hostRequirements": {
+		"cpus": 16,
+		"memory": "64gb",
+		"storage": "128gb"
+	},
 	"name": "C# (.NET) and MS SQL",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
@@ -25,8 +30,9 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
+		"ms-mssql.mssql",
 		"ms-dotnettools.csharp",
-		"ms-mssql.mssql"
+		"ms-dotnettools.csdevkit"
 	],
 
 	// [Optional] To reuse of your local HTTPS dev cert:
@@ -49,6 +55,6 @@
 	//      3. Open a terminal in VS Code and run "mkdir -p /home/vscode/.aspnet/https && mv aspnetapp.pfx /home/vscode/.aspnet/https"
 
 	// postCreateCommand.sh parameters: $1=SA password, $2=dacpac path, $3=sql script(s) path
-	"postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/' && dotnet restore src/NopCommerce.sln"
+	"postCreateCommand": "bash .devcontainer/mssql/postCreateCommand.sh 'P@ssw0rd' './bin/Debug/' './.devcontainer/mssql/'"
 
 }

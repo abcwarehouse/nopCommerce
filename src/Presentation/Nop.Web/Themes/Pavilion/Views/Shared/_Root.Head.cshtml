@@ -34,6 +34,17 @@
     var iosFixFilePath = "~/Plugins/SevenSpikes.Core/Scripts/iOS-12-array-reverse-fix.min.js";
     var iosFixContentFilePath = CommonHelper.DefaultFileProvider.MapPath(iosFixFilePath);
 
+    string fullTitle = Html.NopTitle().ToString();
+    string shortTitle = "";
+    if(fullTitle.Length >= 60) 
+    {
+        shortTitle = fullTitle.Substring(0, 60);
+    }
+    else
+    {
+        shortTitle = fullTitle;
+    }
+
     var currentStore = await storeContext.GetCurrentStoreAsync();
     string storeId = "storeId" + currentStore.Id.ToString();
 
@@ -91,7 +102,7 @@
 <!DOCTYPE html>
 <html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(await this.ShouldUseRtlThemeAsync() ? Html.Raw(" dir=\"rtl\"") : null) @Html.NopPageCssClasses()>
 <head>
-    <title>@Html.NopTitle()</title>
+    <title>@shortTitle</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="description" content="@(Html.NopMetaDescription())" />
     <meta name="keywords" content="@(Html.NopMetaKeywords())" />
@@ -130,6 +141,20 @@
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
     <script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0122/3303.js" async="async" ></script>
 </head>
+
+@functions {
+    public string GetBodyClass()
+    {
+        var routeData = ViewContext.RouteData;
+        var controller = routeData.Values["controller"]?.ToString() ?? "home";
+        var action = routeData.Values["action"]?.ToString() ?? "index";
+        
+        // Combine controller and action to create a unique class
+        return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
+    }
+}
+
+<body class="@GetBodyClass() @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
 <body class="@storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
     @* ABC: A bunch of custom styles *@
     <style>

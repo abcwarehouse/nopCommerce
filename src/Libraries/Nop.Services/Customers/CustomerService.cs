@@ -803,8 +803,13 @@ namespace Nop.Services.Customers
                 throw new ArgumentNullException(nameof(customer));
 
             var firstName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.FirstNameAttribute);
+            // ABC: Remove Symbols from First Name Field
+            if (!string.IsNullOrWhiteSpace(firstName))
+            {
+                firstName = firstName.Replace("[@,\\.;'\\\\]", "");
+            }
             var lastName = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.LastNameAttribute);
-
+            
             var fullName = string.Empty;
             if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName))
                 fullName = $"{firstName} {lastName}";
