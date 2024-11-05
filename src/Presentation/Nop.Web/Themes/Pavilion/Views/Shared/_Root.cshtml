@@ -100,16 +100,20 @@
     }
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const video = document.getElementById("black-friday-video");
     const popup = document.getElementById("video-popup");
     const closeBtn = document.getElementById("close-popup");
-    
-    // Function to check if the cookie exists
+
+    // Function to get a cookie value
     function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
+        const nameEQ = name + "=";
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.indexOf(nameEQ) === 0) return cookie.substring(nameEQ.length, cookie.length);
+        }
+        return null;
     }
 
     // Function to set a cookie
@@ -117,40 +121,43 @@
         const date = new Date();
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
         const expires = "expires=" + date.toUTCString();
-        document.cookie = `${name}=${value}; ${expires}; path=/`;
+        document.cookie = `${name}=${value}; ${expires}; path=/;`;
     }
 
     // Check if the cookie exists; if not, show the popup
     if (!getCookie("videoPopupShown")) {
-        popup.style.display = "flex";
+        popup.style.display = "flex";  // Show the popup
 
         // Set a cookie to prevent the popup from showing again
         setCookie("videoPopupShown", "true", 30); // Expires in 30 days
     }
 
-    // Automatically close the popup and load the new stylesheet when the video ends
-    video.addEventListener("ended", function () {
-        closePopup();
-    });
+    // Automatically close the popup when the video ends
+    video.addEventListener("ended", closePopup);
 
     // Close the popup if the close button is clicked
     closeBtn.addEventListener("click", closePopup);
 
+    // Function to close the popup
     function closePopup() {
         popup.style.display = "none";
     }
 
-    var elem = document.getElementById("black-friday-video");
+    // Function to open the video in fullscreen mode
+    const elem = document.getElementById("black-friday-video");
     function openFullscreen() {
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* Safari */
+        } else if (elem.webkitRequestFullscreen) { // Safari
             elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE11 */
+        } else if (elem.msRequestFullscreen) { // IE11
             elem.msRequestFullscreen();
         }
-        }
-    });
+    }
+
+    // Debugging: Check the cookie value
+    console.log("Cookie value:", getCookie("videoPopupShown"));
+});
 </script>
 
     @* Black Friday End *@

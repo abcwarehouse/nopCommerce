@@ -6400,6 +6400,9 @@ img.hawthorne-logo {
     border: none;
     border-radius: 3px;
     cursor: pointer;
+	position: absolute;
+    top: 0px;
+    right: 60px;
 }
 
 .close-btn:hover {
