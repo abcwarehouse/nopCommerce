@@ -104,12 +104,7 @@
     const video = document.getElementById("black-friday-video");
     const popup = document.getElementById("video-popup");
     const closeBtn = document.getElementById("close-popup");
-
-    if( $('body.home-index').length )
-    {
-        document.getElementById("header").style.display = "none";
-    }
-
+    
     // Function to check if the cookie exists
     function getCookie(name) {
         const value = `; ${document.cookie}`;
@@ -136,7 +131,6 @@
     // Automatically close the popup and load the new stylesheet when the video ends
     video.addEventListener("ended", function () {
         closePopup();
-        document.getElementById("header").style.display = "block";
     });
 
     // Close the popup if the close button is clicked

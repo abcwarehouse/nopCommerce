@@ -6405,6 +6405,11 @@ img.hawthorne-logo {
 .close-btn:hover {
     background: #c9302c;
 }
+div#video-popup {
+    position: absolute;
+    top: 0;
+    z-index: 99999;
+}
 /* End Black Friday */
 
 /* Bootstrap */
