@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Set a cookie to prevent the popup from showing again
         setCookie("videoPopupShown", "true", 30); // Expires in 30 days
     }
-    if(getCookie("videoPopupShown")) 
+    else
     {
         popup.style.display = "none";
     }
