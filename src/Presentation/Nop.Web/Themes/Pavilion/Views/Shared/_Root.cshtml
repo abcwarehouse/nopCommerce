@@ -131,6 +131,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Set a cookie to prevent the popup from showing again
         setCookie("videoPopupShown", "true", 30); // Expires in 30 days
     }
+    if(getCookie("videoPopupShown")) 
+    {
+        popup.style.display = "none";
+    }
 
     // Automatically close the popup when the video ends
     video.addEventListener("ended", closePopup);
