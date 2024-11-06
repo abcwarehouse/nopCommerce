@@ -6420,6 +6420,12 @@ div#video-popup {
 	.mobile-header-content-row {
 		background-color: #ff0314 !important;
 	}
+	
+}
+@media (max-width: 900px) {
+	div#video-popup {
+		display: none !important;
+	}
 }
 /* End Black Friday */
 
