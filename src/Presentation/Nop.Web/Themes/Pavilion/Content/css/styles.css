@@ -6285,7 +6285,7 @@ img.hawthorne-logo {
     padding-top: 35px;
 }
 
-.header-lower {
+body .header-lower {
 	background-color: #ec232a !important
 }
 
@@ -6419,8 +6419,8 @@ div#video-popup {
 }
 
 @media (max-width: 1024px) {
-    .responsive-nav-wrapper-parent {
-		height: 85px !important;
+    body .responsive-nav-wrapper-parent {
+		height: 80px !important;
 	}
 	.mobile-header-content-row {
 		background-color: #ff0314 !important;
