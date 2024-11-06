@@ -6346,7 +6346,7 @@ img.hawthorne-logo {
 	.categories-details-top img {
 		width: 100% !important;
 		height: auto;
-        max-width: 110px;
+        max-width: none;
 	}
 	body .master-wrapper-content {
 		padding-top: 0px;
