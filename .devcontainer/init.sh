@@ -4,13 +4,21 @@ echo 'Initializing gcloud CLI...'
 echo
 gcloud init
 
-echo 'Downloading database from Cloud Storage...'
+echo 'Downloading NOPCommerce database from Cloud Storage...'
 echo
 gcloud storage cp gs://dfar-storage/NOP.bacpac .\NOP.bacpac
 
 echo 'Importing database...'
 echo
 /opt/sqlpackage/sqlpackage /Action:Import /SourceFile:"/workspace/.NOP.bacpac" /TargetConnectionString:"Server=tcp:localhost,1433;Initial Catalog=NOPCommerce;User ID=sa;Password=P@ssw0rd;TrustServerCertificate=True;"
+
+echo 'Downloading StagingDb database from Cloud Storage...'
+echo
+gcloud storage cp gs://dfar-storage/StagingDb.bacpac .\StagingDb.bacpac
+
+echo 'Importing database...'
+echo
+/opt/sqlpackage/sqlpackage /Action:Import /SourceFile:"/workspace/.StagingDb.bacpac" /TargetConnectionString:"Server=tcp:localhost,1433;Initial Catalog=StagingDb;User ID=sa;Password=P@ssw0rd;TrustServerCertificate=True;"
 
 echo 'Copying settings files'
 echo
@@ -21,6 +29,7 @@ cp .devcontainer/dataSettings.json src/Presentation/Nop.Web/App_Data/dataSetting
 echo 'Cleaning up...'
 echo
 rm .NOP.bacpac
+rm .StagingDb.bacpac
 
 echo 'Restoring solution...'
 echo

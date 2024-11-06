@@ -16,7 +16,6 @@
 		"mssql.connections": [
 			{
 				"server": "localhost",
-				"database": "NOPCommerce",
 				"authenticationType": "SqlLogin",
 				"user": "sa",
 				"password": "P@ssw0rd",

@@ -45,3 +45,8 @@ WHERE Name = 'unifipaymentssettings.clientid'
 UPDATE Setting
 SET Value = 'CLIENT_SECRET'
 WHERE Name = 'unifipaymentssettings.clientsecret'
+
+-- Staging DB
+UPDATE Setting
+SET Value = 'Server=tcp:localhost,1433;Initial Catalog=StagingDb;User ID=sa;Password=P@ssw0rd;TrustServerCertificate=True;'
+WHERE Name = 'coresettings.stagingdbconnectionstring'
