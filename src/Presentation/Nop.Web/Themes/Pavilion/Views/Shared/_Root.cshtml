@@ -159,8 +159,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Debugging: Check the cookie value
-    console.log("Cookie value:", getCookie("videoPopupShown"));
+    // Check if the screen size matches a mobile view
+    const mediaQuery = window.matchMedia("(max-width: 768px)"); // Adjust the breakpoint as needed
+
+    function handleMediaChange(e) {
+        if (e.matches) {
+            // Mobile view: Replace video source
+            video.src = "https://www.abcwarehouse.com/videos/BlackFriday_Popup-graphic-mobile.mp4"; // Set the source for the mobile video
+        } else {
+            // Desktop view: Restore original video source
+            video.src = "https://www.abcwarehouse.com/videos/BlackFriday_Popup-graphic.mp4"; // Set the source for the original video
+        }
+    }
+
+    // Initial check and set up event listener
+    handleMediaChange(mediaQuery);
+    mediaQuery.addListener(handleMediaChange);
+
 });
 </script>
 

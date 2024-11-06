@@ -6285,6 +6285,10 @@ img.hawthorne-logo {
     padding-top: 35px;
 }
 
+.header-lower {
+	background-color: #ec232a !important
+}
+
 /* Fireworks Logo Changes */
 @media (min-width: 1020px) {
 	.header-upper .header-links-wrapper {
@@ -6413,6 +6417,7 @@ div#video-popup {
     top: 0;
     z-index: 99999;
 }
+
 @media (max-width: 1024px) {
     .responsive-nav-wrapper-parent {
 		height: 85px !important;
@@ -6422,11 +6427,8 @@ div#video-popup {
 	}
 	
 }
-@media (max-width: 900px) {
-	div#video-popup {
-		display: none !important;
-	}
-}
+
+
 /* End Black Friday */
 
 /* Bootstrap */
