@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Check if the cookie exists; if not, show the popup
     if (!getCookie("videoPopupShown")) {
-        popup.style.display = "flex";  // Show the popup
+        popup.style.display = "block";  // Show the popup
 
         // Set a cookie to prevent the popup from showing again
         setCookie("videoPopupShown", "true", 30); // Expires in 30 days
