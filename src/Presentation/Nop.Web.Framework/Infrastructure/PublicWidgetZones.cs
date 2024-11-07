@@ -2,6 +2,7 @@
 {
     public static partial class PublicWidgetZones
     {
+        public static string AboutUs => "AboutUs";
         public static string AccountNavigationAfter => "account_navigation_after";
         public static string AccountNavigationBefore => "account_navigation_before";
         public static string AdminHeaderLinksAfter => "admin_header_links_after";
