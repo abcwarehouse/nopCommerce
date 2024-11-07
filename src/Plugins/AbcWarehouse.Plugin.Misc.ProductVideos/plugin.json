@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "Product Videos",
+  "SystemName": "Misc.ProductVideos",
+  "Version": "4.40.0",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "Dave Farinelli",
+  "DisplayOrder": 1,
+  "FileName": "AbcWarehouse.Plugin.Misc.ProductVideos.dll",
+  "Description": "Enables PDP Product Videos"
+}
