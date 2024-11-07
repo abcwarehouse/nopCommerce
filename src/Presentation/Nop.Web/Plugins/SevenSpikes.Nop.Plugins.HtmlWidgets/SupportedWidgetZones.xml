@@ -189,4 +189,5 @@
   <WidgetZone>store_hours</WidgetZone>
   <WidgetZone>cart_popup</WidgetZone>
   <WidgetZone>AboutUs</WidgetZone>
+  <WidgetZone>AboutUsBottom</WidgetZone>
 </SupportedWidgetZones>
