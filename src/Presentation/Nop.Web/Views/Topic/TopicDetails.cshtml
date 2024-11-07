@@ -94,11 +94,6 @@
     <div class="page-title" id="ph-title">
         <h1>@Model.Title</h1>
     </div>
-    @if(Model.SystemName.Equals("About-Us"))
-    {
-        @await Component.InvokeAsync("Widget", new { widgetZone = "About-Us" })
-
-    }
     <div class="page-body">
         @Html.Raw(Model.Body)
     </div>
