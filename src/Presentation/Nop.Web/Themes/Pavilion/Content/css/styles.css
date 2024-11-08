@@ -922,6 +922,8 @@ label, label + * {
 }
 
 
+
+
 /*********** HOMEPAGE CAROUSELS ***********/
 
 
@@ -6122,10 +6124,10 @@ h1.search-page-title {
 }
 
 .hawthorne-lower .hours-desktop {
-	float: right;
-    height: 0;
-    margin-top: -33px;
-    margin-right: 140px;
+    float: right;
+    height: 0px;
+    margin-top: -40px;
+	margin-right: 140px;
 }
 .hawthorne-lower.header-lower {
     padding: 40px 0;
@@ -6138,6 +6140,10 @@ h1.search-page-title {
 }
 .hawthorne-home-content .mobile-header-content-row {
     background-color: #02463b;
+}
+
+.hawthorne-lower .header-menu {
+    width: 32% !important;
 }
 
 .header .header-menu>ul li>.with-subcategories {
@@ -6222,11 +6228,14 @@ img.hawthorne-logo {
 	max-width: 100%;
 }
 .hawthorne-lower .search-cart-wrapper {
+    width: 48% !important;
+}
+
+
+.hawthorne-lower .search-cart-wrapper {
     width: 70%;
 }
-.header-menu.nav-panel {
-    width: 10%;
-}
+
 .header-logo.desktop {
     width: 19%;
 }
@@ -6237,7 +6246,7 @@ img.hawthorne-logo {
     margin-bottom: 0;
 }
 .header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
-	width: 80% !important;
+	width: 65% !important;
     display: inline-block;
     float: none;
 }
@@ -6251,7 +6260,7 @@ img.hawthorne-logo {
 }
 .hawthorne-lower #flyout-cart {
     margin-right: 0;
-    padding-left: 50px;
+    padding-left: 110px;
 }
 .hawthorne-lower .cart-trigger {
 	background: #fff;
