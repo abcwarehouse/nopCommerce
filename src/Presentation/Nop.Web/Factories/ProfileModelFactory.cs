@@ -94,7 +94,7 @@ namespace Nop.Web.Factories
             }
 
             var name = await _customerService.FormatUsernameAsync(customer);
-            var title = string.Format(await _localizationService.GetResourceAsync("Profile.ProfileOf"), name);
+            string title = string.Format(await _localizationService.GetResourceAsync("Profile.ProfileOf"), name);
 
             var model = new ProfileIndexModel
             {

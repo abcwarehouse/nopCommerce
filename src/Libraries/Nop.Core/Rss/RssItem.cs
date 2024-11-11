@@ -32,7 +32,7 @@ namespace Nop.Core.Rss
         /// <param name="item">XML view of rss item</param>
         public RssItem(XContainer item)
         {
-            var title = item.Element(NopRssDefaults.Title)?.Value ?? string.Empty;
+            string title = item.Element(NopRssDefaults.Title)?.Value ?? string.Empty;
             var content = item.Element(NopRssDefaults.Content)?.Value ?? string.Empty;
             if (string.IsNullOrEmpty(content))
                 content = item.Element(NopRssDefaults.Description)?.Value ?? string.Empty;

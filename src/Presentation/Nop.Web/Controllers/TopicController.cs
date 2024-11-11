@@ -81,7 +81,7 @@ namespace Nop.Web.Controllers
         public virtual async Task<IActionResult> Authenticate(int id, string password)
         {
             var authResult = false;
-            var title = string.Empty;
+            string title = string.Empty;
             var body = string.Empty;
             var error = string.Empty;
 

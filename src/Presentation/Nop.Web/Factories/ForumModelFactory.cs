@@ -949,7 +949,7 @@ namespace Nop.Web.Factories
                 var forumTopicId = forumSubscription.TopicId;
                 var forumId = forumSubscription.ForumId;
                 var topicSubscription = false;
-                var title = string.Empty;
+                string title = string.Empty;
                 var slug = string.Empty;
 
                 if (forumTopicId > 0)
