@@ -871,7 +871,7 @@ label, label + * {
 	position: relative;
 }
 .store-search-box form {
-	display: inline-block;
+	
 	position: relative;
 	font-size: 0;
 }
@@ -6127,7 +6127,7 @@ h1.search-page-title {
     float: right;
     height: 0px;
     margin-top: -40px;
-	margin-right: 140px;
+	margin-right: -70px;
 }
 .hawthorne-lower.header-lower {
     padding: 40px 0;
@@ -6143,7 +6143,7 @@ h1.search-page-title {
 }
 
 .storeId8 .hawthorne-lower .header-menu {
-    width: 32% !important;
+    width: 37% !important;
 }
 
 .header .header-menu>ul li>.with-subcategories {
@@ -6228,7 +6228,7 @@ img.hawthorne-logo {
 	max-width: 100%;
 }
 .storeId8 .hawthorne-lower .search-cart-wrapper {
-    width: 48% !important;
+    width: 43% !important;
 }
 
 
@@ -6260,7 +6260,7 @@ img.hawthorne-logo {
 }
 .storeId8 .hawthorne-lower #flyout-cart {
     margin-right: 0;
-    padding-left: 110px;
+    padding-left: 65px;
 }
 .hawthorne-lower .cart-trigger {
 	background: #fff;
@@ -6304,7 +6304,7 @@ img.hawthorne-logo {
 		padding-top: 20px;
 	}
 	div#flyout-cart {
-		padding-top: 20px;
+		padding-top: 0px;
 	}
 	.header-middle .header-menu-parent .header-menu-parent {
         padding-top: 5px;
