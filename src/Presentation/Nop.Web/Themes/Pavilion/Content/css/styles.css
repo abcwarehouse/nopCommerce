@@ -6142,7 +6142,7 @@ h1.search-page-title {
     background-color: #02463b;
 }
 
-.hawthorne-lower .header-menu {
+.storeId8.hawthorne-lower .header-menu {
     width: 32% !important;
 }
 
@@ -6227,7 +6227,7 @@ img.hawthorne-logo {
     padding-left: 30px;
 	max-width: 100%;
 }
-.hawthorne-lower .search-cart-wrapper {
+.storeId8.hawthorne-lower .search-cart-wrapper {
     width: 48% !important;
 }
 
@@ -6245,7 +6245,7 @@ img.hawthorne-logo {
 .hawthorne.top-menu ul {
     margin-bottom: 0;
 }
-.header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
+.storeId8.header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
 	width: 65% !important;
     display: inline-block;
     float: none;
@@ -6258,7 +6258,7 @@ img.hawthorne-logo {
 .hawthorne-lower .header-menu {
     overflow-y: visible;
 }
-.hawthorne-lower #flyout-cart {
+.storeId8.hawthorne-lower #flyout-cart {
     margin-right: 0;
     padding-left: 110px;
 }
