@@ -111,8 +111,8 @@ div.search-box.store-search-box {
     width: calc(100% - 290px);
     margin-top: 1.5px;
 }
-div.search-box.store-search-box form#small-search-box-form {
-    width: 100%;
+.storeId8 .div.search-box.store-search-box form#small-search-box-form {
+    width: 110%;
     padding-left: 10px;
 }
 div.search-box.store-search-box form#small-search-box-form input#sli_search_1 {
