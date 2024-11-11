@@ -99,7 +99,7 @@ namespace Nop.Core.Rss
                 if (channel == null)
                     return null;
 
-                var title = channel.Element(NopRssDefaults.Title)?.Value ?? string.Empty;
+                string title = channel.Element(NopRssDefaults.Title)?.Value ?? string.Empty;
                 var description = channel.Element(NopRssDefaults.Description)?.Value ?? string.Empty;
                 var link = new Uri(channel.Element(NopRssDefaults.Link)?.Value ?? string.Empty);
                 var lastBuildDateValue = channel.Element(NopRssDefaults.LastBuildDate)?.Value;
