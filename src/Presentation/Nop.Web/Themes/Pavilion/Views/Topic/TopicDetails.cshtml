@@ -119,13 +119,12 @@
             }
         )
         
-        @if(Model.SystemName == null && Model.SystemName.Equals("AboutUs"));
+        @if (string.Equals(Model.SystemName, "AboutUs", StringComparison.OrdinalIgnoreCase))
         {
             @await Component.InvokeAsync("Widget", new { widgetZone = "AboutUs" });
         }
         @Html.Raw(Model.Body)
-
-        @if(Model.SystemName == null && Model.SystemName.Equals("AboutUs"))
+        @if (string.Equals(Model.SystemName, "AboutUs", StringComparison.OrdinalIgnoreCase))
         {
             @await Component.InvokeAsync("Widget", new { widgetZone = "AboutUsBottom" });
         }
