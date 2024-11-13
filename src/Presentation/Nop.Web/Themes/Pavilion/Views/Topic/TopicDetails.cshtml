@@ -118,23 +118,23 @@
                 additionalData = Model.SystemName
             }
         )
-        @if(Model.SystemName.Equals.IsNullOrEmpty) 
+        @if(Model.SystemName.IsNullOrEmpty) 
         {
             throw new ArgumentNullException("System Name is Null");
         }
         else(Model.SystemName.Equals("AboutUs"))
         {
             @await Component.InvokeAsync("Widget", new { widgetZone = "AboutUs" })
-        }
+        };
         @Html.Raw(Model.Body)
-        @if(Model.SystemName.Equals.IsNullOrEmpty) 
+        @if(Model.SystemName.IsNullOrEmpty) 
         {
             throw new ArgumentNullException("System Name is Null");
         }
         else(Model.SystemName.Equals("AboutUs"))
         {
             @await Component.InvokeAsync("Widget", new { widgetZone = "AboutUsBottom" })
-        }
+        };
         @await Component.InvokeAsync(
             "Widget",
             new {
