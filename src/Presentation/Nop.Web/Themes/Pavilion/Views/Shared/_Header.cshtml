@@ -17,8 +17,8 @@
     bool showCategoriesInSideMenu = await settingService.GetSettingByKeyAsync("pavilionthemesettings.ShowCategoriesInSideMenu", true, storeId, true);
 
     var clearanceUrl = currentStore.Url.Contains("stage") ?
-        "httpsw//stage.abcwarehouse.com/clearance" :
-        "https://www.abcwarehouse.com/clearance"
+        "https://stage.abcwarehouse.com/clearance" :
+        "https://www.abcwarehouse.com/clearance";
 }
     @if (storeId == 8 )
     {
