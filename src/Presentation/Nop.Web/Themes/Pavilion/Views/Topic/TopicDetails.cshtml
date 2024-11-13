@@ -118,20 +118,14 @@
                 additionalData = Model.SystemName
             }
         )
-        @if(Model.SystemName == null) 
-        {
-            throw new ArgumentNullException(nameof(Model.SystemName), "SystemName cannot be null.");
-        }
-        else if(Model.SystemName.Equals("AboutUs"));
+        
+        @if(Model.SystemName == null && Model.SystemName.Equals("AboutUs"));
         {
             @await Component.InvokeAsync("Widget", new { widgetZone = "AboutUs" });
         }
         @Html.Raw(Model.Body)
-        @if(Model.SystemName == null) 
-        {
-            throw new ArgumentNullException(nameof(Model.SystemName), "SystemName cannot be null.");
-        }
-        else if(Model.SystemName.Equals("AboutUs"));
+
+        @if(Model.SystemName == null && Model.SystemName.Equals("AboutUs"))
         {
             @await Component.InvokeAsync("Widget", new { widgetZone = "AboutUsBottom" });
         }
