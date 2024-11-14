@@ -921,7 +921,15 @@ label, label + * {
 	display: none;
 }
 
+@media (min-width: 1025px) {
+    body .store-search-box .search-box-button {
+        margin: -2px 0px 0 5px !important;
+    }
+}
 
+input#sli_search_1 {
+    margin-top: -5px !important;
+}
 
 
 /*********** HOMEPAGE CAROUSELS ***********/
@@ -6127,10 +6135,11 @@ h1.search-page-title {
     float: right;
     height: 0px;
     margin-top: -40px;
-	margin-right: -70px;
+	margin-right: -30px;
 }
 .hawthorne-lower.header-lower {
     padding: 40px 0;
+	margin-top: -16px;
 }
 .hawthorne.top-menu li a label:hover {
     cursor: pointer;
@@ -6266,7 +6275,7 @@ img.hawthorne-logo {
 	background: #fff;
 }
 .hawthorne-lower .header-menu .mega-menu-categories .sublist-wrap {
-    top: 30px;
+    top: 95px;
 }
 .header-lower.hawthorne-lower .with-subcategories {
 	color: #fff;
