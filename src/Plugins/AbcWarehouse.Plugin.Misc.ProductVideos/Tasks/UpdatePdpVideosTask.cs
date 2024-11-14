@@ -12,13 +12,16 @@ namespace AbcWarehouse.Plugin.Misc.ProductVideos.Tasks
     {
         private readonly CoreSettings _settings;
         private readonly ILogger _logger;
+        private readonly IProductService _productService;
 
         public UpdatePdpVideosTask(
             CoreSettings settings,
-            ILogger logger)
+            ILogger logger,
+            IProductService productService)
         {
             _settings = settings;
             _logger = logger;
+            _productService = productService;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -29,7 +32,7 @@ namespace AbcWarehouse.Plugin.Misc.ProductVideos.Tasks
             {
                 var queryString = @"
                     SELECT
-                        rp.item_key,
+                        SUBSTRING(rp.item_key, CHARINDEX(':', rp.item_key) + 1, LEN(rp.item_key)) as item_key,
                         CONCAT('rws_', rpv.thumbnail_image_file_name) as thumbnail_image_file_name,
                         REPLACE(rpv.video_file_name, 'embed/', 'watch?v=') AS video_file_name
                     FROM
@@ -48,10 +51,20 @@ namespace AbcWarehouse.Plugin.Misc.ProductVideos.Tasks
                 {
                     while (reader.Read())
                     {
+                        var sku = reader["item_key"].ToString();
+                        var product = _productService.GetProductBySkuAsync(sku);
+                        if (product == null) { continue; }
+
+                        var video_file_name = reader["video_file_name"].ToString();
+                        // If more than one question mark found, need to clean the URL for MagnificiPopup
+                        var cleanedYouTubeUrl = video_file_name.IndexOf('?') != video_file_name.LastIndexOf('?') ?
+                            video_file_name.Substring(0, video_file_name.LastIndexOf('?')) :
+                            video_file_name;
+
                         Console.WriteLine(String.Format("{0}, {1}, {2}",
                             reader["item_key"],
                             reader["thumbnail_image_file_name"],
-                            reader["video_file_name"]));
+                            cleanedYouTubeUrl));
                     }
                 }
                 finally
