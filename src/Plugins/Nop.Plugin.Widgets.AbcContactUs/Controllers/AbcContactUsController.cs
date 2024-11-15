@@ -23,6 +23,9 @@ using Nop.Services.Localization;
 using Nop.Services.Configuration;
 using Nop.Web.Framework;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net.Http;
 
 namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
 {
@@ -44,6 +47,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
         private readonly INotificationService _notificationService;
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public AbcContactUsController(
             IWorkContext workContext,
@@ -61,7 +65,8 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
             ILogger logger,
             INotificationService notificationService,
             ILocalizationService localizationService,
-            ISettingService settingService
+            ISettingService settingService,
+            IHttpClientFactory httpClientFactory
         )
         {
             _workContext = workContext;
@@ -80,6 +85,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
             _notificationService = notificationService;
             _localizationService = localizationService;
             _settingService = settingService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [AuthorizeAdmin]
@@ -167,6 +173,35 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
             }
 
             return Content("");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitForm(string clientName, string email, string phoneNumber, bool optInAlerts)
+        {
+            var senderCodeId = "yourSenderCodeId";
+            var phoneListId = "yourPhoneListId";
+
+            var requestData = new
+            {
+                Email = email,
+                PhoneNumber = phoneNumber,
+                OptInAlerts = optInAlerts
+            };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync($"https://api.listrak.com/v1/ShortCode/{senderCodeId}/Contact/{phoneNumber}/PhoneList/{phoneListId}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle success
+                return Json(new { success = true, message = "Form submitted successfully." });
+            }
+
+            // Handle failure
+            return Json(new { success = false, message = "Error submitting form." });
         }
     }
 }

@@ -691,6 +691,12 @@ namespace Nop.Web.Infrastructure
             endpointRouteBuilder.MapControllerRoute(name: "PageNotFound",
                 pattern: $"{lang}/page-not-found",
                 defaults: new { controller = "Common", action = "PageNotFound" });
+
+            //Contact Us Footer SMS Listrak
+            endpointRouteBuilder.MapControllerRoute(
+                name: "FooterSMSListrak",
+                pattern: "FooterSMSListrak/SubmitForm",
+                defaults: new { controller = "Notification", action = "SubmitForm" });
         }
 
         #endregion
