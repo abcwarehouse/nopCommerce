@@ -158,7 +158,8 @@
                                 Store
                             </div>
                             <div class="col-md-9">
-                                <nop-select asp-for="SelectedStore" asp-items="Model.Stores" />
+                                <nop-select asp-for="SelectedStore" asp-items="Model.Stores" placeholder='Select Store Test' />
+                                @Html.ValidationMessageFor(model => model.Stores)
                             </div>
                         </div>
                         <div>

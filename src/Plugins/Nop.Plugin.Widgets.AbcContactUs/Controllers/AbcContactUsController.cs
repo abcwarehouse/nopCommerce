@@ -131,6 +131,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
             if (model.SelectedStore == "Website")
             {
                 toAddress = _settings.ContactUsEmail ?? "support@abcwarehouse.com";
+                ccEmails.Add("bjohnson@abcwarehouse.com");
             }
             else
             {
@@ -144,6 +145,10 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
 
                 toAddress = shopAbc != null ? shopAbc.AbcEmail : _settings.ContactUsEmail;
                 ccEmails.Add(_settings.ContactUsEmail);
+                ccEmails.Add("support@abcwarehouse.com");
+                ccEmails.Add("bjohnson@abcwarehouse.com");
+                ccEmails.Add("ms22418@abcwarehouse.com");
+                ccEmails.Add(shop.ManagerEmail);
             }
 
             var subject = "Customer " + model.Reason + "- " + model.SelectedStore + "/" + model.Name + "  " + model.PhoneNumber;
