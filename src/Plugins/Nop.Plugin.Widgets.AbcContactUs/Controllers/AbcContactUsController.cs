@@ -132,6 +132,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
             {
                 toAddress = _settings.ContactUsEmail ?? "support@abcwarehouse.com";
                 ccEmails.Add("bjohnson@abcwarehouse.com");
+                ccEmails.Add("ms22418@abcwarehouse.com");
             }
             else
             {
