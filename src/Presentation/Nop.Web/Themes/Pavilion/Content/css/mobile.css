@@ -28,7 +28,7 @@
 	height: 53px !important; /*override inline height*/
 	border-top: 3px solid #00a1b1;
 	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
-	background-color: #fff;
+	background-color: #02463b;
 }
 .admin-header-links ~ .header .header-logo {
 	top: 95px;
@@ -84,7 +84,7 @@
 	display: inline-block;
 	border-right: 1px solid #eee;
 	background-color: #f74258;
-	background-image: url('../img/mobile-sprite.png');
+	/* background-image: url('../img/mobile-sprite.png');  Image of the mobile menu cart and account*/ 
 	background-repeat: no-repeat;
 	vertical-align: middle;
 }

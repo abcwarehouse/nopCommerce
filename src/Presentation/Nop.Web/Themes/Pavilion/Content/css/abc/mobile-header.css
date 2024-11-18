@@ -29,7 +29,7 @@
 }
 .responsive-nav-wrapper > div {
     border-right: 0;
-    background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png);
+    /* background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png); Image for the menu in mobile */
 }
 
 /* phone number gets special rules */
