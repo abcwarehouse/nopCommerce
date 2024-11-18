@@ -148,7 +148,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
                 ccEmails.Add("support@abcwarehouse.com");
                 ccEmails.Add("bjohnson@abcwarehouse.com");
                 ccEmails.Add("ms22418@abcwarehouse.com");
-                ccEmails.Add(shop.ManagerEmail);
+                ccEmails.Add(shopAbc.ManagerEmail);
             }
 
             var subject = "Customer " + model.Reason + "- " + model.SelectedStore + "/" + model.Name + "  " + model.PhoneNumber;
