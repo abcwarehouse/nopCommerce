@@ -6270,7 +6270,7 @@ img.hawthorne-logo {
 }
 .storeId8 .hawthorne-lower #flyout-cart {
     margin-right: 0;
-    padding-left: 65px;
+    padding-left: 41px;
 }
 .hawthorne-lower .cart-trigger {
 	background: #fff;
@@ -6307,6 +6307,13 @@ img.hawthorne-logo {
 .header-menu ul.mega-menu {
     padding-top: 35px;
 }
+
+/* DeAngelo added this to */
+li.root-category-items > a.with-subcategories > span {
+    color: #fff;
+    margin: 0.39rem !important;
+}
+
 
 .eJVeap {    
 	position: relative;    
