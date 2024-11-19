@@ -1,7 +1,18 @@
 ﻿@model TopMenuModel.CategoryLineModel
 
-<li @if (Model.Level == 0 || storeId == 3) { <text> class="root-category-items" </text>  }>
-    @if (Model.Category.SubCategories.Count > 0)
+<li @if (Model.Level == 0) { <text> class="root-category-items" </text>  }>
+    @if(storeId == 8)
+    {
+        @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
+        {
+            @menuHtml
+        }
+        else
+        {
+            @await Component.InvokeAsync("TopMenu")
+        }
+    }
+    else if (Model.Category.SubCategories.Count > 0)
     {
         <a class="with-subcategories" href="@Url.RouteUrl("Category", new { SeName = Model.Category.SeName })">@Model.Category.Name</a>
         <div class="plus-button"></div>
@@ -20,17 +31,6 @@
                 }
             </ul>
         </div>
-    }
-    else if(storeId == 8)
-    {
-        @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
-        {
-            @menuHtml
-        }
-        else
-        {
-            @await Component.InvokeAsync("TopMenu")
-        }
     }
     else
     {
