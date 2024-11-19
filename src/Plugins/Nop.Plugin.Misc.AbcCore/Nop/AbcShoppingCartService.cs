@@ -35,6 +35,7 @@ using SevenSpikes.Nop.Plugins.StoreLocator.Domain.Shops;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Nop.Plugin.Misc.AbcCore.Models;
 using Nop.Plugin.Misc.AbcCore.Nop;
+using Nop.Web.Models.ShoppingCart;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -122,8 +123,40 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             _localizationService = localizationService;
         }
 
-        public async Task<bool> IsCartEligibleForCheckout(IList<ShoppingCartItem> shoppingCart)
+        public async Task<bool> IsCartEligibleForCheckoutAsync(object model)
         {
+            dynamic items = null;
+            if (model is ShoppingCartModel)
+            {
+                items = (model as ShoppingCartModel).Items;
+            }
+            else if (model is MiniShoppingCartModel)
+            {
+                items = (model as MiniShoppingCartModel).Items;
+            }
+            else
+            {
+                throw new NopException("ShoppingCartModel or MiniShoppingCartModel not passed in.");
+            }
+                
+            foreach (var item in items)
+            {
+                var pcs = await _abcCategoryService.GetProductCategoriesByProductIdAsync(item.ProductId);
+                foreach (var pc in pcs)
+                {
+                    if (await _abcCategoryService.IsCategoryIdClearance(pc.CategoryId))
+                    {
+                        return false;
+                    }
+
+                    var product = await _productService.GetProductByIdAsync(pc.ProductId);
+                    if (product.DisableBuyButton || !product.Published)
+                    {
+                        return false;
+                    }
+                }
+            }
+
             return true;
         }
 
