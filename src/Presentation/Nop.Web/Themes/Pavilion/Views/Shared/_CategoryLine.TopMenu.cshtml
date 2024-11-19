@@ -1,16 +1,14 @@
 ﻿@model TopMenuModel.CategoryLineModel
 
+@{
+    var currentStore = await storeContext.GetCurrentStoreAsync();
+    int storeId = currentStore.Id;
+}
+
 <li @if (Model.Level == 0) { <text> class="root-category-items" </text>  }>
     @if(storeId == 8)
     {
-        @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
-        {
-            @menuHtml
-        }
-        else
-        {
-            @await Component.InvokeAsync("TopMenu")
-        }
+        @await Component.InvokeAsync("TopMenu")
     }
     else if (Model.Category.SubCategories.Count > 0)
     {
