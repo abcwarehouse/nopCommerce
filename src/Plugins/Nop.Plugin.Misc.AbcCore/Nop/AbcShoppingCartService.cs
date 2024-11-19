@@ -34,11 +34,12 @@ using System.Threading.Tasks;
 using SevenSpikes.Nop.Plugins.StoreLocator.Domain.Shops;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Nop.Plugin.Misc.AbcCore.Models;
+using Nop.Plugin.Misc.AbcCore.Nop;
 
-namespace Nop.Plugin.Misc.AbcFrontend.Services
+namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     //a custom price calculation service to modify cart price as needed
-    class CustomShoppingCartService : ShoppingCartService
+    class AbcShoppingCartService : ShoppingCartService, IAbcShoppingCartService
     {
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IAttributeUtilities _attributeUtilities;
@@ -52,7 +53,10 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
         private readonly IProductService _productService;
         private readonly IWorkContext _workContext;
 
-        public CustomShoppingCartService(
+        private readonly IAbcCategoryService _abcCategoryService;
+        private readonly ILocalizationService _localizationService;
+
+        public AbcShoppingCartService(
             CatalogSettings catalogSettings,
             IAclService aclService,
             IActionContextAccessor actionContextAccessor,
@@ -85,7 +89,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             IRepository<HiddenAttributeValue> hiddenAttributeValueRepository,
             ICustomerShopService customerShopService,
             IBackendStockService backendStockService,
-            IShopService shopService
+            IShopService shopService,
+            IAbcCategoryService abcCategoryService
         )
             : base(catalogSettings, aclService, actionContextAccessor,
                 checkoutAttributeParser, checkoutAttributeService, currencyService,
@@ -112,6 +117,14 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             _productAttributeParser = productAttributeParser;
             _productService = productService;
             _workContext = workContext;
+
+            _abcCategoryService = abcCategoryService;
+            _localizationService = localizationService;
+        }
+
+        public async Task<bool> IsCartEligibleForCheckout(IList<ShoppingCartItem> shoppingCart)
+        {
+            return true;
         }
 
         public override async Task MigrateShoppingCartAsync(Customer fromCustomer, Customer toCustomer, bool includeCouponCodes)
@@ -355,6 +368,38 @@ namespace Nop.Plugin.Misc.AbcFrontend.Services
             return baseResult;
         }
 
+
+        protected override async Task<IList<string>> GetStandardWarningsAsync(Customer customer, ShoppingCartType shoppingCartType, Product product,
+            string attributesXml, decimal customerEnteredPrice, int quantity, int shoppingCartItemId, int storeId)
+        {
+            var warnings = await base.GetStandardWarningsAsync(customer, shoppingCartType, product, attributesXml, customerEnteredPrice, quantity, shoppingCartItemId, storeId);
+            var needsReplacement = false;
+            var toReplace = await _localizationService.GetResourceAsync("ShoppingCart.BuyingDisabled");
+
+            foreach (var warning in warnings)
+            {
+                if (warning.Equals(toReplace))
+                {
+                    var productCategories = await _abcCategoryService.GetProductCategoriesByProductIdAsync(product.Id);
+                    foreach (var pc in productCategories)
+                    {
+                        if (await _abcCategoryService.IsCategoryIdClearance(pc.CategoryId))
+                        {
+                            needsReplacement = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (needsReplacement)
+            {
+                warnings.Remove(toReplace);
+                warnings.Add("Clearance Item, In-Store Only");
+            }
+
+            return warnings;
+        }
         // TODO: Tabling this for now
         // private async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> ProcessCustomDiscountAsync(
         //     decimal unitPrice,

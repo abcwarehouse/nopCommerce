@@ -703,6 +703,13 @@
                                         @T("Checkout.Disabled")
                                     </div>
                                 }
+                                @* ABC: Need to disable if ineligible *@
+                                else if (true)
+                                {
+                                    <div class="checkout-disabled">
+                                        Please remove ineligible items from cart to checkout.
+                                    </div>
+                                }
                                 else
                                 {
 	                                <button type="submit" id="checkout" name="checkout" value="checkout" class="button-1 checkout-button">
