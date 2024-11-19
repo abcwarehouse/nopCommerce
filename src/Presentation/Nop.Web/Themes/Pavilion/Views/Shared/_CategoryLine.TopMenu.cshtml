@@ -1,5 +1,7 @@
 ﻿@model TopMenuModel.CategoryLineModel
 
+@inject IStoreContext storeContext
+
 @{
     var currentStore = await storeContext.GetCurrentStoreAsync();
     int storeId = currentStore.Id;
