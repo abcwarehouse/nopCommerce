@@ -6152,10 +6152,6 @@ h1.search-page-title {
     background-color: #02463b;
 }
 
-.storeId8 .hawthorne-lower .header-menu {
-    width: 37% !important;
-}
-
 .header .header-menu>ul li>.with-subcategories {
     width: auto;
 }
@@ -6237,10 +6233,6 @@ img.hawthorne-logo {
     padding-left: 30px;
 	max-width: 100%;
 }
-.storeId8 .hawthorne-lower .search-cart-wrapper {
-    width: 43% !important;
-}
-
 
 .hawthorne-lower .search-cart-wrapper {
     width: 70%;
@@ -6255,11 +6247,7 @@ img.hawthorne-logo {
 .hawthorne.top-menu ul {
     margin-bottom: 0;
 }
-.storeId8 .header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
-	width: 65% !important;
-    display: inline-block;
-    float: none;
-}
+
 .header-lower.hawthorne-lower div#flyout-cart {
     width: 15%;
     display: inline-block;
@@ -6306,6 +6294,32 @@ img.hawthorne-logo {
 }
 .header-menu ul.mega-menu {
     padding-top: 35px;
+}
+body.storeId3 .header-lower {
+	background-color: #ec232a !important
+}
+.storeId8 div#header {
+	background: #02463b;
+}
+.storeId8 .home-page-body .header-lower {
+    background: #02463b !important;
+	max-width: 2000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
+	padding-right: 30px;
+}
+.storeId8 .hawthorne-lower .search-cart-wrapper {
+    width: 55% !important;
+}
+.storeId8 .header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
+	width: 80% !important;
+    display: inline-block;
+    float: none;
+}
+.storeId8 .hawthorne-lower .header-menu {
+    width: 25% !important;
 }
 
 /* DeAngelo added this to */
