@@ -6298,15 +6298,9 @@ img.hawthorne-logo {
 body.storeId3 .header-lower {
 	background-color: #ec232a !important
 }
-.storeId8 div#header {
-	text-align: center;
-	background: #02463b;
-}
+
 .storeId8 .home-page-body .header-lower {
     background: #02463b !important;
-	max-width: 2000px;
-    margin-left: auto;
-    margin-right: auto;
 }
 .storeId8 li.has-sublist.mega-menu-categories.root-category-items {
 	padding-right: 30px;
@@ -6323,20 +6317,6 @@ body.storeId3 .header-lower {
     width: 500px !important;
 }
 
-@media screen and (max-width: 1520px) {
-	.storeId8 .hawthorne-lower .search-cart-wrapper {
-		width: 22% !important;
-	}
-}
-@media screen and (max-width: 1256px) {
-
-	.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
-		padding-right: 15px;
-	}
-	.storeId8 .hawthorne-lower .header-menu {
-		width: 445px !important;
-	}
-}
 
 /* DeAngelo added this to */
 li.root-category-items > a.with-subcategories > span {
@@ -6476,7 +6456,7 @@ body .header-lower {
 	.hawthorne.top-menu {
 		display: none;
 	}
-	body.storeId8 .master-wrapper-page .mobile-header-content-row {
+	body.storeId3 .master-wrapper-page .mobile-header-content-row {
 		background-color: #ff0314 !important;
 	}
 	.eJVeap {
