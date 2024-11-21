@@ -6285,9 +6285,25 @@ img.hawthorne-logo {
     padding-top: 35px;
 }
 
-body .header-lower {
+body.storeId3 .header-lower {
 	background-color: #ec232a !important
 }
+.storeId8 div#header {
+	background: #02463b;
+}
+.storeId8 .home-page-body .header-lower {
+    background: #02463b !important;
+	max-width: 2000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
+	padding-right: 30px;
+}
+.storeId8 .hawthorne-lower .header-menu {
+    width: auto !important;
+}
+
 
 /* Fireworks Logo Changes */
 @media (min-width: 1020px) {
