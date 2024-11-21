@@ -6314,14 +6314,15 @@ body.storeId3 .header-lower {
     float: none;
 }
 .storeId8 .hawthorne-lower .header-menu {
-    width: 500px !important;
+    width: 37% !important;
+	text-align-last: justify;
 }
 
 
 /* DeAngelo added this to */
 li.root-category-items > a.with-subcategories > span {
     color: #fff;
-    margin: 0.39rem !important;
+    margin: 0 auto rem !important;
 }
 
 
