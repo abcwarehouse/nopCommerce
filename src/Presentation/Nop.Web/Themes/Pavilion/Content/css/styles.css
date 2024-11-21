@@ -6314,7 +6314,7 @@ body.storeId3 .header-lower {
     float: none;
 }
 .storeId8 .hawthorne-lower .header-menu {
-    width: 37% !important;
+    width: auto !important;
 	text-align-last: justify;
 }
 
