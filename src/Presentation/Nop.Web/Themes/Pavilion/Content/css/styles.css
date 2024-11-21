@@ -6299,6 +6299,7 @@ body.storeId3 .header-lower {
 	background-color: #ec232a !important
 }
 .storeId8 div#header {
+	text-align: center;
 	background: #02463b;
 }
 .storeId8 .home-page-body .header-lower {
@@ -6311,7 +6312,7 @@ body.storeId3 .header-lower {
 	padding-right: 30px;
 }
 .storeId8 .hawthorne-lower .search-cart-wrapper {
-    width: 55% !important;
+    width: 50% !important;
 }
 .storeId8 .header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
 	width: 80% !important;
@@ -6319,7 +6320,13 @@ body.storeId3 .header-lower {
     float: none;
 }
 .storeId8 .hawthorne-lower .header-menu {
-    width: 25% !important;
+    width: 500px !important;
+}
+
+@media screen and (max-width: 1520px) {
+	.storeId8 .hawthorne-lower .search-cart-wrapper {
+		width: 25% !important;
+	}
 }
 
 /* DeAngelo added this to */
