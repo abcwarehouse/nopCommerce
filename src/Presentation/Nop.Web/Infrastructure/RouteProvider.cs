@@ -696,7 +696,7 @@ namespace Nop.Web.Infrastructure
             endpointRouteBuilder.MapControllerRoute(
                 name: "FooterSMSListrak",
                 pattern: "FooterSMSListrak/SubmitForm",
-                defaults: new { controller = "Notification", action = "SubmitForm" });
+                defaults: new { controller = "Newsletter", action = "FooterSMSListrak" });
         }
 
         #endregion
