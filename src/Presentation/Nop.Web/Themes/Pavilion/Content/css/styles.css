@@ -6315,14 +6315,14 @@ body.storeId3 .header-lower {
 }
 .storeId8 .hawthorne-lower .header-menu {
     width: auto !important;
-	text-align-last: justify;
+	
 }
 
 
 /* DeAngelo added this to */
 li.root-category-items > a.with-subcategories > span {
     color: #fff;
-    margin: 0 auto rem !important;
+   
 }
 
 
@@ -6381,7 +6381,7 @@ body .header-lower {
 	}
 }
 .header-lower.hawthorne-lower .mega-menu-categories {
-    width: 60px;
+    
 }
 .storeId8 .mobile-header-content-row {
     background-color: #02463b;
