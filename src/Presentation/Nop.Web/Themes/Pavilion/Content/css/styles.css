@@ -6302,12 +6302,25 @@ body.storeId3 .header-lower {
 .storeId8 .home-page-body .header-lower {
     background: #02463b !important;
 }
+/* //Angelo Change */
 .storeId8 li.has-sublist.mega-menu-categories.root-category-items {
 	padding-right: 30px;
 }
 .storeId8 .hawthorne-lower .search-cart-wrapper {
     width: 45% !important;
 }
+
+@media (max-width: 1627px) {
+	
+	.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
+		padding-right: 0px !important;
+	}
+	.storeId8 .hawthorne-lower .search-cart-wrapper {
+		width: 25% !important;
+	}
+}
+
+
 .storeId8 .header-lower.hawthorne-lower .search-box.store-search-box.nav-panel {
 	width: 80% !important;
     display: inline-block;
