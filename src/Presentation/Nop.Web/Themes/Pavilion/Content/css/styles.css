@@ -6312,12 +6312,18 @@ body.storeId3 .header-lower {
 
 @media (max-width: 1627px) {
 	
-	.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
-		padding-right: 0px !important;
-	}
+	
 	.storeId8 .hawthorne-lower .search-cart-wrapper {
 		width: 25% !important;
 	}
+}
+
+@media (max-width: 1240px) {
+	
+	.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
+		padding-right: 0px !important;
+	}
+	
 }
 
 
