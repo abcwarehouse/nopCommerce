@@ -1,10 +1,10 @@
 ﻿@using Nop.Core
-@inject IStoreContext storeContext
+@* @inject IStoreContext storeContext *@
 @inject IWorkContext workContext
 @{
 
-    var currentStore = await storeContext.GetCurrentStoreAsync();
-    int storeId = currentStore.Id;
+    @* var currentStore = await storeContext.GetCurrentStoreAsync();
+    int storeId = currentStore.Id; *@
     @* ABC: custom, putting these on top overrides everything below *@
     // Only needed for warranty selector, won't be needed after slideout
     Html.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/checkout-warranty-selection.css");
@@ -45,14 +45,7 @@
 
     Html.AppendCssFileParts("~/Plugins/SevenSpikes.Core/Styles/perfect-scrollbar.min.css");
 
- @if (storeId == 3 )
-     {
-    <link href="/Themes/Pavilion/Content/css/synchrony.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">   
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css">
-    <link rel="stylesheet" href="https://use.typekit.net/pnl6rrl.css">
-     }
+
 
 
     if (supportRtl)
