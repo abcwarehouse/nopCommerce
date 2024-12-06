@@ -581,6 +581,37 @@ namespace Nop.Web.Controllers
                 overrideAttributesXml: customAttributes);
             return View(model);
         }
+        public virtual async Task SmsOptIn(Address address)
+        {
+            if (address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+            //some validation
+            if (address.BillingNewAddress.CountryId == 0)
+                address.BillingNewAddress.CountryId = null;
+            if (address.BillingNewAddress.StateProvinceId == 0)
+                address.BillingNewAddress.StateProvinceId = null;
+
+
+            var senderCodeId = "21631";
+            var phoneListId = "152";
+
+            var requestData = new
+            {
+                Email = address.BillingNewAddress.Email,
+                PhoneNumber = address.BillingNewAddress.PhoneNumber,
+                OptInAlerts = address.SmsOptIn
+            };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync($"https://api.listrak.com/v1/ShortCode/{senderCodeId}/Contact/{address.BillingNewAddress.PhoneNumber}/PhoneList/{phoneListId}", content);
+
+            //await _addressRepository.UpdateAsync(address);
+        }
 
         public virtual async Task<IActionResult> ShippingAddress()
         {
