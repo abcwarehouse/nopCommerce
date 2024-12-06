@@ -206,6 +206,6 @@
 
 @media (min-width:1024px) {	       
     .slick-slider {
-        user-select: auto;
+        user-select: auto !important;
         }
     }
