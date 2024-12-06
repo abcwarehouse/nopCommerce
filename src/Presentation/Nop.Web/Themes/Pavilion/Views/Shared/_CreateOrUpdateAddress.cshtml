@@ -145,6 +145,22 @@
             <span asp-validation-for="FaxNumber"></span>
         </div>
     }
+    <input type="checkbox" asp-for="SmsOptIn" />
+    <label asp-for="SmsOptIn"> <b>Yes, I would like to receive text messages about my orders from ABC Warehouse.</b> By checking this box and 
+submitting this form, I agree to receive text messages about my orders to the mobile number provided at opt-in 
+from ABC Warehouse. Only U.S. mobile numbers are eligible to participate. Consent is not a condition of 
+purchase. Msg frequency may vary. Msg & data rates may apply. Reply HELP for help and STOP to cancel. See 
+Terms and Conditions & Privacy Policy.</label>
+<br>
+<br>
+
+    <input type="checkbox" asp-for="MarketingSmsOptIn" />
+    <label asp-for="MarketingSmsOptIn"><b>Yes, I would like to receive text alerts from ABC Warehouse regarding new products and specials.</b> By 
+checking this box and submitting this form, I agree to receive recurring marketing text messages (e.g. cart 
+reminders), which may be automated, to the mobile number provided at opt-in from ABC Warehouse. Consent is 
+not a condition of purchase. Msg frequency may vary. Msg & data rates may apply. Reply HELP for help and STOP 
+to cancel. See Terms and Conditions & Privacy Policy.</label>
+
     @if (Model.CustomAddressAttributes.Count > 0)
     {
         @await Html.PartialAsync("_AddressAttributes", Model.CustomAddressAttributes)

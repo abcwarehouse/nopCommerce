@@ -18,6 +18,7 @@ using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
+using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Shipping;
@@ -57,6 +58,7 @@ namespace Nop.Web.Controllers
         private readonly PaymentSettings _paymentSettings;
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly ShippingSettings _shippingSettings;
+        private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
 
         #endregion
 
@@ -85,7 +87,8 @@ namespace Nop.Web.Controllers
             OrderSettings orderSettings,
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
-            ShippingSettings shippingSettings)
+            ShippingSettings shippingSettings,
+            INewsLetterSubscriptionService newsLetterSubscriptionService)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -111,6 +114,7 @@ namespace Nop.Web.Controllers
             _paymentSettings = paymentSettings;
             _rewardPointsSettings = rewardPointsSettings;
             _shippingSettings = shippingSettings;
+            _newsLetterSubscriptionService = newsLetterSubscriptionService;
         }
 
         #endregion
@@ -333,7 +337,7 @@ namespace Nop.Web.Controllers
         /// <param name="opc"></param>
         /// <returns></returns>
         [IgnoreAntiforgeryToken]
-        public virtual async Task<IActionResult> SaveEditAddress(CheckoutBillingAddressModel model, bool opc = false)
+        public virtual async Task<IActionResult> SaveEditAddress(Models.Checkout.CheckoutBillingAddressModel model, bool opc = false)
         {
             try
             {
@@ -458,6 +462,7 @@ namespace Nop.Web.Controllers
 
                 TryValidateModel(model);
                 TryValidateModel(model.BillingNewAddress);
+                
                 return await NewBillingAddress(model, form);
             }
 
@@ -499,8 +504,14 @@ namespace Nop.Web.Controllers
 
         [HttpPost, ActionName("BillingAddress")]
         [FormValueRequired("nextstep")]
-        public virtual async Task<IActionResult> NewBillingAddress(CheckoutBillingAddressModel model, IFormCollection form)
+        public virtual async Task<IActionResult> NewBillingAddress(Models.Checkout.CheckoutBillingAddressModel model, IFormCollection form)
         {
+            //SMS Opt In
+            if(model.MarketingSmsOptIn == "marketingSMS" || model.SmsOptIn == "smsOptIn")
+            {
+                await _addressService.SmsOptIn(model);
+            }
+
             //validation
             if (_orderSettings.CheckoutDisabled)
                 return RedirectToRoute("ShoppingCart");
@@ -524,7 +535,7 @@ namespace Nop.Web.Controllers
                 ModelState.AddModelError("", error);
             }
 
-            var newAddress = model.BillingNewAddress;
+            var newAddress = model.BillingAddress;
 
             if (ModelState.IsValid)
             {
@@ -1308,7 +1319,7 @@ namespace Nop.Web.Controllers
         }
 
         [IgnoreAntiforgeryToken]
-        public virtual async Task<IActionResult> OpcSaveBilling(CheckoutBillingAddressModel model, IFormCollection form)
+        public virtual async Task<IActionResult> OpcSaveBilling(Models.Checkout.CheckoutBillingAddressModel model, IFormCollection form)
         {
             try
             {

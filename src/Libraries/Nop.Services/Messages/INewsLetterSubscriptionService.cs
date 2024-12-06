@@ -65,6 +65,18 @@ namespace Nop.Services.Messages
         /// </returns>
         Task<NewsLetterSubscription> GetNewsLetterSubscriptionByEmailAndStoreIdAsync(string email, int storeId);
 
+
+        /// <summary>
+        /// Gets a newsletter subscription by email and store ID
+        /// </summary>
+        /// <param name="email">The newsletter subscription email</param>
+        /// <param name="storeId">Store identifier</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the newsLetter subscription
+        /// </returns>
+        Task<NewsLetterSubscription> GetSMSSubscriptionAsync(string email, string phoneNumber, int storeId);
+
         /// <summary>
         /// Gets the newsletter subscription list
         /// </summary>

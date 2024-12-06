@@ -25,5 +25,7 @@ namespace Nop.Web.Models.Checkout
         /// Used on one-page checkout page
         /// </summary>
         public bool NewAddressPreselected { get; set; }
+        public string SmsOptIn { get; set; }
+        public string MarketingSmsOptIn { get; set; }
     }
 }

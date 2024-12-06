@@ -229,12 +229,12 @@ namespace Nop.Web.Factories
         /// A task that represents the asynchronous operation
         /// The task result contains the billing address model
         /// </returns>
-        public virtual async Task<CheckoutBillingAddressModel> PrepareBillingAddressModelAsync(IList<ShoppingCartItem> cart,
+        public virtual async Task<Models.Checkout.CheckoutBillingAddressModel> PrepareBillingAddressModelAsync(IList<ShoppingCartItem> cart,
             int? selectedCountryId = null,
             bool prePopulateNewAddressWithCustomerFields = false,
             string overrideAttributesXml = "")
         {
-            var model = new CheckoutBillingAddressModel
+            var model = new Models.Checkout.CheckoutBillingAddressModel
             {
                 ShipToSameAddressAllowed = _shippingSettings.ShipToSameAddress && await _shoppingCartService.ShoppingCartRequiresShippingAsync(cart),
                 //allow customers to enter (choose) a shipping address if "Disable Billing address step" setting is enabled

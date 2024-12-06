@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Common;
 using Nop.Data;
@@ -22,6 +25,7 @@ namespace Nop.Services.Common
         private readonly ICountryService _countryService;
         private readonly IRepository<Address> _addressRepository;
         private readonly IStateProvinceService _stateProvinceService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         #endregion
 
@@ -32,7 +36,8 @@ namespace Nop.Services.Common
             IAddressAttributeService addressAttributeService,
             ICountryService countryService,
             IRepository<Address> addressRepository,
-            IStateProvinceService stateProvinceService)
+            IStateProvinceService stateProvinceService,
+            IHttpClientFactory httpClientFactory)
         {
             _addressSettings = addressSettings;
             _addressAttributeParser = addressAttributeParser;
@@ -40,6 +45,7 @@ namespace Nop.Services.Common
             _countryService = countryService;
             _addressRepository = addressRepository;
             _stateProvinceService = stateProvinceService;
+            _httpClientFactory = httpClientFactory;
         }
 
         #endregion
@@ -309,10 +315,49 @@ namespace Nop.Services.Common
                 PhoneNumber = address.PhoneNumber,
                 FaxNumber = address.FaxNumber,
                 CustomAttributes = address.CustomAttributes,
-                CreatedOnUtc = address.CreatedOnUtc
+                CreatedOnUtc = address.CreatedOnUtc,
+                SmsOptIn = address.SmsOptIn,
+                MarketingSmsOptIn = address.MarketingSmsOptIn
             };
 
             return addr;
+        }
+
+        /// <summary>
+        /// Adds Customer to Sms Updates
+        /// </summary>
+        /// <param name="smsOptIn">SmsOptIn</param>
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public virtual async Task SmsOptIn(CheckoutBillingAddressModel address)
+        {
+            if (address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+            //some validation
+            if (address.BillingNewAddress.CountryId == 0)
+                address.BillingNewAddress.CountryId = null;
+            if (address.BillingNewAddress.StateProvinceId == 0)
+                address.BillingNewAddress.StateProvinceId = null;
+
+
+            var senderCodeId = "21631";
+            var phoneListId = "152";
+
+            var requestData = new
+            {
+                Email = address.BillingNewAddress.Email,
+                PhoneNumber = address.BillingNewAddress.PhoneNumber,
+                OptInAlerts = address.SmsOptIn
+            };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync($"https://api.listrak.com/v1/ShortCode/{senderCodeId}/Contact/{address.BillingNewAddress.PhoneNumber}/PhoneList/{phoneListId}", content);
+
+            //await _addressRepository.UpdateAsync(address);
         }
 
         #endregion
