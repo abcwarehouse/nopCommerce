@@ -200,3 +200,12 @@
     .up .roomcategories .col .roomtitle.rightbox{right: 15px;}
 
 }
+
+
+/* Angelo Changes */
+
+@media (min-width:1024px) {	       
+    .slick-slider {
+        user-select: auto;
+        }
+    }
