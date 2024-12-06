@@ -31,5 +31,15 @@ namespace Nop.Core.Domain.Messages
         /// Gets or sets the date and time when subscription was created
         /// </summary>
         public DateTime CreatedOnUtc { get; set; }
+
+        /// <summary>
+        /// Gets or sets Sms Opt In
+        /// </summary>
+        public string SmsOptIn { get; set; }
+
+        /// <summary>
+        /// Gets or sets Marketing SMS Opt In
+        /// </summary>
+        public string MarketingSmsOptIn { get; set; }
     }
 }

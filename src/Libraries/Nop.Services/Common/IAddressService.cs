@@ -100,5 +100,7 @@ namespace Nop.Services.Common
         /// </summary>
         /// <returns>A deep copy of address</returns>
         Address CloneAddress(Address address);
+
+        Task SmsOptIn(CheckoutBillingAddressModel address);
     }
 }

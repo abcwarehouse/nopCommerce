@@ -22,6 +22,7 @@ namespace Nop.Services.Messages
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CustomerCustomerRoleMapping> _customerCustomerRoleMappingRepository;
         private readonly IRepository<NewsLetterSubscription> _subscriptionRepository;
+        private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
 
         #endregion
 
@@ -31,13 +32,16 @@ namespace Nop.Services.Messages
             IEventPublisher eventPublisher,
             IRepository<Customer> customerRepository,
             IRepository<CustomerCustomerRoleMapping> customerCustomerRoleMappingRepository,
-            IRepository<NewsLetterSubscription> subscriptionRepository)
+            IRepository<NewsLetterSubscription> subscriptionRepository,
+            INewsLetterSubscriptionService newsLetterSubscriptionService
+            )
         {
             _customerService = customerService;
             _eventPublisher = eventPublisher;
             _customerRepository = customerRepository;
             _customerCustomerRoleMappingRepository = customerCustomerRoleMappingRepository;
             _subscriptionRepository = subscriptionRepository;
+            _newsLetterSubscriptionService = newsLetterSubscriptionService;
         }
 
         #endregion

@@ -290,6 +290,16 @@
         /// </summary>
         public static string CloseConfigurationStepsAttribute => "CloseConfigurationSteps";
 
+        /// <summary>
+        /// Gets a name of generic attribute to store the value of 'SmsOptIn'
+        /// </summary>
+        public static string SmsOptIn => "SmsOptIn";
+
+        /// <summary>
+        /// Gets a name of generic attribute to store the value of 'MarketingSmsOptIn'
+        /// </summary>
+        public static string MarketingSmsOptIn => "MarketingSmsOptIn";
+
         #endregion
     }
 }

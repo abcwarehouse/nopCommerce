@@ -176,10 +176,10 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitForm(string clientName, string email, string phoneNumber, bool optInAlerts)
+        public async Task<IActionResult> SubmitSmsForm(string clientName, string email, string phoneNumber, bool optInAlerts)
         {
-            var senderCodeId = "yourSenderCodeId";
-            var phoneListId = "yourPhoneListId";
+            var senderCodeId = "21631";
+            var phoneListId = "152";
 
             var requestData = new
             {
@@ -203,6 +203,36 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
             // Handle failure
             return Json(new { success = false, message = "Error submitting form." });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitMarketingSmsForm(string clientName, string email, string phoneNumber, bool optInAlerts)
+        {
+            var senderCodeId = "21631";
+            var phoneListId = "151";
+
+            var requestData = new
+            {
+                Email = email,
+                PhoneNumber = phoneNumber,
+                OptInAlerts = optInAlerts
+            };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.PostAsync($"https://api.listrak.com/v1/ShortCode/{senderCodeId}/Contact/{phoneNumber}/PhoneList/{phoneListId}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle success
+                return Json(new { success = true, message = "Form submitted successfully." });
+            }
+
+            // Handle failure
+            return Json(new { success = false, message = "Error submitting form." });
+        }
+
     }
 }
 

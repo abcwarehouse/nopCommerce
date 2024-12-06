@@ -65,6 +65,7 @@ namespace Nop.Services.Messages
         /// </returns>
         Task<NewsLetterSubscription> GetNewsLetterSubscriptionByEmailAndStoreIdAsync(string email, int storeId);
 
+
         /// <summary>
         /// Gets the newsletter subscription list
         /// </summary>
