@@ -70,6 +70,7 @@ strong, b {-webkit-font-smoothing: antialiased;}
 .up .benefitsec .benefits .imgblk{height: 54px;display: flex;align-items: flex-start;justify-content: center;margin-bottom: 5px;}
 .up .benefitsec .benefits .imgblk img{max-width: 54px;width: 100%;object-fit: cover;max-height: 54px;font-size: 10px;}
 
+
 .topic-page-body .up .benefitsec .slick-dots li button:before{content: '' !important;width: 8px;height: 8px;background-color: #FCB832;border: 2px solid #ffffff; border-radius: 100%;opacity: 1;}
 .topic-page-body .up .benefitsec .slick-dots li.slick-active button:before{background-color: #ffffff;border: 2px solid #EC2028;}
 .topic-page-body .up .benefitsec .slick-prev:before{content: '' !important;background: url(../images/slidearrow.svg) no-repeat;width: 9px;height: 10px;display: block;}
@@ -78,7 +79,6 @@ strong, b {-webkit-font-smoothing: antialiased;}
 .topic-page-body .up .benefitsec .slick-next{right: 2px;top: 68%;z-index: 999;}
 .topic-page-body .up .benefitsec .slick-dots{bottom: -35px;}
 .topic-page-body .up .benefitsec .slick-dots li{margin: 0 20px;}
-
 
 
 .up .roomcategories{background-color: #ffffff;}
