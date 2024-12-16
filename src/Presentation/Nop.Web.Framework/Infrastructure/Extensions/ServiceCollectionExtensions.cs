@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using FluentValidation.AspNetCore;
@@ -34,6 +35,8 @@ using Nop.Web.Framework.Validators;
 using StackExchange.Profiling.Storage;
 using WebMarkupMin.AspNetCore5;
 using WebMarkupMin.NUglify;
+using Nop.Plugin.Misc.AbcCore.Services;
+
 
 namespace Nop.Web.Framework.Infrastructure.Extensions
 {
@@ -417,6 +420,69 @@ namespace Nop.Web.Framework.Infrastructure.Extensions
 
             //client to request reCAPTCHA service
             services.AddHttpClient<CaptchaHttpClient>().WithProxy();
+
         }
+        public static IServiceCollection AddCustomServices(this IServiceCollection services)
+        {
+            services.AddHttpClient("SmsClient", async (serviceProvider, client) =>
+            {
+                var customShopService = serviceProvider.GetRequiredService<ICustomShopService>();
+                var workContext = serviceProvider.GetRequiredService<IWorkContext>();
+                var genericAttributeService = serviceProvider.GetRequiredService<IGenericAttributeService>();
+
+                var currentCustomer = await workContext.GetCurrentCustomerAsync();
+                var bearerToken = await genericAttributeService.GetAttributeAsync<string>(currentCustomer, "SmsBearerToken");
+
+                if (string.IsNullOrEmpty(bearerToken) || await customShopService.IsTokenExpiredAsync(workContext, genericAttributeService))
+                {
+                    bearerToken = await customShopService.GetBearerTokenAsync(genericAttributeService, workContext);
+                }
+
+                client.BaseAddress = new Uri("https://api.listrak.com/sms");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            });
+
+            return services;
+        }
+
+/*
+        public static IServiceCollection AddCustomServices(this IServiceCollection services)
+        {
+            var bearerToken = GetBearerTokenAsync();
+            services.AddHttpClient("SmsClient", client =>
+            {
+                //var bearerToken = await _genericAttributeService.GetAttributeAsync<string>(
+                //await _workContext.GetCurrentCustomerAsync(),
+                //"SmsBearerToken");
+                
+                client.BaseAddress = new Uri("https://api.listrak.com/sms");
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + bearerToken);
+
+            return services;
+        }
+
+         private async Task<string> GetBearerTokenAsync()
+        {
+            var client = new HttpClient();
+
+            var response = await client.PostAsync(
+                "https://api.listrak.com/sms",
+                new FormUrlEncodedContent(new Dictionary<string, string>() {
+                    { "grant_type", "client_credentials" },
+                    { "client_id", 'ao1xkc57sz7t1dw1qawh' },
+                    { "client_secret", 'rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE' },
+                }));
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new NopException("Payments.UniFi: Failure to retrieve bearer token.");
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseJson = JsonDocument.Parse(responseContent);
+            var bearerToken = responseJson.RootElement.GetProperty("access_token").GetString();
+
+            return bearerToken;
+        } */
     }
 }
