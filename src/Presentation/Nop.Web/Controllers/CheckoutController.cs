@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +59,8 @@ namespace Nop.Web.Controllers
         private readonly PaymentSettings _paymentSettings;
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly ShippingSettings _shippingSettings;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
@@ -85,7 +89,9 @@ namespace Nop.Web.Controllers
             OrderSettings orderSettings,
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
-            ShippingSettings shippingSettings)
+            ShippingSettings shippingSettings,
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -111,11 +117,55 @@ namespace Nop.Web.Controllers
             _paymentSettings = paymentSettings;
             _rewardPointsSettings = rewardPointsSettings;
             _shippingSettings = shippingSettings;
+            _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
 
         #region Utilities
+
+        public CheckoutController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
+        public async Task<IActionResult> SendSmsNotification(CheckoutBillingAddressModel model)
+        {
+            var customer = await _workContext.GetCurrentCustomerAsync();
+                //find address (ensure that it belongs to the current customer)
+                var address = await _customerService.GetCustomerAddressAsync(customer.Id, model.BillingNewAddress.Id);
+                if (address == null)
+                    throw new Exception("Address can't be loaded");
+
+            var smsToken = _httpContextAccessor.HttpContext.Session.GetString("TransactionToken");
+            var payload = new Dictionary<string, object>
+            {
+                { "smsToken", smsToken },
+                { "addressInfo", new Dictionary<string, object> {
+                    { "cipher.addressLine1", model.BillingNewAddress.Address1 },
+                    { "cipher.city", model.BillingNewAddress.City },
+                    { "cipher.state", model.BillingNewAddress.StateProvinceName },
+                    { "cipher.SmsOptIn", model.BillingNewAddress.SmsOptIn },
+                    { "cipher.MarketingSmsOptIn", model.BillingNewAddress.MarketingSmsOptIn },
+                } }
+            };
+
+            var json = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient("SmsClient");
+            var response = await client.PostAsync("/send", new StringContent("{\"message\":\"Test Message\"}", Encoding.UTF8, "application/json"));
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok("SMS sent successfully.");
+            }
+            else
+            {
+                return BadRequest("Failed to send SMS.");
+            }
+        }
 
         /// <returns>A task that represents the asynchronous operation</returns>
         protected virtual async Task<bool> IsMinimumOrderPlacementIntervalValidAsync(Customer customer)
@@ -581,6 +631,49 @@ namespace Nop.Web.Controllers
                 overrideAttributesXml: customAttributes);
             return View(model);
         }
+/*
+        public async Task<IActionResult> SendSmsNotification()
+        {
+            var client = _httpClientFactory.CreateClient("SmsClient");
+            var response = await client.PostAsync("/send", new StringContent("{\"message\":\"Testing SMS\"}", Encoding.UTF8, "application/json"));
+
+            if (response.IsSuccessStatusCode)
+                return Ok("SMS sent successfully.");
+            else
+                return BadRequest("Failed to send SMS.");
+        }
+
+         public async Task<IActionResult> SendSmsNotification(Address address)
+        {
+            if(address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+            //some validation
+            if (address.CountryId == 0)
+                address.CountryId = null;
+            if (address.StateProvinceId == 0)
+                address.StateProvinceId = null;
+
+
+            var senderCodeId = "21631";
+            var phoneListId = "152";
+
+            var requestData = new
+            {
+                Email = address.Email,
+                PhoneNumber = address.PhoneNumber,
+                OptInAlerts = address.SmsOptIn
+            };
+
+            var json = JsonConvert.SerializeObject(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var client = IHttpClientFactory.CreateClient(SmsClient);
+            var response = await client.PostAsync($"https://api.listrak.com/v1/ShortCode/{senderCodeId}/Contact/{address.PhoneNumber}/PhoneList/{phoneListId}", content);
+
+            //await _addressRepository.UpdateAsync(address);
+        } */
 
         public virtual async Task<IActionResult> ShippingAddress()
         {
@@ -1159,6 +1252,12 @@ namespace Nop.Web.Controllers
         /// <returns>A task that represents the asynchronous operation</returns>
         protected virtual async Task<JsonResult> OpcLoadStepAfterShippingAddress(IList<ShoppingCartItem> cart)
         {
+            //model
+            var model = await _checkoutModelFactory.PrepareBillingAddressModelAsync(cart, prePopulateNewAddressWithCustomerFields: true);
+
+            var test = await SendSmsNotification(model);
+            System.Diagnostics.Debug.WriteLine(model);
+
             var shippingMethodModel = await _checkoutModelFactory.PrepareShippingMethodModelAsync(cart, await _customerService.GetCustomerShippingAddressAsync(await _workContext.GetCurrentCustomerAsync()));
             if (_shippingSettings.BypassShippingMethodSelectionIfOnlyOne &&
                 shippingMethodModel.ShippingMethods.Count == 1)

@@ -39,6 +39,7 @@ using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcExportOrder.Services;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -80,6 +81,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly IWarrantyService _warrantyService;
         private readonly ITermLookupService _termLookupService;
         private readonly ICardCheckService _cardCheckService;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CustomCheckoutController(
             AddressSettings addressSettings,
@@ -114,14 +117,16 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IIsamGiftCardService isamGiftCardService,
             IWarrantyService warrantyService,
             ITermLookupService termLookupService,
-            ICardCheckService cardCheckService
+            ICardCheckService cardCheckService,
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor
         ) : base(addressSettings, customerSettings, addressAttributeParser, 
             addressService, checkoutModelFactory, countryService, customerService,
             genericAttributeService, localizationService, logger, orderProcessingService,
             orderService, paymentPluginManager, paymentService, productService,
             shippingService, shoppingCartService, storeContext, webHelper,
             workContext, orderSettings, paymentSettings, rewardPointsSettings,
-            shippingSettings)
+            shippingSettings, httpClientFactory, httpContextAccessor)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -157,6 +162,8 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _warrantyService = warrantyService;
             _termLookupService = termLookupService;
             _cardCheckService = cardCheckService;
+            _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #region Methods (one page checkout)

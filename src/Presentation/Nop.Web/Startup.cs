@@ -35,7 +35,9 @@ namespace Nop.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureApplicationServices(_configuration, _webHostEnvironment);
-        }
+            services.AddCustomServices();
+            services.AddScoped<ICustomShopService, CustomShopService>();
+        } 
 
         /// <summary>
         /// Configure the application HTTP request pipeline

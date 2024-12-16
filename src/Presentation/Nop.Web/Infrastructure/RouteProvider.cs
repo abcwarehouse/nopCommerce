@@ -222,6 +222,12 @@ namespace Nop.Web.Infrastructure
             endpointRouteBuilder.MapControllerRoute(name: "CheckoutBillingAddress",
                 pattern: $"{lang}/checkout/billingaddress",
                 defaults: new { controller = "Checkout", action = "BillingAddress" });
+            
+             //Contact Us Footer SMS Listrak
+            endpointRouteBuilder.MapControllerRoute(
+                name: "SendSmsNotification",
+                pattern: "SMSListrak/SendSmsNotification",
+                defaults: new { controller = "Checkout", action = "SendSmsNotification" });
 
             endpointRouteBuilder.MapControllerRoute(name: "CheckoutSelectBillingAddress",
                 pattern: $"{lang}/checkout/selectbillingaddress",
