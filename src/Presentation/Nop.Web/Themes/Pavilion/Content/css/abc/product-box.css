@@ -15,6 +15,14 @@
 	line-height: 1.2;
 }
 
+/* Angelo Change Made the product box text bigger on mobile */
+@media (max-width: 440px) {
+    body .item-box .product-title {
+        font-size: 1.6em;
+    }
+
+}
+
 .item-box .product-title span {
 	display: block;
 	font-weight: bold;
@@ -125,15 +133,27 @@ span.price.you-save {
 		display: inline;
 	}
 
-    .item-box .price,
+    /* .item-box .price,
     span.price.you-save {
         font-size: 0.8rem;
+    } */
+
+    .item-box .price,
+    span.price.you-save {
+        font-size: 1.6em;
     }
+
+    /* .price-sale-tag,
+    .item-box .price.actual-price {
+        font-size: 0.9rem;
+    } */
 
     .price-sale-tag,
     .item-box .price.actual-price {
-        font-size: 0.9rem;
+        font-size: 1.6em;
     }
+
+
 }
 
 @media (min-width: 425px) {
@@ -145,15 +165,27 @@ span.price.you-save {
 		margin: 0 1rem;
 	}
 
-    .item-box .price,
+    
+        .item-box .price, span.price.you-save {
+            font-size: 1.6em;
+        }
+    
+
+    /* .item-box .price,
     span.price.you-save {
         font-size: 0.9rem;
-    }
+    } */
 
     .price-sale-tag,
     .item-box .price.actual-price {
-        font-size: 1rem;
+        font-size: 1.6em;
     }
+
+    /* .price-sale-tag,
+    .item-box .price.actual-price {
+        font-size: 1rem;
+    } */
+
 }
 
 @media (min-width: 769px) {

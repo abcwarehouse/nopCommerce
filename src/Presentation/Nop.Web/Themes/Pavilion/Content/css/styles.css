@@ -1649,6 +1649,14 @@ label, label + * {
 	background-color: #f9f9f9;
     font-size: 0;
 }
+/* Angelo Change Removed a gray bar from the mobile version of the product box*/
+@media (max-width : 440px)
+{
+	body .item-box .buttons-upper {
+		background-color: transparent;
+	}
+}
+
 .item-box .buttons-upper button {
 	width: 30px;
 	height: 30px;
