@@ -216,6 +216,14 @@ span.price.you-save {
 	}
 }
 
+@media (max-width: 440px) {
+	body .item-number-style {
+		font-size: 1.3em;
+	}
+}
+
+
+
 /* This modal stuff should be moved, I think */
 .modal-content {
     text-align: left;
