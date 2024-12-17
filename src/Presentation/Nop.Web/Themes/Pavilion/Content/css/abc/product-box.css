@@ -120,7 +120,7 @@ span.price.you-save {
     font-size: 22pt;
 }
 
-@media (min-width: 375px) {
+/* @media (min-width: 375px) {
 	.pr-snippet-rating-decimal.pr-rounded {
 		display: inline;
 	}
@@ -134,9 +134,9 @@ span.price.you-save {
     .item-box .price.actual-price {
         font-size: 0.9rem;
     }
-}
+} */
 
-@media (min-width: 425px) {
+/* @media (min-width: 425px) {
 	.item-box .product-title {
 		padding: 0.25rem 1rem 0 1rem;
 	}
@@ -154,7 +154,7 @@ span.price.you-save {
     .item-box .price.actual-price {
         font-size: 1rem;
     }
-}
+} */
 
 @media (min-width: 769px) {
 	.item-box {
@@ -198,3 +198,55 @@ span.price.you-save {
     .modal-content b {
         font-size: 10px;
     }
+
+    /* Angelo Mobile Changes to Make the Product Text Look better on Mobile */
+
+@media (max-width: 440px)
+{
+    .product-box-description {
+        font-size: 1.6em;
+    }
+
+    body .item-number-style {
+        font-size: 1.3em;
+
+    }
+    
+    .item-box .product-title {
+		padding: 0.25rem 1rem 0 1rem;
+	}
+	
+	.add-info {
+		margin: 0 1rem;
+	}
+
+    .item-box .price,
+    span.price.you-save {
+        font-size: 1.6rem;
+    }
+
+    .price-sale-tag,
+    .item-box .price.actual-price {
+        font-size: 1.6rem;
+    }
+
+    .pr-snippet-rating-decimal.pr-rounded {
+		display: inline;
+	}
+
+    .item-box .price, span.price.you-save {
+        font-size: 1.6em;
+    }
+
+    .item-box .product-title {
+        height: 3.5rem;
+        padding: .25rem .5rem 0 .5rem;
+        font-size: 1.6em;
+        line-height: 1.2;
+    }
+
+    body .item-box .buttons-upper {
+        background-color: transparent;
+    }
+}
+    
