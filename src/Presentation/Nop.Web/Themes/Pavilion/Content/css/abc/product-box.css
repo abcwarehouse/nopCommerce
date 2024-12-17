@@ -245,10 +245,6 @@ span.price.you-save {
 		display: inline;
 	}
 
-    .item-box .price, span.price.you-save {
-        font-size: 1.6em;
-    }
-
     .item-box .product-title {
         height: 3.5rem;
         padding: .25rem .5rem 0 .5rem;
