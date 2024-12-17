@@ -259,5 +259,14 @@ span.price.you-save {
     body .item-box .buttons-upper {
         background-color: transparent;
     }
+
+    .product-box-specials {
+        font-size: 1.2em;
+    }
+
+
+    .item-box .buttons-lower button span {
+        font-size: 17px;
+    }
+
 }
-    
