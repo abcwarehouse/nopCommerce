@@ -120,7 +120,13 @@ span.price.you-save {
     font-size: 22pt;
 }
 
-/* @media (min-width: 375px) {
+
+
+
+
+
+
+ @media (min-width: 441px) {
 	.pr-snippet-rating-decimal.pr-rounded {
 		display: inline;
 	}
@@ -134,9 +140,9 @@ span.price.you-save {
     .item-box .price.actual-price {
         font-size: 0.9rem;
     }
-} */
+} 
 
-/* @media (min-width: 425px) {
+ @media (min-width: 441px) {
 	.item-box .product-title {
 		padding: 0.25rem 1rem 0 1rem;
 	}
@@ -154,7 +160,12 @@ span.price.you-save {
     .item-box .price.actual-price {
         font-size: 1rem;
     }
-} */
+} 
+
+
+
+
+
 
 @media (min-width: 769px) {
 	.item-box {
