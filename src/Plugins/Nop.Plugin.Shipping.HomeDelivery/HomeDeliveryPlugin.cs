@@ -19,6 +19,7 @@ using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using System.Threading.Tasks;
 using Nop.Plugin.Shipping.Fedex;
+using Nop.Core;
 
 namespace Nop.Plugin.Shipping.HomeDelivery
 {
@@ -109,8 +110,20 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                         continue;
                     }
 
-                    // Should only have one pav in all cases
-                    var pav = (await _productAttributeParser.ParseProductAttributeValuesAsync(itemAttributeXml, pam.Id)).Single();
+                    // Since this is a delivery/pickup item, it needs a single pav
+                    var pavs = await _productAttributeParser.ParseProductAttributeValuesAsync(itemAttributeXml, pam.Id);
+                    ProductAttributeValue pav = null;
+                    try {
+                        pav = pavs.Single();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        var sci = item.ShoppingCartItem;
+                        throw new NopException(
+                            $"Delivery/Pickup shopping cart item {sci.Id} has a "
+                             "missing or invalid product attribute value(s)."
+                        );
+                    }
 
                     // Mattresses are added to legacy
                     if (pav.Name.Contains("Home Delivery (Price in Cart)"))
