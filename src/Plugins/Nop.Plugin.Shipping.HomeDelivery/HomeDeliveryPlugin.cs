@@ -20,6 +20,8 @@ using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using System.Threading.Tasks;
 using Nop.Plugin.Shipping.Fedex;
 using Nop.Core;
+using Nop.Services.Logging;
+using Nop.Core.Domain.Logging;
 
 namespace Nop.Plugin.Shipping.HomeDelivery
 {
@@ -35,6 +37,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
         private readonly INopDataProvider _nopContext;
         private readonly IHomeDeliveryCostService _homeDeliveryCostService;
         private readonly IProductAttributeService _productAttributeService;
+        private readonly ILogger _logger;
 
         public HomeDeliveryPlugin(
             IDeliveryService deliveryService,
@@ -42,7 +45,8 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             IProductAttributeParser productAttributeParser,
             INopDataProvider nopContext,
             IHomeDeliveryCostService homeDeliveryCostService,
-            IProductAttributeService productAttributeService
+            IProductAttributeService productAttributeService,
+            ILogger logger
         )
         {
             _deliveryService = deliveryService;
@@ -52,6 +56,7 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             _nopContext = nopContext;
             _homeDeliveryCostService = homeDeliveryCostService;
             _productAttributeService = productAttributeService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -119,10 +124,13 @@ namespace Nop.Plugin.Shipping.HomeDelivery
                     catch (InvalidOperationException)
                     {
                         var sci = item.ShoppingCartItem;
-                        throw new NopException(
-                            $"Delivery/Pickup shopping cart item {sci.Id} has a "
-                             "missing or invalid product attribute value(s)."
+                        await _logger.InsertLogAsync(
+                            LogLevel.Error,
+                            $"Delivery/Pickup shopping cart item {sci.Id} has invalid product attribute value(s). Attribute XML in full message.",
+                            $"{itemAttributeXml}",
+                            getShippingOptionRequest.Customer
                         );
+                        throw new NopException("Failure when filtering shopping cart items for getting shipping options.");
                     }
 
                     // Mattresses are added to legacy
