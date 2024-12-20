@@ -220,8 +220,14 @@ namespace Nop.Web.Infrastructure
                 defaults: new { controller = "Checkout", action = "SelectShippingAddress" });
 
             endpointRouteBuilder.MapControllerRoute(name: "CheckoutBillingAddress",
-                pattern: $"{lang}/checkout/billingaddress",
+                pattern: $"{lang}/v1/ShortCode/{{senderCodeId}}/PhoneList/{{phoneListId}}/Contact",
                 defaults: new { controller = "Checkout", action = "BillingAddress" });
+            
+             //Contact Us Footer SMS Listrak
+            endpointRouteBuilder.MapControllerRoute(
+                name: "SMSListrak",
+                pattern: "SMSListrak/SubmitForm",
+                defaults: new { controller = "Checkout", action = "SMSListrak" });
 
             endpointRouteBuilder.MapControllerRoute(name: "CheckoutSelectBillingAddress",
                 pattern: $"{lang}/checkout/selectbillingaddress",
