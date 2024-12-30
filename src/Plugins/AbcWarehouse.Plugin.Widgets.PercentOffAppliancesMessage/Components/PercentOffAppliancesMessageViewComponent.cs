@@ -52,7 +52,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 "LG SIGNATURE",
                 "LG STUDIO",
                 "LG XBOOM",
-                "\"C\" BY GE",
+                //"\"C\" BY GE",
                 "GE CAFE",
                 "GE MONOGRAM",
                 "GE PROFILE",
