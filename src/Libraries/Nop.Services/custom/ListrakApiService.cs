@@ -69,7 +69,7 @@ public class ListrakApiService : IListrakApiService
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.listrak.com/OAuth2/Token");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token");
             request.Content = new StringContent(JsonConvert.SerializeObject(new
             {
                 username = "ao1xkc57sz7t1dw1qawh",
