@@ -32,4 +32,4 @@ namespace Nop.Web
             await host.WaitForShutdownAsync();
         }
     }
-}}
+}
