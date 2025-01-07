@@ -211,7 +211,6 @@ span.price.you-save {
 
     .home-page-body .item-number-style {
         font-size: 1.3em;
-
     }
     
     .home-page-body .item-box .product-title {
@@ -222,12 +221,18 @@ span.price.you-save {
 		margin: 0 1rem;
 	}
 
-    .home-page-body .item-box .price,
+    .home-page-body .item-box .price {
+        font-size: 1.3rem;
+    }
+
     .home-page-body .price.you-save {
         font-size: 1.3rem;
     }
 
-    .home-page-body .price-sale-tag,
+    .home-page-body .price-sale-tag {
+        font-size: 1.3rem;
+    }
+
     .home-page-body .item-box .price.actual-price {
         font-size: 1.3rem;
     }
