@@ -19,6 +19,7 @@ public class ListrakApiService : IListrakApiService
 
     public ListrakApiService(HttpClient httpClient, IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
+        _httpClientFactory = httpClientFactory;
         _httpClient = httpClient;
         _configuration = configuration;
         _httpClient.BaseAddress = new Uri("https://api.listrak.com");
