@@ -1,13 +1,13 @@
 @model AbcWarehouse.Plugin.Widgets.Listrak.Models.ListrakModel;
 
-<!-- Listrak Analytics - Javascript Framework -->
+<!-- Listrak Analytics - Javascript Framework 
 <script type="text/javascript">
     (function (d, tid, vid) {
     if (typeof _ltk != 'undefined') return; var js = d.createElement('script'); js.id = 'ltkSDK';
     js.src = "https://cdn.listrakbi.com/scripts/script.js?m=" + tid + "&v=" + vid;
     d.querySelector('head').appendChild(js);
     })(document, '@Model.MerchantId', '1');
-</script>
+</script>-->
 <script type="text/javascript">
     (function(d){if(typeof _ltk=="undefined"){if(document.addEventListener)document.addEventListener("ltkAsyncListener",function(){_ltk_util.ready(d)});else{e=document.documentElement;e.ltkAsyncProperty=0;e.attachEvent("onpropertychange",function(e){if(e.propertyName=="ltkAsyncProperty"){_ltk_util.ready(d)}})}}else{_ltk_util.ready(d)}})(function(){
         // Sets up listeners for email capture
