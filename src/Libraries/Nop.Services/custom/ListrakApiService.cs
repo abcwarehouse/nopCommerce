@@ -25,7 +25,7 @@ public class ListrakApiService : IListrakApiService
         _httpClient.BaseAddress = new Uri("https://api.listrak.com");
     }
 
-    public string GetToken()
+    /*public string GetToken()
     {
         var tokenEndpoint = "/OAuth2/Token"; // Relative path for token API
         var credentials = new
@@ -65,8 +65,9 @@ public class ListrakApiService : IListrakApiService
             Console.WriteLine($"Exception in GetToken: {ex.Message}");
             throw new Exception("Failed to retrieve the API token.", ex);
         }
-    } 
-    /*public string GetToken()
+    }*/ 
+
+    public string GetToken()
     {
         try
         {
@@ -89,7 +90,7 @@ public class ListrakApiService : IListrakApiService
         {
             throw new Exception("Failed to retrieve the API token.", ex);
         }
-    } */
+    }
 
     public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked)
     {
