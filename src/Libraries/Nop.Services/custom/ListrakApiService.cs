@@ -96,7 +96,7 @@ public class ListrakApiService : IListrakApiService
     public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked)
     {
         var client = _httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer" + token);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var data = new
         {
