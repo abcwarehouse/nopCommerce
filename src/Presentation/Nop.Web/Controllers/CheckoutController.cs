@@ -58,7 +58,7 @@ namespace Nop.Web.Controllers
         private readonly PaymentSettings _paymentSettings;
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly ShippingSettings _shippingSettings;
-        private readonly IListrakApiService _ListrakApiService;
+        private readonly IListrakApiService _listrakApiService;
 
         #endregion
 
@@ -88,7 +88,7 @@ namespace Nop.Web.Controllers
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
             ShippingSettings shippingSettings,
-            IListrakApiService ListrakApiService)
+            IListrakApiService listrakApiService)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -114,7 +114,7 @@ namespace Nop.Web.Controllers
             _paymentSettings = paymentSettings;
             _rewardPointsSettings = rewardPointsSettings;
             _shippingSettings = shippingSettings;
-            _ListrakApiService = ListrakApiService;
+            _listrakApiService = listrakApiService;
         }
 
         #endregion
@@ -505,7 +505,7 @@ namespace Nop.Web.Controllers
         {
             if (model.SmsOptIn)
             {
-                var token = _ListrakApiService.GetToken();
+                var token = _listrakApiService.GetTokenAsync();
                 var billingAddress = model.BillingNewAddress;
 
                 Nop.Core.Domain.Common.Address billingAddressConverted = new Nop.Core.Domain.Common.Address
@@ -527,7 +527,7 @@ namespace Nop.Web.Controllers
 
                 };
 
-                var response = _ListrakApiService.SendBillingAddress(token, billingAddressConverted, model.SmsOptIn);
+                var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn);
                 if (!response.IsSuccess)
                 {
                     ModelState.AddModelError("", "Error calling third-party API.");

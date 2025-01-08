@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Nop.Core.Domain.Common;
@@ -67,7 +68,7 @@ public class ListrakApiService : IListrakApiService
         }
     }*/ 
 
-    public string GetToken()
+    public async Task<string> GetTokenAsync()
     {
         try
         {
@@ -78,10 +79,10 @@ public class ListrakApiService : IListrakApiService
                 password = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
             }), Encoding.UTF8, "application/json");
 
-            var response = _httpClient.SendAsync(request).Result;
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
 
             return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
@@ -95,7 +96,7 @@ public class ListrakApiService : IListrakApiService
     public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked)
     {
         var client = _httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer" + token);
 
         var data = new
         {
