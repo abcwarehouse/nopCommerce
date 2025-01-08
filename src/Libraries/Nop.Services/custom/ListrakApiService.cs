@@ -112,8 +112,17 @@ public class ListrakApiService : IListrakApiService
             },
             CheckboxChecked = isCheckboxChecked
         };
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                ShortCodeId = "1026",
+                PhoneNumber = "7343081104",
+                PhoneListId = "148"
+            }
+        };
 
-        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1", data).Result;
+        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/7343081104/148", listrakData).Result;
 
         return new ApiResponse
         {
