@@ -22,31 +22,34 @@ $(document).ready(function () {
     var el = sidebar.find(".mega-menu-responsive");
     $(el[0]).addClass("mobile-sidebar-category first");
     $(el[1]).addClass("mobile-sidebar-category second");
-    var str = `
-        <div class="mobile-sidebar-title">
-            <div class="back-button"> < Back </div>
-            <a id="select_category_item" href="#" target="_blank">${categoryArray[0]}</a>
-        </div>
-    `;
+    // var str = '<div class="mobile-sidebar-title"><div class="back-button"> < Back </div><div id="select_category_item">' + categoryArray[0] + '</div></div>';
+
+
+    var str = `<div class="mobile-sidebar-title"><div class="back-button"> < Back </div><a id="select_category_item" href="#" target="_blank">${categoryArray[0]}</a></div>`;
     sidebar.append(str);
 
     header = $(".header-menu .mobile-sidebar-category.first");
     content = $(".header-menu .mobile-sidebar-category.second");
-    selectCategory = $("#select_category_item");
+    selectCategory = $(".header-menu #select_category_item");
     backButton = $(".mobile-sidebar-title .back-button");
 
-    // Update link based on category name
+    effectBack();
+
+    heightArray[index] = getHeight($(".mobile-sidebar-category.second > li"), "F");
+
+    content.height(heightArray[index]);
+
+    //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
         const baseURL = "https://stage.abcwarehouse.com/";
-        const formattedName = categoryName.replace(/\s+/g, '-').toLowerCase(); // Replace spaces with hyphens and make lowercase
+        const formattedName = categoryName.replace(/\s+/g, '').toLowerCase(); // Replace spaces with hyphens and make lowercase
         selectCategory.attr("href", baseURL + formattedName);
     }
 
-    // Set the initial link
-    updateCategoryLink(categoryArray[0]);
+  // Set the initial link
+  updateCategoryLink(categoryArray[0]);
 
-    heightArray[index] = getHeight($(".mobile-sidebar-category.second > li"), "F");
-    content.height(heightArray[index]);
+
 
     nextButton.click(function () {
         heightArray[index + 1] = getHeight($(this).next().find(".sublist:eq(0)>li"), "O");
@@ -58,19 +61,18 @@ $(document).ready(function () {
             content.height(heightArray[index + 1]);
         }
 
-        const newCategory = $(this).parent().find('a span').first().text();
-        categoryArray[index + 1] = newCategory;
-        updateCategoryLink(newCategory); // Update the link
-        selectCategory.text(newCategory); // Update the displayed category name
+        backButton.removeClass('hidden');
+        selectCategory.text($(this).parent().find('a span').first().text());
 
+        categoryArray[index + 1] = $(this).parent().find('a span').first().text();
         elementArray[index] = this;
         index++;
         sidebar.animate({ scrollTop: 0 }, 500);
-        backButton.removeClass('hidden');
     });
 
+
     backButton.click(function () {
-        if (index > 0) {
+        if (sidebar.find('.active').length > 0) {
             index--;
 
             if (heightArray[index] > heightArray[index - 1]) {
@@ -81,9 +83,7 @@ $(document).ready(function () {
                 content.height(heightArray[index - 1]);
             }
 
-            const previousCategory = categoryArray[index];
-            updateCategoryLink(previousCategory); // Update the link
-            selectCategory.text(previousCategory); // Update the displayed category name
+            selectCategory.text(categoryArray[index]);
 
             if (sidebar.find('.active').length == 1) {
                 content.height(heightArray[0]);
@@ -95,15 +95,16 @@ $(document).ready(function () {
         effectBack();
     });
 
-    closeButton.click(function () {
-        subContent.removeClass("active");
-    });
-
     menuSetting();
+
     removeNonLeafLinks();
 
     $(".link-sub").click(function () {
         $(this).next().click();
+    });
+
+    closeButton.click(function () {
+        subContent.removeClass("active");
     });
 });
 
@@ -148,6 +149,133 @@ function effectBack() {
         backButton.addClass('hidden');
     } else {
         backButton.removeClass('hidden');
+    }
+}
+
+// ABCTODO: Probably worth making a createAbc and using this method to
+// coordinate between the three stores
+function menuSetting() {
+    var menu_array = header.find('li');
+    var len = menu_array.length;
+    var path = '';
+    var storeFlag = "abc";
+    for (var i = 0; i < len; i++) {
+        if ($(menu_array[i]).find("a[href*='hawthorne']").length == 1) {
+            storeFlag = "haw";
+            break;
+        }
+    }
+
+    for (var i = 0; i < len; i++) {
+        const isAbc = storeFlag == "abc";
+        var str = $(menu_array[i]).find('span').text().trim();
+        var img = "";
+        
+        if (str == "Blog") {
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/BlogButton.png)';
+        } else if (str == "Home") {
+            if (storeFlag == "abc") {
+                path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[1] + ')';
+            } else {
+                path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[7] + ')';
+            }
+        } else if (str == "Home Page") {
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[7] + ')';
+        } else if (str == "Locations") {
+            if (storeFlag == "abc") {
+                path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[2] + ')';
+            } else {
+                path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[5] + ')';
+            }
+        } else if (str == "Clearance") {
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[3] + ')';
+        } else if (str == "Sale Ad") {
+            if (storeFlag == "abc") {
+                path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[4] + ')';
+            } else {
+                path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[6] + ')';
+            }
+        } else if (str == "Store Locations") {
+            img = isAbc ? imageArray[2] : imageArray[5];
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + img + ')';
+        } else if (str == "Financing") {
+            img = imageArray[10];
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + img + ')';
+        } else if (str == "Weekly Ad") {
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[6] + ')';
+        } else if (str.indexOf("Back") !== -1) {
+            img = isAbc ? imageArray[8] : imageArray[9];
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + img + ')';
+        } else {
+            path = 'url(/Plugins/Misc.AbcFrontend/Images/' + imageArray[0] + ')';
+        }
+        $(menu_array[i]).find('a').css('background-image', path);
+        $(menu_array[i]).css('width', '33.3%');
+    }
+    $(menu_array[len]).append("<div class='phone-line'></div>");
+    $(menu_array[len]).find('span').css('line-height', '0px');
+
+    createForHawthorne(menu_array, len);
+    createForMickeyShorr(menu_array, len);
+}
+
+function createForHawthorne(menu_array, len) {
+    // hardcode this to true for local testing
+    const isHawthorne = window.location.href.indexOf("hawthorneonline") > -1;
+    if (!isHawthorne) { return; }
+
+    // adjust sidebar title for single row of icons
+    var mobileSidebarTitle = document.getElementsByClassName("mobile-sidebar-title")[0];
+    mobileSidebarTitle.style.top = "125px";
+
+    $(menu_array[0]).css('width', "25%");
+    $(menu_array[0]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/LocationsButton.png')");
+    $(menu_array[0]).find('a').attr("href", '/AllShops');
+    $(menu_array[0]).find('a').find('span').text('Locations');
+    $(menu_array[1]).css('width', "25%");
+    $(menu_array[1]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/CreditIcon.png')");
+    $(menu_array[1]).find('a').attr("href", '/hawthorne-credit-card');
+    $(menu_array[1]).find('a').find('span').text('Financing');
+    $(menu_array[2]).css('width', "25%");
+    $(menu_array[2]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/ClearanceTagButton.png')");
+    $(menu_array[2]).find('a').attr("href", 'https://clearance.hawthorneonline.com');
+    $(menu_array[2]).find('a').find('span').text('Clearance');
+    $(menu_array[3]).css('width', "25%");
+    $(menu_array[3]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/SaleAdButton.png')");
+    $(menu_array[3]).find('a').attr("href", '/special-financing-options-2');
+    $(menu_array[3]).find('a').find('span').text('Lookbook');
+
+    for (var i = 4; i < len; i++)
+    {
+        $(menu_array[i]).remove();
+    }
+}
+
+function createForMickeyShorr(menu_array, len) {
+    // hardcode this to true for local testing
+    const isMickeyShorr = window.location.href.indexOf("mickeyshorr") > -1;
+    if (!isMickeyShorr) { return; }
+
+    // adjust sidebar title for single row of icons
+    var mobileSidebarTitle = document.getElementsByClassName("mobile-sidebar-title")[0];
+    mobileSidebarTitle.style.top = "125px";
+
+    $(menu_array[0]).css('width', "33.3%");
+    $(menu_array[0]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/LocationsButton.png')");
+    $(menu_array[0]).find('a').attr("href", '/AllShops')
+    $(menu_array[0]).find('a').find('span').text('Locations')
+    $(menu_array[1]).css('width', "33.3%");
+    $(menu_array[1]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/SaleAdButton.png')");
+    $(menu_array[1]).find('a').attr("href", '/sale-ad')
+    $(menu_array[1]).find('a').find('span').text('Sale Ad')
+    $(menu_array[2]).css('width', "33.3%");
+    $(menu_array[2]).find('a').css('background-image', "url('/Plugins/Misc.AbcFrontend/Images/CreditIcon.png')");
+    $(menu_array[2]).find('a').attr("href", '/special-financing-options-2')
+    $(menu_array[2]).find('a').find('span').text('Financing')
+
+    for (var i = 3; i < len; i++)
+    {
+        $(menu_array[i]).remove();
     }
 }
 
