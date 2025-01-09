@@ -18,7 +18,7 @@ var elementArray = new Array();
 var categoryArray = new Array();
 
 
-// categoryArray[0] = "SHOP ALL CATEGORIES";
+ categoryArray[0] = "SHOP ALL CATEGORIES";
 
 categoryArray = [
     { name: "SHOP ALL CATEGORIES", url: "https://www.abcwarehouse.com/" },
