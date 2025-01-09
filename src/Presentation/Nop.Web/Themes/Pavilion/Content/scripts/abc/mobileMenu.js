@@ -67,8 +67,8 @@ $(document).ready(function () {
         //Get the Current Category name and URL
         const CurrentCategoryName = $(this).parent().find('a span').first().text();
         const categoryIndex = index + 1; //Match index in categoryArray
-        const currentCategory = categoryArray.find(abc => abc.name === currentCategoryName) || {};
-        // selectCategory.text($(this).parent().find('a span').first().text());
+        const currentCategory = categoryArray.find(cat => cat.name === currentCategoryName) || {};
+        selectCategory.text($(this).parent().find('a span').first().text());
         
         // Update the breadcrumb header with a link
         const categoryLink = currentCategory.url || "#";
