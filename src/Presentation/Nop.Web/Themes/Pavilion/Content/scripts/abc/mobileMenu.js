@@ -42,7 +42,7 @@ $(document).ready(function () {
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
         const baseURL = "https://stage.abcwarehouse.com/";
-        const formattedName = categoryName.replace(/\s+/g, '').toLowerCase(); // Replace spaces with hyphens and make lowercase
+        const formattedName = categoryName.replace(/\s+/g, '-').toLowerCase(); // Replace spaces with hyphens and make lowercase
         selectCategory.attr("href", baseURL + formattedName);
     }
 
