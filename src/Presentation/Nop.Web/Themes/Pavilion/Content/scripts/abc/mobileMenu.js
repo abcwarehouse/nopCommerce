@@ -62,7 +62,14 @@ $(document).ready(function () {
         }
 
         backButton.removeClass('hidden');
-        selectCategory.text($(this).parent().find('a span').first().text());
+        //selectCategory.text($(this).parent().find('a span').first().text());
+        const newCategory = $(this).parent().find('a span').first().text();
+        categoryArray[index + 1] = newCategory;
+        updateCategoryLink(newCategory); // Update the link
+        selectCategory.text(newCategory); // Update the displayed category name
+
+
+
 
         categoryArray[index + 1] = $(this).parent().find('a span').first().text();
         elementArray[index] = this;
@@ -83,7 +90,11 @@ $(document).ready(function () {
                 content.height(heightArray[index - 1]);
             }
 
-            selectCategory.text(categoryArray[index]);
+            // selectCategory.text(categoryArray[index]);
+            const previousCategory = categoryArray[index];
+            updateCategoryLink(previousCategory); // Update the link
+            selectCategory.text(previousCategory); // Update the displayed category name
+
 
             if (sidebar.find('.active').length == 1) {
                 content.height(heightArray[0]);
