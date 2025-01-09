@@ -16,7 +16,22 @@ var imageArray = new Array('Default.png', 'HomeButton.png', 'LocationsButton.png
 var element;
 var elementArray = new Array();
 var categoryArray = new Array();
-categoryArray[0] = "SHOP ALL CATEGORIES";
+
+
+// categoryArray[0] = "SHOP ALL CATEGORIES";
+
+categoryArray = [
+    { name: "SHOP ALL CATEGORIES", url: "https://www.abcwarehouse.com/" },
+    { name: "APPLIANCES", url: "https://www.abcwarehouse.com/appliances" },
+    { name: "TV-VIDEO", url: "https://www.abcwarehouse.com/tv-video" },
+    { name: "FURNITURE", url: "https://https://www.abcwarehouse.com/furniture" },
+    { name: "MATTRESSES", url: "https://www.abcwarehouse.com/mattresses" },
+    { name: "AUDIO-ELECTRONICS", url: "https://www.abcwarehouse.com/audio-electronics" },
+    { name: "ELECTRONICS", url: "https://www.abcwarehouse.com/electronics" },
+    { name: "CAR AUDIO/VIDEO", url: "https://www.abcwarehouse.com/" },
+    { name: "GAMES/ FUN  ITEMS", url: "https://www.abcwarehouse.com/appliances" },
+    { name: "ELECTRONICS", url: "https://www.abcwarehouse.com/electronics" }
+];
 
 $(document).ready(function () {
     var el = sidebar.find(".mega-menu-responsive");
@@ -46,11 +61,25 @@ $(document).ready(function () {
             content.height(heightArray[index + 1]);
         }
 
+        //Updates the back button visibiliy
         backButton.removeClass('hidden');
-        selectCategory.text($(this).parent().find('a span').first().text());
 
-        categoryArray[index + 1] = $(this).parent().find('a span').first().text();
+        //Get the Current Category name and URL
+        var CurrentCategoryName = $(this).parent().find('a span').first().text();
+        var categoryIndex = index + 1; //Match index in categoryArray
+        var currentCategory = categoryArray.find(abc => abc.name === currentCategoryName) || {};
+        // selectCategory.text($(this).parent().find('a span').first().text());
+        
+        // Update the breadcrumb header with a link
+        var categoryLink = currentCategory.url || "#";
+        selectCategory.html(`<a href="${categoryLink}" target="_blank">${currentCategoryName}</a>`);
+
+        // Track the selected category and element for navigation
+        categoryArray[index + 1] = currentCategory;
         elementArray[index] = this;
+
+
+        //Next Category
         index++;
         sidebar.animate({ scrollTop: 0 }, 500);
     });
