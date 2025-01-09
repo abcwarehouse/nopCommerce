@@ -18,7 +18,7 @@ var elementArray = new Array();
 var categoryArray = new Array();
 
 
- categoryArray[0] = "SHOP ALL CATEGORIES";
+//  categoryArray[0] = "SHOP ALL CATEGORIES";
 
 categoryArray = [
     { name: "SHOP ALL CATEGORIES", url: "https://www.abcwarehouse.com/" },
@@ -65,13 +65,13 @@ $(document).ready(function () {
         backButton.removeClass('hidden');
 
         //Get the Current Category name and URL
-        var CurrentCategoryName = $(this).parent().find('a span').first().text();
-        var categoryIndex = index + 1; //Match index in categoryArray
-        var currentCategory = categoryArray.find(abc => abc.name === currentCategoryName) || {};
+        const CurrentCategoryName = $(this).parent().find('a span').first().text();
+        const categoryIndex = index + 1; //Match index in categoryArray
+        const currentCategory = categoryArray.find(abc => abc.name === currentCategoryName) || {};
         // selectCategory.text($(this).parent().find('a span').first().text());
         
         // Update the breadcrumb header with a link
-        var categoryLink = currentCategory.url || "#";
+        const categoryLink = currentCategory.url || "#";
         selectCategory.html(`<a href="${categoryLink}" target="_blank">${currentCategoryName}</a>`);
 
         // Track the selected category and element for navigation
