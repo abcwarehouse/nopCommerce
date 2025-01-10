@@ -55,13 +55,13 @@ $(document).ready(function () {
     }
     
     // Special case for "Shop By Brand"
-    else if (categoryName.toLowerCase() === "Shop by Brand") {
+    else if (categoryName.toLowerCase() === "shop by brand") {
         selectCategory.attr("href", baseURL + "mattress-by-brand");
         return;
     }
 
     // Special case for "Blank Media /Usb Storage"
-    else if (categoryName.toLowerCase() === "Blank Media/ USB Storage") {
+    else if (categoryName.toLowerCase() === "blank media/ usb storage") {
         selectCategory.attr("href", baseURL + "media-usb-storage");
         return;
     }
