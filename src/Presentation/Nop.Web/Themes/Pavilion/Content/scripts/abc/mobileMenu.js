@@ -42,12 +42,39 @@ $(document).ready(function () {
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
         const baseURL = "https://stage.abcwarehouse.com/";
-        // const formattedName = categoryName.replace(/[\s/]+/g, '-').toLowerCase(); // Replace spaces with hyphens and make lowercase
-        const formattedName = categoryName
-        .replace(/[\s/&/-]+/g, '-') // Replace spaces, slashes, ampersands, and dashes with a single hyphen
-        .replace(/[^a-z0-9-]/gi, '') // Remove any other non-alphanumeric characters except hyphens
-        .toLowerCase(); // Convert to lowercase
-        selectCategory.attr("href", baseURL + formattedName);
+
+         // Special case for "shop-all-categories"
+    if (categoryName.toLowerCase() === "shop all categories") {
+        selectCategory.attr("href", baseURL);
+        return;
+    }
+      // Special case for "dishwashers"
+    else if (categoryName.toLowerCase() === "dishwashers") {
+        selectCategory.attr("href", baseURL + "dishwashers-3");
+        return;
+    }
+    
+    // Special case for "Shop By Brand"
+    else if (categoryName.toLowerCase() === "Shop by Brand") {
+        selectCategory.attr("href", baseURL + "mattress-by-brand");
+        return;
+    }
+
+    // Special case for "Blank Media /Usb Storage"
+    else if (categoryName.toLowerCase() === "Blank Media/ USB Storage") {
+        selectCategory.attr("href", baseURL + "media-usb-storage");
+        return;
+    }
+    //General case
+    else
+      {
+         // const formattedName = categoryName.replace(/[\s/]+/g, '-').toLowerCase(); // Replace spaces with hyphens and make lowercase
+         const formattedName = categoryName
+         .replace(/[\s/&/-]+/g, '-') // Replace spaces, slashes, ampersands, and dashes with a single hyphen
+         .replace(/[^a-z0-9-]/gi, '') // Remove any other non-alphanumeric characters except hyphens
+         .toLowerCase(); // Convert to lowercase
+         selectCategory.attr("href", baseURL + formattedName);
+      }   
     }
 
   // Set the initial link
