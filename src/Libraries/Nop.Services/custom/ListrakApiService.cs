@@ -117,12 +117,12 @@ public class ListrakApiService : IListrakApiService
             ListrakData = new 
             {
                 ShortCodeId = "1026",
-                PhoneNumber = "7343081104",
+                PhoneNumber = "2484083263",
                 PhoneListId = "148"
             }
         };
 
-        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/7343081104/PhoneList/148", listrakData).Result;
+        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/2484083263/PhoneList/148", listrakData).Result;
 
         return new ApiResponse
         {
