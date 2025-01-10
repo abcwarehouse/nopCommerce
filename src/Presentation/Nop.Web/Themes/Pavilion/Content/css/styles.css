@@ -6437,9 +6437,13 @@ div#storeDropDown div {
 
 
 /* End Black Friday */
+
+/*Angelo*/
  /* Mobile Menu Padding Fix */
-.sublist-wrap.active {    padding-top: 60px;
+ .mega-menu-responsive.mobile-sidebar-category .sublist-wrap.active { 
+	padding-top: 50px;
 }
+
 
 
 /* Bootstrap */
