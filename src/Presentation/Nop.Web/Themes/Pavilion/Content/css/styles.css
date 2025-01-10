@@ -6437,6 +6437,10 @@ div#storeDropDown div {
 
 
 /* End Black Friday */
+ /* Mobile Menu Padding Fix */
+.sublist-wrap.active {    padding-top: 60px;
+}
+
 
 /* Bootstrap */
 .row {
