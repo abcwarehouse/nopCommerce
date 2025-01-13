@@ -41,7 +41,7 @@ $(document).ready(function () {
 
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
-        const baseURL = "https://abcwarehouse.com/";
+        const baseURL = "https://stage.abcwarehouse.com/";
 
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
