@@ -6377,7 +6377,7 @@ img.hawthorne-logo {
 
 /* Superbowl*/
 .abc-home-content .master-wrapper-page {
-	background-image: url("http://abcwarehouse.com/images/ABCFootball_1.jpg");
+	background-image: url("http://abcwarehouse.com/images/ABCFootball_2.jpg");
 	background-size: 100%;
 	background-position-y: 210px;
 }
@@ -6390,6 +6390,12 @@ img.hawthorne-logo {
 }
 .abc-home-content .mobile-header-content-row {
     background-color: #249948 !important;
+}
+
+@media screen and (max-width: 999px) {
+	.two-columns-area.slider-right-column {
+		margin-top: -12px;
+	}
 }
 
 
