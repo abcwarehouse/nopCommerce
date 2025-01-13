@@ -1,0 +1,220 @@
+{
+    "InstalledPluginNames": [
+      "Obsolete field, using only for compatibility"
+    ],
+    "InstalledPlugins": [
+      {
+        "SystemName": "Shipping.UPS",
+        "Version": "1.60"
+      },
+      {
+        "SystemName": "SevenSpikes.Core",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.ProductRibbons",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.AjaxFilters",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.QuickView",
+        "Version": "4.3"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.AnywhereSliders",
+        "Version": "4.40"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.MegaMenu",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.NopQuickTabs",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.JCarousel",
+        "Version": "4.40"
+      },
+      {
+        "SystemName": "SevenSpikes.Theme.Pavilion",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.StoreLocator",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.HtmlWidgets",
+        "Version": "4.40"
+      },
+      {
+        "SystemName": "Misc.AzureWebTestsIntegration",
+        "Version": "1.00"
+      },
+      {
+        "SystemName": "Misc.EnhancedLogging",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.FreshAddressNewsletterIntegration",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.SearchPageRedirect",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Payments.AbcCard",
+        "Version": "1.00"
+      },
+      {
+        "SystemName": "Misc.AbcSync",
+        "Version": "4.40.2"
+      },
+      {
+        "SystemName": "Misc.AbcFrontend",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.AbcHomeDeliveryStatus",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.AbcSliExport",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.AbcContactUs",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.AbcStatusApi",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Shipping.HomeDelivery",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.AbcBonusBundle",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.AbcMarkdownDate",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.AbcPickupInStore",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Payments.Manual",
+        "Version": "1.55"
+      },
+      {
+        "SystemName": "EllaSoftware.CronTasks",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.AbcExportOrder",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.AbcPromos",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.AbcMattresses",
+        "Version": "4.40.1"
+      },
+      {
+        "SystemName": "Widgets.AbcEnergyGuide",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.PowerReviews",
+        "Version": "4.40.1"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.AjaxCart",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "Tax.AbcTax",
+        "Version": "4.40.1"
+      },
+      {
+        "SystemName": "Misc.SLI",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.Listrak",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Misc.AbcCore",
+        "Version": "4.40.4"
+      },
+      {
+        "SystemName": "Misc.LetsEncrypt",
+        "Version": "1.00"
+      },
+      {
+        "SystemName": "SevenSpikes.Nop.Plugins.RichBlog",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "Widgets.CartSlideout",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.UniFi",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Payments.UniFi",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "Widgets.PriceSpider",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "FoxNetSoft.WebPImages",
+        "Version": "2.03"
+      },
+      {
+        "SystemName": "NopAdvance.Core",
+        "Version": "1.11"
+      },
+      {
+        "SystemName": "NopAdvance.Plugin.ProductYouTubeVideo",
+        "Version": "1.0"
+      },
+      {
+        "SystemName": "SevenSpikes.Theme.Voyage",
+        "Version": "4.4"
+      },
+      {
+        "SystemName": "Widgets.AddressAutocomplete",
+        "Version": "4.40.0"
+      },
+      {
+        "SystemName": "NopAdvance.DiscountRules.CartSubTotal",
+        "Version": "1.2"
+      },
+      {
+        "SystemName": "Widgets.PercentOffAppliancesMessage",
+        "Version": "4.40.0"
+      }
+    ],
+    "PluginNamesToUninstall": [],
+    "PluginNamesToDelete": [
+      "Widgets.AccessiBe"
+    ],
+    "PluginNamesToInstall": []
+  }

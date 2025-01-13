@@ -254,6 +254,14 @@ namespace Nop.Plugin.Misc.AbcCore
                             Visible = true,
                             ControllerName = "NewProduct",
                             ActionName = "List"
+                        },
+                        new SiteMapNode()
+                        {
+                            SystemName = "ABCWarehouse.List404",
+                            Title = "404 List",
+                            Visible = true,
+                            ControllerName = "List404",
+                            ActionName = "List"
                         }
                     }
                 };

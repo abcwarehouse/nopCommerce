@@ -1,0 +1,43 @@
+@using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
+@using Nop.Web.Framework.Models.DataTables
+
+@{
+    //page title
+    ViewBag.PageTitle = "404 List";
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("AbcWarehouse.List404");
+
+    Layout = "_AdminLayout";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        404 List
+    </h1>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "list404-grid",
+                        UrlRead = new DataUrl("List", "List404", null),
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(List404Model.Slug))
+                            {
+                                Title = "Slug",
+                                Width = "50"
+                            }
+                        }
+                    })                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
