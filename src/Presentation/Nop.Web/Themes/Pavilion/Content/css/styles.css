@@ -6392,6 +6392,10 @@ img.hawthorne-logo {
     background-color: #249948 !important;
 }
 
+.master-wrapper-content {
+    margin-top: 15px;
+}
+
 @media screen and (max-width: 999px) {
 	.two-columns-area.slider-right-column {
 		margin-top: -12px;
