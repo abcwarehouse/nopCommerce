@@ -25,7 +25,7 @@ $(document).ready(function () {
     // var str = '<div class="mobile-sidebar-title"><div class="back-button"> < Back </div><div id="select_category_item">' + categoryArray[0] + '</div></div>';
 
 
-    var str = `<div class="mobile-sidebar-title"><div class="back-button"> < Back </div><a id="select_category_item" href="#" target="_blank">${categoryArray[0]}</a></div>`;
+    var str = `<div class="mobile-sidebar-title"><div class="back-button"> < Back </div><a id="select_category_item" href="#">${categoryArray[0]}</a></div>`;
     sidebar.append(str);
 
     header = $(".header-menu .mobile-sidebar-category.first");
@@ -45,7 +45,7 @@ $(document).ready(function () {
 
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
-        selectCategory.attr("href", baseURL);
+        selectCategory.attr("href", baseURL + "filterSearch");
         return;
     }
       // Special case for "dishwashers"
