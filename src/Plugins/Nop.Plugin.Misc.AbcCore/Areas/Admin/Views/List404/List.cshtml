@@ -1,9 +1,11 @@
+@model List404SearchModel
+
 @using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
 @using Nop.Web.Framework.Models.DataTables
 @using Nop.Services.Common
 @using Nop.Core
 
-@inject GenericAttributeService genericAttributeService
+@inject IGenericAttributeService genericAttributeService
 @inject IWorkContext workContext
 
 @inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>
@@ -72,11 +74,12 @@
                     {
                         Name = "list404-grid",
                         UrlRead = new DataUrl("List", "List404", null),
+                        SearchButtonId = "search-log",
                         Length = Model.PageSize,
                         LengthMenu = Model.AvailablePageSizes,
                         Filters = new List<FilterParameter>
                         {
-                            new FilterParameter(nameof(Model.SearchProductName))
+                            new FilterParameter(nameof(Model.Slug))
                         },
                         ColumnCollection = new List<ColumnProperty>
                         {
