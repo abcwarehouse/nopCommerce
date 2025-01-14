@@ -6313,6 +6313,10 @@ body.storeId3 .header-lower {
     width: 45% !important;
 }
 
+.storeId8 .item-box.water {
+    display: none;
+}
+
 @media (max-width: 1645px) {
 	
 	

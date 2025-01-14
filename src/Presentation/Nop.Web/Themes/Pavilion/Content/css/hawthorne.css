@@ -122,12 +122,6 @@ div.jCarouselMainWrapper {
     display: none;
 }
 
-/* Angelo Change */
-
-.storeId8 .item-box.water {
-    display: none;
-}
-
 @media screen and (max-width: 767px) {
     img.haw-main-img {
         height: auto;
