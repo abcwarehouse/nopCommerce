@@ -923,7 +923,7 @@ label, label + * {
 
 @media (min-width: 1025px) {
     body .store-search-box .search-box-button {
-        margin: -7px 0px 0 5px !important;
+        margin: -10px 0px 0 5px !important;
     }
 }
 
@@ -6250,7 +6250,7 @@ img.hawthorne-logo {
     width: 15%;
     display: inline-block;
     float: none;
-	margin-bottom: -12px;
+	margin-bottom: -8px;
 }
 .hawthorne-lower .header-menu {
     overflow-y: visible;
