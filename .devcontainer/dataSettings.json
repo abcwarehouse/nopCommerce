@@ -1,5 +1,0 @@
-{
-    "DataConnectionString": "Server=34.42.34.242,1433;Initial Catalog=NOPCommerce;User ID=sa;Password=test123?;TrustServerCertificate=True;Connection Timeout=300",
-    "DataProvider": "sqlserver",
-    "RawDataSettings": {}
-}
