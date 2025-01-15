@@ -14,43 +14,54 @@ using Nop.Services.Logging;
 using System.Text.RegularExpressions;
 using Nop.Core;
 using Nop.Plugin.Misc.AbcCore.Nop;
+using Nop.Services.Helpers;
+using System;
 
 namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
 {
-    public class List404Controller : BaseAdminController
+    public class PageNotFoundController : BaseAdminController
     {
+        private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IAbcLogger _logger;
 
-        public List404Controller(IAbcLogger logger)
+        public PageNotFoundController(
+            IDateTimeHelper dateTimeHelper,
+            IAbcLogger logger)
         {
+            _dateTimeHelper = dateTimeHelper;
             _logger = logger;
         }
 
         public IActionResult List()
         {
             return View(
-                "~/Plugins/Misc.AbcCore/Areas/Admin/Views/List404/List.cshtml",
-                new List404SearchModel()
+                "~/Plugins/Misc.AbcCore/Areas/Admin/Views/PageNotFound/List.cshtml",
+                new PageNotFoundSearchModel()
             );
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> List(List404SearchModel searchModel)
+        public virtual async Task<IActionResult> List(PageNotFoundSearchModel searchModel)
         {
             var logs = _logger.GetPageNotFoundLogs();
+            if (!string.IsNullOrWhiteSpace(searchModel.Slug))
+            {
+                logs = logs.Where(logs => logs.PageUrl.Contains(searchModel.Slug)).ToList();
+            }
             var pagedList = logs.ToPagedList(searchModel);
-            var model = new List404ListModel().PrepareToGrid(searchModel, pagedList, () =>
+            var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pagedList, () =>
             {
                 //fill in model values from the entity
-                return pagedList.Select(log =>
+                return pagedList.SelectAwait(async log =>
                 {
-                    var list404Model = new List404Model()
+                    var PageNotFoundModel = new PageNotFoundModel()
                     {
                         Slug = log.PageUrl,
-                        ReferrerUrl = log.ReferrerUrl
+                        ReferrerUrl = log.ReferrerUrl,
+                        Date = await _dateTimeHelper.ConvertToUserTimeAsync(log.CreatedOnUtc, DateTimeKind.Utc)
                     };
 
-                    return list404Model;
+                    return PageNotFoundModel;
                 });
             });
 

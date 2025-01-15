@@ -1,4 +1,4 @@
-@model List404SearchModel
+@model PageNotFoundSearchModel
 
 @using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
 @using Nop.Web.Framework.Models.DataTables
@@ -13,21 +13,21 @@
 
 @{
     //page title
-    ViewBag.PageTitle = "404 List";
+    ViewBag.PageTitle = "Page Not Found List";
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("AbcWarehouse.List404");
+    Html.SetActiveMenuItemSystemName("AbcWarehouse.PageNotFound");
 
     Layout = "_AdminLayout";
 }
 
 @{
-    const string hideSearchBlockAttributeName = "List404Page.HideSearchBlock";
+    const string hideSearchBlockAttributeName = "PageNotFoundPage.HideSearchBlock";
     var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
 }
 
 <div class="content-header clearfix">
     <h1 class="pull-left">
-        404 List
+        Page Not Found List
     </h1>
 </div>
 
@@ -72,8 +72,8 @@
                 <div class="card-body">
                     @await Html.PartialAsync("Table", new DataTablesModel
                     {
-                        Name = "list404-grid",
-                        UrlRead = new DataUrl("List", "List404", null),
+                        Name = "PageNotFound-grid",
+                        UrlRead = new DataUrl("List", "PageNotFound", null),
                         SearchButtonId = "search-log",
                         Length = Model.PageSize,
                         LengthMenu = Model.AvailablePageSizes,
@@ -83,15 +83,21 @@
                         },
                         ColumnCollection = new List<ColumnProperty>
                         {
-                            new ColumnProperty(nameof(List404Model.Slug))
+                            new ColumnProperty(nameof(PageNotFoundModel.Slug))
                             {
                                 Title = "Slug",
                                 Width = "200"
                             },
-                            new ColumnProperty(nameof(List404Model.ReferrerUrl))
+                            new ColumnProperty(nameof(PageNotFoundModel.ReferrerUrl))
                             {
                                 Title = "Referrer",
                                 Width = "300"
+                            },
+                            new ColumnProperty(nameof(PageNotFoundModel.Date))
+                            {
+                                Title = "Date",
+                                Width = "300",
+                                Render = new RenderDate()
                             }
                         }
                     })

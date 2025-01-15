@@ -257,10 +257,10 @@ namespace Nop.Plugin.Misc.AbcCore
                         },
                         new SiteMapNode()
                         {
-                            SystemName = "ABCWarehouse.List404",
-                            Title = "404 List",
+                            SystemName = "ABCWarehouse.PageNotFound",
+                            Title = "Page Not Found List",
                             Visible = true,
-                            ControllerName = "List404",
+                            ControllerName = "PageNotFound",
                             ActionName = "List"
                         }
                     }

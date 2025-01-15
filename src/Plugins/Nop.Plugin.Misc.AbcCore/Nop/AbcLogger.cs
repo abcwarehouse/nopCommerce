@@ -33,7 +33,10 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 
         public IList<Log> GetPageNotFoundLogs()
         {
-            return _logRepository.Table.Where(log => log.ShortMessage.Contains("Error 404.")).ToList();
+            return _logRepository.Table
+                                 .Where(log => log.ShortMessage.Contains("Error 404."))
+                                 .OrderByDescending(log => log.CreatedOnUtc)
+                                 .ToList();
         }
     }
 }
