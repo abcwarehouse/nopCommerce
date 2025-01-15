@@ -63,48 +63,32 @@
 			</div>
 		}
 		@if (Model.Products.Count > 0)
-{
-    <div class="product-grid">
-        <div class="item-grid">
-            @* Group products by manufacturer name and sort alphabetically *@
-            var groupedProducts = Model.Products.GroupBy(p =>
-            {
-                // Extract manufacturer name from product name
-                var index = p.Name.LastIndexOf(' ');
-                return index < 0 ? "Unknown Manufacturer" : p.Name.Substring(0, index).Trim();
-            }).OrderBy(g => g.Key);
-
-            @foreach (var group in groupedProducts)
-            {
-                @* Manufacturer Title *@
-                <h2 class="manufacturer-title">@group.Key</h2>
-
-                @* Render products in this manufacturer group *@
-                @foreach (var product in group)
-                {
-                    var index = product.Name.LastIndexOf(' ');
-                    string man = "";
-                    string manNo = "";
-
-                    // Extract manufacturer and product number
-                    if (index < 0)
-                    {
-                        manNo = product.Name;
-                    }
-                    else
-                    {
-                        man = product.Name.Substring(0, index).Trim();
-                        manNo = product.Name.Substring(index).Trim();
-                    }
-
-                    <div class="item-box">
-                        @Html.Partial("_ProductBox", product)
-                    </div>
-                }
-            }
-        </div>
-    </div>
-}
+		{
+			<div class="product-grid">
+				<div class="item-grid">
+					@foreach (var product in Model.Products)
+					{
+						var index = product.Name.LastIndexOf(' ');
+						string man = "";
+						string manNo = "";
+						//Name does not conform to standard of [manufacturer] [sku]
+						if (index < 0)
+						{
+							manNo = product.Name;
+						}
+						else
+						{
+							man = product.Name.Substring(0, index);
+							manNo = product.Name.Substring(index);
+						}
+					<div class="item-box">
+						<h1>@(${man})</h1>
+						@Html.Partial("_ProductBox", product)
+					</div>
+					}
+				</div>
+			</div>
+		}
 		@{
             var pager = Html.Pager(Model).QueryParam("pagenumber");
         }
