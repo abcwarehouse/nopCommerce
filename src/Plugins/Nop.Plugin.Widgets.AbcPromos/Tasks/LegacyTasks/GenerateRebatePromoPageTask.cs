@@ -113,7 +113,10 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
 
-                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                if(promo.ManufacturerId != null)
+                {
+                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId);
+
                   string manName = manufactureModel.Name;
                   if (manName == "")
                     {
@@ -126,6 +129,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                         $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
 
                         "</div>";
+                }
 
                          
             }
