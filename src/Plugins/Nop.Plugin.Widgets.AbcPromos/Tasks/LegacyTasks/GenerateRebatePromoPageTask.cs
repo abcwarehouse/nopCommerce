@@ -115,7 +115,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
                 if(promo.ManufacturerId != null)
                 {
-                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId);
+                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
 
                   string manName = manufactureModel.Name;
                   if (manName == "")
@@ -130,7 +130,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
                         "</div>";
                 }
-
                          
             }
 
