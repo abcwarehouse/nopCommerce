@@ -113,7 +113,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                                 promo.Description;
                 html += $"<div class=\"abc-item abc-promo-item\"> " +
                         $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
-                        $"{promoDescription}</a><br />" +
+                        $"{promoDescription}fhjkdlsaf jklsadlkjsdalksdajf lksdaf lksdafsdlka fjsdalk fsdalk </a><br />" +
                         $"Expires {promo.EndDate.ToString("MM-dd-yy")}" +
                         "</div>";
             }
