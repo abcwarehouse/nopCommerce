@@ -5,26 +5,7 @@
     Html.AddCssFileParts("~/Plugins/Widgets.AbcPromos/styles/product-details.css");
 }
 
-@foreach (var product in Model.Products)
+@foreach (var promo in Model)
 {
-    var index = product.Name.LastIndexOf(' ');
-						string man = "";
-						string manNo = "";
-						//Name does not conform to standard of [manufacturer] [sku]
-						if (index < 0)
-						{
-							manNo = product.Name;
-						}
-						else
-						{
-							man = product.Name.Substring(0, index);
-							manNo = product.Name.Substring(index);
-						}
-                        <h1>@{man}</h1>
-    
-    @foreach (var promo in Model)
-    {
-
     <a href="@promo.GetPopupCommand()" class="prices-bottom-message promo-rebate-message">@promo.Description</a>
-    }
 }
