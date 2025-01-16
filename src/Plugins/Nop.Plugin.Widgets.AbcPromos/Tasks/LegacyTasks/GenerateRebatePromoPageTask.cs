@@ -113,7 +113,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
 
-                var manName = await _manufacturerService.GetProductManufacturersByProductIdAsync(promo.ManufacturerId ?? 999);
+                var manName =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
 
                 html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
                         $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
