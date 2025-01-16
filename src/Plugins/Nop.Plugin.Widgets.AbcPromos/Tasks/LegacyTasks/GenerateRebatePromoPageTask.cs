@@ -107,11 +107,12 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 {
                     continue;
                 }
-
+                
+                var manName = _manufacturerService.GetProductManufacturersByProductIdAsync(promo.ManufacturerId ?? 0);
                 var promoDescription = promo.ManufacturerId != null ?
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
-                html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{GetProductManufacturersByProductIdAsync(promo.ManufacturerId)}</h1>" + 
+                html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
                         $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
                         $"{promoDescription}</a><br />" +
                         $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
