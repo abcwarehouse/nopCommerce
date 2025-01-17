@@ -113,38 +113,24 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
 
-                if(promo.ManufacturerId != null)
-                {
-                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                var manufactureModel = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                string manName;
 
-                  string manName = manufactureModel.Name;
-                  
+                if (manufactureModel != null && manufactureModel.Name != null)
+                {
+                    manName = manufactureModel.Name; 
+                }
+                else
+                {
+                    manName = "Universal";
+                }
 
                 html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
                         $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
                         $"{promoDescription}</a><br />" +
                         $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
 
-                        "</div>";
-                }
-                else 
-                {
-                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-
-                  string manName = manufactureModel.Name;
-                  if (manName == "")
-                    {
-                        manName = "Universal";
-                    }
-
-                html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
-                        $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
-                        $"{promoDescription}</a><br />" +
-                        $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
-
-                        "</div>";
-                }
-                         
+                        "</div>";           
             }
 
             html += "</div>";
