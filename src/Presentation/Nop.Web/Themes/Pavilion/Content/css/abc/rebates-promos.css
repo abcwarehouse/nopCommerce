@@ -6,7 +6,7 @@
 }
 
 .abc-item {
-    margin: 5px auto;
+    margin: 2% 3% 2% 0%;
     background: #fff;
     line-height: 25px;
     padding: 1rem;
@@ -20,4 +20,11 @@
 
 .abc-item a:hover {
     text-decoration: underline;
+}
+
+.abc-manufacturer-container {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: left;
+    width: 100%;
 }
