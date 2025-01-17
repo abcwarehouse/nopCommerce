@@ -118,6 +118,20 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                   var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
 
                   string manName = manufactureModel.Name;
+                  
+
+                html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
+                        $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
+                        $"{promoDescription}</a><br />" +
+                        $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
+
+                        "</div>";
+                }
+                else 
+                {
+                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+
+                  string manName = manufactureModel.Name;
                   if (manName == "")
                     {
                         manName = "Universal";
