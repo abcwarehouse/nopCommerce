@@ -150,7 +150,11 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             foreach (var group in sortedPromoGroups)
             {
                 // ManName Header
-                html += $"<h2 class=\"abc-manufacturer-title\">{group.Key}</h2>"; 
+                html += $"<div class=\"abc-manufacturer-container\">" + 
+                $"<h2 class=\"abc-manufacturer-title\">{group.Key}</h2>" +
+                $"</div>";
+
+
                 foreach (var promoItem in group.Value)
         {
                 var promo = promoItem.Promo;
