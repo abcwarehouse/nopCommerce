@@ -153,6 +153,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 html += $"<h2 class=\"abc-manufacturer-title\">{group.Key}</h2>"; 
                 foreach (var promoItem in group.Value)
         {
+                var promo = promoItem.Promo;
+                var promoDescription = promoItem.PromoDescription;
 
                 html += $"<div class=\"abc-item abc-promo-item\"> " +
                         $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
