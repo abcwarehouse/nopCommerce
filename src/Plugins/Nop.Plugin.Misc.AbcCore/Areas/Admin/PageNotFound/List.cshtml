@@ -1,6 +1,9 @@
 @model PageNotFoundSearchModel
 
-@using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
+@using Nop.Web.Framework.UI
+@using Nop.Web.Framework.Models.DataTables
+@using Nop.Core.Domain.Common
+@using Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
 @using Nop.Web.Framework.Models.DataTables
 @using Nop.Services.Common
 @using Nop.Core
@@ -92,6 +95,11 @@
                             {
                                 Title = "Referrer",
                                 Width = "300"
+                            },
+                            new ColumnProperty(nameof(PageNotFoundModel.CustomerEmail))
+                            {
+                                Title = "Customer",
+                                Render = new RenderLink(new DataUrl("~/Admin/Customer/Edit", nameof(PageNotFoundModel.CustomerId)))
                             },
                             new ColumnProperty(nameof(PageNotFoundModel.Date))
                             {

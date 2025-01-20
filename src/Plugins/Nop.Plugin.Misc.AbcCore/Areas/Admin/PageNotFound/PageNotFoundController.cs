@@ -16,18 +16,22 @@ using Nop.Core;
 using Nop.Plugin.Misc.AbcCore.Nop;
 using Nop.Services.Helpers;
 using System;
+using Nop.Services.Customers;
 
-namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
+namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
 {
     public class PageNotFoundController : BaseAdminController
     {
+        private readonly ICustomerService _customerService;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IAbcLogger _logger;
 
         public PageNotFoundController(
+            ICustomerService customerService,
             IDateTimeHelper dateTimeHelper,
             IAbcLogger logger)
         {
+            _customerService = customerService;
             _dateTimeHelper = dateTimeHelper;
             _logger = logger;
         }
@@ -35,7 +39,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
         public IActionResult List()
         {
             return View(
-                "~/Plugins/Misc.AbcCore/Areas/Admin/Views/PageNotFound/List.cshtml",
+                "~/Plugins/Misc.AbcCore/Areas/Admin/PageNotFound/List.cshtml",
                 new PageNotFoundSearchModel()
             );
         }
@@ -54,10 +58,13 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
                 //fill in model values from the entity
                 return pagedList.SelectAwait(async log =>
                 {
+                    var customerId = log.CustomerId.HasValue ? log.CustomerId.Value : 0;
                     var PageNotFoundModel = new PageNotFoundModel()
                     {
                         Slug = log.PageUrl,
                         ReferrerUrl = log.ReferrerUrl,
+                        CustomerId = customerId,
+                        CustomerEmail = (await _customerService.GetCustomerByIdAsync(customerId))?.Email ?? "Guest",
                         Date = await _dateTimeHelper.ConvertToUserTimeAsync(log.CreatedOnUtc, DateTimeKind.Utc)
                     };
 
