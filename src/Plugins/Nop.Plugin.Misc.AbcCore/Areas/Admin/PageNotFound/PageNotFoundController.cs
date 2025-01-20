@@ -52,6 +52,14 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
             {
                 logs = logs.Where(logs => logs.PageUrl.Contains(searchModel.Slug)).ToList();
             }
+            if (!string.IsNullOrWhiteSpace(searchModel.CustomerEmail))
+            {
+                var customerId = (await _customerService.GetCustomerByEmailAsync(searchModel.CustomerEmail))?.Id;
+                if (customerId.HasValue)
+                {
+                    logs = logs.Where(logs => logs.CustomerId == customerId.Value).ToList();
+                }
+            }
             var pagedList = logs.ToPagedList(searchModel);
             var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pagedList, () =>
             {
