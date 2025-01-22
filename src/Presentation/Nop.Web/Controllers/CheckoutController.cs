@@ -502,11 +502,11 @@ namespace Nop.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult BillingAddressWithSms(CheckoutBillingAddressModel model)
+        public async Task<IActionResult> BillingAddressWithSms(CheckoutBillingAddressModel model)
         {
             //if (model.SmsOptIn)
             //{
-                var token = _listrakApiService.GetTokenAsync();
+                var token = await _listrakApiService.GetTokenAsync();
                 Console.WriteLine($"Token: {token}");
                 
                 var billingAddress = model.BillingNewAddress;
