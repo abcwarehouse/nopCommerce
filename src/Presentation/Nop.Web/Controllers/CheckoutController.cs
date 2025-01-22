@@ -503,7 +503,8 @@ namespace Nop.Web.Controllers
         [HttpPost]
         public IActionResult BillingAddressWithSms(CheckoutBillingAddressModel model)
         {
-
+            //if (model.SmsOptIn)
+            //{
                 var token = _listrakApiService.GetTokenAsync();
                 Console.WriteLine($"Token: {token}");
                 
@@ -535,7 +536,7 @@ namespace Nop.Web.Controllers
                     ModelState.AddModelError("", "Error calling third-party API.");
                     return View(model);
                 }
-            
+            //}
 
             return RedirectToRoute("CheckoutShippingAddress");
         }
@@ -559,10 +560,10 @@ namespace Nop.Web.Controllers
             if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
-            if(model.SmsOptIn == true) 
-            {
+            //if(model.SmsOptIn == true) 
+            //{
                 BillingAddressWithSms(model);
-            }
+            //}
 
             //custom address attributes
             var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
