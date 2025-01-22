@@ -21,7 +21,7 @@ namespace Nop.Web.Infrastructure
         /// <param name="appSettings">App settings</param>
         public virtual void Register(IServiceCollection services, ITypeFinder typeFinder, AppSettings appSettings)
         {
-            builder.RegisterType<ListrakApiService>().As<IListrakApiService>().InstancePerLifetimeScope();
+            //builder.RegisterType<ListrakApiService>().As<IListrakApiService>().InstancePerLifetimeScope();
             //installation localization service
             services.AddScoped<IInstallationLocalizationService, InstallationLocalizationService>();
 
