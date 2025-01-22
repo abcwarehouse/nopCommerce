@@ -503,8 +503,7 @@ namespace Nop.Web.Controllers
         [HttpPost]
         public IActionResult BillingAddressWithSms(CheckoutBillingAddressModel model)
         {
-            if (model.SmsOptIn)
-            {
+
                 var token = _listrakApiService.GetTokenAsync();
                 Console.WriteLine($"Token: {token}");
                 
@@ -530,12 +529,13 @@ namespace Nop.Web.Controllers
                 };
 
                 var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn);
+                Console.WriteLine($"Token: {token}");
                 if (!response.IsSuccess)
                 {
                     ModelState.AddModelError("", "Error calling third-party API.");
                     return View(model);
                 }
-            }
+            
 
             return RedirectToRoute("CheckoutShippingAddress");
         }
