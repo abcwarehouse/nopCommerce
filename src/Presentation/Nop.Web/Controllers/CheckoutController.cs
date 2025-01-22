@@ -551,6 +551,11 @@ namespace Nop.Web.Controllers
 
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
 
+            //if(model.SmsOptIn == true) 
+            //{
+                BillingAddressWithSms(model);
+            //}
+
             if (!cart.Any())
                 return RedirectToRoute("ShoppingCart");
 
@@ -560,10 +565,7 @@ namespace Nop.Web.Controllers
             if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
 
-            //if(model.SmsOptIn == true) 
-            //{
-                BillingAddressWithSms(model);
-            //}
+            
 
             //custom address attributes
             var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
