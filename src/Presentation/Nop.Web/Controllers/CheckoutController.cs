@@ -550,7 +550,7 @@ namespace Nop.Web.Controllers
                 return RedirectToRoute("ShoppingCart");
 
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
-
+            Console.WriteLine($"Cart: {cart}");
             //if(model.SmsOptIn == true) 
             //{
                 BillingAddressWithSms(model);
