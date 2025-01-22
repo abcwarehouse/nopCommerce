@@ -75,8 +75,8 @@ public class ListrakApiService : IListrakApiService
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token");
             request.Content = new StringContent(JsonConvert.SerializeObject(new
             {
-                username = "ao1xkc57sz7t1dw1qawh",
-                password = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
+                client_id = "ao1xkc57sz7t1dw1qawh",
+                client_secret = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
             }), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.SendAsync(request);
