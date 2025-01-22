@@ -504,6 +504,7 @@ namespace Nop.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> BillingAddressWithSms(CheckoutBillingAddressModel model)
         {
+            Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if (model.SmsOptIn)
             //{
                 var token = await _listrakApiService.GetTokenAsync();
@@ -553,6 +554,7 @@ namespace Nop.Web.Controllers
 
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
             Console.WriteLine($"Cart: {cart}");
+            Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if(model.SmsOptIn == true) 
             //{
                 BillingAddressWithSms(model);
