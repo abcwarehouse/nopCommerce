@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Services.Custom;
 using Nop.Web.Framework.Infrastructure.Extensions;
+using Autofac;
 
 namespace Nop.Web
 {
@@ -39,6 +40,9 @@ namespace Nop.Web
             services.AddScoped<IListrakApiService, ListrakApiService>();
             services.AddHttpClient<ListrakApiService>();
             services.AddHttpClient();
+
+            // Bind ListrakApiSettings to configuration
+            services.Configure<ListrakApiSettings>(_configuration.GetSection("ListrakApi"));
         }
 
         /// <summary>
@@ -49,6 +53,21 @@ namespace Nop.Web
         {
             application.ConfigureRequestPipeline();
             application.StartEngine();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            // Register ListrakApiSettings
+            builder.Register(ctx =>
+            {
+                var config = ctx.Resolve<IConfiguration>();
+                var listrakApiSettings = new ListrakApiSettings();
+                config.GetSection("ListrakApi").Bind(listrakApiSettings);
+                return listrakApiSettings;
+            }).SingleInstance();
+
+            // Register ListrakApiService
+            builder.RegisterType<ListrakApiService>().AsSelf().InstancePerLifetimeScope();
         }
     }
 }
