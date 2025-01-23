@@ -73,22 +73,22 @@ public class ListrakApiService : IListrakApiService
     {
         try
         {
-            /*var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token");
             request.Content = new StringContent(JsonConvert.SerializeObject(new
             {
-                client = "ao1xkc57sz7t1dw1qawh",
-                secret = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
-            }), Encoding.UTF8, "application/json");*/
+                client_id = "ao1xkc57sz7t1dw1qawh",
+                client_secret = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
+            }), Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token")
+            /*var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token")
             {
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    { "client", "ao1xkc57sz7t1dw1qawh" },
-                    { "secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
+                    { "client_id", "ao1xkc57sz7t1dw1qawh" },
+                    { "client_secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
                     { "grant_type", "client_credentials" } // Include grant_type if required
                 })
-            };
+            };*/
 
             var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
