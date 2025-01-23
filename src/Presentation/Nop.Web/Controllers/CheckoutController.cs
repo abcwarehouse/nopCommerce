@@ -557,7 +557,7 @@ namespace Nop.Web.Controllers
             Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if(model.SmsOptIn == true) 
             //{
-                BillingAddressWithSms(model);
+                await BillingAddressWithSms(model);
             //}
 
             if (!cart.Any())
