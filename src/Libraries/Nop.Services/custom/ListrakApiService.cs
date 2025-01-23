@@ -119,7 +119,7 @@ public class ListrakApiService : IListrakApiService
             }
         };
 
-        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/{billingAddress.PhoneNumber}/PhoneList/152", listrakData).Result;
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
 
         return new ApiResponse
         {
