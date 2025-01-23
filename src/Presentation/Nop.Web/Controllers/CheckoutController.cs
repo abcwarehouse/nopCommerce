@@ -528,7 +528,6 @@ namespace Nop.Web.Controllers
                     PhoneNumber = billingAddress.PhoneNumber,
                     FaxNumber = billingAddress.FaxNumber,
                     SmsOptIn = billingAddress.SmsOptIn
-
                 };
 
                 var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn);

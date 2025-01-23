@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Nop.Core.Domain.Common;
 using Nop.Services.Custom;
@@ -16,13 +17,13 @@ public class ListrakApiService : IListrakApiService
     private readonly IConfiguration _configuration;
     private readonly ListrakApiSettings _listrakApiSettings;
 
-    public ListrakApiService(HttpClient httpClient, IHttpClientFactory httpClientFactory, IConfiguration configuration, ListrakApiSettings listrakApiSettings)
+    public ListrakApiService(HttpClient httpClient, IHttpClientFactory httpClientFactory, IConfiguration configuration, IOptions<ListrakApiSettings> listrakApiSettings)
     {
         _httpClientFactory = httpClientFactory;
         _httpClient = httpClient;
         _configuration = configuration;
         _httpClient.BaseAddress = new Uri("https://api.listrak.com");
-        _listrakApiSettings = listrakApiSettings;
+        _listrakApiSettings = listrakApiSettings.Value;
     }
 
     public async Task<string> GetTokenAsync()
@@ -34,7 +35,7 @@ public class ListrakApiService : IListrakApiService
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "client_id", _listrakApiSettings.ClientId },
-                    { "client_secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
+                    { "client_secret", _listrakApiSettings.ClientSecret },
                     { "grant_type", "client_credentials" }
                 })
             };
