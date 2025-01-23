@@ -73,29 +73,29 @@ public class ListrakApiService : IListrakApiService
     {
         try
         {
-            /*var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token");
-            request.Content = new StringContent(JsonConvert.SerializeObject(new
-            {
-                client_id = "ao1xkc57sz7t1dw1qawh",
-                client_secret = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
-            }), Encoding.UTF8, "application/json");*/
-
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token")
             {
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "client_id", "ao1xkc57sz7t1dw1qawh" },
                     { "client_secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
-                    { "grant_type", "client_credentials" } // Include grant_type if required
+                    { "grant_type", "client_credentials" }
                 })
             };
 
+            request.Headers.Add("Accept", "application/json");
+
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-
             var content = await response.Content.ReadAsStringAsync();
-            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
 
+            Console.WriteLine($"Response Content: {content}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to retrieve token. Status Code: {response.StatusCode}, Response: {content}");
+            }
+
+            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
             return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
         }
         catch (Exception ex)
