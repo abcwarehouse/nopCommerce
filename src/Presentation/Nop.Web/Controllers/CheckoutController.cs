@@ -507,7 +507,7 @@ namespace Nop.Web.Controllers
             Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if (model.SmsOptIn)
             //{
-                var token = await _listrakApiService.GetTokenAsync();
+                //var token = await _listrakApiService.GetTokenAsync();
                 Console.WriteLine($"Token: {token}");
                 
                 var billingAddress = model.BillingNewAddress;
@@ -535,7 +535,7 @@ namespace Nop.Web.Controllers
                 Console.WriteLine($"Token: {token}");
                 if (!response.IsSuccess)
                 {
-                    ModelState.AddModelError("", token.ToString());
+                    //ModelState.AddModelError("", token.ToString());
                     ModelState.AddModelError("", "Error calling third-party API.");
                     return View(model);
                 }
