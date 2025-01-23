@@ -507,8 +507,8 @@ namespace Nop.Web.Controllers
             Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if (model.SmsOptIn)
             //{
-                //var token = await _listrakApiService.GetTokenAsync();
-                //Console.WriteLine($"Token: {token}");
+                var token = await _listrakApiService.GetTokenAsync();
+                Console.WriteLine($"Token: {token}");
                 
                 var billingAddress = model.BillingNewAddress;
 
@@ -531,11 +531,11 @@ namespace Nop.Web.Controllers
 
                 };
 
-                var response = _listrakApiService.SendBillingAddress("2t2vf5kupP4MEKtu0_EQm6Idyxcr9j2V1dHW4QfXwvklxtWh76zt4V3kCrRdlVUTn07LCYMIhAcccIjmdLjYuoRfPooDJGhswpHhXm7Z59W6Z9P5F3AA0hjgjCsT_m9jqeWMcVB_IVDmVdCE8_E5YGWwRAD0pWHkpOMLX4Yw2MJK4o8cfwItvcTihM58B_o6viY9lRPj1Vc-g1tSWlchBr9DKtaxjpscWIZfBCsrKC4c3-n--JoZZTsGeJOJDIuu_SihAJYcZr3UIO3StsDnB19N6sU0zJa2tQ41ZubHw40uJLPHLeBETurCqZR7q14a", billingAddressConverted, model.SmsOptIn);
-                //Console.WriteLine($"Token: {token}");
+                var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn);
+                Console.WriteLine($"Token: {token}");
                 if (!response.IsSuccess)
                 {
-                    //ModelState.AddModelError("", token.ToString());
+                    ModelState.AddModelError("", token.ToString());
                     ModelState.AddModelError("", "Error calling third-party API.");
                     return View(model);
                 }
@@ -557,7 +557,7 @@ namespace Nop.Web.Controllers
             Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if(model.SmsOptIn == true) 
             //{
-                await BillingAddressWithSms(model);
+                BillingAddressWithSms(model);
             //}
 
             if (!cart.Any())

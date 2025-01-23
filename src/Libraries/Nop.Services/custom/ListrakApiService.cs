@@ -75,8 +75,8 @@ public class ListrakApiService : IListrakApiService
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token");
             request.Content = new StringContent(JsonConvert.SerializeObject(new
             {
-                client_id = "ao1xkc57sz7t1dw1qawh",
-                client_secret = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
+                client = "ao1xkc57sz7t1dw1qawh",
+                secret = "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE"
             }), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.SendAsync(request);
@@ -118,11 +118,11 @@ public class ListrakApiService : IListrakApiService
             {
                 ShortCodeId = "1026",
                 PhoneNumber = "2484083263",
-                PhoneListId = "148"
+                PhoneListId = "149"
             }
         };
 
-        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/2484083263/PhoneList/148", listrakData).Result;
+        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/7343081104/PhoneList/148", listrakData).Result;
 
         return new ApiResponse
         {
