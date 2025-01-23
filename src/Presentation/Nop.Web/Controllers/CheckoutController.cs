@@ -508,7 +508,7 @@ namespace Nop.Web.Controllers
             //if (model.SmsOptIn)
             //{
                 //var token = await _listrakApiService.GetTokenAsync();
-                Console.WriteLine($"Token: {token}");
+                //Console.WriteLine($"Token: {token}");
                 
                 var billingAddress = model.BillingNewAddress;
 
