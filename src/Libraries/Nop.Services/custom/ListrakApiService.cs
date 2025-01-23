@@ -109,21 +109,6 @@ public class ListrakApiService : IListrakApiService
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var data = new
-        {
-            Address = new
-            {
-                billingAddress.FirstName,
-                billingAddress.LastName,
-                billingAddress.Email,
-                billingAddress.Address1,
-                billingAddress.City,
-                billingAddress.ZipPostalCode,
-                billingAddress.CountryId,
-                billingAddress.PhoneNumber
-            },
-            CheckboxChecked = isCheckboxChecked
-        };
         var listrakData = new 
         {
             ListrakData = new 
@@ -134,7 +119,7 @@ public class ListrakApiService : IListrakApiService
             }
         };
 
-        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{listrakData.ListrakData.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/{billingAddress.PhoneNumber}/PhoneList/152", listrakData).Result;
 
         return new ApiResponse
         {
