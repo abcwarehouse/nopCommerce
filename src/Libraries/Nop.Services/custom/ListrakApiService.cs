@@ -120,6 +120,7 @@ public class ListrakApiService : IListrakApiService
                 billingAddress.City,
                 billingAddress.ZipPostalCode,
                 billingAddress.CountryId,
+                billingAddress.PhoneNumber
             },
             CheckboxChecked = isCheckboxChecked
         };
@@ -128,12 +129,12 @@ public class ListrakApiService : IListrakApiService
             ListrakData = new 
             {
                 ShortCodeId = "1026",
-                PhoneNumber = "2484083263",
-                PhoneListId = "149"
+                PhoneNumber = billingAddress.PhoneNumber,
+                PhoneListId = "152"
             }
         };
 
-        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/1026/Contact/7343081104/PhoneList/152", listrakData).Result;
+        var response = client.PostAsJsonAsync("https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{listrakData.ListrakData.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
 
         return new ApiResponse
         {
