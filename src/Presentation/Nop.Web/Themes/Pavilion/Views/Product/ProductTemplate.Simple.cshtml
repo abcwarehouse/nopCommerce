@@ -275,26 +275,8 @@
                         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })
                     </div>
 
-                    <!--Power Reviews reviews-->
-                    @{
-                        String category = "";
-                        if (Model.Breadcrumb != null && Model.Breadcrumb.CategoryBreadcrumb != null && Model.Breadcrumb.CategoryBreadcrumb.Count > 0)
-                        {
-                            category = Model.Breadcrumb.CategoryBreadcrumb.ToArray().Last().Name;
-                        }
-
-                        var prDesc = " ";
-
-                        if (productIsAbc)
-                        {
-                            prDesc = Html.Encode(abcP.AbcDescription);
-                        }
-                        else if (!string.IsNullOrEmpty(currentProduct.ShortDescription))
-                        {
-                            var truncatedDesc = currentProduct.ShortDescription.Length <= 300 ? currentProduct.ShortDescription : currentProduct.ShortDescription.Substring(0, 300);
-                            prDesc = Html.Encode(truncatedDesc);
-                        }
-                    }
+                    <!--BV reviews-->
+                    <div data-bv-show="rating_summary" data-bv-product-id="@{Model.Id}"></div>
 
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
                 </div>
