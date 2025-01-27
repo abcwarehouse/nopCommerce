@@ -276,7 +276,9 @@
                     </div>
 
                     <!--BV reviews-->
-                    <div data-bv-show="rating_summary" data-bv-product-id="@{Model.Id}"></div>
+                    @{
+                        <div data-bv-show="rating_summary" data-bv-product-id= $"{currentProduct.Id}"></div>
+                    }
 
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
                 </div>
