@@ -16,6 +16,9 @@ using Nop.Services.Media;
 using Nop.Services.Logging;
 using Nop.Plugin.Widgets.AbcPromos;
 using Task = System.Threading.Tasks.Task;
+using Nop.Web.Models.Catalog;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 {
@@ -32,6 +35,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly IProductService _productService;
         private readonly ITopicService _topicService;
         private readonly IUrlRecordService _urlRecordService;
+        private readonly IUrlHelper _urlHelper;
 
         private readonly ILogger _logger;
 
@@ -51,7 +55,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             IUrlRecordService urlRecordService,
             ILogger logger,
             MediaSettings mediaSettings,
-            AbcPromosSettings settings
+            AbcPromosSettings settings,
+            IUrlHelper urlHelper
         )
         {
             _topicRepository = topicRepository;
@@ -67,6 +72,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             _logger = logger;
             _mediaSettings = mediaSettings;
             _settings = settings;
+            _urlHelper = urlHelper;
         }
 
         public async Task ExecuteAsync()
@@ -129,6 +135,9 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                         $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
 
                         "</div>";
+
+                html += $"<a href=\"{manName}\">Shop {manName}</a>";
+
                 }
                          
             }
