@@ -12,6 +12,7 @@
 @using Nop.Plugin.Misc.AbcCore.Extensions
 @using Nop.Services.Configuration;
 @using Nop.Plugin.Misc.AbcCore.Nop;
+@using Microsoft.Extensions.Logging;
 
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
@@ -277,8 +278,10 @@
 
                     <!--BV reviews-->
                     @{
-                        <div data-bv-show="rating_summary" data-bv-product-id= $"{currentProduct.Id}"></div>
-                        Console.Log("ProductId: ", currentProduct.Id);
+                        <div data-bv-show="rating_summary" data-bv-product-id= "@currentProduct.Id"></div>
+                        <div class="testing">
+                            @currentProduct.Id
+                        </div>
                     }
 
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
