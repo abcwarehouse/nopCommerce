@@ -168,6 +168,9 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                         "</div>";
 
             }
+                 html += $"< a href = \"@Url.RouteUrl(\"Manufacturer\", new { SeName = item.SeName })\" title = \"@item.PictureModel.Title\" >  @item.Name </ a >";
+
+
         }
             html += "</div>";
 
