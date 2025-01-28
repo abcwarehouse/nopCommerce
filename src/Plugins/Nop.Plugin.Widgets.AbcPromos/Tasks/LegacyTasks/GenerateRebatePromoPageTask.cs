@@ -34,7 +34,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly IProductService _productService;
         private readonly ITopicService _topicService;
         private readonly IUrlRecordService _urlRecordService;
-        private readonly IUrlHelper _urlHelper;
         private readonly MediaSettings _mediaSettings;
         private readonly AbcPromosSettings _settings;
 
