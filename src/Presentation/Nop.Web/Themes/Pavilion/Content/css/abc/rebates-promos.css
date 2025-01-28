@@ -28,3 +28,22 @@
     text-align: left;
     width: 100%;
 }
+
+.ManButton {
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgb(255, 255, 255) 0px 1px 0px 0px inset;
+    color: rgb(255, 138, 0);
+    cursor: pointer;
+    display: inline-block;
+    font-family: Arial;
+    font-size: 14px;
+    text-shadow: rgb(255, 255, 255) 0px 1px 0px;
+    margin-bottom: 10px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(220, 220, 220);
+    border-image: initial;
+    border-radius: 16px;
+    padding: 6px 24px;
+    text-decoration: none;
+}
