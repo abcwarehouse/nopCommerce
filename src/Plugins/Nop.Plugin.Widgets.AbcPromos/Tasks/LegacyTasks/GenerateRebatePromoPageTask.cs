@@ -106,10 +106,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
                             (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
                             await _abcPromoService.GetActivePromosAsync();
-
-            //Dictionary Group Promos by ManNum
-            var promoGroups = new Dictionary<string, List<dynamic>>();
-
             foreach (var promo in promos)
             {
                 var publishedPromoProducts = await _abcPromoService.GetPublishedProductsByPromoIdAsync(promo.Id);
@@ -117,59 +113,26 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 {
                     continue;
                 }
-
-
-
-
+                
+                
                 var promoDescription = promo.ManufacturerId != null ?
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
 
-                var manufactureModel = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-                string manName;
-
-                if (manufactureModel != null && manufactureModel.Name != null)
+                if(promo.ManufacturerId != null)
                 {
-                    manName = manufactureModel.Name;
-                }
-                else
-                {
-                    manName = "Universal";
-                }
+                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
 
-                // Store in the dictionary grouped by manufacturer name
-                if (!promoGroups.ContainsKey(manName))
-                {
-                    promoGroups[manName] = new List<dynamic>();
-                }
+                  string manName = manufactureModel.Name;
+                  if (manName == "")
+                    {
+                        manName = "Universal";
+                    }
 
-                promoGroups[manName].Add(new
-                {
-                    Promo = promo,
-                    PromoDescription = promoDescription
-                });
-
-            }
-            //Sort Groups Alphabetically
-            var sortedPromoGroups = promoGroups.OrderBy(p => p.Key);
-
-            foreach (var group in sortedPromoGroups)
-            {
-                // ManName Header
-                html += $"<div class=\"abc-manufacturer-container\">" + 
-                $"<h2 class=\"abc-manufacturer-title\">{group.Key}</h2>" +
-                $"</div>";
-
-
-                foreach (var promoItem in group.Value)
-        {
-                var promo = promoItem.Promo;
-                var promoDescription = promoItem.PromoDescription;
-
-                html += $"<div class=\"abc-item abc-promo-item\"> " +
+                html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
                         $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
                         $"{promoDescription}</a><br />" +
-                        $"Expires {promo.EndDate.ToString("MM-dd-yy")}" +
+                        $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
 
                         "</div>";
 
@@ -179,11 +142,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                          
             }
 
-            }
-                 html += $"< a href = \"@Url.RouteUrl(\"Manufacturer\", new { SeName = item.SeName })\" title = \"@item.PictureModel.Title\" >  @item.Name </ a >";
-
-
-        }
             html += "</div>";
 
             return html;
