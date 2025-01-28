@@ -118,12 +118,11 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 var promoDescription = promo.ManufacturerId != null ?
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
-                 
-                if(promo.ManufacturerId != null)
-                {
-                    var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                 var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
 
                 string manName = manufactureModel.Name;
+                if(promo.ManufacturerId != null)
+                {
                  
                   if (manName == "")
                     {
@@ -138,9 +137,9 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                         "</div>";
 
                 
-                     html += $"<a class=\"ManButton\" href=\"{manName}\">Shop {manName}</a>";
+
                 }
-               
+                html += $"<a class=\"ManButton\" href=\"{manName}\">Shop {manName}</a>";
 
                          
             }
