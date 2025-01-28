@@ -28,7 +28,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductAbcDescription> _productAbcDescriptionRepository;
         private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
-
         private readonly IAbcPromoService _abcPromoService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IPictureService _pictureService;
@@ -36,7 +35,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly ITopicService _topicService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IUrlHelper _urlHelper;
-        private readonly ILogger _logger;
         private readonly MediaSettings _mediaSettings;
         private readonly AbcPromosSettings _settings;
 
@@ -51,10 +49,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             IProductService productService,
             ITopicService topicService,
             IUrlRecordService urlRecordService,
-            ILogger logger,
             MediaSettings mediaSettings,
             AbcPromosSettings settings,
-            IUrlHelper urlHelper
         )
         {
             _topicRepository = topicRepository;
@@ -67,10 +63,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             _productService = productService;
             _topicService = topicService;
             _urlRecordService = urlRecordService;
-            _logger = logger;
             _mediaSettings = mediaSettings;
             _settings = settings;
-            _urlHelper = urlHelper;
         }
 
         public async Task ExecuteAsync()
