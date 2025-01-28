@@ -1,4 +1,4 @@
-﻿﻿using Nop.Services.Tasks;
+﻿using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Core.Domain.Topics;
 using Nop.Services.Topics;
@@ -136,9 +136,10 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
                         "</div>";
 
-                html += $"<a href=\"{manName}\">Shop {manName}</a>";
+                
 
                 }
+                html += $"<a href=\"{manName}\">Shop {manName}</a>";
                          
             }
 
