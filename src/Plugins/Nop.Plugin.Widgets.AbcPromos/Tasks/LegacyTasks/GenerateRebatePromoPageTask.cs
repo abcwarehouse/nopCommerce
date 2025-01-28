@@ -49,7 +49,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             ITopicService topicService,
             IUrlRecordService urlRecordService,
             MediaSettings mediaSettings,
-            AbcPromosSettings settings,
+            AbcPromosSettings settings
         )
         {
             _topicRepository = topicRepository;
