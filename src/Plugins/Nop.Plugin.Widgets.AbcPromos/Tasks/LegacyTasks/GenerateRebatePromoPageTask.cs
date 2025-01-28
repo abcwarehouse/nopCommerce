@@ -118,12 +118,12 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 var promoDescription = promo.ManufacturerId != null ?
                                 $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
                                 promo.Description;
+                 var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
 
+                string manName = manufactureModel.Name;
                 if(promo.ManufacturerId != null)
                 {
-                  var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-
-                  string manName = manufactureModel.Name;
+                 
                   if (manName == "")
                     {
                         manName = "Universal";
