@@ -278,8 +278,7 @@
 
                     <!--BV reviews-->
                     @{
-                        var dumbTest = "productId" + currentProduct.Id;
-                        <div data-bv-show="rating_summary" data-bv-product-id= "@dumbTest"></div>
+                        <div data-bv-show="rating_summary" data-bv-product-id= "@currentProduct.Id"></div>
                         <div class="testing">
                             @currentProduct.Id
                         </div>
