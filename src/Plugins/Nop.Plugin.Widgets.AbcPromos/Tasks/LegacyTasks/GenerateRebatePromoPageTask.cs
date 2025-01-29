@@ -37,7 +37,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly IUrlRecordService _urlRecordService;
         private readonly IUrlHelper _urlHelper;
 
-        private readonly ILogger _logger;
+       
 
         private readonly MediaSettings _mediaSettings;
         private readonly AbcPromosSettings _settings;
@@ -53,7 +53,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             IProductService productService,
             ITopicService topicService,
             IUrlRecordService urlRecordService,
-            ILogger logger,
+            
             MediaSettings mediaSettings,
             AbcPromosSettings settings,
             IUrlHelper urlHelper
@@ -69,7 +69,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             _productService = productService;
             _topicService = topicService;
             _urlRecordService = urlRecordService;
-            _logger = logger;
+            
             _mediaSettings = mediaSettings;
             _settings = settings;
             _urlHelper = urlHelper;
