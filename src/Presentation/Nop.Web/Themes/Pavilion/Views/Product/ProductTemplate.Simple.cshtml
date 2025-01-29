@@ -278,34 +278,12 @@
 
                     <!--BV reviews-->
                     @{
-                        <div data-bv-show="rating_summary" data-bv-product-id= "@currentProduct.Id"></div>
+                        <div data-bv-show="rating_summary" data-bv-product-id= "productId\@currentProduct.Id"></div>
                         <div class="testing">
                             @currentProduct.Id
                         </div>
                     }
-                    <!--load Transaction event and parameters-->
-                    <script>
-                        window.bvCallback = function (BV) {
-                            BV.pixel.trackTransaction({
-                                "currency" : "USD",
-                                "orderId" : "1",
-                                "total" : "0",
-                                "items" : [
-                                {
-                                    "price" : @currentProduct.Price,
-                                    "quantity" : "1",
-                                    "productId" : @currentProduct.Id,
-                                    "optional_item_parameter" : "value"
-                                },
-                                ...
-                                ],
-                                "optional_order_parameter" : "value",
-                                ...
-                                "optional_PII_parameter" : "value",
-                                ...
-                            });
-                        };
-                    </script>
+
 
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
                 </div>
