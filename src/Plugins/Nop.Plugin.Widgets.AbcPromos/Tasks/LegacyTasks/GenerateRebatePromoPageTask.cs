@@ -98,7 +98,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             await _topicService.UpdateTopicAsync(topic);
         }
 
-        private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
+       private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
 {
     var html = $"<h2 class=\"abc-rebate-promo-title\">Promos</h2><div class=\"abc-container abc-promo-container\">";
 
@@ -106,19 +106,31 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                  (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
                  await _abcPromoService.GetActivePromosAsync();
 
-    var promoGroups = promos.GroupBy(async promo => {
-        var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-        return manufacturer?.Name ?? "Universal";
-    });
+    // Create a dictionary to store manufacturer names to avoid multiple async calls inside LINQ
+    var promoGroups = new Dictionary<string, List<AbcPromo>>();
 
-    foreach (var group in promoGroups.OrderBy(g => g.Key.Result))
+    foreach (var promo in promos)
     {
-        string manName = await group.Key;
-        string promoSlug = await _urlRecordService.GetActiveSlugAsync(group.First().Id, "AbcPromo", 0) ?? "default-slug";
+        var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+        var manName = manufacturer?.Name ?? "Universal";
+
+        if (!promoGroups.ContainsKey(manName))
+        {
+            promoGroups[manName] = new List<AbcPromo>();
+        }
+
+        promoGroups[manName].Add(promo);
+    }
+
+    foreach (var group in promoGroups.OrderBy(g => g.Key))
+    {
+        string manName = group.Key;
+        var firstPromo = group.Value.First();
+        string promoSlug = await _urlRecordService.GetActiveSlugAsync(firstPromo.Id, "AbcPromo", 0) ?? "default-slug";
 
         html += $"<h1>{manName}</h1>";
 
-        foreach (var promo in await Task.WhenAll(group))
+        foreach (var promo in group.Value)
         {
             var promoDescription = $"{manName} - {promo.Description}";
 
@@ -127,8 +139,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                     $"Expires {promo.EndDate:MM-dd-yy}" +
                     "</div>";
         }
-        
-    html += $"<a class=\"ManButton\" href=\"/promos/{promoSlug}\">Shop {manName}</a>";
+
+        html += $"<a class=\"ManButton\" href=\"/promos/{promoSlug}\">Shop {manName}</a>";
     }
 
     return html;
