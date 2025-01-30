@@ -130,6 +130,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         foreach (var promo in group.Value)
         {
             string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
+            string promoSlug1 = await _urlRecordService.GetActiveSlugAsync(firstPromo.Id, "AbcPromo", 0) ?? "default-slug";
             var promoDescription = $"{manName} - {promo.Description}";
 
            html += $"<div class=\"abc-item abc-promo-item\"> " +
@@ -137,6 +138,9 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                    $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
                     "</div>";
         }
+
+        html += $"<a class=\"ManButton\" href=\"/promos/{promoSlug1}\">Shop {manName}</a>";
+
     }
 
     return html;
