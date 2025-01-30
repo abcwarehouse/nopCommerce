@@ -125,6 +125,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
     foreach (var group in promoGroups.OrderBy(g => g.Key))
     {
         string manName = group.Key;
+        var firstPromo = group.Value.First();
         html += $"<h1>{manName}</h1>";
 
         foreach (var promo in group.Value)
