@@ -106,7 +106,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                  (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
                  await _abcPromoService.GetActivePromosAsync();
 
-    // Create a dictionary to store manufacturer names to avoid multiple async calls inside LINQ
+    // Dictionary to store manufacturer names and their promos
     var promoGroups = new Dictionary<string, List<AbcPromo>>();
 
     foreach (var promo in promos)
@@ -125,22 +125,18 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
     foreach (var group in promoGroups.OrderBy(g => g.Key))
     {
         string manName = group.Key;
-        var firstPromo = group.Value.First();
-        string promoSlug = await _urlRecordService.GetActiveSlugAsync(firstPromo.Id, "AbcPromo", 0) ?? "default-slug";
-
         html += $"<h1>{manName}</h1>";
 
         foreach (var promo in group.Value)
         {
+            string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
             var promoDescription = $"{manName} - {promo.Description}";
 
-            html += $"<div class=\"abc-item abc-promo-item\"> " +
-                    $"{promoDescription}<br />" +
-                    $"Expires {promo.EndDate:MM-dd-yy}" +
+           html += $"<div class=\"abc-item abc-promo-item\"> " +
+                   $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" + 
+                   $"Expires {promo.EndDate:MM-dd-yy}<br />" +
                     "</div>";
         }
-
-        html += $"<a class=\"ManButton\" href=\"/promos/{promoSlug}\">Shop {manName}</a>";
     }
 
     return html;
