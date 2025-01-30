@@ -4565,6 +4565,10 @@ label, label + * {
 	margin: 20px 0 0;
 }
 
+.product-box-review {
+	margin-left: 15px;
+}
+
 .section.shipping-method,
 .section.payment-method,
 .section.payment-info,
