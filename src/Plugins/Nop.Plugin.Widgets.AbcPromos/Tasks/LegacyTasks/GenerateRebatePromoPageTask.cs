@@ -55,7 +55,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             IUrlRecordService urlRecordService,
             
             MediaSettings mediaSettings,
-            AbcPromosSettings settings,
+            AbcPromosSettings settings
             
         )
         {
