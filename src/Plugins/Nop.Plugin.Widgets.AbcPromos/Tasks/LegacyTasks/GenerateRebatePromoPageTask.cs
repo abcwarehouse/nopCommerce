@@ -114,6 +114,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
     foreach (var group in promoGroups.OrderBy(g => g.Key.Result))
     {
         string manName = await group.Key;
+        string promoSlug = await _urlRecordService.GetActiveSlugAsync(group.First().Id, "AbcPromo", 0) ?? "default-slug";
+
         html += $"<h1>{manName}</h1>";
 
         foreach (var promo in await Task.WhenAll(group))
@@ -122,11 +124,11 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
             html += $"<div class=\"abc-item abc-promo-item\"> " +
                     $"{promoDescription}<br />" +
-                    $"Expires {promo.EndDate.ToString("MM-dd-yy")}" +
+                    $"Expires {promo.EndDate:MM-dd-yy}" +
                     "</div>";
         }
         
-        html += $"<a class=\"ManButton\" href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(group.First().Id, \"AbcPromo\", 0) ?? \"default-slug\"}\">Shop {manName}</a>";
+    html += $"<a class=\"ManButton\" href=\"/promos/{promoSlug}\">Shop {manName}</a>";
     }
 
     return html;
