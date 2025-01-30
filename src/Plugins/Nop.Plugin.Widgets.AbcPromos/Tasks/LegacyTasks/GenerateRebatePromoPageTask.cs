@@ -126,22 +126,22 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
     {
         string manName = group.Key;
         var firstPromo = group.Value.First();
+        string promoSlug1 = await _urlRecordService.GetActiveSlugAsync(firstPromo.Id, "AbcPromo", 0) ?? "default-slug";
+
         html += $"<h1>{manName}</h1>";
 
         foreach (var promo in group.Value)
         {
             string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
-            string promoSlug1 = await _urlRecordService.GetActiveSlugAsync(firstPromo.Id, "AbcPromo", 0) ?? "default-slug";
             var promoDescription = $"{manName} - {promo.Description}";
 
-           html += $"<div class=\"abc-item abc-promo-item\"> " +
+            html += $"<div class=\"abc-item abc-promo-item\"> " +
                    $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" + 
                    $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
-                    "</div>";
+                   "</div>";
         }
 
         html += $"<a class=\"ManButton\" href=\"/promos/{promoSlug1}\">Shop {manName}</a>";
-
     }
 
     return html;
