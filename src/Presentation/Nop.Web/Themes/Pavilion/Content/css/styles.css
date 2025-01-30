@@ -4566,7 +4566,7 @@ label, label + * {
 }
 
 .product-box-review {
-	margin-left: 15px;
+	margin: 10px 0;
 }
 
 .section.shipping-method,
