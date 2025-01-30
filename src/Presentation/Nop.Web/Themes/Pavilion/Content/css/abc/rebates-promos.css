@@ -9,12 +9,12 @@
     margin: 2% 3% 2% 0%;
     /* background: #fff; */
     line-height: 25px;
-    padding: 1rem;
+    /* padding: 1rem; */
     flex: 0 0 16rem;
 }
 
 .abc-item a {
-    text-decoration: none;
+    /* text-decoration: none; */
     font-weight: bold;
 }
 
