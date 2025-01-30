@@ -16,6 +16,7 @@
 .abc-item a {
     /* text-decoration: none; */
     font-weight: bold;
+    color: blue;
 }
 
 .abc-item a:hover {
