@@ -35,7 +35,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         private readonly IProductService _productService;
         private readonly ITopicService _topicService;
         private readonly IUrlRecordService _urlRecordService;
-        private readonly IUrlHelper _urlHelper;
+       
 
        
 
@@ -56,7 +56,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             
             MediaSettings mediaSettings,
             AbcPromosSettings settings,
-            IUrlHelper urlHelper
+            
         )
         {
             _topicRepository = topicRepository;
@@ -72,7 +72,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             
             _mediaSettings = mediaSettings;
             _settings = settings;
-            _urlHelper = urlHelper;
+           
         }
 
         public async Task ExecuteAsync()
