@@ -99,23 +99,26 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         }
 
         private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
-        {
-            var html = $"<h2 class=\"abc-rebate-promo-title\">" +
-                        "Promos</h2><div class=\"abc-container abc-promo-container\">";
+{
+    var html = $"<h2 class=\"abc-rebate-promo-title\">" +
+               "Promos</h2><div class=\"abc-container abc-promo-container\">";
 
-            var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
-                            (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
-                            await _abcPromoService.GetActivePromosAsync();
-            foreach (var promo in promos)
-            {
-                var publishedPromoProducts = await _abcPromoService.GetPublishedProductsByPromoIdAsync(promo.Id);
-                if (!publishedPromoProducts.Any())
-                {
-                    continue;
-                }
-                
-                
-  // Handle manufacturer retrieval safely
+    var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
+                 (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
+                 await _abcPromoService.GetActivePromosAsync();
+
+    // Create a list to hold promo data before sorting
+    var promoList = new List<(string manName, string promoHtml)>();
+
+    foreach (var promo in promos)
+    {
+        var publishedPromoProducts = await _abcPromoService.GetPublishedProductsByPromoIdAsync(promo.Id);
+        if (!publishedPromoProducts.Any())
+        {
+            continue;
+        }
+
+        // Handle manufacturer retrieval safely
         var manufacturerId = promo.ManufacturerId ?? 0;
         var manufactureModel = await _manufacturerService.GetManufacturerByIdAsync(manufacturerId);
         if (manufactureModel == null)
@@ -127,19 +130,26 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
         var promoDescription = $"{manName} - {promo.Description}";
 
-        html += $"<div class=\"abc-item abc-promo-item\"> " +
-                $"<h1>{manName}</h1>" +
-                $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug"}\"> " +
-                $"{promoDescription}</a><br />" +
-                $"Expires {promo.EndDate.ToString("MM-dd-yy")}" +
-                "</div>";
+        string promoHtml = $"<div class=\"abc-item abc-promo-item\"> " +
+                           $"<h1>{manName}</h1>" +
+                           $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug"}\"> " +
+                           $"{promoDescription}</a><br />" +
+                           $"Expires {promo.EndDate.ToString("MM-dd-yy")}" +
+                           "</div>";
 
+        // Add promo to list for sorting
+        promoList.Add((manName, promoHtml));
+    }
+
+    // Sort promos alphabetically by manufacturer name
+    foreach (var (manName, promoHtml) in promoList.OrderBy(p => p.manName))
+    {
+        html += promoHtml;
         html += $"<a class=\"ManButton\" href=\"{manName}\">Shop {manName}</a>";
     }
 
     html += "</div>";
-
     return html;
-        }
+}
     }
 }
