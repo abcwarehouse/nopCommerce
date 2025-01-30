@@ -125,8 +125,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
     foreach (var group in promoGroups.OrderBy(g => g.Key))
     {
         string manName = group.Key;
-        var firstPromo = group.Value.First();
-        string promoSlug1 = await _urlRecordService.GetActiveSlugAsync(firstPromo.Id, "AbcPromo", 0) ?? "default-slug";
+        string promoSlug1 = await _urlRecordService.GetActiveSlugAsync(group.First().Id, "AbcPromo", 0) ?? "default-slug";
+
 
         html += $"<h1>{manName}</h1>";
 

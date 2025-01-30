@@ -33,7 +33,8 @@
 .ManButton {
     background-color: rgb(255, 255, 255);
     box-shadow: rgb(255, 255, 255) 0px 1px 0px 0px inset;
-    color: rgb(255, 138, 0);
+    color: white;
+    background-color: #e91d24;
     cursor: pointer;
     display: inline-block;
     font-family: Arial;
@@ -46,5 +47,5 @@
     border-image: initial;
     border-radius: 16px;
     padding: 6px 24px;
-    text-decoration: none;
+    text-decoration: none !important;
 }
