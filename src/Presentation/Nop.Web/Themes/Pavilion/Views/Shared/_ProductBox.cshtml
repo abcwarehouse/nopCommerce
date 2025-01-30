@@ -486,6 +486,7 @@
                 </form>
             }
         </div>
+        <div data-bv-show="rating_summary" data-bv-product-id="@Model.Id"></div>
     </div>
 </div>
 @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductBoxAfter, additionalData = Model })

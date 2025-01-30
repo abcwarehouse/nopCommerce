@@ -192,17 +192,40 @@
                             <span class="product-name__isam-id">@displayIdStr</span>
                         }
                     </div>
-                    <!-- custom: reviews widget -->
-                    @await Component.InvokeAsync(
-                        "Widget",
-                        new {
-                            widgetZone = CustomPublicWidgetZones.ProductDetailsReviews,
-                            additionalData = Model
-                        }
-                    )
+                    <!--BV reviews-->
+                    @{
+                        <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
 
-                    <!--reviews-->
-                    @await Html.PartialAsync("_ProductReviewOverview", Model.ProductReviewOverview)
+                        <!-- Content Tabs -->
+                        <div id="review_tab" style="display: none;">
+                            <!-- Instruct BV loader to show the R&R feature for productID123 here -->
+                            <div data-bv-show="reviews" data-bv-product-id="@currentProduct.Id"></div>
+                        </div>
+
+                        <div id="questions_tab" style="display: none;">
+                            <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
+                        </div>
+                    }
+                    <script>
+                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
+                        window.bvCallback = function (BV) {
+
+                        // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
+                            BV.swat_reviews.on('show', function () {
+                                // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
+                                $('#review_tab').show();
+                            });
+                            
+                        // Register a function to be called when a BV feature needs to display the Q&A element, such as when selecting the number of questions link
+
+                        BV.swat_questions.on('show', function () {
+
+                                // If the Q&A container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
+
+                            $('#questions_tab').show();
+                        });
+                            };
+                    </script>
 
                     <!--rental info-->
                     @{
@@ -275,46 +298,6 @@
                         @await Html.PartialAsync("_ProductEmailAFriendButton", Model)
                         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })
                     </div>
-
-                    <!--BV reviews-->
-                    @{
-                        <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
-                        <div class="testing">
-                            @currentProduct.Id
-                        </div>
-
-                        <!-- Content Tabs -->
-                        <div id="review_tab" style="display: none;">
-                            <!-- Instruct BV loader to show the R&R feature for productID123 here -->
-                            <div data-bv-show="reviews" data-bv-product-id="@currentProduct.Id"></div>
-                        </div>
-
-                        <div id="questions_tab" style="display: none;">
-                            <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
-                        </div>
-                    }
-
-                    <script>
-                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
-                        window.bvCallback = function (BV) {
-
-                        // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
-                            BV.swat_reviews.on('show', function () {
-                                // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                                $('#review_tab').show();
-                            });
-                            
-                        // Register a function to be called when a BV feature needs to display the Q&A element, such as when selecting the number of questions link
-
-                        BV.swat_questions.on('show', function () {
-
-                                // If the Q&A container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
-
-                            $('#questions_tab').show();
-                        });
-                            };
-                    </script>
-
 
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
                 </div>
