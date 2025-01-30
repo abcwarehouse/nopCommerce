@@ -141,7 +141,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                    "</div>";
         }
 
-        html += $"<a class=\"ManButton\" href=\"/promos/{manName}\">Shop {manName}</a>";
+        html += $"<a class=\"ManButton\" href=\"/{manName}\">Shop {manName}</a>";
     }
 
     return html;
