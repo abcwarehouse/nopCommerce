@@ -115,38 +115,31 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 }
                 
                 
-                var promoDescription = promo.ManufacturerId != null ?
-                                $"{(await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
-                                promo.Description;
-                 var manufactureModel =  await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+  // Handle manufacturer retrieval safely
+        var manufacturerId = promo.ManufacturerId ?? 0;
+        var manufactureModel = await _manufacturerService.GetManufacturerByIdAsync(manufacturerId);
+        if (manufactureModel == null)
+        {
+            continue; // Skip this promo if manufacturer is null
+        }
 
-                string manName = manufactureModel.Name;
-                if(promo.ManufacturerId != null)
-                {
-                 
-                  if (manName == "")
-                    {
-                        manName = "Universal";
-                    }
+        string manName = string.IsNullOrEmpty(manufactureModel.Name) ? "Universal" : manufactureModel.Name;
 
-                html += $"<div class=\"abc-item abc-promo-item\"> " + $"<h1>{manName}</h1>" + 
-                        $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0)}\"> " +
-                        $"{promoDescription}</a><br />" +
-                        $"Expires {promo.EndDate.ToString("MM-dd-yy")}" + 
+        var promoDescription = $"{manName} - {promo.Description}";
 
-                        "</div>";
+        html += $"<div class=\"abc-item abc-promo-item\"> " +
+                $"<h1>{manName}</h1>" +
+                $"<a href=\"/promos/{await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug"}\"> " +
+                $"{promoDescription}</a><br />" +
+                $"Expires {promo.EndDate.ToString("MM-dd-yy")}" +
+                "</div>";
 
-                
+        html += $"<a class=\"ManButton\" href=\"{manName}\">Shop {manName}</a>";
+    }
 
-                }
-                html += $"<a class=\"ManButton\" href=\"{manName}\">Shop {manName}</a>";
+    html += "</div>";
 
-                         
-            }
-
-            html += "</div>";
-
-            return html;
+    return html;
         }
     }
 }
