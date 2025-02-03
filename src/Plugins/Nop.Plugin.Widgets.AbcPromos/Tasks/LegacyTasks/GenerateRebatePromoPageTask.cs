@@ -19,6 +19,7 @@ using Task = System.Threading.Tasks.Task;
 using Nop.Web.Models.Catalog;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 {
