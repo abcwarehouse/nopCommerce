@@ -142,64 +142,25 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 }
 
 
-                if (manName.ToLower() == "profile")
+          // Dictionary to map manName to their respective URLs
+          var manNameToUrlMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+         {
+            { "profile", "/profile-2" },
+            { "deal partners", "/deal-partners-llc" },
+            { "universal", "/manufacturer/all" },
+            { "atg....audio to go", "/atgaudio-to-go" },
+            { "black and decker", "/black-decker" },
+            { "fisher & paykel", "/fisher-paykel" },
+            { "g.e. cafe series", "/ge-cafe-series" },
+            { "leggett & platt", "/leggett-platt" },
+            { "nectar", "/nectar-3" },
+            { "panasonic energy c/o amer", "/panasonic-energy-co-amer" }
+         };
+
+                if (manNameToUrlMap.TryGetValue(manName, out var url))
                 {
-                    html += $"<a class=\"ManButton\" href=\"/profile-2\">Shop {manName}</a>";
+                    html += $"<a class=\"ManButton\" href=\"{url}\">Shop {manName}</a>";
                 }
-                else if (manName.ToLower() == "deal partners")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/deal-partners-llc\">Shop {manName}</a>";
-                }
-                 else if (manName.ToLower() == "universal")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/manufacturer/all\">Shop {manName}</a>";
-                }
-
-                 else if (manName.ToLower() == "atg....audio to go")
-
-                {
-                    html += $"<a class=\"ManButton\" href=\"/atgaudio-to-go\">Shop {manName}</a>";
-                }
-
-                 else if (manName.ToLower() == "black and decker")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/black-decker\">Shop {manName}</a>";
-                }
-
-                 else if (manName.ToLower() == "fisher & paykel")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/fisher-paykel\">Shop {manName}</a>";
-                }
-
-                
-
-                 else if (manName.ToLower() == "g.e. cafe series")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/ge-cafe-series\">Shop {manName}</a>";
-                }
-
-                 else if (manName.ToLower() == "leggett & platt")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/leggett-platt\">Shop {manName}</a>";
-                }
-
-
-                 else if (manName.ToLower() == "nectar")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/nectar-3\">Shop {manName}</a>";
-                }
-
-
-                 else if (manName.ToLower() == "panasonic energy c/o amer")
-                {
-                    html += $"<a class=\"ManButton\" href=\"/panasonic-energy-co-amer\">Shop {manName}</a>";
-                }
-
-           
-
-
-
-
                 else
                 {
                     string formattedManName = manName.Replace(" ", "-")
