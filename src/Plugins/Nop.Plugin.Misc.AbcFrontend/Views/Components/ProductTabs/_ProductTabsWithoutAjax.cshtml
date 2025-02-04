@@ -100,11 +100,7 @@
     }
     <!-- custom: reviews quicktab -->
     <div id="quickTab-Reviews">
-        <div data-bv-show="inpage_submission" data-bv-product-id="@Model.ProductModel.Id" data-bv-campaign-id="@Model.ProductModel.Id"></div>
-        <script>
-            // Invoke review submission
-            BV.ui('rr', 'submit_review',{productId : Model.ProductModel.Id});
-        </script>
+        <div data-bv-show="review_highlights" data-bv-product-id="@Model.ProductModel.IdS"></div>
     </div>
     @if (!string.IsNullOrEmpty(addnlDocumentContent))
     {
