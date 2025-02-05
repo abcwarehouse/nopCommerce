@@ -111,11 +111,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
             foreach (var promo in promos)
             {
-               var manufacturer = promo.ManufacturerId.HasValue && promo.ManufacturerId.Value > 0
-                ? await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)
-                : null;
-
-                var manName = !string.IsNullOrWhiteSpace(manufacturer?.Name) ? manufacturer.Name : "Universal";
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                var manName = manufacturer?.Name ?? "Universal";
 
                 if (!promoGroups.ContainsKey(manName))
                 {
