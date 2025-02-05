@@ -111,8 +111,11 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
             foreach (var promo in promos)
             {
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-                var manName = manufacturer?.Name ?? "Universal";
+               var manufacturer = promo.ManufacturerId.HasValue && promo.ManufacturerId.Value > 0
+                ? await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)
+                : null;
+
+                var manName = !string.IsNullOrWhiteSpace(manufacturer?.Name) ? manufacturer.Name : "Universal";
 
                 if (!promoGroups.ContainsKey(manName))
                 {
@@ -140,7 +143,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                            $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
                            "</div>";
                 }
-
 
                 if (manName.ToLower() == "profile")
                 {
@@ -171,8 +173,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                     html += $"<a class=\"ManButton\" href=\"/fisher-paykel\">Shop {manName}</a>";
                 }
 
-                
-
                  else if (manName.ToLower() == "g.e. cafe series")
                 {
                     html += $"<a class=\"ManButton\" href=\"/ge-cafe-series\">Shop {manName}</a>";
@@ -195,10 +195,35 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                     html += $"<a class=\"ManButton\" href=\"/panasonic-energy-co-amer\">Shop {manName}</a>";
                 }
 
-           
+                  else if (manName.ToLower() == "roku streaming stick+")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/roku-streaming-stick-plus\">Shop {manName}</a>";
+                }
 
+                 else if (manName.ToLower() == "sealy")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/sealy-4\">Shop {manName}</a>";
+                }
 
+                else if (manName.ToLower() == "sunbrite tv")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/sunbritetv\">Shop {manName}</a>";
+                }
 
+                else if (manName.ToLower() == "sunbrite tv")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/sunbritetv\">Shop {manName}</a>";
+                }
+
+                else if (manName.ToLower() == "tempur-pedic")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/tempur-pedic-mattress\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "tempur-pedic")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/tempur-pedic-mattress\">Shop {manName}</a>";
+                }
 
                 else
                 {
