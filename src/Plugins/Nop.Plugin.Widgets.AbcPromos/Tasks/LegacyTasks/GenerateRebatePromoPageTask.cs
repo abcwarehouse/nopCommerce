@@ -99,116 +99,141 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         }
 
         private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
-{
-    var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
+        {
+            var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
 
-    var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
-                 (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
-                 await _abcPromoService.GetActivePromosAsync();
+            var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
+                         (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
+                         await _abcPromoService.GetActivePromosAsync();
 
-    // Dictionary to store manufacturer names and their promos
-    var promoGroups = new Dictionary<string, List<AbcPromo>>();
+            // Dictionary to store manufacturer names and their promos
+            var promoGroups = new Dictionary<string, List<AbcPromo>>();
 
-    foreach (var promo in promos)
-    {
-        var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-        var manName = manufacturer?.Name?.Trim() ?? "Universal";
+            foreach (var promo in promos)
+            {
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                var manName = manufacturer?.Name ?? "Universal";
 
-        // Ensure case-insensitive comparison
-        manName = manName.ToLower();
+                if (!promoGroups.ContainsKey(manName))
+                {
+                    promoGroups[manName] = new List<AbcPromo>();
+                }
 
-        if (!promoGroups.ContainsKey(manName))
-        {
-            promoGroups[manName] = new List<AbcPromo>();
-        }
+                promoGroups[manName].Add(promo);
+            }
 
-        promoGroups[manName].Add(promo);
-    }
+            foreach (var group in promoGroups.OrderBy(g => g.Key))
+            {
+                string manName = group.Key;
 
-    foreach (var group in promoGroups.OrderBy(g => g.Key))
-    {
-        string manName = group.Key;
 
-        html += $"<h1>{manName}</h1>";
 
-        foreach (var promo in group.Value)
-        {
-            string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
-            var promoDescription = $"{manName} - {promo.Description}";
+                html += $"<h1>{manName}</h1>";
 
-            html += $"<div class=\"abc-item abc-promo-item\"> " +
-                   $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
-                   $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
-                   "</div>";
-        }
+                foreach (var promo in group.Value)
+                {
+                    string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
+                    var promoDescription = $"{manName} - {promo.Description}";
 
-        if (manName.ToLower() == "profile")
-        {
-            html += $"<a class=\"ManButton\" href=\"/profile-2\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "deal partners")
-        {
-            html += $"<a class=\"ManButton\" href=\"/deal-partners-llc\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "universal")
-        {
-            html += $"<a class=\"ManButton\" href=\"/manufacturer/all\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "atg....audio to go")
-        {
-            html += $"<a class=\"ManButton\" href=\"/atgaudio-to-go\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "black and decker")
-        {
-            html += $"<a class=\"ManButton\" href=\"/black-decker\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "fisher & paykel")
-        {
-            html += $"<a class=\"ManButton\" href=\"/fisher-paykel\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "g.e. cafe series")
-        {
-            html += $"<a class=\"ManButton\" href=\"/ge-cafe-series\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "leggett & platt")
-        {
-            html += $"<a class=\"ManButton\" href=\"/leggett-platt\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "nectar")
-        {
-            html += $"<a class=\"ManButton\" href=\"/nectar-3\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "panasonic energy c/o amer")
-        {
-            html += $"<a class=\"ManButton\" href=\"/panasonic-energy-co-amer\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "roku streaming stick+")
-        {
-            html += $"<a class=\"ManButton\" href=\"/roku-streaming-stick-plus\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "sealy")
-        {
-            html += $"<a class=\"ManButton\" href=\"/sealy-4\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "sunbrite tv")
-        {
-            html += $"<a class=\"ManButton\" href=\"/sunbritetv\">Shop {manName}</a>";
-        }
-        else if (manName.ToLower() == "tempur-pedic")
-        {
-            html += $"<a class=\"ManButton\" href=\"/tempur-pedic-mattress\">Shop {manName}</a>";
-        }
-        else
-        {
-            string formattedManName = manName.Replace(" ", "-")
-                                             .Replace("/", "")
-                                             .Replace(".", "")
-                                             .Replace(",", "");
-            html += $"<a class=\"ManButton\" href=\"/{formattedManName}\">Shop {manName}</a>";
-        }
-    }
+                    html += $"<div class=\"abc-item abc-promo-item\"> " +
+                           $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
+                           $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
+                           "</div>";
+                }
 
-    return html;
-}
+                if (manName.ToLower() == "profile")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/profile-2\">Shop {manName}</a>";
+                }
+                else if (manName.ToLower() == "deal partners")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/deal-partners-llc\">Shop {manName}</a>";
+                }
+                 else if (manName.ToLower() == "universal")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/manufacturer/all\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "atg....audio to go")
+
+                {
+                    html += $"<a class=\"ManButton\" href=\"/atgaudio-to-go\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "black and decker")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/black-decker\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "fisher & paykel")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/fisher-paykel\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "g.e. cafe series")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/ge-cafe-series\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "leggett & platt")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/leggett-platt\">Shop {manName}</a>";
+                }
+
+
+                 else if (manName.ToLower() == "nectar")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/nectar-3\">Shop {manName}</a>";
+                }
+
+
+                 else if (manName.ToLower() == "panasonic energy c/o amer")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/panasonic-energy-co-amer\">Shop {manName}</a>";
+                }
+
+                  else if (manName.ToLower() == "roku streaming stick+")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/roku-streaming-stick-plus\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "sealy")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/sealy-4\">Shop {manName}</a>";
+                }
+
+                else if (manName.ToLower() == "sunbrite tv")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/sunbritetv\">Shop {manName}</a>";
+                }
+
+                else if (manName.ToLower() == "sunbrite tv")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/sunbritetv\">Shop {manName}</a>";
+                }
+
+                else if (manName.ToLower() == "tempur-pedic")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/tempur-pedic-mattress\">Shop {manName}</a>";
+                }
+
+                 else if (manName.ToLower() == "tempur-pedic")
+                {
+                    html += $"<a class=\"ManButton\" href=\"/tempur-pedic-mattress\">Shop {manName}</a>";
+                }
+
+                else
+                {
+                    string formattedManName = manName.Replace(" ", "-")
+                                                     .Replace("/", "")
+                                                     .Replace(".", "")
+                                                     .Replace(",", "");
+                    html += $"<a class=\"ManButton\" href=\"/{formattedManName}\">Shop {manName}</a>";
+                }
+
+            }
+
+            return html;
+        }
     }
 }
