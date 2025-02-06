@@ -67,9 +67,6 @@ script {
 
 
 /*********** GLOBAL STYLES **********/
-
-
-
 body {
     max-width: 100%;
 	overflow-x: hidden; /* responsive navigation & filters scroll bug fix*/
