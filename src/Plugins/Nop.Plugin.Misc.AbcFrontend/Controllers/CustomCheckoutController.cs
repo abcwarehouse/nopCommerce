@@ -39,6 +39,7 @@ using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcExportOrder.Services;
 using System.Threading.Tasks;
+using Nop.Core.Domain.Logging;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -180,7 +181,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 {
                     var termLookup = await _termLookupService.GetTermAsync(cart);
                     HttpContext.Session.Set("TransPromo", termLookup.termNo ?? defaultTransPromo);
-                    HttpContext.Session.SetString("TransDescription", $"{termLookup.description} {termLookup.link}");
+                    HttpContext.Session.SetString("TransDescription", $"{termLookup.description}");
                 }
             }
             catch (IsamException e)
@@ -313,40 +314,43 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         public override async Task<IActionResult> ShippingMethod()
         {
+            var customer = await _workContext.GetCurrentCustomerAsync();
             var cart = await _shoppingCartService.GetShoppingCartAsync(
-                await _workContext.GetCurrentCustomerAsync(),
+                customer,
                 ShoppingCartType.ShoppingCart,
                 (await _storeContext.GetCurrentStoreAsync()).Id
             );
             if (!cart.Any())
                 return RedirectToRoute("ShoppingCart");
-            if (await _customerService.IsGuestAsync(
-                await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
+            if (await _customerService.IsGuestAsync(customer) && !_orderSettings.AnonymousCheckoutAllowed)
             {
                 return Challenge();
             }
 
+            var customerShippingAddress = await _customerService.GetCustomerShippingAddressAsync(customer);
             var model = await _checkoutModelFactory.PrepareShippingMethodModelAsync(
                 cart,
-                await _customerService.GetCustomerShippingAddressAsync(await _workContext.GetCurrentCustomerAsync())
+                customerShippingAddress
             );
 
-            // this will blow up if there's more than one, which is how ABC is
+            // this will blow up if there isn't exactly one, which is how ABC is
             // currently set up.
-            var shippingMethod = model.ShippingMethods.Single();
-            if (shippingMethod.Fee == "$0.00")
+            var shippingMethod = model.ShippingMethods.SingleOrDefault();
+            if (shippingMethod == null || shippingMethod.Fee != "$0.00")
             {
-                await _genericAttributeService.SaveAttributeAsync(
-                    await _workContext.GetCurrentCustomerAsync(),
-                    NopCustomerDefaults.SelectedShippingOptionAttribute,
-                    shippingMethod.ShippingOption,
-                    (await _storeContext.GetCurrentStoreAsync()).Id
-                );
-                await SendExternalShippingMethodRequestAsync();
-                return RedirectToRoute("CheckoutPaymentMethod");
+                return await base.ShippingMethod();
             }
-                
-            return await base.ShippingMethod();
+
+            // Otherwise if all items are Home Delivery, select the singular
+            // shipping method and move to the next screen
+            await _genericAttributeService.SaveAttributeAsync(
+                customer,
+                NopCustomerDefaults.SelectedShippingOptionAttribute,
+                shippingMethod.ShippingOption,
+                (await _storeContext.GetCurrentStoreAsync()).Id
+            );
+            await SendExternalShippingMethodRequestAsync();
+            return RedirectToRoute("CheckoutPaymentMethod");
         }
 
         // Makes an external request
