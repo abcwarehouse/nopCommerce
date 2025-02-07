@@ -6377,6 +6377,7 @@ img.hawthorne-logo {
 
 
 
+
 /*promo banner*/
   
 .promo-bann {
@@ -6453,9 +6454,15 @@ div#storeDropDown div {
 .contact-us-header {
     clear: both;
 }
+=======
+/*Angelo*/
+ /* Mobile Menu Padding Fix*/
+  .mega-menu-responsive.mobile-sidebar-category .sublist-wrap.active { 
+	padding-top: 50px;
+} 
 
 
-/* End Black Friday */
+
 
 /* Bootstrap */
 .row {
