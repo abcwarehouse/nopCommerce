@@ -196,7 +196,9 @@
                     </div>
                     <!--BV reviews-->
                     @{
-                        <div data-bv-show="inline_rating" data-bv-product-id="@currentProduct.Id"></div>
+                        <a href="#review_tab">
+                            <div data-bv-show="inline_rating" data-bv-product-id="@currentProduct.Id"></div>
+                        </a>
 
                         <!-- Content Tabs -->
                         <div id="review_tab" style="display: none;">
