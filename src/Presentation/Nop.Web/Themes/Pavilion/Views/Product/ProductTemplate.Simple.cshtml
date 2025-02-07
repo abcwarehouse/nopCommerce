@@ -360,6 +360,7 @@
 
 @{
     var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+    var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 
 <script type="application/ld+json">
     {
@@ -367,7 +368,7 @@
        "type" : "Product",
        "id" : "@bvProductUrl",
        "name" : "@Model.Name",
-       "image" : "@PictureModel.ImageUrl",
+       "image" : "@productImageUrl",
        "description" : "@Model.ShortDescription",
        "sku" : "@Model.Sku",
        "brand" : "@Model.ProductManufacturers",
