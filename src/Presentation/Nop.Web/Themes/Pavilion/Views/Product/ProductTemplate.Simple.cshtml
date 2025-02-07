@@ -23,33 +23,14 @@
 @inject ISettingService _settingService
 @inject IProductAttributeService _productAttributeService
 @inject IAbcCategoryService abcCategoryService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var productUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+}
 
 @{
     Layout = "_ColumnsOne";
-
-    <script type="application/ld+json">
-     {
-     "@context" : "https://schema.org",
-       "@type" : "Product",
-       "@id" : "https://www.abcwarehouse.com/product-url.",
-       "name" : "@Product.Name",
-       "image" : "@Product.ImageUrl",
-       "description" : "@Product.Description",
-       "sku" : "@Product.Sku",
-       "brand" : "@Product.Manufacturer.Name",}
-    </script>
-    <!--BV injected code-->
-    <script id="bv-jsonld-aggregate-rating-data" type="application/ld+json">
-        { "@context": "http://schema.org",
-        "@id": "https://yourdomain.com/product-url",
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "bestRating":5,
-            "ratingValue":3.8,
-            "reviewCount":1070
-        }
-        }
-   </script>
 
     //title
     Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
@@ -380,3 +361,27 @@
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
     </div>
 </div>
+
+<script type="application/ld+json">
+    {
+       "@context" : "https://schema.org",
+       "@type" : "Product",
+       "@id" : "@productUrl",
+       "name" : "@Model.Name",
+       "image" : "@Model.ImageUrl",
+       "description" : "@Model.Description",
+       "sku" : "@Model.Sku",
+       "brand" : "@Model.ProductManufacturers",
+    }
+</script>
+    <!--BV injected code-->
+    <script>
+        // Make sure that BV.configure is defined before running this script
+        BV.configure('global', {
+            events : {
+                bvRender : function (data) {
+                // JavaScript code that executes when the Bazaarvoice application renders.
+                }
+            }
+        });
+    </script>
