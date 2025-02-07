@@ -236,9 +236,9 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
             }
 
-            
+            return html;
         }
-        return html;
+        
        
     }
 }
