@@ -13,6 +13,7 @@
 @using Nop.Services.Configuration;
 @using Nop.Plugin.Misc.AbcCore.Nop;
 @using Microsoft.Extensions.Logging;
+@using Newtonsoft.Json
 
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
@@ -371,7 +372,7 @@
        "image" : "@productImageUrl",
        "description" : "@Model.ShortDescription",
        "sku" : "@Model.Sku",
-       "brand" : "@string.Join(", ", Model.ProductManufacturers.Select(m => m.Name))",
+       "brand": "@(string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)))"
     }
 </script>
     <!--BV injected code-->
