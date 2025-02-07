@@ -361,7 +361,7 @@
 @{
     var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
-
+}
 <script type="application/ld+json">
     {
        "context" : "https://schema.org",
@@ -385,4 +385,3 @@
             }
         });
     </script>
-}
