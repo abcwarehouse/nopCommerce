@@ -27,6 +27,30 @@
 @{
     Layout = "_ColumnsOne";
 
+    <script type="application/ld+json">
+     {
+     "@context" : "https://schema.org",
+       "@type" : "Product",
+       "@id" : "https://www.abcwarehouse.com/product-url.",
+       "name" : "@Product.Name",
+       "image" : "@Product.ImageUrl",
+       "description" : "@Product.Description",
+       "sku" : "@Product.Sku",
+       "brand" : "@Product.Manufacturer.Name",}
+    </script>
+    <!--BV injected code-->
+    <script id="bv-jsonld-aggregate-rating-data" type="application/ld+json">
+        { "@context": "http://schema.org",
+        "@id": "https://yourdomain.com/product-url",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "bestRating":5,
+            "ratingValue":3.8,
+            "reviewCount":1070
+        }
+        }
+   </script>
+
     //title
     Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
     //meta
@@ -194,7 +218,7 @@
                     </div>
                     <!--BV reviews-->
                     @{
-                        <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
+                        <div data-bv-show="inline_rating" data-bv-product-id="@currentProduct.Id"></div>
 
                         <!-- Content Tabs -->
                         <div id="review_tab" style="display: none;">
