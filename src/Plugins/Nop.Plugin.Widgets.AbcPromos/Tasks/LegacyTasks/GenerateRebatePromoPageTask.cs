@@ -158,7 +158,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                    $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
                    $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
                    "</div>";
-        }he
+        }
 
                 if (manName.ToLower() == "profile")
                 {
