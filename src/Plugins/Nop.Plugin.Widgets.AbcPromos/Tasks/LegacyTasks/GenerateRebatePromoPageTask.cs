@@ -235,7 +235,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                  
 
             }
-
+            html += $"<\div>";
             return html;
         }
         
