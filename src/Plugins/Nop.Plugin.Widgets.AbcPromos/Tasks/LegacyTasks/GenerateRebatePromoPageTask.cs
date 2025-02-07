@@ -1,4 +1,4 @@
-﻿using Nop.Services.Tasks;
+﻿﻿using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Core.Domain.Topics;
 using Nop.Services.Topics;
@@ -98,9 +98,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             await _topicService.UpdateTopicAsync(topic);
         }
 
-        
-
-
         private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
         {
             var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
@@ -114,6 +111,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
             foreach (var promo in promos)
             {
+               
                 var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
                 var manName = manufacturer?.Name ?? "Universal";
 
