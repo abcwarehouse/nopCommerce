@@ -20,6 +20,7 @@ using Nop.Web.Models.Catalog;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 {
     public class GenerateRebatePromoPageTask : IScheduleTask
@@ -98,35 +99,10 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             await _topicService.UpdateTopicAsync(topic);
         }
 
-        private int CalculateLevenshteinDistance(string a, string b)
-{
-    if (string.IsNullOrEmpty(a)) return string.IsNullOrEmpty(b) ? 0 : b.Length;
-    if (string.IsNullOrEmpty(b)) return a.Length;
-
-    int[,] matrix = new int[a.Length + 1, b.Length + 1];
-
-    // Initialize the first row and column
-    for (int i = 0; i <= a.Length; i++) matrix[i, 0] = i;
-    for (int j = 0; j <= b.Length; j++) matrix[0, j] = j;
-
-    // Fill the matrix
-    for (int i = 1; i <= a.Length; i++)
-    {
-        for (int j = 1; j <= b.Length; j++)
-        {
-            int cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
-            matrix[i, j] = Math.Min(
-                Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
-                matrix[i - 1, j - 1] + cost
-            );
-        }
-    }
-
-    return matrix[a.Length, b.Length];
-}
+        
 
 
-        private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
+        private async Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
 {
     var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
 
@@ -137,8 +113,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
     // Dictionary to store manufacturer groups
     var promoGroups = new Dictionary<string, List<AbcPromo>>();
 
-    // Threshold for string similarity (adjust as needed)
-    int similarityThreshold = 3; // Levenshtein Distance threshold
+    // Threshold for Levenshtein Distance (adjust as needed)
+    int similarityThreshold = 3; // Maximum allowed distance for grouping
 
     foreach (var promo in promos)
     {
@@ -150,9 +126,10 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         foreach (var groupKey in promoGroups.Keys)
         {
             int distance = CalculateLevenshteinDistance(manName.ToLower(), groupKey.ToLower());
+
+            // If the distance is within the threshold, add to the existing group
             if (distance <= similarityThreshold)
             {
-                // Add to the existing group
                 promoGroups[groupKey].Add(promo);
                 isGrouped = true;
                 break;
@@ -181,7 +158,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                    $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
                    $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
                    "</div>";
-        }
+        }he
 
                 if (manName.ToLower() == "profile")
                 {
@@ -276,6 +253,32 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             }
 
             return html;
+        }
+         private int CalculateLevenshteinDistance(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a)) return string.IsNullOrEmpty(b) ? 0 : b.Length;
+            if (string.IsNullOrEmpty(b)) return a.Length;
+
+            int[,] matrix = new int[a.Length + 1, b.Length + 1];
+
+            // Initialize the first row and column
+            for (int i = 0; i <= a.Length; i++) matrix[i, 0] = i;
+            for (int j = 0; j <= b.Length; j++) matrix[0, j] = j;
+
+            // Fill the matrix
+            for (int i = 1; i <= a.Length; i++)
+            {
+                for (int j = 1; j <= b.Length; j++)
+                {
+                    int cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
+                    matrix[i, j] = Math.Min(
+                        Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
+                        matrix[i - 1, j - 1] + cost
+                    );
+                }
+            }
+
+            return matrix[a.Length, b.Length];
         }
     }
 }
