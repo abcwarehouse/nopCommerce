@@ -26,10 +26,6 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
-    var productUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
-}
-
-@{
     Layout = "_ColumnsOne";
 
     //title
@@ -362,13 +358,16 @@
     </div>
 </div>
 
+@{
+    var productUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+
 <script type="application/ld+json">
     {
        "context" : "https://schema.org",
        "type" : "Product",
        "id" : "@productUrl",
        "name" : "@Model.Name",
-       "image" : "@Model.ImageUrl",
+       "image" : "@Model.PictureModel.ImageUrl",
        "description" : "@Model.ShortDescription",
        "sku" : "@Model.Sku",
        "brand" : "@Model.ProductManufacturers",
@@ -385,3 +384,4 @@
             }
         });
     </script>
+}
