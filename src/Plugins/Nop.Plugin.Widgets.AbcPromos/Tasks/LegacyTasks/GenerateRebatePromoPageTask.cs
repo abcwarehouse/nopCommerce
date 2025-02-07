@@ -231,13 +231,14 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                                                      .Replace(",", "");
                     html += $"<a class=\"ManButton\" href=\"/{formattedManName}\">Shop {manName}</a>";
                 }
-                
-                 return html;
+
+                 
 
             }
 
             
         }
+        return html;
        
     }
 }
