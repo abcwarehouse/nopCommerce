@@ -371,7 +371,7 @@
        "image" : "@productImageUrl",
        "description" : "@Model.ShortDescription",
        "sku" : "@Model.Sku",
-       "brand" : "@Model.ProductManufacturers.ManufacturerBriefInfoModel.Name",
+       "brand" : "@string.Join(", ", Model.ProductManufacturers.Select(m => m.Name))",
     }
 </script>
     <!--BV injected code-->
