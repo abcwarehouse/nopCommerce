@@ -20,7 +20,6 @@ using Nop.Web.Models.Catalog;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 {
     public class GenerateRebatePromoPageTask : IScheduleTask
@@ -102,63 +101,48 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         
 
 
-        private async Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
-{
-    var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
-
-    var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
-                 (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
-                 await _abcPromoService.GetActivePromosAsync();
-
-    // Dictionary to store manufacturer groups
-    var promoGroups = new Dictionary<string, List<AbcPromo>>();
-
-    // Threshold for Levenshtein Distance (adjust as needed)
-    int similarityThreshold = 3; // Maximum allowed distance for grouping
-
-    foreach (var promo in promos)
-    {
-        var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-        var manName = manufacturer?.Name ?? "Universal";
-
-        // Check if the manufacturer name is similar to any existing group
-        bool isGrouped = false;
-        foreach (var groupKey in promoGroups.Keys)
+        private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
         {
-            int distance = CalculateLevenshteinDistance(manName.ToLower(), groupKey.ToLower());
+            var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
 
-            // If the distance is within the threshold, add to the existing group
-            if (distance <= similarityThreshold)
+            var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
+                         (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
+                         await _abcPromoService.GetActivePromosAsync();
+
+            // Dictionary to store manufacturer names and their promos
+            var promoGroups = new Dictionary<string, List<AbcPromo>>();
+
+            foreach (var promo in promos)
             {
-                promoGroups[groupKey].Add(promo);
-                isGrouped = true;
-                break;
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                var manName = manufacturer?.Name ?? "Universal";
+
+                if (!promoGroups.ContainsKey(manName))
+                {
+                    promoGroups[manName] = new List<AbcPromo>();
+                }
+
+                promoGroups[manName].Add(promo);
             }
-        }
 
-        // If no similar group is found, create a new group
-        if (!isGrouped)
-        {
-            promoGroups[manName] = new List<AbcPromo> { promo };
-        }
-    }
+            foreach (var group in promoGroups.OrderBy(g => g.Key))
+            {
+                string manName = group.Key;
 
-    // Generate HTML for each group
-    foreach (var group in promoGroups.OrderBy(g => g.Key))
-    {
-        string manName = group.Key;
-        html += $"<h1>{manName}</h1>";
 
-        foreach (var promo in group.Value)
-        {
-            string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
-            var promoDescription = $"{manName} - {promo.Description}";
 
-            html += $"<div class=\"abc-item abc-promo-item\"> " +
-                   $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
-                   $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
-                   "</div>";
-        }
+                html += $"<h1>{manName}</h1>";
+
+                foreach (var promo in group.Value)
+                {
+                    string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
+                    var promoDescription = $"{manName} - {promo.Description}";
+
+                    html += $"<div class=\"abc-item abc-promo-item\"> " +
+                           $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
+                           $" - Expires {promo.EndDate:MM-dd-yy}<br />" +
+                           "</div>";
+                }
 
                 if (manName.ToLower() == "profile")
                 {
@@ -253,32 +237,6 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             }
 
             return html;
-        }
-         private int CalculateLevenshteinDistance(string a, string b)
-        {
-            if (string.IsNullOrEmpty(a)) return string.IsNullOrEmpty(b) ? 0 : b.Length;
-            if (string.IsNullOrEmpty(b)) return a.Length;
-
-            int[,] matrix = new int[a.Length + 1, b.Length + 1];
-
-            // Initialize the first row and column
-            for (int i = 0; i <= a.Length; i++) matrix[i, 0] = i;
-            for (int j = 0; j <= b.Length; j++) matrix[0, j] = j;
-
-            // Fill the matrix
-            for (int i = 1; i <= a.Length; i++)
-            {
-                for (int j = 1; j <= b.Length; j++)
-                {
-                    int cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
-                    matrix[i, j] = Math.Min(
-                        Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
-                        matrix[i - 1, j - 1] + cost
-                    );
-                }
-            }
-
-            return matrix[a.Length, b.Length];
         }
     }
 }
