@@ -129,7 +129,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             {
                 string manName = group.Key;
                 TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-                string manNameTitle = textInfo.ToTitleCase(input.ToLower());
+                string manNameTitle = textInfo.ToTitleCase(manName.ToLower());
 
                 html += $"<h1 class=\"manName\">{manName}</h1>";
 
