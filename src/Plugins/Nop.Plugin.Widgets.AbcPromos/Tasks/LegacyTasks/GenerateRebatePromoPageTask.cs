@@ -131,7 +131,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
                 string manNameTitle = textInfo.ToTitleCase(manName.ToLower());
 
-                html += $"<h1 class=\"manName\">{manName}</h1>";
+                html += $"<h1 class=\"manName\">{manNameTitle}</h1>";
 
                 foreach (var promo in group.Value)
                 {
