@@ -129,7 +129,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
 
 
-                html += $"<h1 class\"manName\">{manName}</h1>";
+                html += $"<h1 class=\"manName\">{manName}</h1>";
 
                 foreach (var promo in group.Value)
                 {

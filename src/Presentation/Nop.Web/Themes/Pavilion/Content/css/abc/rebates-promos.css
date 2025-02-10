@@ -40,7 +40,7 @@
     font-family: Arial;
     font-size: 14px;
     text-shadow: rgb(255, 255, 255) 0px 1px 0px;
-    margin-bottom: 10px;
+    margin-bottom: 35px;
     border-width: 1px;
     border-style: solid;
     border-color: rgb(220, 220, 220);
@@ -50,6 +50,7 @@
     text-decoration: none !important;
 }
 
-.manName {
+h1.manname {
     font-size: 22px;
+    color: #333;
 }
