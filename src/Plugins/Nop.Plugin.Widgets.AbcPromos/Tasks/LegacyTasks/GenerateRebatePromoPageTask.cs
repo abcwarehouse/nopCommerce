@@ -102,8 +102,9 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 
         private async System.Threading.Tasks.Task<string> GetRebatePromoHtmlAsync(Topic rootTopic)
         {
-            var html = "<img src=\"https://place-hold.it/1008x305/aaa/white&text=Banner&bold&fontsize=24\" alt=\"RebateBanner\">";
+            
             var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
+            html += "<img src=\"https://place-hold.it/1008x305/aaa/white&text=Banner&bold&fontsize=24\" alt=\"RebateBanner\">";
 
             var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
                          (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
