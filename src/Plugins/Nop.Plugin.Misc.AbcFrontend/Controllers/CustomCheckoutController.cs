@@ -40,6 +40,7 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcExportOrder.Services;
 using System.Threading.Tasks;
 using Nop.Services.Custom;
+using Nop.Core.Domain.Logging;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
@@ -325,18 +326,20 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             );
             if (!cart.Any())
                 return RedirectToRoute("ShoppingCart");
+            if (await _customerService.IsGuestAsync(customer) && !_orderSettings.AnonymousCheckoutAllowed)
+            {
+                return Challenge();
+            }
 
+            var customerShippingAddress = await _customerService.GetCustomerShippingAddressAsync(customer);
             var model = await _checkoutModelFactory.PrepareShippingMethodModelAsync(
                 cart,
-                await _customerService.GetCustomerShippingAddressAsync(customer)
+                customerShippingAddress
             );
 
             // this will blow up if there isn't exactly one, which is how ABC is
             // currently set up.
             var shippingMethod = model.ShippingMethods.SingleOrDefault();
-
-            // If no shipping method found, default to base functionality
-            // which is usually not having a shipping address for a guest
             if (shippingMethod == null || shippingMethod.Fee != "$0.00")
             {
                 return await base.ShippingMethod();
