@@ -16,7 +16,7 @@
 .abc-item a {
     /* text-decoration: none; */
     font-weight: bold;
-    color: blue;
+    color: rgb(43, 95, 194);
 }
 
 .abc-item a:hover {
@@ -31,23 +31,20 @@
 }
 
 .ManButton {
-    background-color: rgb(255, 255, 255);
-    box-shadow: rgb(255, 255, 255) 0px 1px 0px 0px inset;
-    color: white;
-    background-color: #e91d24;
+    background-color: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 16px;
+    -webkit-box-shadow: inset 0 1px 0 0 #fff;
+    box-shadow: inset 0 1px 0 0 #fff;
+    color: #e91d24;
     cursor: pointer;
     display: inline-block;
     font-family: Arial;
     font-size: 14px;
-    text-shadow: rgb(255, 255, 255) 0px 1px 0px;
-    margin-bottom: 35px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(220, 220, 220);
-    border-image: initial;
-    border-radius: 16px;
     padding: 6px 24px;
-    text-decoration: none !important;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #fff;
+    margin-bottom: 10px;
 }
 
 h1.manName {

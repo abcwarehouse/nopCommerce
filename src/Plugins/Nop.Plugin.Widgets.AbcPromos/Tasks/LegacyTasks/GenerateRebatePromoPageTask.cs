@@ -19,6 +19,8 @@ using Task = System.Threading.Tasks.Task;
 using Nop.Web.Models.Catalog;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Globalization;
 
 namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
 {
@@ -126,8 +128,8 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             foreach (var group in promoGroups.OrderBy(g => g.Key))
             {
                 string manName = group.Key;
-
-
+                TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+                string manNameTitle = textInfo.ToTitleCase(input.ToLower());
 
                 html += $"<h1 class=\"manName\">{manName}</h1>";
 
