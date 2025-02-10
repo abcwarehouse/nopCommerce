@@ -32,10 +32,16 @@ public class ListrakApiService : IListrakApiService
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token")
             {
+                // Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                // {
+                //     { "client_id", _listrakApiSettings.ClientId },
+                //     { "client_secret", _listrakApiSettings.ClientSecret },
+                //     { "grant_type", "client_credentials" }
+                // })
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    { "client_id", _listrakApiSettings.ClientId },
-                    { "client_secret", _listrakApiSettings.ClientSecret },
+                    { "client_id", "ao1xkc57sz7t1dw1qawh" },
+                    { "client_secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
                     { "grant_type", "client_credentials" }
                 })
             };
