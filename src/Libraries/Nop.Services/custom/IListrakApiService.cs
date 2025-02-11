@@ -8,7 +8,7 @@ namespace Nop.Services.Custom
     public interface IListrakApiService
     {
         Task<string> GetTokenAsync();
-        ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked);
+        ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked, bool isMarketingCheckboxChecked);
     }
     public class ApiResponse
     {

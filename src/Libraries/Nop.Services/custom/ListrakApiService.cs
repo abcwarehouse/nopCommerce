@@ -67,7 +67,48 @@ public class ListrakApiService : IListrakApiService
         }
     }
 
-    public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked)
+    public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked, bool isMarketingCheckboxChecked)
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if(isCheckboxChecked)
+        {
+            var listrakData = new 
+            {
+                ListrakData = new 
+                {
+                    ShortCodeId = "1026",
+                    PhoneNumber = billingAddress.PhoneNumber,
+                    PhoneListId = "152"
+                }
+            };
+
+            var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+        }
+        if(isMarketingCheckboxChecked)
+        {
+            var listrakData = new 
+            {
+                ListrakData = new 
+                {
+                    ShortCodeId = "1026",
+                    PhoneNumber = billingAddress.PhoneNumber,
+                    PhoneListId = "151"
+                }
+            };
+
+            var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+        }
+
+        return new ApiResponse
+        {
+            IsSuccess = response.IsSuccessStatusCode,
+            Message = response.ReasonPhrase
+        };
+    }
+
+    public ApiResponse UnsubListrak(string token, Address billingAddress)
     {
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -82,7 +123,7 @@ public class ListrakApiService : IListrakApiService
             }
         };
 
-        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/ContactUnsubscribe/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
 
         return new ApiResponse
         {
@@ -90,4 +131,5 @@ public class ListrakApiService : IListrakApiService
             Message = response.ReasonPhrase
         };
     }
+
 }
