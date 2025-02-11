@@ -299,7 +299,7 @@ namespace Nop.Web.Controllers
             }
 
             // Fetch the order items
-            var orderItems = _orderService.GetOrderItemsAsync(order.Id);
+            var orderItems = await _orderService.GetOrderItemsAsync(order.Id);
 
             //model
             var model = await _checkoutModelFactory.PrepareCheckoutCompletedModelAsync(order);
