@@ -116,7 +116,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
             {
                
                 var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
-                var manName = manufacturer?.Name ?? "Universal";
+                var manName = manufacturer?.Name ?? "Multiple Brands";
 
                 if (!promoGroups.ContainsKey(manName))
                 {
@@ -137,7 +137,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
                 foreach (var promo in group.Value)
                 {
                     string promoSlug = await _urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0) ?? "default-slug";
-                    var promoDescription = $"{manName} - {promo.Description}";
+                    var promoDescription = $"{promo.Description}";
 
                     html += $"<div class=\"abc-item abc-promo-item\"> " +
                            $"<a class=\"promo-link\" href=\"/promos/{promoSlug}\">{promoDescription}</a>" +
