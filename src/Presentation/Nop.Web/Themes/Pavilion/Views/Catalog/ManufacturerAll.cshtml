@@ -15,9 +15,26 @@
     //page class
     Html.AppendPageCssClassParts("html-manufacturer-list-page");
 
-    //custom
-    var orderedList = Model.OrderBy(it => it.SeName);
+     // Featured filter list
+    var allowedManufacturers = new HashSet<string>
+    {
+        "AIRELOOM", "ASHLEY", "BOSCH", "CAFE", "COZZIA", "ELECTROLUX", "FRIGIDAIRE",
+        "FRIGIDAIRE GALLERY", "GE APPLIANCES", "GE CAFE", "G.E. CAFE SERIES", "GE PROFILE",
+        "HOTPOINT", "JBL", "KITCHENAID", "LG", "LG SIGNATURE", "LG STUDIO", "MAYTAG",
+        "NATUZZI", "PROFILE", "SAMSUNG", "SEALY", "SERTA RESTOKRAFT MATT INC", 
+        "SIMMONS BEAUTYREST", "SCOTT LIVING", "SPEED QUEEN", "SUBZERO", "SUNBRITE TV", 
+        "TCL", "TEMPUR-PEDIC", "VIZIO", "WHIRLPOOL"
+    };
+
+    var orderedList = Model.Where(it => allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
+
+    //custom old code
+    @* var orderedList = Model.OrderBy(it => it.SeName); *@
 }
+
+
+    
+
 @* custom style *@
 <style>
 .manufacturer-item > .picture, .manufacturer-details {
@@ -30,7 +47,6 @@
 }
 
 .title.title.title {
-  width: 100%;
   width: 100%;
   margin: auto;
   display: block;
