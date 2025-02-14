@@ -19,7 +19,7 @@
     var allowedManufacturers = new HashSet<string>
     {
         "AIRELOOM", "ASHLEY", "BOSCH", "CAFE", "COZZIA", "ELECTROLUX", "FRIGIDAIRE",
-        "FRIGIDAIRE GALLERY", "GE APPLIANCES", "GE CAFE", "G.E. CAFE SERIES", "GE PROFILE",
+        "FRIGIDAIRE GALLERY", "GE APPLIANCES", "GE PROFILE",
         "HOTPOINT", "JBL", "KITCHENAID", "LG", "LG SIGNATURE", "LG STUDIO", "MAYTAG",
         "NATUZZI", "PROFILE", "SAMSUNG", "SEALY", "SERTA RESTOKRAFT MATT INC", 
         "SIMMONS BEAUTYREST", "SCOTT LIVING", "SPEED QUEEN", "SUBZERO", "SUNBRITE TV", 
@@ -27,8 +27,9 @@
     };
 
     var orderedList = Model.Where(it => allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
+    var remainingManufacturers = Model.Where(it => !allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
 
-    //custom old code
+    // old code
     @* var orderedList = Model.OrderBy(it => it.SeName); *@
 }
 
@@ -60,6 +61,8 @@
   padding: 8px;
 }
 </style>
+
+
 <div class="page manufacturer-list-page">
     <div class="page-title">
         <h1>@T("Manufacturers.List")</h1>
@@ -103,6 +106,31 @@
                                     @T("SevenSpikes.Themes.Pavilion.Manufacturers.ShowAllProducts")
                                 </a>
                             </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="page-title">
+            <h2>Other Manufacturers</h2>
+        </div>
+        <div class="manufacturer-grid">
+            <div class="item-grid">
+                @foreach (var item in remainingManufacturers)
+                {
+                    <div class="item-box">
+                        <div class="manufacturer-item">
+                            <h2 class="title">
+                                <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
+                                    @item.Name
+                                </a>
+                            </h2>
+                            @* This is the code for the pics of the remaining logos *@
+                            @* <div class="picture">
+                                <a href="@Url.RouteUrl("Manufacturer", new {SeName = item.SeName})" title="@item.PictureModel.Title">
+                                    <img alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title"/>
+                                </a>
+                            </div> *@
                         </div>
                     </div>
                 }
