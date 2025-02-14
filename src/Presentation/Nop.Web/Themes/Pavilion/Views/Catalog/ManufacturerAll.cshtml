@@ -82,7 +82,8 @@
                 {
                     <div class="item-box">
                         <div class="manufacturer-item">
-                            <h2 class="title">
+                            @* added the substring for the alphabetical nav bar *@
+                            <h2 class="title" id="@item.Name.Substring(0,1).ToUpper()">
                                 <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
                                     @item.Name
                                 </a>
@@ -120,13 +121,20 @@
             </div>
         </div>
             <h2 class="explore">Explore More Brands</h2>
+
+        @* This is the code for implementing the navbar  *@
+        @foreach (var letter in remainingManufacturers.Select(m => m.Name.Substring(0,1).ToUpper()).Distinct())
+            {
+                <a href="#@letter">@letter</a>
+            }
         <div class="manufacturer-grid">
             <div class="item-grid">
                 @foreach (var item in remainingManufacturers)
                 {
                     <div class="item-box">
                         <div class="manufacturer-item">
-                            <h2 class="title">
+                             @* This is the code for implementing the navbar  *@
+                            <h2 class="title"  id="@item.Name.Substring(0,1).ToUpper()">
                                 <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
                                     @item.Name
                                 </a>
