@@ -27,7 +27,8 @@
     };
 
     var orderedList = Model.Where(it => allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
-    var remainingManufacturers = Model.Where(it => !allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
+    var trueOrderedList = Model.OrderBy(it => it.SeName);
+    
 
     // old code
     @* var orderedList = Model.OrderBy(it => it.SeName); *@
@@ -78,7 +79,7 @@
 }
 
 .alpha-nav a {
-    margin: 0 8px;
+    margin: 0 6px;
     font-weight: bold;
     text-decoration: none;
     color: #007bff;
@@ -104,7 +105,7 @@
                     <div class="item-box">
                         <div class="manufacturer-item">
                             @* Each manufacturer’s name now has an ID corresponding to its first letter,  *@
-                            <h2 class="title" id="@item.Name.Substring(0,1).ToUpper()">
+                            <h2 class="title">
                                 <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
                                     @item.Name
                                 </a>
@@ -145,14 +146,14 @@
 
         @* This is the code for implementing the navbar  *@
         <div class="alpha-nav">
-             @foreach (var letter in remainingManufacturers.Select(m => m.Name.Substring(0,1).ToUpper()).Distinct())
+             @foreach (var letter in trueOrderedList.Select(m => m.Name.Substring(0,1).ToUpper()).Distinct())
                 {
                     <a href="#@letter">@letter</a>
                 }
         </div>
         <div class="manufacturer-grid">
             <div class="item-grid">
-                @foreach (var item in remainingManufacturers)
+                @foreach (var item in trueOrderedList)
                 {
                     <div class="item-box">
                         <div class="manufacturer-item">
