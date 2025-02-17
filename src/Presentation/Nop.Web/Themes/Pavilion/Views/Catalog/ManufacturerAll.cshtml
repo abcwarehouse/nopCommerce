@@ -90,6 +90,13 @@
     color: #ff4500;
 }
 
+.title-hidden {
+    width: 100%;
+    margin: auto;
+    display: none;
+    text-align: center;
+}
+
 </style>
 
 
@@ -105,7 +112,7 @@
                     <div class="item-box">
                         <div class="manufacturer-item">
                             @* Each manufacturer’s name now has an ID corresponding to its first letter,  *@
-                            <h2 class="title">
+                            <h2 class="title-hidden">
                                 <a href="@Url.RouteUrl("Manufacturer", new { SeName = item.SeName })" title="@item.PictureModel.Title">
                                     @item.Name
                                 </a>
@@ -118,7 +125,7 @@
                                         {
                                             ("src", item.PictureModel.ImageUrl),
                                             ("alt", item.PictureModel.AlternateText),
-                                            ("title", item.PictureModel.Title)
+                                            ("title-hidden", item.PictureModel.Title)
                                         })
                                     }
                                     else
