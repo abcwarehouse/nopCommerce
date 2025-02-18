@@ -67,39 +67,91 @@ public class ListrakApiService : IListrakApiService
         }
     }
 
-    public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isCheckboxChecked, bool isMarketingCheckboxChecked)
+    public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isSmsChecked, bool isMarketingChecked)
     {
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        HttpResponseMessage smsResponse = null;
+        HttpResponseMessage marketingSmsResponse = null;
 
-        if(isCheckboxChecked)
+        if(isSmsChecked)
         {
-            var listrakData = new 
-            {
-                ListrakData = new 
-                {
-                    ShortCodeId = "1026",
-                    PhoneNumber = billingAddress.PhoneNumber,
-                    PhoneListId = "152"
-                }
-            };
-
-            var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+            smsResponse = SmsSub(token, billingAddress, client);
         }
-        if(isMarketingCheckboxChecked)
+
+        if(isMarketingChecked)
         {
-            var listrakData = new 
-            {
-                ListrakData = new 
-                {
-                    ShortCodeId = "1026",
-                    PhoneNumber = billingAddress.PhoneNumber,
-                    PhoneListId = "151"
-                }
-            };
-
-            var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+            marketingSmsResponse = MarketingSub(token, billingAddress, client);
         }
+
+        if(smsResponse.IsSuccessStatusCode == marketingSmsResponse.IsSuccessStatusCode || smsResponse.IsSuccessStatusCode == false)
+        {
+            return new ApiResponse
+            {
+                IsSuccess = smsResponse.IsSuccessStatusCode,
+                Message = smsResponse.ReasonPhrase
+            };
+        }
+        else
+        {
+            return new ApiResponse
+            {
+                IsSuccess = marketingSmsResponse.IsSuccessStatusCode,
+                Message = marketingSmsResponse.ReasonPhrase
+            };
+        }        
+        
+    }
+
+    public HttpResponseMessage SmsSub(string token, Address billingAddress, HttpClient client)
+    {
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                ShortCodeId = "1026",
+                PhoneNumber = billingAddress.PhoneNumber,
+                PhoneListId = "152"
+            }
+        };
+
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+
+        return response;
+    }
+    public HttpResponseMessage MarketingSub(string token, Address billingAddress, HttpClient client)
+    {
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                ShortCodeId = "1026",
+                PhoneNumber = billingAddress.PhoneNumber,
+                PhoneListId = "151"
+            }
+        };
+
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{billingAddress.PhoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+
+        return response;
+    }
+
+    public ApiResponse CheckSubList(String phoneNumber)
+    {
+        var token = GetTokenAsync();
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                SenderCode = "1026",
+                PhoneNumber = phoneNumber
+            }
+        };
+
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.SenderCode}/Contact/{phoneNumber}", listrakData).Result;
 
         return new ApiResponse
         {

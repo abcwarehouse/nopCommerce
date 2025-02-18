@@ -323,9 +323,19 @@
                     </div>
                 </div>
             }
-
-            
-            
+            <div class="fieldset">
+                <div class="title">
+                    <strong>SMS Opt In</strong>
+                </div>
+                <div class="form-fields">
+                    <div class="inputs">
+                        <label asp-for="Sms" asp-postfix=":"></label>
+                        <input asp-for="Sms" />
+                        <span asp-validation-for="Sms"></span>
+                    </div>
+                </div>
+            </div>
+     
             @if (Model.AllowCustomersToSetTimeZone || Model.SignatureEnabled)
             {
                 <div class="fieldset">

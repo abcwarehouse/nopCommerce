@@ -128,8 +128,6 @@ namespace Nop.Web.Models.Customer
         [NopResourceDisplayName("Account.Fields.Newsletter")]
         public bool Newsletter { get; set; }
 
-        public bool SmsEnabled { get; set; }
-        [NopResourceDisplayName("Account.Fields.SmsEnabled")]
         public bool Sms { get; set; }
 
         //preferences

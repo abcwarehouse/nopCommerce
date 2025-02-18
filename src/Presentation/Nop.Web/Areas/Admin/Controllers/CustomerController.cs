@@ -35,6 +35,7 @@ using Nop.Web.Areas.Admin.Models.Customers;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
+using Nop.Services.Custom;
 
 namespace Nop.Web.Areas.Admin.Controllers
 {
@@ -74,6 +75,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
         private readonly TaxSettings _taxSettings;
+        private readonly IListrakApiService _listrakApiService;
 
         #endregion
 
@@ -109,8 +111,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             IStoreService storeService,
             ITaxService taxService,
             IWorkContext workContext,
-            IWorkflowMessageService workflowMessageService,
-            TaxSettings taxSettings)
+            TaxSettings taxSettings,
+            IListrakApiService listrakApiService)
         {
             _customerSettings = customerSettings;
             _dateTimeSettings = dateTimeSettings;
@@ -142,7 +144,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _storeService = storeService;
             _taxService = taxService;
             _workContext = workContext;
-            _workflowMessageService = workflowMessageService;
+            _listrakApiService = listrakApiService;
             _taxSettings = taxSettings;
         }
 
@@ -440,6 +442,11 @@ namespace Nop.Web.Areas.Admin.Controllers
                             }
                         }
                     }
+                }
+
+                if(!string.IsNullOrEmpty(model.Phone))
+                {
+                    var smsSubCheck = _listrakApiService.CheckSubList(model.Phone);
                 }
 
                 //password
