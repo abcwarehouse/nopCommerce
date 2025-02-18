@@ -4572,6 +4572,13 @@ input#sli_search_1 {
 	margin: 20px 0 0;
 }
 
+.product-box-review {
+	margin: 10px 0;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+
 .section.shipping-method,
 .section.payment-method,
 .section.payment-info,
@@ -6525,6 +6532,19 @@ div#storeDropDown div {
 }
 .contact-us-header {
     clear: both;
+}
+
+/*promo banner*/
+  
+.promo-bann {
+	width: 80%;
+}
+
+
+@media only screen and (max-width: 600px) {
+	.promo-bann {
+		width: 100%;
+	}
 }
 
 /*Angelo*/
