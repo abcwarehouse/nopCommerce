@@ -530,7 +530,7 @@ namespace Nop.Web.Controllers
                     SmsOptIn = billingAddress.SmsOptIn
                 };
 
-                var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn, model.MarketingSms);
+                var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn, model.SmsMarketingOptIn);
                 Console.WriteLine($"Token: {token}");
                 if (!response.IsSuccess)
                 {
