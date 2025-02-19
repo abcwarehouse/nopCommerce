@@ -223,7 +223,17 @@
                 @if (showCategoriesInSideMenu && !isHomeSliderFullWidth)
                 {
                     <div class="category-navigation-list-wrapper">
-                        <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}"></ul>
+                        <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}">
+                         @if(storeId == 3)
+                            {
+                                <li class="mega-menu-categories hawthorne-link">
+                                    <a href="https://hawthorne.abcwarehouse.com/">
+                                        <span style="color:white; background-color: #02463b; font-weight:bold">Hawthorne</span>
+                                    </a>
+                                </li>
+                            }
+                        
+                        </ul>
                     </div>
                 }
                 @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_sidebar_after" })
