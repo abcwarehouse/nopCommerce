@@ -284,18 +284,11 @@
                         <strong>@T("Account.YourContactInformation")</strong>
                     </div>
                     <div class="form-fields">
-                        @if (Model.PhoneEnabled)
-                        {
-                            <div class="inputs">
-                                <label asp-for="Phone" asp-postfix=":"></label>
-                                <input asp-for="Phone" />
-                                @if (Model.PhoneRequired)
-                                {
-                                    <nop-required />
-                                }
-                                <span asp-validation-for="Phone"></span>
-                            </div>
-                        }
+                        <div class="inputs">
+                            <label asp-for="Phone" asp-postfix=":"></label>
+                            <input asp-for="Phone" />
+                            <span asp-validation-for="Phone"></span>
+                        </div>
                         @if (Model.FaxEnabled)
                         {
                             <div class="inputs">
@@ -345,6 +338,33 @@
                     </div>
                 </div>
             </div>
+
+            <div class="subscribe-buttons">
+                @{
+                    var smsToken = _listrakApiService.GetTokenAsync().ToString();
+                }
+                @if(!smsBool)
+                {
+                    <button onClick={handleUnsubscribe}>Unsubscribe</button>
+                }
+                {status && <p>{status}</p>}
+            </div>
+
+            <script>
+                const handleUnsubscribe = async () => {
+                    try {
+                    const response = _listrakService.UnsubListrak(token, );
+                    });
+                    if (response.ok) {
+                        setStatus("Subscribed successfully!");
+                    } else {
+                        setStatus("Subscription failed.");
+                    }
+                    } catch (error) {
+                    setStatus("Error: " + error.message);
+                    }
+                };
+            </script>
      
             @if (Model.AllowCustomersToSetTimeZone || Model.SignatureEnabled)
             {
