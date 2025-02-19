@@ -447,6 +447,7 @@ namespace Nop.Web.Areas.Admin.Controllers
                 if(!string.IsNullOrEmpty(model.Phone))
                 {
                     var smsSubCheck = _listrakApiService.CheckSubList(model.Phone);
+                    
                 }
 
                 //password

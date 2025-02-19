@@ -1,6 +1,7 @@
 ﻿@using Nop.Core
 @model CustomerInfoModel
 @inject Nop.Core.IWebHelper webHelper
+@inject Nop.Services.Custom.IListrakApiService _listrakApiService
 @{
     Layout = "_ColumnsTwo";
 
@@ -17,7 +18,12 @@
 }
 
 @{
-    var isSmsOptedIn = Model.Sms;
+    var CheckResponse = _listrakApiService.CheckSubList(Model.Phone);
+    var smsBool = false;
+    if(CheckResponse.IsSuccess)
+    {
+        smsBool = true;
+    }
 }
 
 <div class="page account-page customer-info-page">
@@ -334,7 +340,7 @@
                 <div class="form-fields">
                     <div class="inputs">
                         <label asp-for="Sms" asp-postfix=":"></label>
-                        <input type="checkbox" name="Sms" id="Sms" value="true" @(isSmsOptedIn ? "checked=\"checked\"" : "") />
+                        <input type="checkbox" name="Sms" id="Sms" value="smsBool" />
                         <span asp-validation-for="Sms"></span>
                     </div>
                 </div>
