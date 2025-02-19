@@ -224,6 +224,7 @@
                 {
                     <div class="category-navigation-list-wrapper">
                         <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}">
+                        </ul>
                          @if(storeId == 3)
                             {
                                <li style="background-color:#02463b; width: 283px; height: 46px;" class="mega-menu-categories hawthorne-link">
@@ -232,8 +233,6 @@
                                  </a>
                                </li>
                             }
-                        
-                        </ul>
                     </div>
                 }
                 @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_sidebar_after" })
