@@ -335,12 +335,12 @@
             }
             <div class="fieldset">
                 <div class="title">
-                    <strong>SMS Opt In</strong>
+                    <strong>SMS Opt In/Out</strong>
                 </div>
                 <div class="form-fields">
                     <div class="inputs">
                         <label asp-for="Sms" asp-postfix=":"></label>
-                        <input type="checkbox" name="Sms" id="Sms" value="smsBool" />
+                        <input type="checkbox" name="Sms" id="Sms" value="smsBool" @(smsBool ? "checked" : "")/>
                         <span asp-validation-for="Sms"></span>
                     </div>
                 </div>
