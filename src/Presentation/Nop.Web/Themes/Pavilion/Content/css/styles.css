@@ -6234,8 +6234,8 @@ h1.search-page-title {
 	display: inline-block;
 }
 img.hawthorne-logo {
-    padding-left: 30px;
-	max-width: 100%;
+    /* padding-left: 30px; */
+	/* max-width: 100%; */
 }
 
 .hawthorne-lower .search-cart-wrapper {
@@ -6248,6 +6248,15 @@ img.hawthorne-logo {
 .hawthorne-lower .close-button.close-search {
     display: none;
 }
+
+/* Header Hawthorne Button */
+img.hawthorne-logo {
+    padding-left: 30px;
+    max-width: 70%;
+    margin-top: -5px;
+    margin-left: -30px;
+}
+
 
 /* Angelo Change */
 .header-lower.hawthorne-lower div#flyout-cart {
