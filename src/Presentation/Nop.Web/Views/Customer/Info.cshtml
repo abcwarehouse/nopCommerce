@@ -16,6 +16,10 @@
     @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Info })
 }
 
+@{
+    var isSmsOptedIn = Model.Sms;
+}
+
 <div class="page account-page customer-info-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") - @T("Account.CustomerInfo")</h1>
@@ -330,7 +334,7 @@
                 <div class="form-fields">
                     <div class="inputs">
                         <label asp-for="Sms" asp-postfix=":"></label>
-                        <input asp-for="Sms" />
+                        <input type="checkbox" name="Sms" id="Sms" value="true" @(isSmsOptedIn ? "checked=\"checked\"" : "") />
                         <span asp-validation-for="Sms"></span>
                     </div>
                 </div>
@@ -473,6 +477,27 @@
         </form>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        // Handle checkbox change and update API
+        $('#Sms').change(function () {
+            let isChecked = $(this).is(':checked');
+            $.ajax({
+                url: '/your-api-endpoint',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ isOptedIn: isChecked }),
+                success: function () {
+                    console.log('SMS opt-in status updated successfully');
+                },
+                error: function (error) {
+                    console.log('Error updating SMS opt-in status', error);
+                }
+            });
+        });
+    });
+</script>
 
 <script asp-location="Footer">
     function removeexternalassociation(itemId) {
