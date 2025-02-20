@@ -128,6 +128,8 @@ namespace Nop.Web.Models.Customer
         [NopResourceDisplayName("Account.Fields.Newsletter")]
         public bool Newsletter { get; set; }
 
+        public bool Sms { get; set; }
+
         //preferences
         public bool SignatureEnabled { get; set; }
         [NopResourceDisplayName("Account.Fields.Signature")]
