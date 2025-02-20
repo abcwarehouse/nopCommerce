@@ -107,6 +107,12 @@ input.search-box-text {
 }
 
 /* SLI search bar */
+.storeId3 div.search-box.store-search-box {
+    width: calc(100% - 290px);
+    margin-top: 1.5px;
+    margin-left: 25%;
+}
+
 div.search-box.store-search-box {
     width: calc(100% - 290px);
     margin-top: 1.5px;
@@ -181,6 +187,10 @@ input#sli_search_1::-webkit-input-placeholder {
 
     input.search-box-text {
         width: 100% !important;
+    }
+
+    .storeId3 .store-search-box {
+        width: calc(70% - 247px) !important;
     }
 
     .store-search-box {

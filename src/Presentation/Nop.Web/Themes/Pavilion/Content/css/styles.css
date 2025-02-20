@@ -919,7 +919,7 @@ label, label + * {
 }
 
 @media (min-width: 1025px) {
-    body .store-search-box .search-box-button {
+    .storeId8 .store-search-box .search-box-button {
         margin: -10px 0px 0 5px !important;
     }
 }
