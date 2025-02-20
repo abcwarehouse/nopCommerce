@@ -112,7 +112,8 @@ namespace Nop.Web.Areas.Admin.Controllers
             ITaxService taxService,
             IWorkContext workContext,
             TaxSettings taxSettings,
-            IListrakApiService listrakApiService)
+            IListrakApiService listrakApiService,
+            IWorkflowMessageService workflowMessageService)
         {
             _customerSettings = customerSettings;
             _dateTimeSettings = dateTimeSettings;
@@ -146,6 +147,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             _workContext = workContext;
             _listrakApiService = listrakApiService;
             _taxSettings = taxSettings;
+            _workflowMessageService = workflowMessageService;
         }
 
         #endregion
