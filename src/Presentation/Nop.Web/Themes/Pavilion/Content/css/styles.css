@@ -6191,6 +6191,20 @@ h1.search-page-title {
 	}
 }
 
+/* Added to make room for the merch category in the side mega menu */
+.storeId3 .header-menu.categories-in-side-panel {
+    margin-left: -90px;
+}
+
+@media (max-width: 1280px) {
+	.storeId3 .header-menu.categories-in-side-panel {
+		margin-left: -8px;
+	}
+}
+
+
+
+
 .header-links {
 	left: -20px;
   }
