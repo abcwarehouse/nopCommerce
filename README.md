@@ -1,4 +1,4 @@
-﻿# ABCWarehouse
+# ABCWarehouse
 
 NopCommerce codebase
 
