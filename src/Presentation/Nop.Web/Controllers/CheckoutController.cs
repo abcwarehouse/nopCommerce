@@ -508,6 +508,15 @@ namespace Nop.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> BillingAddressWithSms(CheckoutBillingAddressModel model)
         {
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentNullException(nameof(token), "Token is null or empty.");
+            }
+            if (billingAddress == null)
+            {
+                throw new ArgumentNullException(nameof(billingAddress), "Billing address is null.");
+            }
+       
             Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
             //if (model.SmsOptIn)
             //{
