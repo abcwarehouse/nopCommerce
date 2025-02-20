@@ -301,7 +301,7 @@
                         }
                     </div>
                 </div>
-            }
+    
             @if (Model.NewsletterEnabled || Model.CustomerAttributes.Count > 0)
             {
                 <div class="fieldset">
@@ -341,7 +341,7 @@
                 @{
                     var smsToken = _listrakApiService.GetTokenAsync().ToString();
                 }
-                @if(!smsBool)
+                @if(smsBool)
                 {
                     <button onClick={handleUnsubscribe}>Unsubscribe</button>
                 }
