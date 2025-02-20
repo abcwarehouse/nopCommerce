@@ -14,10 +14,12 @@ using Nop.Core.Domain.Shipping;
 using Nop.Core.Http.Extensions;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
+using Nop.Services.Custom;
 using Nop.Services.Customers;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Services.Logging;
+using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Shipping;
@@ -57,6 +59,7 @@ namespace Nop.Web.Controllers
         private readonly PaymentSettings _paymentSettings;
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly ShippingSettings _shippingSettings;
+        private readonly IListrakApiService _listrakApiService;
 
         #endregion
 
@@ -85,7 +88,8 @@ namespace Nop.Web.Controllers
             OrderSettings orderSettings,
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
-            ShippingSettings shippingSettings)
+            ShippingSettings shippingSettings,
+            IListrakApiService listrakApiService)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -111,6 +115,7 @@ namespace Nop.Web.Controllers
             _paymentSettings = paymentSettings;
             _rewardPointsSettings = rewardPointsSettings;
             _shippingSettings = shippingSettings;
+            _listrakApiService = listrakApiService;
         }
 
         #endregion
@@ -468,8 +473,7 @@ namespace Nop.Web.Controllers
             return View(model);
         }
 
-        public virtual async Task<IActionResult> SelectBillingAddress(int addressId, bool shipToSameAddress = false)
-        {
+        public virtual async Task<IActionResult> SelectBillingAddress(int addressId, bool shipToSameAddress = false) {
             //validation
             if (_orderSettings.CheckoutDisabled)
                 return RedirectToRoute("ShoppingCart");
@@ -501,6 +505,48 @@ namespace Nop.Web.Controllers
             return RedirectToRoute("CheckoutShippingAddress");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> BillingAddressWithSms(CheckoutBillingAddressModel model)
+        {
+            Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
+            //if (model.SmsOptIn)
+            //{
+                var token = await _listrakApiService.GetTokenAsync();
+                Console.WriteLine($"Token: {token}");
+                
+                var billingAddress = model.BillingNewAddress;
+
+                Nop.Core.Domain.Common.Address billingAddressConverted = new Nop.Core.Domain.Common.Address
+                {
+                    FirstName = billingAddress.FirstName,
+                    LastName = billingAddress.LastName,
+                    Email = billingAddress.Email,
+                    Company = billingAddress.Company,
+                    CountryId = billingAddress.CountryId,
+                    StateProvinceId = billingAddress.StateProvinceId,
+                    County = billingAddress.County,
+                    City = billingAddress.City,
+                    Address1 = model.BillingNewAddress.Address1,
+                    Address2 = model.BillingNewAddress.Address2,
+                    ZipPostalCode = billingAddress.ZipPostalCode,
+                    PhoneNumber = billingAddress.PhoneNumber,
+                    FaxNumber = billingAddress.FaxNumber,
+                    SmsOptIn = billingAddress.SmsOptIn
+                };
+
+                var response = _listrakApiService.SendBillingAddress(token.ToString(), billingAddressConverted, model.SmsOptIn, model.SmsMarketingOptIn);
+                Console.WriteLine($"Token: {token}");
+                if (!response.IsSuccess)
+                {
+                    ModelState.AddModelError("", token.ToString());
+                    ModelState.AddModelError("", "Error calling third-party API.");
+                    return View(model);
+                }
+            //}
+
+            return RedirectToRoute("CheckoutShippingAddress");
+        }
+
         [HttpPost, ActionName("BillingAddress")]
         [FormValueRequired("nextstep")]
         public virtual async Task<IActionResult> NewBillingAddress(CheckoutBillingAddressModel model, IFormCollection form)
@@ -510,6 +556,12 @@ namespace Nop.Web.Controllers
                 return RedirectToRoute("ShoppingCart");
 
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
+            Console.WriteLine($"Cart: {cart}");
+            Console.WriteLine($"model.SmsOptIn: {model.SmsOptIn}");
+            //if(model.SmsOptIn == true) 
+            //{
+                await BillingAddressWithSms(model);
+            //}
 
             if (!cart.Any())
                 return RedirectToRoute("ShoppingCart");
@@ -519,6 +571,8 @@ namespace Nop.Web.Controllers
 
             if (await _customerService.IsGuestAsync(await _workContext.GetCurrentCustomerAsync()) && !_orderSettings.AnonymousCheckoutAllowed)
                 return Challenge();
+
+            
 
             //custom address attributes
             var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);

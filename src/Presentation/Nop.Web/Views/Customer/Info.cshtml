@@ -1,6 +1,7 @@
 ﻿@using Nop.Core
 @model CustomerInfoModel
 @inject Nop.Core.IWebHelper webHelper
+@inject Nop.Services.Custom.IListrakApiService _listrakApiService
 @{
     Layout = "_ColumnsTwo";
 
@@ -14,6 +15,15 @@
 @section left
     {
     @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Info })
+}
+
+@{
+    var CheckResponse = _listrakApiService.CheckSubList(Model.Phone);
+    var smsBool = false;
+    if(CheckResponse.IsSuccess)
+    {
+        smsBool = true;
+    }
 }
 
 <div class="page account-page customer-info-page">
@@ -267,25 +277,16 @@
                     </div>
                 </div>
             }
-            @if (Model.PhoneEnabled || Model.FaxEnabled)
-            {
                 <div class="fieldset">
                     <div class="title">
                         <strong>@T("Account.YourContactInformation")</strong>
                     </div>
                     <div class="form-fields">
-                        @if (Model.PhoneEnabled)
-                        {
-                            <div class="inputs">
-                                <label asp-for="Phone" asp-postfix=":"></label>
-                                <input asp-for="Phone" />
-                                @if (Model.PhoneRequired)
-                                {
-                                    <nop-required />
-                                }
-                                <span asp-validation-for="Phone"></span>
-                            </div>
-                        }
+                        <div class="inputs">
+                            <label asp-for="Phone" asp-postfix=":"></label>
+                            <input asp-for="Phone" />
+                            <span asp-validation-for="Phone"></span>
+                        </div>
                         @if (Model.FaxEnabled)
                         {
                             <div class="inputs">
@@ -300,7 +301,7 @@
                         }
                     </div>
                 </div>
-            }
+    
             @if (Model.NewsletterEnabled || Model.CustomerAttributes.Count > 0)
             {
                 <div class="fieldset">
@@ -323,6 +324,45 @@
                     </div>
                 </div>
             }
+            <div class="fieldset">
+                <div class="title">
+                    <strong>SMS Opt In/Out</strong>
+                </div>
+                <div class="form-fields">
+                    <div class="inputs">
+                        <label asp-for="Sms" asp-postfix=":"></label>
+                        <input type="checkbox" name="Sms" id="Sms" value="smsBool" checked)/>
+                        <span asp-validation-for="Sms"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subscribe-buttons">
+                @{
+                    var smsToken = _listrakApiService.GetTokenAsync().ToString();
+                }
+                @if(smsBool)
+                {
+                    <button onClick={handleUnsubscribe}>Unsubscribe</button>
+                }
+            </div>
+
+            <script>
+                const handleUnsubscribe = async () => {
+                    try {
+                    const response = _listrakService.UnsubListrak(token, Model.Phone);
+                    });
+                    if (response.ok) {
+                        setStatus("Subscribed successfully!");
+                    } else {
+                        setStatus("Subscription failed.");
+                    }
+                    } catch (error) {
+                    setStatus("Error: " + error.message);
+                    }
+                };
+            </script>
+     
             @if (Model.AllowCustomersToSetTimeZone || Model.SignatureEnabled)
             {
                 <div class="fieldset">
@@ -347,7 +387,7 @@
                         }
                     </div>
                 </div>
-            }
+            } 
             @if (Model.NumberOfExternalAuthenticationProviders > 0)
             {
                 <div class="fieldset">
@@ -460,6 +500,27 @@
         </form>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        // Handle checkbox change and update API
+        $('#Sms').change(function () {
+            let isChecked = $(this).is(':checked');
+            $.ajax({
+                url: '/your-api-endpoint',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ isOptedIn: isChecked }),
+                success: function () {
+                    console.log('SMS opt-in status updated successfully');
+                },
+                error: function (error) {
+                    console.log('Error updating SMS opt-in status', error);
+                }
+            });
+        });
+    });
+</script>
 
 <script asp-location="Footer">
     function removeexternalassociation(itemId) {
