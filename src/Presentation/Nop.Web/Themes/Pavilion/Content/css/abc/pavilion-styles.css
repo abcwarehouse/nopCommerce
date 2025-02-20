@@ -64,13 +64,22 @@
 .hours-desktop .cFzLkk {
     margin-top: 0;
 }
-#flyout-cart {
+.storeId8 #flyout-cart {
     width: auto;
     float: right;
     margin-right: 115px;
     margin-top: 0px;
     margin-bottom: -15px;
     padding-bottom: 15px;
+}
+
+.storeId3 #flyout-cart {
+    width: auto;
+    float: right;
+    margin-right: 115px;
+    margin-top: 0px;
+    margin-bottom: -15px;
+    padding-bottom: 5px;
 }
 
 /* Have logo match category width - other header logo fixes */

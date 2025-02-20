@@ -6426,9 +6426,13 @@ body .header-lower {
 	.header-upper .header-links-wrapper {
 		padding-top: 20px;
 	}
-	div#flyout-cart {
+	.storeId8 #flyout-cart {
 		padding-top: 3px;
 	}
+	.storeId3 #flyout-cart {
+		padding-top: 20px;
+	}
+
 	.header-middle .header-menu-parent .header-menu-parent {
         padding-top: 5px;
     }
