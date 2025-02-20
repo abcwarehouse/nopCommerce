@@ -77,6 +77,16 @@ public class ListrakApiService : IListrakApiService
 
     public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isSmsChecked, bool isMarketingChecked)
     {
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new ArgumentNullException(nameof(token), "Token is null or empty");
+        }
+
+        if (billingAddress == null)
+        {
+            throw new ArgumentNullException(nameof(billingAddress), "Billing address is null");
+        }
+
         var client = GetHttpClient(token);
         HttpResponseMessage smsResponse = null;
         HttpResponseMessage marketingSmsResponse = null;
