@@ -73,7 +73,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IStoreService _storeService;
         private readonly ITaxService _taxService;
         private readonly IWorkContext _workContext;
-        private readonly IWorkflowMessageService _workflowMessageService;
+        //private readonly IWorkflowMessageService _workflowMessageService;
         private readonly TaxSettings _taxSettings;
         private readonly IListrakApiService _listrakApiService;
 
@@ -112,8 +112,7 @@ namespace Nop.Web.Areas.Admin.Controllers
             ITaxService taxService,
             IWorkContext workContext,
             TaxSettings taxSettings,
-            IListrakApiService listrakApiService,
-            IWorkflowMessageService _workflowMessageService)
+            IListrakApiService listrakApiService)
         {
             _customerSettings = customerSettings;
             _dateTimeSettings = dateTimeSettings;
@@ -147,7 +146,6 @@ namespace Nop.Web.Areas.Admin.Controllers
             _workContext = workContext;
             _listrakApiService = listrakApiService;
             _taxSettings = taxSettings;
-            _workflowMessageService = WorkflowMessageService;
         }
 
         #endregion
