@@ -73,7 +73,7 @@ namespace Nop.Web.Areas.Admin.Controllers
         private readonly IStoreService _storeService;
         private readonly ITaxService _taxService;
         private readonly IWorkContext _workContext;
-        //private readonly IWorkflowMessageService _workflowMessageService;
+        private readonly IWorkflowMessageService _workflowMessageService;
         private readonly TaxSettings _taxSettings;
         private readonly IListrakApiService _listrakApiService;
 
