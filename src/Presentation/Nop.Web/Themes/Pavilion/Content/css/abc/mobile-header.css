@@ -29,7 +29,7 @@
 }
 .responsive-nav-wrapper > div {
     border-right: 0;
-    background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png);
+    /* background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png); Image for the menu in mobile */
 }
 
 /* phone number gets special rules */
@@ -107,12 +107,18 @@ input.search-box-text {
 }
 
 /* SLI search bar */
+.storeId3 div.search-box.store-search-box {
+    width: calc(100% - 290px);
+    margin-top: 1.5px;
+    margin-left: 25%;
+}
+
 div.search-box.store-search-box {
     width: calc(100% - 290px);
     margin-top: 1.5px;
 }
-div.search-box.store-search-box form#small-search-box-form {
-    width: 100%;
+.storeId8 .div.search-box.store-search-box form#small-search-box-form {
+    width: 110%;
     padding-left: 10px;
 }
 div.search-box.store-search-box form#small-search-box-form input#sli_search_1 {
@@ -181,6 +187,10 @@ input#sli_search_1::-webkit-input-placeholder {
 
     input.search-box-text {
         width: 100% !important;
+    }
+
+    .storeId3 .store-search-box {
+        width: calc(70% - 247px) !important;
     }
 
     .store-search-box {

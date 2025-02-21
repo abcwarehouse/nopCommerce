@@ -16,6 +16,7 @@
     bool stickyCategoryMenuFlyout = await settingService.GetSettingByKeyAsync("pavilionthemesettings.StickyCategoryMenuFlyout", true, storeId, true);
     bool showCategoriesInSideMenu = await settingService.GetSettingByKeyAsync("pavilionthemesettings.ShowCategoriesInSideMenu", true, storeId, true);
 
+    var menuHtml = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
     var clearanceUrl = currentStore.Url.Contains("stage") ?
         "https://stage.abcwarehouse.com/clearance" :
         "https://www.abcwarehouse.com/clearance";
@@ -92,6 +93,22 @@
                 @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
             </div>
 
+                <div class="header-menu-parent">
+                    <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
+                        <div class="close-menu">
+                            <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
+                        </div>
+                        @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
+                        {
+                            @menuHtml
+                        }
+                        else
+                        {
+                            @await Component.InvokeAsync("TopMenu")
+                        }
+                    </div>
+                </div>
+
             <div class="search-cart-wrapper">
                 <div class="search-box store-search-box nav-panel">
                     <div class="close-button close-search">
@@ -137,7 +154,9 @@
             </div>
         </div>
 
-        <div class="header-middle">
+        
+    } 
+<div class="header-middle">
             <div class="center">
                 <div class="header-logo">
                     @await Component.InvokeAsync("Logo")
@@ -151,9 +170,6 @@
                         <div class="close-menu">
                             <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
                         </div>
-                        @{
-                            var menuHtml = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
-                        }
                         @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
                         {
                             @menuHtml
@@ -164,11 +180,12 @@
                         }
                     </div>
                 </div>
-                @await Component.InvokeAsync("FlyoutShoppingCart")
+                @* Old location of the cart *@
+                @* @await Component.InvokeAsync("FlyoutShoppingCart") *@
             </div>
         </div>
 
-        <div class="header-lower">
+        <div class="header-lower secondary-bar">
             <div class="center">
                 @if (showCategoriesInSideMenu)
                 {
@@ -186,9 +203,10 @@
                     @await Component.InvokeAsync("SearchBox")
                     *@
                 </div>
+                @await Component.InvokeAsync("FlyoutShoppingCart")
+                <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
             </div>
         </div>
-    } 
 </div>
 
 @if (isHomePage && storeId != 8)
@@ -208,7 +226,16 @@
                 @if (showCategoriesInSideMenu && !isHomeSliderFullWidth)
                 {
                     <div class="category-navigation-list-wrapper">
-                        <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}"></ul>
+                        <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}">
+                        </ul>
+                         @if(storeId == 3)
+                            {
+                               <li style="background-color:#02463b; width: auto; height: 46px;" class="mega-menu-categories hawthorne-link">
+                                <a href="https://hawthorne.abcwarehouse.com/">
+                                 <img class="hawthorne-logo" src="https://www.abcwarehouse.com/images/hawthorne/Hawthorne%20Logo%20Gold.png" alt="hawthorne logo">
+                                 </a>
+                               </li>
+                            }
                     </div>
                 }
                 @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_sidebar_after" })
