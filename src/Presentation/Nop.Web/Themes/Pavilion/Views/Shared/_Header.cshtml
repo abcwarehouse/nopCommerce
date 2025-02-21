@@ -180,7 +180,8 @@
                         }
                     </div>
                 </div>
-                @await Component.InvokeAsync("FlyoutShoppingCart")
+                @* Old location of the cart *@
+                @* @await Component.InvokeAsync("FlyoutShoppingCart") *@
             </div>
         </div>
 
@@ -202,6 +203,7 @@
                     @await Component.InvokeAsync("SearchBox")
                     *@
                 </div>
+                @await Component.InvokeAsync("FlyoutShoppingCart")
             </div>
         </div>
 </div>
