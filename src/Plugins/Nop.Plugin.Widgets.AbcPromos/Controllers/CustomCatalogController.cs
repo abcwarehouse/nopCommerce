@@ -87,13 +87,13 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
                     if (sm.StoreId == activeStoreId)
                     {
                         storePromos.Add(promo);
-                        continue;
+                        break;
                     }
                 }
             }
 
             // Filter to promos with published products only
-            storePromos = await promos.WhereAwait(async p => (await _abcPromoService.GetPublishedProductsByPromoIdAsync(p.Id)).Any()).ToListAsync();
+            storePromos = await storePromos.WhereAwait(async p => (await _abcPromoService.GetPublishedProductsByPromoIdAsync(p.Id)).Any()).ToListAsync();
 
             return View("~/Plugins/Widgets.AbcPromos/Views/PromoListingPage.cshtml", storePromos);
         }

@@ -23,16 +23,18 @@
         <h1>Rebates and Promos</h1>
     </div>
     <div class="page-body">
-        @foreach (var promo in Model)
-        {
-            var promoDescription = promo.ManufacturerId != null ?
-                $"{(await manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
-                promo.Description;
-            var slug = await urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0);
-            <div>
-                <a href="/promos/@slug">@promoDescription</a><br />
-                <span>Expires @promo.EndDate.ToString("MM-dd-yy")</span>
-            </div>
-        }
+        <div class="abc-container abc-promo-container">
+            @foreach (var promo in Model)
+            {
+                var promoDescription = promo.ManufacturerId != null ?
+                    $"{(await manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
+                    promo.Description;
+                var slug = await urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0);
+                <div class="abc-item abc-promo-item">
+                    <a href="/promos/@slug">@promoDescription</a><br />
+                    <span>Expires @promo.EndDate.ToString("MM-dd-yy")</span>
+                </div>
+            }
+        </div>
     </div>
 </div>
