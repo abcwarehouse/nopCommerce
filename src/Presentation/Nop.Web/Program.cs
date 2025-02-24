@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿﻿using System.Threading.Tasks;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +12,7 @@ namespace Nop.Web
         /// <returns>A task that represents the asynchronous operation</returns>
         public static async Task Main(string[] args)
         {
-           //initialize the host
+            //initialize the host
             using var host = Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
@@ -23,8 +23,9 @@ namespace Nop.Web
                             .AddEnvironmentVariables();
                     })
                     .UseStartup<Startup>())
+                .Build();
 
-                       //start the program, a task will be completed when the host starts
+            //start the program, a task will be completed when the host starts
             await host.StartAsync();
 
             //a task will be completed when shutdown is triggered
