@@ -150,6 +150,7 @@
 }
 .header-selectors-wrapper label {
 	background-position: left -40px;
+	color: white;
 }
 .header-links,
 .header-selectors {
