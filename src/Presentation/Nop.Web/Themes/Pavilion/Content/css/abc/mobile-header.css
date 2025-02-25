@@ -113,6 +113,13 @@ input.search-box-text {
     margin-left: 25.6%;
 }
 
+
+@media (max-width: 1024px) {
+.storeId3 div.search-box.store-search-box {
+    margin-left: 27.2%;
+}
+}
+
 div.search-box.store-search-box {
     width: calc(100% - 290px);
     margin-top: 1.5px;
@@ -196,6 +203,12 @@ input#sli_search_1::-webkit-input-placeholder {
     .store-search-box {
         width: calc(100% - 247px) !important;
     }
+}
+
+@media (max-width: 1024px) {
+.storeId3 .store-search-box {
+    width: calc(64% - 247px) !important;
+  }
 }
 
 @media (min-width: 1281px) {
