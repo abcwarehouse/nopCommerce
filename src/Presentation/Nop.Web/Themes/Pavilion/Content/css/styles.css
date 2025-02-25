@@ -6126,7 +6126,7 @@ h1.search-page-title {
 }
 
 .header-middle .hours-desktop {
-	padding-top: 18px;
+	margin-top: 32px;
    
 }
 .header-logo.header-logo img {
@@ -6194,6 +6194,7 @@ h1.search-page-title {
 /* Added to make room for the merch category in the side mega menu */
 .storeId3 .header-menu.categories-in-side-panel {
     margin-left: -90px;
+	margin-top: 6px;
 }
 
 @media (max-width: 1280px) {
@@ -6210,6 +6211,11 @@ h1.search-page-title {
   }
 .header-links-wrapper label:hover {
     cursor: pointer;
+}
+
+.storeId3 .header-links-wrapper label {
+	color:white;
+
 }
 
 .hawthorne.top-menu {
