@@ -6214,7 +6214,7 @@ h1.search-page-title {
 }
 
 .storeId3 .header-links-wrapper label {
-	color:white;
+	color:black;
 
 }
 
@@ -6329,7 +6329,7 @@ img.hawthorne-logo {
     padding-top: 35px;
 }
 body.storeId3 .header-lower {
-	background-color: #ec232a !important
+	background-color: #d3d3d3 !important;
 }
 
 .storeId8 .home-page-body .header-lower {
