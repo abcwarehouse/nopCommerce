@@ -120,6 +120,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             var promoProducts = await _abcPromoService.GetPublishedProductsByPromoIdAsync(promo.Id);
 
             // need to filter by store here
+            promoProducts = await FilterByStoreAsync(promoProducts);
 
             // if a category is provided, filter by it
             var filterCategory = await GetFilterCategoryAsync();
@@ -168,6 +169,23 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             await PrepareSortingOptionsAsync(model, command);
 
             return View("~/Plugins/Widgets.AbcPromos/Views/PromoListing.cshtml", model);
+        }
+
+        private async Task<List<Product>> FilterByStoreAsync(IList<Product> products)
+        {
+            var activeStoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
+            var result = new List<Product>();
+
+            foreach (var product in products)
+            {
+                var storeMappings = await _storeMappingService.GetStoreMappingsAsync(product);
+                if (storeMappings.Select(sm => sm.StoreId).Contains(activeStoreId))
+                {
+                    result.Add(product);
+                }
+            }
+
+            return result;
         }
 
         private async Task<Category> GetFilterCategoryAsync()
