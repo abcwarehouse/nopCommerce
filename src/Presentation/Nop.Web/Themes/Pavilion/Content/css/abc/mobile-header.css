@@ -114,7 +114,7 @@ input.search-box-text {
 }
 
 
-@media (max-width: 10280px) {
+@media (max-width: 1280px) {
 .storeId3 div.search-box.store-search-box {
     margin-left: 27.2%;
 }
