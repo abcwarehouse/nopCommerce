@@ -37,7 +37,7 @@
         z-index: 1020;
         width: 100%;
         height: 53px !important;
-        border-top: 3px solid #00a1b1;
+        border-top: 3px solid white;
         box-shadow: 0 3px 5px rgba(0, 0, 0, .1);
         background-color: #fff;
     }
@@ -96,7 +96,7 @@
 	display: block;
 	clear: both;
 }
-.responsive-nav-wrapper > div {
+.storeId8 .responsive-nav-wrapper > div {
 	
 	
 	background-color: #02463b !important;
@@ -105,6 +105,18 @@
 	background-size: 43%;
 	background-position: center;
 }
+
+.storeId3 .responsive-nav-wrapper > div {
+	
+	
+	background-color: white !important;
+	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');  
+	
+	
+	
+}
+
+
 .responsive-nav-wrapper > div:first-child {
 	border-left: 1px solid #eee;
 }
