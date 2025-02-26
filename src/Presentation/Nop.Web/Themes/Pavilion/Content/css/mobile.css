@@ -147,9 +147,9 @@
 	font-size: 0;
 }
 
-div#header-links-opener {
+.storeId8 div#header-links-opener {
     background-image: url('https://www.abcwarehouse.com/images/gold_account.png');
-    background-position: center;
+    background-position: -108px center;
 }
 
 /* RESPONSIVE MENU */
