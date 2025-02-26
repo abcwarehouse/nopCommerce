@@ -20,7 +20,7 @@
 	background-color: #fff;
 	line-height: 110px;
 }
-.responsive-nav-wrapper-parent {
+.storeId8 .responsive-nav-wrapper-parent {
 	position: fixed;
 	top: 0;
 	z-index: 1020;
@@ -29,6 +29,20 @@
 	border-top: 3px solid #00a1b1;
 	background-color: #02463b;
 }
+
+
+.storeId3 .responsive-nav-wrapper-parent {
+        position: fixed;
+        top: 0;
+        z-index: 1020;
+        width: 100%;
+        height: 53px !important;
+        border-top: 3px solid #00a1b1;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, .1);
+        background-color: #fff;
+    }
+
+
 .admin-header-links ~ .header .header-logo {
 	top: 95px;
 }
@@ -66,6 +80,9 @@
 .two-columns-area ~ .master-wrapper-content {
 	margin-top: 0 !important; /*important because of demo-strip*/
 }
+
+
+
 
 /* RESPONSIVE NAV WRAPPER */
 
