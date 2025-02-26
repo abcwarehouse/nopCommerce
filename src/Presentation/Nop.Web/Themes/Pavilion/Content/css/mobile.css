@@ -33,7 +33,7 @@
 
 .storeId3 .responsive-nav-wrapper-parent {
         position: fixed;
-        top: 42px;
+        top: 42px !important;
         z-index: 1020;
         width: 100%;
         height: 53px !important;
@@ -111,6 +111,7 @@
 	
 	background-color: white !important;
 	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');  
+	background-position: 215px;
 	
 	
 	
@@ -123,7 +124,9 @@
 .responsive-nav-wrapper div.menu-title {
 	background-position: 0 center;
 }
-.responsive-nav-wrapper div.shopping-cart-link {
+.storeId3 .responsive-nav-wrapper div.shopping-cart-link {
+	
+	background-position: -55px center;
 	
 }
 .responsive-nav-wrapper div.personal-button {
