@@ -216,3 +216,7 @@ input#sli_search_1::-webkit-input-placeholder {
         width: calc(100% - 290px) !important;
     }
 }
+
+.storeId3 .mobile-header-content-row {
+    margin-top: 54px;
+}

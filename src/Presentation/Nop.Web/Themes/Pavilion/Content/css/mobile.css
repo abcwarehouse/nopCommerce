@@ -33,7 +33,7 @@
 
 .storeId3 .responsive-nav-wrapper-parent {
         position: fixed;
-        top: 0;
+        top: 42px;
         z-index: 1020;
         width: 100%;
         height: 53px !important;
