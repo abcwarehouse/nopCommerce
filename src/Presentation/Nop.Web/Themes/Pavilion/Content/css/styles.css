@@ -256,6 +256,11 @@ label, label + * {
 	white-space: nowrap; /*fix for 'required' elements*/
     font-size: 0;
 }
+
+.storeId8 .inputs {
+	font-size: 13px;
+}
+
 .inputs:after {
 	content: "";
 	display: block;
