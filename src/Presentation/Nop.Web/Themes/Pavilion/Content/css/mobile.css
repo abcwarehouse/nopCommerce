@@ -447,6 +447,6 @@
 
 @media (max-width: 1025px) {
 .storeId3 .ABC-Merch {
-    display: none;
+    display: none !important;
 }
 }
