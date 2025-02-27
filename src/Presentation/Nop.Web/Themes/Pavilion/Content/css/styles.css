@@ -6232,8 +6232,9 @@ h1.search-page-title {
 }
 .hawthorne.top-menu li img {
     padding: 10px 10px;
-    height: 43px;
-	width: auto;
+    height: auto;
+    width: auto;
+    margin-top: 0px;
 }
 .hawthorne.top-menu li {
     padding: 0px 15px;
