@@ -6394,8 +6394,8 @@ ul.mega-menu.hawthorne {
 }
 
 
-/* DeAngelo added this to */
-li.root-category-items > a.with-subcategories > span {
+/* DeAngelo added this for hawthorne */
+.storeId8 .root-category-items > a.with-subcategories > span {
     color: #fff;
    
 }
@@ -6408,7 +6408,7 @@ li.root-category-items > a.with-subcategories > span {
 	margin-left: auto;    
 	margin-right: auto;}
 
-li.has-sublist.mega-menu-categories.root-category-items {
+.storeId8 .has-sublist.mega-menu-categories.root-category-items {
 		padding-bottom: 40px !important;
 	}
 
