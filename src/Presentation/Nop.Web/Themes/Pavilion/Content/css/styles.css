@@ -4566,13 +4566,6 @@ label, label + * {
 	margin: 20px 0 0;
 }
 
-.product-box-review {
-	margin: 10px 0;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
-
 .section.shipping-method,
 .section.payment-method,
 .section.payment-info,
@@ -6395,16 +6388,6 @@ img.hawthorne-logo {
 		width: 100%;
 	}
 }
-
-
-
-/*Angelo*/
- /* Mobile Menu Padding Fix*/
-  .mega-menu-responsive.mobile-sidebar-category .sublist-wrap.active { 
-	padding-top: 50px;
-} 
-
-
 
 /* Bootstrap */
 .row {
