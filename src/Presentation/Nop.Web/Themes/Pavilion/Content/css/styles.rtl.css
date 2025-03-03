@@ -1291,9 +1291,7 @@ label, label + * {
 	vertical-align: middle;
 	cursor: pointer;
 }
-.poll .buttons,
-.poll-total-votes {
-}
+
 .poll .buttons button {
 	border: none;
 	background-color: #f74258;
@@ -2963,9 +2961,6 @@ label, label + * {
 }
 .product-review-item .product-review-box {
 	margin: 0 0 5px;
-}
-.product-review-item .review-type-rating-ext {
-	/*display: none;*/
 }
 .product-review-item .review-main {
 	margin: 0 0 20px;
@@ -4976,10 +4971,6 @@ label, label + * {
 	display: block;
 	margin: 15px 0 0;
 }
-#opc-billing .section,
-#opc-shipping .section {
-	/*max-width: 480px;*/
-}
 .opc .enter-address {
 	padding: 0 !important;
 }
@@ -5643,8 +5634,6 @@ label, label + * {
 	font-size: 22px;
 	color: #333;
 }
-.forum-page .forum-description {
-}
 
 .forum-actions,
 .topic-actions {
@@ -6099,4 +6088,16 @@ label, label + * {
 .profile-page .topic-data label,
 .profile-page .topic-data span {
 	display: inline-block;
+}
+
+.sublist-wrap.categories.with-pictures .sublist {
+    padding-left: 30px !important;
+}
+@media screen and (max-width: 999px) {
+	ul.sublist {
+		padding-top: 40px !important;
+	}
+	.header-menu>ul li>.with-subcategories {
+	width: 250px !important;
+	}
 }
