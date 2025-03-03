@@ -6388,14 +6388,14 @@ img.hawthorne-logo {
 		width: 100%;
 	}
 }
-@media screen and (min-width: 1281px) {
+@media (min-width: 1281px) {
     body .top-level-manufacturer .item-box:nth-child(6n+1) {
         clear: both;
         margin-left: 0;
     }
 }
 
-@media screen and (min-width: 1281px) {
+@media (min-width: 1281px) {
     body .top-level-manufacturer .item-box {
         width: 15%;
     }
