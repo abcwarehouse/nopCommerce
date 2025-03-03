@@ -1,6 +1,7 @@
-﻿
-
-/*********** CSS RESET **********/
+﻿/*********** CSS RESET **********/
+html {
+    scroll-behavior: smooth;
+}
 
 * {
 	margin: 0;
