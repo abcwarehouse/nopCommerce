@@ -19,6 +19,7 @@
     <None Remove="logo.png" />
     <None Remove="plugin.json" />
     <None Remove="UpdateAbcPromos.StoredProc.sql" />
+    <None Remove="Views\BuildInfo.cshtml" />
     <None Remove="Views\Configure.cshtml" />
     <None Remove="Views\_ViewImports.cshtml" />
     <None Remove="Views\ProductDetails.cshtml" />
@@ -38,6 +39,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UpdateAbcPromos.StoredProc.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\BuildInfo.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Configure.cshtml">
@@ -113,8 +117,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitInfo" Version="3.5.0" />
     <PackageReference Include="System.Data.Odbc" Version="5.0.0" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <GitVersion>false</GitVersion>
+  </PropertyGroup>
 
   <!-- This target execute after "Build" target -->
   <Target Name="NopTarget" AfterTargets="Build">

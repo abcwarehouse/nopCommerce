@@ -65,6 +65,11 @@ namespace Nop.Plugin.Misc.AbcCore.Components
                         Url.Action("Configure", "AbcCore")),
                         false);
             }
+            else if (widgetZone == PublicWidgetZones.Footer)
+            {
+                var sha = ThisAssembly.Git.Sha[..7];
+                return Content($"{sha}");
+            }
 
             return Content("");
         }
