@@ -5,6 +5,7 @@
 
 @inject IStoreContext storeContext
 @inject ISettingService settingService
+@inject ICommonModelFactory CommonModelFactory
 
 
 @{
@@ -25,7 +26,7 @@
 
 
     //Get the HeaderlinksModel
-    var headerLinksModel = await Component.InvokeAsync("HeaderLinks");
+    var headerLinksModel = await CommonModelFactory.PrepareHeaderLinksModelAsync();
 
 }
 
@@ -142,14 +143,14 @@
                     <a href="/customer/info"><label>
                         @* This basically just checks if the user is logged in, if they are then it displays their name
                          instead of MyAccount and if they arent it just displays MyAccount *@
-                        @* @if (headerLinksModel.IsAuthenticated)
+                        @if (headerLinksModel.IsAuthenticated)
                         {
                             @headerLinksModel.CustomerName
                             }
                         else {
-                        @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")} *@
+                        @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")}
 
-                        @await Component.InvokeAsync("HeaderLinks")
+
                         </label>
                         </a>
                     @await Component.InvokeAsync("HeaderLinks")
