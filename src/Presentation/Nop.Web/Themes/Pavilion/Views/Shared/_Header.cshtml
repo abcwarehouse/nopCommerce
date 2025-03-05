@@ -1,8 +1,13 @@
 ﻿@using Nop.Core
 @using Nop.Services.Configuration
 
+@* Injected HeaderLinksModel *@
+@using Nop.Web.Models.Common
+@using Nop.Web.Factories;
+
 @inject IStoreContext storeContext
 @inject ISettingService settingService
+@inject ICommonModelFactory CommonModelFactory
 
 @{
     var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
@@ -20,6 +25,9 @@
     var clearanceUrl = currentStore.Url.Contains("stage") ?
         "https://stage.abcwarehouse.com/clearance" :
         "https://www.abcwarehouse.com/clearance";
+
+        //Get the HeaderlinksModel
+    var headerLinksModel = await CommonModelFactory.PrepareHeaderLinksModelAsync();
 }
 
  @if (storeId == 3 && !isHomePage )
@@ -206,7 +214,21 @@
                 </div>
                 @await Component.InvokeAsync("FlyoutShoppingCart")
                 <div class="header-links-wrapper">
-                    <a href="/customer/info"><label>@T("SevenSpikes.Themes.Pavilion.Header.MyAccount")</label></a>
+                    <a href="/customer/info"><label>
+                        
+                        <a href="/customer/info"><label>
+                        @* This basically just checks if the user is logged in, if they are then it displays their name
+                         instead of MyAccount and if they arent it just displays MyAccount *@
+                        @if (headerLinksModel.IsAuthenticated)
+                        {
+                            @headerLinksModel.CustomerName
+                            }
+                        else {
+                        @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")
+                        }
+                        
+                        
+                        </label></a>
                     @await Component.InvokeAsync("HeaderLinks")
                 </div>
             </div>
