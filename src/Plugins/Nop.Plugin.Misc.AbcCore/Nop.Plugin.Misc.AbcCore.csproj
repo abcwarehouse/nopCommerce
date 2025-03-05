@@ -117,13 +117,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitInfo" Version="3.5.0" />
     <PackageReference Include="System.Data.Odbc" Version="5.0.0" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <GitVersion>false</GitVersion>
-  </PropertyGroup>
 
   <!-- This target execute after "Build" target -->
   <Target Name="NopTarget" AfterTargets="Build">
@@ -131,4 +126,8 @@
     <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
   </Target>
 
+  <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
+    <Exec Command="git rev-parse --abbrev-ref HEAD > $(MSBuildProjectDirectory)\$(OutDir)branch.txt" />
+    <Exec Command="git rev-parse --short HEAD > $(MSBuildProjectDirectory)\$(OutDir)sha.txt" />
+  </Target>
 </Project>
