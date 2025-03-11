@@ -221,7 +221,7 @@
                          instead of MyAccount and if they arent it just displays MyAccount *@
                         @if (headerLinksModel.IsAuthenticated)
                         {
-                            @headerLinksModel.CustomerName
+                            <label id="customerName">@headerLinksModel.CustomerName</label>
                             }
                         else {
                         @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")

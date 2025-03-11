@@ -6209,6 +6209,22 @@ h1.search-page-title {
 }
 
 
+/* Customer Name */
+#customerName {
+    font-size: 1em;
+    display: inline-block;
+    max-width: 100px; /* Adjust as needed */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) { /* Adjust font size for smaller screens */
+    #customerName {
+        font-size: 0.8em;
+    }
+}
+
 
 
 .header-links {
