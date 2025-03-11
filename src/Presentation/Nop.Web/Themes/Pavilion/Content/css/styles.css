@@ -6213,13 +6213,13 @@ h1.search-page-title {
 #customerName {
     font-size: 1em;
     display: inline-block;
-    max-width: 100px; /* Adjust as needed */
+    max-width: 100px; 
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-@media (max-width: 600px) { /* Adjust font size for smaller screens */
+@media (max-width: 600px) { 
     #customerName {
         font-size: 0.8em;
     }
