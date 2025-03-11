@@ -58,7 +58,7 @@
 .header-links-wrapper {
     position: absolute;
     top: 17px;
-    right: 0;
+    right: 85px;
     z-index: 10;
 }
 .hours-desktop .cFzLkk {
@@ -76,7 +76,7 @@
 .storeId3 #flyout-cart {
     width: auto;
     float: right;
-    margin-right: 115px;
+    margin-right: 195px;
     margin-top: -22px;
     margin-bottom: -15px;
     padding-bottom: 5px;
