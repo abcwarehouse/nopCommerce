@@ -104,7 +104,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks
         {
             
             var html = $"<h2 class=\"abc-rebate-promo-title\"></h2><div class=\"abc-container abc-promo-container\">";
-            html += "<img src=\"https://place-hold.it/1200x305/aaa/white&text=Banner&bold&fontsize=24\" alt=\"RebateBanner\" class=\"responsive-banner\">";
+            html += "<img src=\"/NopAbc/wwwroot/images/1200x1000Rebate\" alt=\"RebateBanner\" class=\"responsive-banner\">";
             var promos = _settings.IncludeExpiredPromosOnRebatesPromosPage ?
                          (await _abcPromoService.GetActivePromosAsync()).Union(await _abcPromoService.GetExpiredPromosAsync()) :
                          await _abcPromoService.GetActivePromosAsync();
