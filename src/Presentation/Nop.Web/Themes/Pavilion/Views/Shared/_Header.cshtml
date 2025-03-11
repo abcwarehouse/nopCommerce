@@ -214,7 +214,7 @@
                 </div>
                 @await Component.InvokeAsync("FlyoutShoppingCart")
                 <div class="header-links-wrapper">
-                    <a href="/customer/info"><label>
+                    <a href="/customer/info">
                         
                         
                         @* This basically just checks if the user is logged in, if they are then it displays their name
@@ -224,11 +224,11 @@
                             <label id="customerName">@headerLinksModel.CustomerName</label>
                             }
                         else {
-                        @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")
+                       <label> @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")</label>
                         }
                         
                         
-                        </label></a>
+                        </a>
                     @await Component.InvokeAsync("HeaderLinks")
                 </div>
             </div>
