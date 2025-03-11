@@ -19,21 +19,107 @@
 
 <div class="page category-page">
     <div class="page-title">
-        @* <h1>@Model.Name</h1> *@
         <h1>Rebates and Promos</h1>
     </div>
     <div class="page-body">
         <div class="abc-container abc-promo-container">
-            @foreach (var promo in Model)
-            {
-                var promoDescription = promo.ManufacturerId != null ?
-                    $"{(await manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId.Value)).Name} - {promo.Description}" :
-                    promo.Description;
-                var slug = await urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0);
-                <div class="abc-item abc-promo-item">
-                    <a href="/promos/@slug">@promoDescription</a><br />
-                    <span>Expires @promo.EndDate.ToString("MM-dd-yy")</span>
-                </div>
+            @{
+                // Group promos by manufacturer
+                var promoGroups = new Dictionary<string, List<AbcPromo>>();
+                foreach (var promo in Model)
+                {
+                    var manufacturer = await manufacturerService.GetManufacturerByIdAsync(promo.ManufacturerId ?? 0);
+                    var manName = manufacturer?.Name ?? "Multiple Brands";
+
+                    if (!promoGroups.ContainsKey(manName))
+                    {
+                        promoGroups[manName] = new List<AbcPromo>();
+                    }
+
+                    promoGroups[manName].Add(promo);
+                }
+
+                // Render grouped promos
+                foreach (var group in promoGroups.OrderBy(g => g.Key))
+                {
+                    string manName = group.Key;
+                    <h1 class="manName">@manName</h1>
+
+                    foreach (var promo in group.Value)
+                    {
+                        var promoDescription = promo.Description;
+                        var slug = await urlRecordService.GetActiveSlugAsync(promo.Id, "AbcPromo", 0);
+                        <div class="abc-item abc-promo-item">
+                            <a class="promo-link" href="/promos/@slug">@promoDescription</a> - Expires @promo.EndDate.ToString("MM-dd-yy")<br />
+                        </div>
+                    }
+
+                    // Add manufacturer-specific buttons
+                    if (manName.ToLower() == "profile")
+                    {
+                        <a class="ManButton" href="/profile-2">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "deal partners")
+                    {
+                        <a class="ManButton" href="/deal-partners-llc">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "universal")
+                    {
+                        <a class="ManButton" href="/manufacturer/all">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "atg....audio to go")
+                    {
+                        <a class="ManButton" href="/atgaudio-to-go">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "black and decker")
+                    {
+                        <a class="ManButton" href="/black-decker">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "fisher & paykel")
+                    {
+                        <a class="ManButton" href="/fisher-paykel">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "g.e. cafe series")
+                    {
+                        <a class="ManButton" href="/ge-cafe-series">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "leggett & platt")
+                    {
+                        <a class="ManButton" href="/leggett-platt">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "nectar")
+                    {
+                        <a class="ManButton" href="/nectar-3">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "panasonic energy c/o amer")
+                    {
+                        <a class="ManButton" href="/panasonic-energy-co-amer">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "roku streaming stick+")
+                    {
+                        <a class="ManButton" href="/roku-streaming-stick-plus">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "sealy")
+                    {
+                        <a class="ManButton" href="/sealy-4">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "sunbrite tv")
+                    {
+                        <a class="ManButton" href="/sunbritetv">Shop @manName</a>
+                    }
+                    else if (manName.ToLower() == "tempur-pedic")
+                    {
+                        <a class="ManButton" href="/tempur-pedic-mattress">Shop @manName</a>
+                    }
+                    else
+                    {
+                        string formattedManName = manName.Replace(" ", "-")
+                                                         .Replace("/", "")
+                                                         .Replace(".", "")
+                                                         .Replace(",", "");
+                        <a class="ManButton" href="/@formattedManName">Shop @manName</a>
+                    }
+                }
             }
         </div>
     </div>
