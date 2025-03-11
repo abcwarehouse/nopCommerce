@@ -12,6 +12,8 @@ using Nop.Services.Plugins;
 using Nop.Services.Tasks;
 using Nop.Web.Framework.Infrastructure;
 using Nop.Services.Localization;
+using System;
+using System.Net.Http;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
@@ -23,17 +25,20 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly ISettingService _settingService;
+        private readonly ICategoryService _categoryService;
 
         public CartSlideoutPlugin(
             ILocalizationService localizationService,
             IProductAttributeService productAttributeService,
             IScheduleTaskService scheduleTaskService,
-            ISettingService settingService)
+            ISettingService settingService,
+            ICategoryService categoryService)
         {
             _localizationService = localizationService;
             _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
             _settingService = settingService;
+            _categoryService = categoryService;
         }
 
         public bool HideInWidgetList => false;
@@ -61,14 +66,49 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             await RemoveProductAttributesAsync();
             await AddProductAttributesAsync();
 
-            await _localizationService.AddOrUpdateLocaleResourceAsync(
-                "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable",
+            string zip = "48150";
+            string productId = "0";
+            string url = $"/AddToCart/GetDeliveryOptions?zip={zip}&productId={productId}";
+            HttpResponseMessage response = null;
+            Category category = null;
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode(); // Throw if not successful
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine(responseBody);
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine($"Request error: {e.Message}");
+                }
+            }
+            
+            if (category.ParentCategoryId == 0 || category.Name == "Appliances" && (response != null && response.IsSuccessStatusCode))
+            {
+                await _localizationService.AddOrUpdateLocaleResourceAsync(
+                "AbcWarehouse.Plugin.Widgets.CartSlideout.ApplianceDeliveryNotAvailable",
                 "Home delivery for the zip code entered is not available through ABC Warehouse " +
                 "because it is outside of our local service area in Michigan, Ohio and Indiana.  " +
                 "Please see our sister company, us-appliance.com for nation-wide delivery options for " +
                 "your new appliance(s). " +
                 "<a href='https://www.us-appliance.com/' target='_blank' rel='noopener noreferrer'>Shop Us Appliance</a> for more details."
-            );
+                );
+            }
+            else
+            {
+                await _localizationService.AddOrUpdateLocaleResourceAsync(
+                "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable",
+                "Home delivery for the zip code entered is not available at this time. ABC Warehouse currently " +
+                "provides home delivery on major appliances and TVs within our Home Delivery Areas throughout " +
+                "Michigan, and surrounding areas of our store locations in Ohio and Indiana."
+                );
+            }
+            
             await _localizationService.AddOrUpdateLocaleResourceAsync(
                 "AbcWarehouse.Plugin.Widgets.CartSlideout.MattressMessaging",
                 "FREE Delivery, Set-Up and Removal on any mattress purchase set $697 or more."
