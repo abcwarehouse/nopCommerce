@@ -20,76 +20,84 @@
 @{
     Layout = "_ColumnsTwo";
 
-    //title
+    // Add the promotion name to the page title
     Html.AddTitleParts(Model.Name);
 
-    //page class
+    // Add a custom CSS class to the page for styling
     Html.AppendPageCssClassParts("html-promo-page");
 
-	// ABC: get the URL for widget
-	var path = @Context.Request.Path.Value;
+    // Get the URL path for widget logic
+    var path = @Context.Request.Path.Value;
 }
 
 <div class="page promo-page">
-	@if (Model.BannerImageUrl != null)
-	{
-		<p style="text-align: center">
-			<a href="@Model.PromoFormPopup">
-				<img src="@Model.BannerImageUrl" alt="@Model.Name" width="100%" />
-			</a>
-		</p>
-	}
-	@if (path.Contains("1966-t-385-cyber-monday-deal"))
-	{
-		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.PromoProductsBelowBanner, additionalData = Model })
-	}
-	<div class="page-body">
-		@if (Model.Products.Count > 0)
-		{
-			<div class="product-selectors">
-				@*DFar: open filters for mobile*@
-				<div id="mobile-filters-wrapper">
-					<button id="mobile-filters" onclick="toggleMobileFilters()"><i class="fas fa-filter"></i>Filters</button>
-				</div>
+    <!-- Banner Image -->
+    @if (Model.BannerImageUrl != null)
+    {
+        <p style="text-align: center">
+            <a href="@Model.PromoFormPopup">
+                <img src="@Model.BannerImageUrl" alt="@Model.Name" width="100%" />
+            </a>
+        </p>
+    }
 
-				@*sorting*@
-				@* @if (Model.AllowProductSorting)
-				{
-					<div class="product-sorting">
-						<span>@T("Catalog.OrderBy")</span>
-						@Html.DropDownList("products-orderby", Model.AvailableSortOptions, new { onchange = "setLocation(this.value);" })
-					</div>
-				} *@
-			</div>
-		}
-		@if (Model.Products.Count > 0)
-		{
-			<div class="product-grid">
-				<div class="item-grid">
-					@foreach (var product in Model.Products)
-					{
-						var index = product.Name.LastIndexOf(' ');
-						string man = "";
-						string manNo = "";
-						//Name does not conform to standard of [manufacturer] [sku]
-						if (index < 0)
-						{
-							manNo = product.Name;
-						}
-						else
-						{
-							man = product.Name.Substring(0, index);
-							manNo = product.Name.Substring(index);
-						}
-					<div class="item-box">
-						
-						@Html.Partial("_ProductBox", product)
-					</div>
-					}
-				</div>
-			</div>
-		}
-		@{
+    <!-- Custom Widget for Specific Path -->
+    @if (path.Contains("1966-t-385-cyber-monday-deal"))
+    {
+        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.PromoProductsBelowBanner, additionalData = Model })
+    }
+
+    <div class="page-body">
+        <!-- Render Rebate and Promo HTML -->
+        @if (!string.IsNullOrEmpty(Model.RebatePromoHtml))
+        {
+            <div class="rebate-promo-section">
+                @Html.Raw(Model.RebatePromoHtml)
+            </div>
+        }
+
+        <!-- Product Filters and Sorting -->
+        @if (Model.Products.Count > 0)
+        {
+            <div class="product-selectors">
+                <!-- Mobile Filters Button -->
+                <div id="mobile-filters-wrapper">
+                    <button id="mobile-filters" onclick="toggleMobileFilters()">
+                        <i class="fas fa-filter"></i>Filters
+                    </button>
+                </div>
+            </div>
+        }
+
+        <!-- Product Grid -->
+        @if (Model.Products.Count > 0)
+        {
+            <div class="product-grid">
+                <div class="item-grid">
+                    @foreach (var product in Model.Products)
+                    {
+                        var index = product.Name.LastIndexOf(' ');
+                        string man = "";
+                        string manNo = "";
+                        if (index < 0)
+                        {
+                            manNo = product.Name;
+                        }
+                        else
+                        {
+                            man = product.Name.Substring(0, index);
+                            manNo = product.Name.Substring(index);
+                        }
+                        <div class="item-box">
+                            @Html.Partial("_ProductBox", product)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Pagination -->
+        @{
             var pager = Html.Pager(Model).QueryParam("pagenumber");
         }
         @if (!(await pager.IsEmpty()))
@@ -98,12 +106,16 @@
                 @pager
             </div>
         }
-		@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
-	</div>
+
+        <!-- Widget at Bottom of Page -->
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
+    </div>
 </div>
+
+<!-- Aside Section for Page Title -->
 @section AsidePageTitle
 {
-	<div class="page-title">
-		<h1>@Model.Name</h1>
-	</div>
+    <div class="page-title">
+        <h1>@Model.Name</h1>
+    </div>
 }
