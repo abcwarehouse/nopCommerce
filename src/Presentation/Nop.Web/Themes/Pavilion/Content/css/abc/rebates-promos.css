@@ -47,9 +47,25 @@
 h1.manName {
     font-size: 22px;
     color: #333;
+    padding: 10px 0 10px 0;
 }
 
 .responsive-banner {
     max-width: 100%;
     height: auto;
+}
+
+.abc-item.abc-promo-item {
+    padding: 0 0px 0 24px;
+}
+
+
+.promo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.promo-group {
+    break-inside: avoid;
 }
