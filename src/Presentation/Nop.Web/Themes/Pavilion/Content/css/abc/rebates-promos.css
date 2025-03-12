@@ -40,19 +40,20 @@
     
     text-decoration: none !important;
     text-shadow: 0 1px 0 #fff;
-    
+    margin-left: 11px;
     margin-bottom: 35px;
 }
 
 h1.manName {
     font-size: 22px;
     color: #333;
-    padding: 10px 0 10px 0;
+    padding: 10px 0 10px 10px;
 }
 
 .responsive-banner {
-    max-width: 100%;
-    height: auto;
+    width: 100%; 
+    height: auto; 
+    display: block;
 }
 
 .abc-item.abc-promo-item {
@@ -68,4 +69,14 @@ h1.manName {
 
 .promo-group {
     break-inside: avoid;
+}
+
+.abc-container.abc-promo-container {
+    background-color: white;
+}
+
+.full-width-banner-container {
+    width: 100vw; 
+    margin-left: calc(-50vw + 50%); 
+    overflow: hidden; 
 }
