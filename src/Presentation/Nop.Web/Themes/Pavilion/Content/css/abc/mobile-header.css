@@ -148,6 +148,11 @@ input.search-box-text::placeholder {
     color: #787878;
 }
 
+
+.storeId3 form#small-search-box-form {
+    width: 100%;
+    
+}
 .search-box-button {
     background: url(/Plugins/Misc.AbcFrontend/Images/search-button.png) center no-repeat !important;
     background-color: transparent !important;
