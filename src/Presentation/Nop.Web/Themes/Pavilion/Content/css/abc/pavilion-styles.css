@@ -55,8 +55,9 @@
 .header-upper .center {
     position: relative;
 }
-.header-links-wrapper {
+.storeId3 .header-links-wrapper {
     display: flex;
+    padding-bottom: 188px;
 }
 .hours-desktop .cFzLkk {
     margin-top: 0;
