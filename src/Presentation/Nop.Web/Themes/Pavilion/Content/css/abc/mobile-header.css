@@ -216,7 +216,7 @@ input#sli_search_1::-webkit-input-placeholder {
 
 @media (max-width: 1280px) {
 .storeId3 .store-search-box {
-    width: calc(57% - 247px) !important;
+    width: calc(74% - 247px) !important;
   }
 }
 
