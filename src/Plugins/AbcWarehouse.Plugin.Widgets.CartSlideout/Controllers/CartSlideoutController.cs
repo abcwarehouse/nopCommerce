@@ -114,6 +114,25 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             });
         }
 
+        [HttpGet]
+        public IActionResult GetProductCategories(int productId)
+        {
+            var product = _productService.GetProductById(productId);
+            if (product == null)
+                return NotFound();
+
+            var categories = _categoryService.GetProductCategoriesByProductId(productId);
+            var mainCategory = categories.FirstOrDefault(); // Assuming the first category is the primary one
+
+            return Json(new
+            {
+                categoryId = mainCategory?.CategoryId,
+                parentCategoryId = mainCategory?.Category?.ParentCategoryId,
+                categoryName = mainCategory?.Category?.Name ?? "",
+                parentCategoryName = mainCategory?.Category?.ParentCategory?.Name ?? ""
+            });
+        }
+
         private async Task<bool> IsWarrantySelectedAsync(IFormCollection form)
         {
             foreach (var element in form)
