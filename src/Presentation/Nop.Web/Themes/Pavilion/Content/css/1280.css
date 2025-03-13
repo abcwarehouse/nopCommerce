@@ -47,7 +47,11 @@
 }
 .header .center {
 	width: 1200px;
-	display: flex;
+	
+}
+
+.header .header-lower .center {
+    display: flex;
 }
 .header-links-wrapper,
 .header-selectors-wrapper {
