@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Caching;
@@ -34,6 +35,8 @@ namespace Nop.Services.Catalog
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IWorkContext _workContext;
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
 
         #endregion
 
@@ -50,7 +53,9 @@ namespace Nop.Services.Catalog
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IProductService productService,
+            ICategoryService categoryService)
         {
             _aclService = aclService;
             _customerService = customerService;
@@ -63,6 +68,8 @@ namespace Nop.Services.Catalog
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
             _workContext = workContext;
+            _productService = productService;
+            _categoryService = categoryService;
         }
 
         #endregion
@@ -787,6 +794,38 @@ namespace Nop.Services.Catalog
                 return result;
             });
         }
+
+        public async Task<Category> GetParentCategory(int productId)
+        {
+            // Fetch the product and ensure it exists
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product == null)
+                return null;
+
+            // Retrieve the product's categories (ProductCategory entities)
+            var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(productId);
+            var productCategory = productCategories.FirstOrDefault(); // Get the first category mapping
+
+            if (productCategory == null)
+                return null;
+
+            // Fetch the actual Category entity using its ID
+            var category = await _categoryService.GetCategoryByIdAsync(productCategory.CategoryId);
+            if (category == null)
+                return null;
+
+            // Fetch the parent category
+            var parentCategory = await _categoryService.GetCategoryByIdAsync(category.ParentCategoryId);
+
+            return parentCategory; // Return the parent category object, or null if none exists
+        }
+
+        public Task<Category> GetParentCategory(string zip, string productId)
+        {
+            throw new NotImplementedException();
+        }
+
+
 
         #endregion
     }

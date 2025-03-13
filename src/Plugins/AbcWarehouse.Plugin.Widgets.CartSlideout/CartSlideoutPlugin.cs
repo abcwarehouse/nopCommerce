@@ -30,7 +30,6 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly ISettingService _settingService;
         private readonly ICategoryService _categoryService;
-        private readonly ICategoryService _abcCategoryService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWorkContext _workContext;
 
@@ -40,7 +39,6 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             IScheduleTaskService scheduleTaskService,
             ISettingService settingService,
             ICategoryService categoryService,
-            ICategoryService abcCategoryService,
             IShoppingCartService shoppingCartService,
             IWorkContext workContext)
         {
@@ -49,7 +47,6 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             _scheduleTaskService = scheduleTaskService;
             _settingService = settingService;
             _categoryService = categoryService;
-            _categoryService = abcCategoryService;
             _shoppingCartService = shoppingCartService;
             _workContext = workContext;
         }
@@ -207,26 +204,5 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             }
         }
 
-        /*public async Task<Category> GetParentCategory(string zip, string productId)
-        {
-            string url = $"/AddToCart/GetDeliveryOptions?zip={zip}&productId={productId}";
-            HttpResponseMessage response = null;
-
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    response = await client.GetAsync(url);
-                    response.EnsureSuccessStatusCode(); // Throw if not successful
-
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine(responseBody);
-                }
-                catch (HttpRequestException e)
-                {
-                    Console.WriteLine($"Request error: {e.Message}");
-                }
-            }
-        } */
     }
 }
