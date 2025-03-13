@@ -197,7 +197,7 @@ input#sli_search_1::-webkit-input-placeholder {
     }
 
     .storeId3 .store-search-box {
-        width: calc(67% - 247px) !important;
+        width: calc(61% - 247px) !important;
     }
 
     .store-search-box {
@@ -207,7 +207,7 @@ input#sli_search_1::-webkit-input-placeholder {
 
 @media (max-width: 1280px) {
 .storeId3 .store-search-box {
-    width: calc(64% - 247px) !important;
+    width: calc(57% - 247px) !important;
   }
 }
 

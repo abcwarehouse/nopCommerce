@@ -6213,7 +6213,7 @@ h1.search-page-title {
 #customerName {
     font-size: 1em;
     display: inline-block;
-    max-width: 100px; 
+    max-width: 150px; 
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
