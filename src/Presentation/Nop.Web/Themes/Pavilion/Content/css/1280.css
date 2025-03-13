@@ -47,6 +47,7 @@
 }
 .header .center {
 	width: 1200px;
+	display: flex;
 }
 .header-links-wrapper,
 .header-selectors-wrapper {

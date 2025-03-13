@@ -111,6 +111,10 @@ input.search-box-text {
     width: calc(100% - 290px);
     margin-top: 1.5px;
     margin-left: 25.6%;
+    display: flex;
+    flex-grow: 1;
+    max-width: calc(100% - 300px);
+    padding-right: 20px;
 }
 
 
@@ -125,7 +129,7 @@ div.search-box.store-search-box {
     margin-top: 1.5px;
 }
 .storeId8 .div.search-box.store-search-box form#small-search-box-form {
-    width: 110%;
+    width: 100%;
     padding-left: 10px;
 }
 div.search-box.store-search-box form#small-search-box-form input#sli_search_1 {
