@@ -116,6 +116,7 @@
 .header .center {
 	width: 980px;
 	margin: auto;
+	display: flex;
 }
 
 .header-upper {
@@ -134,7 +135,7 @@
 	position: relative;
 	float: right;
 	height: 42px;
-	margin: -35px 0 0 0px;
+	margin: 4px 0 0 30px;
 	transition: all 0.2s ease;
 }
 .header-links-wrapper label,
