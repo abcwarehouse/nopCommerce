@@ -69,6 +69,58 @@ async function checkDeliveryShippingAvailabilityAsync() {
     updateAttributes();
 }
 
+async function checkIfAppliance() {
+    try {
+        // Fetch product category and parent category
+        const categoryResponse = await fetch(`/Product/GetProductCategories?productId=${productId}`);
+        
+        if (categoryResponse.status !== 200) {
+            alert('Error fetching product category.');
+            updateCheckDeliveryAvailabilityButton();
+            return;
+        }
+        
+        const categoryData = await categoryResponse.json();
+        const { categoryId, parentCategoryId } = categoryData; 
+
+        const response = await fetch(`/AddToCart/GetDeliveryOptions?zip=${zip}&productId=${productId}&categoryId=${categoryId}&parentCategoryId=${parentCategoryId}`);
+        
+        if (response.status !== 200) {
+            alert('Error occurred when checking delivery options.');
+            updateCheckDeliveryAvailabilityButton();
+            return;
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An unexpected error occurred.');
+        updateCheckDeliveryAvailabilityButton();
+    }
+}
+
+async function checkDeliveryOptionsWithCategory(productId) {
+    try {
+        const categoryResponse = await fetch(`/Product/GetProductCategories?productId=${productId}`);
+        if (categoryResponse.status !== 200) {
+            alert('Error fetching product category.');
+            return;
+        }
+
+        const categoryData = await categoryResponse.json();
+        const { categoryId, parentCategoryId, categoryName, parentCategoryName } = categoryData;
+
+        const isApplianceCategory = categoryName.toLowerCase().includes("appliance") || 
+                                    parentCategoryName.toLowerCase().includes("appliance");
+
+        checkDeliveryShippingAvailabilityAsync(isApplianceCategory);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An unexpected error occurred.');
+    }
+}
+
+
+
 function openDeliveryOptions(response) {
     deliveryInput.style.display = "none";
     deliveryNotAvailable.style.display = "none";

@@ -25,6 +25,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
         private readonly IAbcProductAttributeService _productAttributeService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWorkContext _workContext;
+        private readonly ICategoryService _categoryService;
 
         public CartSlideoutController(
             IProductAttributeParser productAttributeParser,
@@ -32,7 +33,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             IAbcMattressModelService abcMattressModelService,
             IAbcProductAttributeService productAttributeService,
             IShoppingCartService shoppingCartService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            ICategoryService categoryService)
         {
             _productAttributeParser = productAttributeParser;
             _productService = productService;
@@ -40,6 +42,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             _productAttributeService = productAttributeService;
             _shoppingCartService = shoppingCartService;
             _workContext = workContext;
+            _categoryService = categoryService;
         }
 
         // very similiar to OrderController.ProductDetails_AttributeChange
@@ -113,6 +116,33 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                 IsAddEditCartAllowed = isAddEditCartAllowed
             });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductCategories(int productId)
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product == null)
+                return NotFound();
+
+            var categories = await _categoryService.GetProductCategoriesByProductIdAsync(productId);
+            var category = categories.FirstOrDefault(); // Get the actual Category object
+
+            if (category == null)
+                return Json(new { message = "No category found for the product." });
+
+            var parentCategory = await _categoryService.GetParentCategory(productId);
+            //var parentCategory = await _categoryService.GetCategoryByIdAsync(category.ParentCategoryId ?? 0);
+            var categoryName = _categoryService.GetCategoryByIdAsync(category.Id).Result.Name;
+
+            return Json(new
+            {
+                categoryId = category.Id,
+                categoryName = categoryName,
+                parentCategoryId = parentCategory?.Id,
+                parentCategoryName = parentCategory?.Name ?? ""
+            });
+        }
+
 
         private async Task<bool> IsWarrantySelectedAsync(IFormCollection form)
         {

@@ -12,6 +12,12 @@ using Nop.Services.Plugins;
 using Nop.Services.Tasks;
 using Nop.Web.Framework.Infrastructure;
 using Nop.Services.Localization;
+using System;
+using System.Net.Http;
+using System.ComponentModel;
+using Nop.Services.Orders;
+using Nop.Core;
+using Nop.Core.Domain.Orders;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
@@ -23,17 +29,26 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         private readonly IProductAttributeService _productAttributeService;
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly ISettingService _settingService;
+        private readonly ICategoryService _categoryService;
+        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IWorkContext _workContext;
 
         public CartSlideoutPlugin(
             ILocalizationService localizationService,
             IProductAttributeService productAttributeService,
             IScheduleTaskService scheduleTaskService,
-            ISettingService settingService)
+            ISettingService settingService,
+            ICategoryService categoryService,
+            IShoppingCartService shoppingCartService,
+            IWorkContext workContext)
         {
             _localizationService = localizationService;
             _productAttributeService = productAttributeService;
             _scheduleTaskService = scheduleTaskService;
             _settingService = settingService;
+            _categoryService = categoryService;
+            _shoppingCartService = shoppingCartService;
+            _workContext = workContext;
         }
 
         public bool HideInWidgetList => false;
@@ -52,29 +67,76 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
         {
             // Need to have show cart after add to cart turned off:
             await _settingService.SetSettingAsync<bool>(
-                "shoppingcartsettings.displaycartafteraddingproduct",
-                false);
+        "shoppingcartsettings.displaycartafteraddingproduct",
+        false);
 
-            await RemoveTaskAsync();
-            await AddTaskAsync();
+    await RemoveTaskAsync();
+    await AddTaskAsync();
 
-            await RemoveProductAttributesAsync();
-            await AddProductAttributesAsync();
+    await RemoveProductAttributesAsync();
+    await AddProductAttributesAsync();
 
-            await _localizationService.AddOrUpdateLocaleResourceAsync(
-                "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable",
-                "Home delivery for the zip code entered is not available through ABC Warehouse " +
-                "because it is outside of our local service area in Michigan, Ohio and Indiana.  " +
-                "Please see our sister company, us-appliance.com for nation-wide delivery options for " +
-                "your new appliance(s). " +
-                "<a href='https://www.us-appliance.com/' target='_blank' rel='noopener noreferrer'>Shop Us Appliance</a> for more details."
-            );
-            await _localizationService.AddOrUpdateLocaleResourceAsync(
-                "AbcWarehouse.Plugin.Widgets.CartSlideout.MattressMessaging",
-                "FREE Delivery, Set-Up and Removal on any mattress purchase set $697 or more."
-            );
+    var customer = await _workContext.GetCurrentCustomerAsync();
+    // Get all cart items
+    var cartItems = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart);
 
-            await base.InstallAsync();
+    // Check if any product belongs to "Appliances"
+    bool hasApplianceCategory = false;
+
+    foreach (var item in cartItems)
+    {
+        // Get product categories
+        var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(item.ProductId);
+
+        foreach (var productCategory in productCategories)
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(productCategory.CategoryId);
+            
+            // Check if this category or its parent is "Appliances"
+            if (category != null)
+            {
+                if (category.Name.Equals("Appliances", StringComparison.OrdinalIgnoreCase) ||
+                    (category.ParentCategoryId > 0 && 
+                    (await _categoryService.GetCategoryByIdAsync(category.ParentCategoryId))?.Name.Equals("Appliances", StringComparison.OrdinalIgnoreCase) == true))
+                {
+                    hasApplianceCategory = true;
+                    break;
+                }
+            }
+        }
+
+        if (hasApplianceCategory)
+            break; // No need to check further if already found
+    }
+
+    // Update the localization message based on category presence
+    if (hasApplianceCategory)
+    {
+        await _localizationService.AddOrUpdateLocaleResourceAsync(
+            "AbcWarehouse.Plugin.Widgets.CartSlideout.ApplianceDeliveryNotAvailable",
+            "Home delivery for the zip code entered is not available through ABC Warehouse " +
+            "because it is outside of our local service area in Michigan, Ohio and Indiana.  " +
+            "Please see our sister company, us-appliance.com for nation-wide delivery options for " +
+            "your new appliance(s). " +
+            "<a href='https://www.us-appliance.com/' target='_blank' rel='noopener noreferrer'>Shop Us Appliance</a> for more details."
+        );
+    }
+    else
+    {
+        await _localizationService.AddOrUpdateLocaleResourceAsync(
+            "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable",
+            "Home delivery for the zip code entered is not available at this time. ABC Warehouse currently " +
+            "provides home delivery on major appliances and TVs within our Home Delivery Areas throughout " +
+            "Michigan, and surrounding areas of our store locations in Ohio and Indiana."
+        );
+    }
+
+    await _localizationService.AddOrUpdateLocaleResourceAsync(
+        "AbcWarehouse.Plugin.Widgets.CartSlideout.MattressMessaging",
+        "FREE Delivery, Set-Up and Removal on any mattress purchase set $697 or more."
+    );
+
+    await base.InstallAsync();
         }
 
         public override async System.Threading.Tasks.Task UninstallAsync()
@@ -141,5 +203,6 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                 await _productAttributeService.DeleteProductAttributeAsync(attribute);
             }
         }
+
     }
 }
