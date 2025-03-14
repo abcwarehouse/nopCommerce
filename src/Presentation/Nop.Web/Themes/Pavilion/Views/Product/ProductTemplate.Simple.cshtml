@@ -197,9 +197,12 @@
                     <!--BV reviews-->
                     @{
                         <a href="#quickTab-Reviews" 
-                            onclick="event.preventDefault(); document.querySelector('#quickTab-Reviews').click();">
+                            onclick="event.preventDefault(); document.querySelector('#quickTab-Reviews-tab').click(); 
+                            document.querySelector('#quickTab-Reviews-tab').style.display = 'block';
+                            document.querySelector('#quickTab-Reviews-tab').scrollIntoView({ behavior: 'smooth' });">
                             <div data-bv-show="inline_rating" data-bv-product-id="@currentProduct.Id"></div>
                         </a>
+
 
                         <!-- Content Tabs -->
                         <div id="review_tab" style="display: none;">
