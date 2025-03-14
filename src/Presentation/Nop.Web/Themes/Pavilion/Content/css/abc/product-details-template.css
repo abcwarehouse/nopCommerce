@@ -9,6 +9,20 @@
     margin-bottom: 10px;
 }
 
+@media screen and (max-width: 1024px) {
+    .storeId3 .header#header {
+        margin-bottom: -210px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+.storeId3 #flyout-cart {
+    
+    display: none;
+}
+}
+
+
 .product-name.product-name.product-name h1 {
     color: #4f4f4f;
     font-size: 1rem;
