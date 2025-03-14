@@ -19,7 +19,6 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
     public class AbcCategoryService : CategoryService, IAbcCategoryService
     {
     private readonly IRepository<Category> _categoryRepository;
-    private readonly IUrlRecordService _urlRecordService;
 
     public AbcCategoryService(
         IAclService aclService,

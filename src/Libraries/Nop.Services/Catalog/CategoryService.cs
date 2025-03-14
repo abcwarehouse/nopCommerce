@@ -36,7 +36,6 @@ namespace Nop.Services.Catalog
         private readonly IStoreMappingService _storeMappingService;
         private readonly IWorkContext _workContext;
         private readonly IProductService _productService;
-        private readonly Lazy<ICategoryService> _categoryService;
 
         #endregion
 
@@ -54,8 +53,7 @@ namespace Nop.Services.Catalog
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IWorkContext workContext,
-            IProductService productService,
-            Lazy<ICategoryService> categoryService)
+            IProductService productService)
         {
             _aclService = aclService;
             _customerService = customerService;
@@ -69,7 +67,6 @@ namespace Nop.Services.Catalog
             _storeMappingService = storeMappingService;
             _workContext = workContext;
             _productService = productService;
-            _categoryService = categoryService;
         }
 
         #endregion
@@ -803,19 +800,19 @@ namespace Nop.Services.Catalog
                 return null;
 
             // Retrieve the product's categories (ProductCategory entities)
-            var productCategories = await _categoryService.Value.GetProductCategoriesByProductIdAsync(productId);
+            var productCategories = await GetProductCategoriesByProductIdAsync(productId);
             var productCategory = productCategories.FirstOrDefault(); // Get the first category mapping
 
             if (productCategory == null)
                 return null;
 
             // Fetch the actual Category entity using its ID
-            var category = await _categoryService.Value.GetCategoryByIdAsync(productCategory.CategoryId);
+            var category = await GetCategoryByIdAsync(productCategory.CategoryId);
             if (category == null)
                 return null;
 
             // Fetch the parent category
-            var parentCategory = await _categoryService.Value.GetCategoryByIdAsync(category.ParentCategoryId);
+            var parentCategory = await GetCategoryByIdAsync(category.ParentCategoryId);
 
             return parentCategory; // Return the parent category object, or null if none exists
         }
