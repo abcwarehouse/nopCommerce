@@ -6249,6 +6249,12 @@ h1.search-page-title {
 
 }
 
+@media screen and (max-width: 1024px) {
+	.storeId3 .header-links-wrapper label {
+		display: none;
+	}
+}
+
 .hawthorne.top-menu {
     text-align: right;
 	background: #f6f6f6;
