@@ -11,7 +11,9 @@
 
 @media screen and (max-width: 1024px) {
     .storeId3 .header#header {
-        margin-bottom: -210px;
+        margin-bottom: -195px;
+        margin-top: -32px;
+        padding: 10px 0;
     }
 }
 
@@ -22,6 +24,11 @@
 }
 }
 
+@media screen and (max-width: 1024px) {
+.storeId3 .master-column-wrapper {
+    margin: 20px 0;
+}
+}
 
 .product-name.product-name.product-name h1 {
     color: #4f4f4f;
