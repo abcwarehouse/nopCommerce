@@ -2,7 +2,7 @@
     /* display: flex; */
     /* flex-wrap: wrap;
     text-align: center; */
-    margin: 1rem 0;
+    /* margin: 1rem 0; */
 }
 .abc-item {
     margin: 2% 3% 2% 0%;
@@ -65,6 +65,7 @@ h1.manName {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    text-align: center;
 }
 
 @media screen and (max-width: 500px) {
