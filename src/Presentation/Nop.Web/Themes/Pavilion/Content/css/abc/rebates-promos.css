@@ -67,6 +67,14 @@ h1.manName {
     gap: 20px;
 }
 
+@media screen and (max-width: 500px) {
+    .promo-grid {
+        
+        grid-template-columns: repeat(1, 1fr);
+        
+    }
+}
+
 .promo-group {
     break-inside: avoid;
 }
