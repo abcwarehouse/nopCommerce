@@ -6156,7 +6156,9 @@ h1.search-page-title {
 .measurement-confirmation {
     padding-bottom: 20px;
 }
-
+div#quickTab-Reviews-tab {
+    background: #fff;
+}
 .sublist-wrap.categories.with-pictures .sublist {
     padding-left: 30px !important;
 }
