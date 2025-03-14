@@ -32,8 +32,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         IStoreContext storeContext,
         IStoreMappingService storeMappingService,
         IWorkContext workContext,
-        IProductService productService,
-        ICategoryService categoryService
+        IProductService productService
     ) : base(
         aclService,
         customerService,
@@ -46,8 +45,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         storeContext,
         storeMappingService,
         workContext,
-        productService,
-        categoryService
+        productService
     )
     {
         _categoryRepository = categoryRepository;
