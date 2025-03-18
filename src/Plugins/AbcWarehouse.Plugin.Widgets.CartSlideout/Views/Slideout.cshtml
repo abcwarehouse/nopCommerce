@@ -8,6 +8,7 @@
 
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Widgets.CartSlideout/scripts/cart-slideout.js");
 }
+@await Component.InvokeAsync("CartSlideout")
 
 <div class="cart-slideout-overlay"></div>
 <div class="cart-slideout">
@@ -29,10 +30,26 @@
             <input class="cart-slideout__delivery-zip-code-input" />
         </div>
         <button class="cart-slideout__check-delivery-options__btn"
-                onclick="checkDeliveryShippingAvailabilityAsync()"
+                onclick="checkDeliveryShippingAvailabilityAsync(); GetProductCategories(productId); HasApplianceTopLevelCategoryAsync();"
                 disabled>
                 Check Delivery/Shipping Availability
         </button>
+
+        @if (Model.HasApplianceCategory)
+        {
+            <div class="cart-slideout__delivery-not-available">
+                @T("AbcWarehouse.Plugin.Widgets.CartSlideout.ApplianceDeliveryNotAvailable")
+            </div>
+        }
+        else
+        {
+            <div class="cart-slideout__delivery-not-available">
+                @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable")
+            </div>
+        }
+        <div class="cart-slideout__delivery-not-available">
+            @T("AbcWarehouse.Plugin.Widgets.CartSlideout.MattressMessaging")
+        </div>
     </div>
     <div class="cart-slideout__delivery-not-available">
         @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable")
