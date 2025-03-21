@@ -20,13 +20,14 @@ window.bvCallback = function (BV) {
     "orderId": "@Model.CustomOrderNumber",
     "total": "@order.OrderSubtotalInclTax",
     "items": [
-      @foreach (var item in orderItems)
+      @for (int i = 0; i < orderItems.Count; i++)
       {
-        @:{
-          "price": "@item.UnitPriceInclTax",
-          "quantity": "@item.Quantity",
-          "productId": "@item.ProductId"
-        }@(item != orderItems.Last() ? "," : "")
+        var item = orderItems[i];
+        @Html.Raw($"{{\"price\": \"{item.UnitPriceInclTax}\", \"quantity\": \"{item.Quantity}\", \"productId\": \"{item.ProductId}\"}}")
+        @if (i < orderItems.Count - 1)
+        {
+          @Html.Raw(",")
+        }
       }
     ]
   });
