@@ -18,7 +18,7 @@ window.bvCallback = function (BV) {
   BV.pixel.trackTransaction({
     "currency": "USD",
     "orderId": "@Model.CustomOrderNumber",
-    "total": "@order.OrderSubtotalInclTax",
+    "total": "@order.OrderTotal",
     "items": [
       @for (int i = 0; i < orderItems.Count; i++)
       {
