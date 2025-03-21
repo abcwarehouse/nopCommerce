@@ -301,6 +301,9 @@ namespace Nop.Web.Controllers
             // Fetch the order items
             var orderItems = await _orderService.GetOrderItemsAsync(order.Id);
 
+            ViewBag.OrderTotal = order.OrderTotal.ToString("0.00"); // Format as needed
+            ViewBag.OrderItems = orderItems;
+
             //model
             var model = await _checkoutModelFactory.PrepareCheckoutCompletedModelAsync(order);
             ViewBag.OrderItems = orderItems;
