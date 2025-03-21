@@ -10,6 +10,13 @@
 
     var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
+    if (orderItems == null || !orderItems.Any())
+    {
+        <script>
+            console.error("Order items are missing or empty.");
+        </script>
+        return;
+    }
 }
 
 <div class="page checkout-page order-completed-page">
