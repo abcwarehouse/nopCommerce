@@ -194,45 +194,38 @@
                             <span class="product-name__isam-id">@displayIdStr</span>
                         }
                     </div>
-                    <!--BV reviews-->
-                    @{
-                        <a href="#quickTab-Reviews" 
-                            onclick="event.preventDefault(); document.querySelector('#quickTab-Reviews-tab').click(); 
-                            document.querySelector('#quickTab-Reviews-tab').style.display = 'block';
-                            document.querySelector('#quickTab-Reviews-tab').scrollIntoView({ behavior: 'smooth' });">
-                            <div data-bv-show="inline_rating" data-bv-product-id="@currentProduct.Id"></div>
-                        </a>
 
+                    <!-- Rating summary goes above the fold near product name or image -->
+                    <div data-bv-show="rating_summary" data-bv-product-id="@productId"></div>
 
-                        <!-- Content Tabs -->
-                        <div id="review_tab" style="display: none;">
-                            <!-- Instruct BV loader to show the R&R feature for productID123 here -->
-                            <div data-bv-show="reviews" data-bv-product-id="@currentProduct.Id"></div>
-                        </div>
+                    <!-- Content Tabs -->
+                    <div id="review_tab" style="display: none;">
+                        <!-- Instruct BV loader to show the R&R feature for productID123 here -->
+                        <div data-bv-show="reviews" data-bv-product-id="@productId"></div>
+                    </div>
 
-                        <div id="questions_tab" style="display: none;">
-                            <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
-                        </div>
-                    }
+                    <div id="questions_tab" style="display: none;">
+                        <!-- Instruct BV loader to show the Q&A feature for productID123 here -->
+                        <div data-bv-show="questions" data-bv-product-id="@productId"></div>
+                    </div>
+
                     <script>
                         // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
                         window.bvCallback = function (BV) {
 
-                        // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
-                            BV.swat_reviews.on('show', function () {
-                                // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                                $('#review_tab').show();
-                            });
-                            
-                        // Register a function to be called when a BV feature needs to display the Q&A element, such as when selecting the number of questions link
+                    // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
+                        BV.reviews.on('show', function () {
+                            // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
+                            $('#review_tab').show();
+                        });
 
-                        BV.swat_questions.on('show', function () {
-
-                                // If the Q&A container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
-
+                    // Register a function to be called when a BV feature needs to 
+                    // display the Q&A element, such as when selecting the number of questions link
+                        BV.questions.on('show', function () {
+                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
                             $('#questions_tab').show();
                         });
-                            };
+                        };
                     </script>
 
                     <!--rental info-->

@@ -11,6 +11,28 @@
     var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
 }
+
+<!-- Load Transaction event and parameters -->
+<script>
+window.bvCallback = function (BV) {
+  BV.pixel.trackTransaction({
+    "currency": "USD",
+    "orderId": "@Model.CustomOrderNumber",
+    "total": "@order.OrderSubtotalInclTax",
+    "items": [
+      @foreach (var item in orderItems)
+      {
+        @:{
+          "price": "@item.UnitPriceInclTax",
+          "quantity": "@item.Quantity",
+          "productId": "@item.ProductId"
+        }@(item != orderItems.Last() ? "," : "")
+      }
+    ]
+  });
+};
+</script>
+
 <div class="page checkout-page order-completed-page">
     @if (!Model.OnePageCheckoutEnabled)
     {
