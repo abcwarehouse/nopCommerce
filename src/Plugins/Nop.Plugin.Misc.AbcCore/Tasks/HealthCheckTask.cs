@@ -14,19 +14,23 @@ using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using System.Threading.Tasks;
 using Nop.Services.Logging;
 using Nop.Core.Domain.Logging;
+using Nop.Core.Caching;
 
-namespace Nop.Plugin.Misc.AbcCore
+namespace Nop.Plugin.Misc.AbcCore.Tasks
 {
     class HealthCheckTask : IScheduleTask
     {
         private readonly ILogger _logger;
         private readonly INopDataProvider _nopDataProvider;
+        private readonly IStaticCacheManager _staticCacheManager;
 
         public HealthCheckTask(ILogger logger,
-            INopDataProvider nopDataProvider)
+            INopDataProvider nopDataProvider,
+            IStaticCacheManager staticCacheManager)
         {
             _logger = logger;
             _nopDataProvider = nopDataProvider;
+            _staticCacheManager = staticCacheManager;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -46,7 +50,8 @@ namespace Nop.Plugin.Misc.AbcCore
 
             if (illegalAbcProductCount > 0)
             {
-                await _logger.WarningAsync($"Unmapped {illegalAbcProductCount} products from ABC Warehouse store.");
+                await _logger.WarningAsync($"Unmapped {illegalAbcProductCount} illegal products from ABC Warehouse store, clearing cache.");
+                await _staticCacheManager.ClearAsync();
             }
         }
     }
