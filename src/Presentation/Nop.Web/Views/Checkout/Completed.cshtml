@@ -14,11 +14,22 @@
     var orderTotal = ViewBag.OrderTotal as string;
     var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
-    var customerEmail = "Unknown";
-    var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
     if (customer != null)
     {
         customerEmail = customer.Email;
+    }
+
+    var customerEmail = "Unknown";
+    if (order != null && order.CustomerId > 0)
+    {
+        var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
+        customerEmail = customer?.Email ?? "Unknown";
+    }
+    else
+    {
+        <script>
+            console.error("Invalid order or missing CustomerId.");
+        </script>
     }
         
     if (orderItems == null || !orderItems.Any())
