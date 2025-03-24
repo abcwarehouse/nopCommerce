@@ -1,4 +1,7 @@
 ﻿@model CheckoutCompletedModel
+@using Nop.Services.Customers
+@inject ICustomerService _customerService
+
 @{
     Layout = "_ColumnsOne";
 
@@ -11,6 +14,13 @@
     var orderTotal = ViewBag.OrderTotal as string;
     var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
+    var customerEmail = "Unknown";
+    var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
+    if (customer != null)
+    {
+        customerEmail = customer.Email;
+    }
+        
     if (orderItems == null || !orderItems.Any())
     {
         <script>
@@ -61,14 +71,14 @@ window.bvCallback = function (BV) {
       @for (int i = 0; i < orderItems.Count; i++)
       {
           var item = orderItems[i];
-          @Html.Raw($"{{\"price\": \"{item.UnitPriceInclTax}\", \"quantity\": \"{item.Quantity}\", \"productId\": \"{item.ProductId}\"}}")
+          @Html.Raw($"{{\"price\": \"{item.UnitPriceInclTax.ToString("0.00")}\", \"quantity\": \"{item.Quantity}\", \"productId\": \"{item.ProductId}\"}}")
           @if (i < orderItems.Count - 1)
           {
               @Html.Raw(",")
           }
       }
     ],
-    "optional_PII_parameter" : "@Html.Raw(order.CustomerEmail)"
+    "optional_PII_parameter" : "@customerEmail"
   });
 };
 </script>
