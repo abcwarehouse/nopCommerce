@@ -14,10 +14,6 @@
     var orderTotal = ViewBag.OrderTotal as string;
     var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
-    if (customer != null)
-    {
-        customerEmail = customer.Email;
-    }
 
     var customerEmail = "Unknown";
     if (order != null && order.CustomerId > 0)
