@@ -7,7 +7,7 @@ namespace Nop.Web.Models.Newsletter
     {
         [DataType(DataType.EmailAddress)]
         public string NewsletterSmsEmail { get; set; }
-        public string NewsletterPhoneNumber { get; set; }
+        public string NewsletterSmsPhone { get; set; }
         public bool AllowToUnsubscribe { get; set; }
     }
 }
