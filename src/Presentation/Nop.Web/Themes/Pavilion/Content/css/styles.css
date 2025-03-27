@@ -693,7 +693,9 @@ label, label + * {
 
 
 /*********** HEADER ***********/
-
+.header-links {
+	margin-left: 10px;
+}
 
 
 .admin-header-links {
