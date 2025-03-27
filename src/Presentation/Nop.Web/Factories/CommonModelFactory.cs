@@ -919,6 +919,7 @@ namespace Nop.Web.Factories
                     "/shoppingcart/*",
                     "/storeclosed",
                     "/subscribenewsletter",
+                    "/SubscribeNewsletterWithPhone",
                     "/topic/authenticate",
                     "/viewpm",
                     "/uploadfilecheckoutattribute",

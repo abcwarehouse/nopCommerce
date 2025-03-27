@@ -6,7 +6,7 @@
     <div class="newsletter-subscribe" id="newsletter-subscribe-block">
         <div class="newsletter-email">
             <input asp-for="NewsletterEmail" id="newsletter-email" class="newsletter-subscribe-text" placeholder=@T("Newsletter.Email.Placeholder") aria-label="@T("Newsletter.Subscribe")" />
-
+            <input asp-for="NewsletterPhone" id="newsletter-phone" class="newsletter-subscribe-text" placeholder="Phone Number" aria-label="@T("Newsletter.Subscribe")" />
             <button type="button" id="newsletter-subscribe-button" class="button-1 newsletter-subscribe-button">@T(Model.AllowToUnsubscribe ? "Newsletter.Options.Send" : "Newsletter.Options.Subscribe")</button>
 
             @if (Model.AllowToUnsubscribe)
@@ -30,60 +30,74 @@
     </div>
     <div class="newsletter-result" id="newsletter-result-block"></div>
     <script asp-location="Footer">
-        function newsletter_subscribe(subscribe) {
-            var subscribeProgress = $("#subscribe-loading-progress");
-            subscribeProgress.show();
-            var postData = {
-                subscribe: subscribe,
-                email: $("#newsletter-email").val()
-            };
-            $.ajax({
-                cache: false,
-                type: "POST",
-                url: "@(Url.RouteUrl("SubscribeNewsletter"))",
-                data: postData,
-                success: function (data, textStatus, jqXHR) {
-                    $("#newsletter-result-block").html(data.Result);
-                    if (data.Success) {
-                        $('#newsletter-subscribe-block').hide();
-                        $('#newsletter-result-block').show();
 
-                        // ABC: add to Listrak
-                        _ltk.Signup.New('newsletter-abc', 'newsletter-email', _ltk.Signup.TYPE.CLICK, 'newsletter-subscribe-button');
-                    } else {
-                        $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Failed to subscribe.');
-                },
-                complete: function (jqXHR, textStatus) {
-                    subscribeProgress.hide();
-                }
-            });
+    function newsletter_subscribe(subscribe) {
+        var subscribeProgress = $("#subscribe-loading-progress");
+        subscribeProgress.show();
+        var email = $("#newsletter-email").val();
+        var phone = $("#newsletter-phone").val();
+
+        var postData = {
+            subscribe: subscribe,
+            email: email
+        };
+
+        // If phone is provided, add it to postData
+        if (phone) {
+            postData.phone = phone;
         }
 
-        $(document).ready(function () {
-            $('#newsletter-subscribe-button').on('click', function () {
-                @if (Model.AllowToUnsubscribe)
-                {
-                    <text>if ($('#newsletter_subscribe').is(':checked')) {
+        // Determine the URL based on phone presence
+        var url = phone 
+            ? "@(Url.RouteUrl("SubscribeNewsletterWithPhone"))" 
+            : "@(Url.RouteUrl("SubscribeNewsletter"))";
+
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: url,
+            data: postData,
+            success: function (data) {
+                $("#newsletter-result-block").html(data.Result);
+                if (data.Success) {
+                    $('#newsletter-subscribe-block').hide();
+                    $('#newsletter-result-block').show();
+
+                    // ABC: add to Listrak
+                    _ltk.Signup.New('newsletter-abc', 'newsletter-email', _ltk.Signup.TYPE.CLICK, 'newsletter-subscribe-button');
+                } else {
+                    $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
+                }
+            },
+            error: function () {
+                alert('Failed to subscribe.');
+            },
+            complete: function () {
+                subscribeProgress.hide();
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#newsletter-subscribe-button').on('click', function () {
+            @if (Model.AllowToUnsubscribe)
+            {
+                <text>if ($('#newsletter_subscribe').is(':checked')) {
                     newsletter_subscribe('true');
                 } else {
                     newsletter_subscribe('false');
                 }</text>
-                }
-                else
-                {
-                    <text>newsletter_subscribe('true');</text>
-                }
-            });
-            $("#newsletter-email").on("keydown", function (event) {
-                if (event.keyCode == 13) {
-                    $("#newsletter-subscribe-button").trigger("click");
-                    return false;
-                }
-            });
+            }
+            else
+            {
+                <text>newsletter_subscribe('true');</text>
+            }
         });
-    </script>
-</div>
+
+        $("#newsletter-email").on("keydown", function (event) {
+            if (event.keyCode == 13) {
+                $("#newsletter-subscribe-button").trigger("click");
+                return false;
+            }
+        });
+    });

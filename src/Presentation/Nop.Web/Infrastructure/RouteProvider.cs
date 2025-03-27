@@ -252,6 +252,11 @@ namespace Nop.Web.Infrastructure
                 pattern: $"subscribenewsletter",
                 defaults: new { controller = "Newsletter", action = "SubscribeNewsletter" });
 
+            //subscribe newsletters (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "SubscribeNewsletterWithPhone",
+                pattern: $"SubscribeNewsletterWithPhone",
+                defaults: new { controller = "Newsletter", action = "SubscribeNewsletterWithPhone" });
+
             //email wishlist
             endpointRouteBuilder.MapControllerRoute(name: "EmailWishlist",
                 pattern: $"{lang}/emailwishlist",
