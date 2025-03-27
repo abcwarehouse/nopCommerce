@@ -39,6 +39,7 @@ using Nop.Plugin.Misc.AbcFrontend.Services;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcExportOrder.Services;
 using System.Threading.Tasks;
+using Nop.Services.Custom;
 using Nop.Core.Domain.Logging;
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
@@ -81,6 +82,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly IWarrantyService _warrantyService;
         private readonly ITermLookupService _termLookupService;
         private readonly ICardCheckService _cardCheckService;
+        private readonly IListrakApiService _ListrakApiService;
 
         public CustomCheckoutController(
             AddressSettings addressSettings,
@@ -115,14 +117,15 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IIsamGiftCardService isamGiftCardService,
             IWarrantyService warrantyService,
             ITermLookupService termLookupService,
-            ICardCheckService cardCheckService
+            ICardCheckService cardCheckService,
+            IListrakApiService ListrakApiService
         ) : base(addressSettings, customerSettings, addressAttributeParser, 
             addressService, checkoutModelFactory, countryService, customerService,
             genericAttributeService, localizationService, logger, orderProcessingService,
             orderService, paymentPluginManager, paymentService, productService,
             shippingService, shoppingCartService, storeContext, webHelper,
             workContext, orderSettings, paymentSettings, rewardPointsSettings,
-            shippingSettings)
+            shippingSettings, ListrakApiService)
         {
             _addressSettings = addressSettings;
             _customerSettings = customerSettings;
@@ -158,6 +161,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _warrantyService = warrantyService;
             _termLookupService = termLookupService;
             _cardCheckService = cardCheckService;
+            _ListrakApiService = ListrakApiService;
         }
 
         #region Methods (one page checkout)

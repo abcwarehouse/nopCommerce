@@ -82,5 +82,6 @@ namespace Nop.Web.Models.Common
 
         public string FormattedCustomAddressAttributes { get; set; }
         public IList<AddressAttributeModel> CustomAddressAttributes { get; set; }
+        public bool SmsOptIn { get; set; }
     }
 }
