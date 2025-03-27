@@ -59,6 +59,385 @@
                     <a href="?ltkpopupshow=ABC">Sign Up Now</a>
                 </div>
             </div>
+
+
+
+            
+                <!-- Pop-up Form -->
+                <!-- ltkpopup-no-scroll: centers the popup on display by preventing the page from scrolling -->
+                <!-- ltkpopup-ios-fix: keeps fixed position popups like bottom banners in place in iOS -->
+                <div id="ltkpopup-wrapper" class="ltkpopup-signup ltkpopup-no-scroll" name="version3-custom" role="dialog" aria-labelledby="ltkpopup-headline" aria-describedby="ltkpopup-content-para">
+                    <!-- Main Popup Content Area -->
+                    <!-- Add class ltkpopup-no-padd for split popups -->
+                    <div id="ltkpopup-content" class="ltkpopup-signup ltkpopup-no-padd">
+  
+                      <!-- Pull in the popup container -->
+                      <div id="ltkpopup-email-form">
+                        <!-- If fullscreen popup, add class - ltkpopup-fullscreen -->
+                        <div class="ltkpopup-clearfix ltkpopup-split-content ltkpopup-split-above-below">
+  
+                          <div class="ltkpopup-contain-img">
+                            <img src="https://mediacdn.espssl.com/10122/Shared/ABCWarehouse/Popup/popup-img-retro-min.png" alt="" class="ltkpopup-img-fluid ltkpopup-mobile-hide" aria-hidden="true">
+                            <img src="https://mediacdn.espssl.com/10122/Shared/ABCWarehouse/Popup/popup-img-retro_mobile-min.png" alt="" class="ltkpopup-img-fluid ltkpopup-desktop-hide" aria-hidden="true">
+                          </div>
+  
+  
+                          <div class="ltkpopup-contain-form">
+  
+                            <h1 id="ltkpopup-headline" class="ltkpopup-headline">STAY IN THE KNOW!</h1>
+                            <p id="ltkpopup-content-para" class="ltkpopup-content-para">Sign up and never miss a deal on our top brands.</p>
+  
+                            <div class="ltkpopup-form-contain">
+                              <div class="ltkpopup-form-control">
+  
+                                <!-- Email Input Required Error Message|Moved out of column for display purposes -->
+                                <div class="ltkpopup-error-message" aria-live="assertive" data-ltkpopup-error-for="ltkpopup-email" data-ltkpopup-message="Enter a valid email address."></div>
+                                <div>
+                                  <label for="ltkpopup-email"></label>
+                                  <input autofocus required type="email" id="ltkpopup-email" class="ltkpopup-email" tabindex="0" name="ltkpopup-email" placeholder="Email Address" autocomplete="email" pattern="^([a-zA-Z0-9._+!-]+[@](?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})$" onchange="_ltk.SCA.Update('email', this.value)" />
+                                </div>
+  
+                              </div>
+  
+                              <div class="ltkpopup-form-control">
+  
+  
+  
+                              </div>
+  
+                              <!-- Emmet Snippets if applicable -->
+                              <!-- zip error dropdown checkbox radio sms-capture -->
+  
+                              <!-- Button Container -->
+                              <div class="ltkpopup-form-control">
+                                <div class="ltkpopup-button-container ltkpopup-flex ltkpopup-clearfix">
+  
+                                  <!-- Submit Button -->
+                                  <button id="ltkpopup-submit" class="ltkpopup-subscribe" tabindex="0" type="submit">
+                                    <span>SIGN ME UP</span>
+                                  </button>
+  
+  
+  
+  
+                                  <div class="ltkpopup-no-thanks" id="ltkpopup-text-btn">
+                                    <button tabindex="0" class="ltkpopup-close">No, thanks.</button>
+                                  </div>
+  
+  
+                                </div>
+                              </div>
+                            </div>
+  
+                            <p class="ltkpopup-content-para ltkpopup-disclaimer">By submitting your email address, you
+                              <br> acknowledge and consent to our <a href="https://www.abcwarehouse.com/policies-information" target="_blank">Privacy&nbsp;Policy</a>.
+                            </p>
+  
+                          </div>
+  
+                        </div>
+                      </div>
+  
+  
+  
+                      <!-- Emmet Snippets if applicable -->
+                      <!-- zip error dropdown checkbox radio sms-capture -->
+  
+                      <!-- Do Not Delete. Connects the Popup to Segmentation within the Listrak platform. Input name needs to match segmentation -->
+                      <div class="ltkpopup-source">
+                        <input type="hidden" class="text" name="ltkSource" value="On" tabindex="-1" />
+                      </div>
+  
+                      <!-- Close 'X' Button -->
+                      <!-- Add class ltkpopup-circle-close to create a circle close button -->
+                      <div id="ltkpopup-close-button" class="">
+                        <a class="ltkpopup-close" tabindex="0" role="button" aria-label="close">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
+                            <line x1="1" y1="1" x2="28" y2="28" />
+                            <line x1="28" y1="1" x2="1" y2="28" />
+                          </svg>
+                        </a>
+                      </div>
+  
+                    </div>
+                    <!-- End ltkpopup-content -->
+  
+                  </div>
+                  <!-- End ltkpopup-wrapper -->
+  
+                  <script>
+                          // Check Input Validity
+      function checkInputValidity(inputEl) {
+          var ltkErrorMessage = jQuery("[data-ltkpopup-error-for='" + inputEl.id + "'");
+          var ltkLabel = jQuery("label[for='" + inputEl.id + "']");
+          jQuery(ltkErrorMessage).text("");
+          jQuery.merge(jQuery(inputEl), jQuery(ltkLabel)).removeClass("ltkinputnotvalid");
+          inputEl.checkValidity();
+          if (jQuery(inputEl).is(':invalid')) {
+              jQuery.merge(jQuery(inputEl), jQuery(ltkLabel)).addClass("ltkinputnotvalid");
+              // jQuery(ltkLabel).addClass("ltkinputnotvalid");
+              var ltkErrorMessageText = jQuery(ltkErrorMessage).attr("data-ltkpopup-message");
+              jQuery(ltkErrorMessage).text(ltkErrorMessageText);
+              return false;
+          }
+          return true;
+      }
+  
+    
+      var emailVal;
+      var phoneVal;
+      jQuery('#ltkpopup-email').on('change', function(){
+          emailVal = jQuery(this).val();
+      });
+      jQuery('#ltkpopup-phone').on('change', function(){
+          phoneVal = jQuery(this).val();
+      });
+      jQuery('#ltkpopup-submit').on('click', function () {
+          var e = jQuery("#ltkpopup-content :input");
+          jQuery(e).each(function (e) {
+              checkInputValidity(this);
+              if (jQuery(this).is(":invalid")) {
+                  this.setAttribute("aria-describedby", this.id + "-error-message");
+              } else {
+                  this.removeAttribute("aria-describedby")
+              }
+          });
+          setTimeout(function () {
+              if (document.querySelector(".ltkinputnotvalid") != null) {
+                  document.querySelector(".ltkinputnotvalid").focus();
+              }
+          }, 0);
+      });
+
+
+      console.log(checkInputValidity);
+
+  </script>
+  
+                  <script>
+      // Browsers
+      var b = document.documentElement;
+      b.className = b.className.replace("no-js", "js"), b.setAttribute("data-useragent", navigator.userAgent.toLowerCase()), b.setAttribute("data-platform", navigator.platform.toLowerCase());
+      var $html = jQuery("html"),
+          ua = $html.data("useragent"),
+          pf = $html.data("platform");
+  
+      function is(e) {
+          return ua.indexOf(e) > -1
+      }
+      var browser = {
+          isIE: is("msie") || is("trident/7.0"),
+          isIE7: is("msie 7.0"),
+          isIE8: is("msie 8.0"),
+          isIE9: is("msie 9.0"),
+          isIE10: is("msie 10"),
+          isIE11: is("rv:11") && is("trident/7.0"),
+          isEdge: is("edge"),
+          isChrome: is("chrome") && !is("edge"),
+          isSafari: is("safari") && !is("chrome") && !is("edge"),
+          isFirefox: is("firefox") && !is("edge"),
+          isAndroidChrome: is("android") && is("chrome"),
+          isAndroidDefault: is("android") && !is("chrome"),
+          isWin7: is("windows nt 6.1"),
+          isWin8: is("windows nt 6.2"),
+          isWindows: pf.indexOf("win32") > -1,
+          isWebkit: is("webkit") && !is("edge"),
+          isIPad: is("ipad"),
+          isIPadChrome: is("ipad") && is("crios"),
+          isIPhone: is("iphone"),
+          isIPhoneChrome: is("iphone") && is("crios"),
+          isAndroid: is("android"),
+          isIOS: is("iphone") || is("ipad")
+      };
+      for (var title in browser) {
+          var helperClass = title.slice(2).toLowerCase();
+          browser[title] && jQuery("#ltkpopup-content").addClass(helperClass)
+      }
+  
+      // Close Function
+      jQuery('.ltkpopup-close').focus(function () {
+          jQuery('.ltkpopup-close').keypress(function (e) {
+              var key = e.which;
+              if (key == 13) {
+                  jQuery('#ltkpopup-overlay, #ltkpopup-container').remove()
+              }
+          })
+      });
+  
+
+  
+  
+      changeFocus = function () {
+          if (document.getElementById("ltkpopup-email") == undefined && document.getElementById("ltkpopup-phone") == undefined && document.querySelectorAll(".simpleltkmodal-wrap")[0] != undefined) {
+              document.querySelectorAll(".simpleltkmodal-wrap")[0].focus();
+          }
+      }
+  
+      // Tab Trapping
+      jQuery(document).ready(function () {
+          setTimeout(function () {
+              function triggerFocus(element) {
+                  var eventType = "onfocusin" in element ? "focusin" : "focus",
+                      bubbles = "onfocusin" in element,
+                      event;
+  
+                  if ("createEvent" in document) {
+                      event = document.createEvent("Event");
+                      event.initEvent(eventType, bubbles, true);
+                  } else if ("Event" in window) {
+                      event = new Event(eventType, {
+                          bubbles: bubbles,
+                          cancelable: true
+                      });
+                  }
+  
+                  element.focus();
+                  element.dispatchEvent(event);
+              }
+              if (document.getElementById("ltkpopup-email") != undefined) {
+                  triggerFocus(document.getElementById("ltkpopup-email"));
+              } else if (document.getElementById("ltkpopup-phone") != undefined) {
+                  triggerFocus(document.getElementById("ltkpopup-phone"));
+              } else {
+                  changeFocus();
+              }
+          }, 0);
+      });
+  
+      function trapTabKey(e) {
+          var t = document.activeElement,
+              s = focusableElems.indexOf(t);
+          if (9 === e.keyCode) {
+              e.preventDefault();
+              moveTab(s, e.shiftKey)
+          }
+      }
+  
+      function moveTab(index, shift) {
+          var nextTab = null;
+          var nextIndex = index;
+          if (shift) {
+              if (focusableElems[index] == firstTabStop) {
+                  nextTab = lastTabStop;
+              } else {
+                  nextIndex = index - 1;
+                  nextTab = focusableElem[nextIndex];
+              }
+          } else {
+              if (focusableElems[index] == lastTabStop) {
+                  nextTab = firstTabStop;
+                  nextIndex = 0;
+              } else {
+                  nextIndex = index + 1;
+                  nextTab = focusableElems[nextIndex];
+              }
+          }
+  
+          if (jQuery(nextTab).is(":visible")) {
+              nextTab.focus();
+          } else {
+              moveTab(nextIndex, shift);
+          }
+      }
+      setTimeout(function () {
+          //Do not delete - tab functionality will break
+          _ltk.Modal.simpleModal.impl.unbindEvents("keydown.simpleltkmodal"), _ltk.Modal.simpleModal.impl.unbindEvents("focus");
+          changeFocus();
+      }, 50);
+      var focused = document.activeElement;
+      jQuery(".ltkpopup-close").on("click", function () {
+          focused.focus()
+      });
+      var focusBox = document.getElementById("ltkpopup-content"),
+          focusableElemStr = 'a[href], [title], input:not([type=hidden]), [tabindex="0"], [tabindex="1"]',
+          focusableElem = focusBox.querySelectorAll(focusableElemStr),
+          focusableElems = Array.prototype.slice.call(focusableElem),
+          firstTabStop = focusableElems[0],
+          lastTabStop = focusableElems[focusableElems.length - 1];
+          focusBox.addEventListener("keydown", trapTabKey);
+  
+  
+      // floating labels
+      jQuery('.ltkpopup-floating-label-container :input').each(function () {
+          this.addEventListener('blur', removeFloat, false);
+          if(this.hasAttribute('data-inputmask') || this.id == 'ltkpopup-datepicker') {
+              this.addEventListener('focus', addFloat, false);
+          } else {			
+              this.addEventListener('click', addFloat, false);
+              this.addEventListener('keydown', addFloat, false);
+          }
+      });
+      function addFloat(event) {
+          jQuery(event.target).closest(".ltkpopup-floating-label-container").addClass('ltkpopup-floatLabel');
+          jQuery("[data-ltkpopup-error-for='" + event.target.id + "']").addClass('ltkpopup-floatLabel');
+      }
+      function removeFloat(event) {
+          if (event.target.value.length == 0 && !event.target.classList.contains("ltkpopup-datepicker")) {
+              jQuery(event.target).closest(".ltkpopup-floating-label-container").removeClass('ltkpopup-floatLabel');
+              jQuery("[data-ltkpopup-error-for='" + event.target.id + "']").removeClass('ltkpopup-floatLabel');
+          }
+      }
+  </script>
+                  <script>
+      jQuery(document).ready(function () {
+  
+          if (jQuery("[data-inputmask]").length) {
+              
+                  // Input masking for number validation - Get Jquery Input Mask from CDN and load it
+                  jQuery.getScript(
+                      "https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.1/jquery.inputmask.bundle.js",
+                      function () {
+                          jQuery("[data-inputmask]").each(function() {
+                               // Mask phone number input after script is loaded
+                              jQuery(this).inputmask({greedy: false, showMaskOnHover: false, definitions: {
+                              '#': { validator: "[0-9]", cardinality: 1
+                              }
+                              }
+                              });
+                          });
+                      });
+          }
+      });
+  </script>
+                  <script>
+      var datepickerField = document.querySelector("#ltkpopup-datepicker");
+      if (datepickerField != null) {
+          var jQueryUIcss = document.createElement("link");
+          jQueryUIcss.href = "https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css";
+          jQueryUIcss.rel = "stylesheet";
+          jQueryUIcss.addEventListener("load", function () {
+              var jQueryUI = document.createElement("script");
+              jQueryUI.src = "https://code.jquery.com/ui/1.12.1/jquery-ui.js";
+              jQueryUI.addEventListener("load", function () {
+                  datepickerField.setAttribute("readonly", "");
+                  jQuery(datepickerField).datepicker({
+                      changeMonth: true,
+                      changeYear: false,
+                      yearRange: '-0:+0',
+                      // use for different date format and hidden bday field
+                      dateFormat: "mm/dd",
+                      altField: "#ltkpopup-hidden-bday",
+                      altFormat: "mm/dd/1900",
+                      onClose: function (selectedDate) {
+                                  if (selectedDate == "") {
+                                      jQuery(this).closest(".ltkpopup-floating-label-container").removeClass('ltkpopup-floatLabel');
+                                  }
+                              }
+                      });
+  
+                  jQuery(datepickerField).focus(function () {
+                      jQuery('#ui-datepicker-div').appendTo(this.parentNode);
+                  });
+              });
+              document.getElementById("ltkpopup-content").appendChild(jQueryUI);
+          });
+          document.getElementById("ltkpopup-content").appendChild(jQueryUIcss);
+      }
+  </script>
+  
+  
+                
+                
                 
             @await Component.InvokeAsync("SocialButtons")
         </div>
