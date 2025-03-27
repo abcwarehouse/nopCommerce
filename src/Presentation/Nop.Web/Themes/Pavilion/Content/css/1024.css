@@ -172,6 +172,8 @@
 	display: block;
 }
 .header-links ul {
+	margin-left: -6px;
+
 }
 .header-links li {
 	padding: 0 16px;
