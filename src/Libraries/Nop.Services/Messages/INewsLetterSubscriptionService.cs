@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Messages;
 
@@ -84,5 +85,7 @@ namespace Nop.Services.Messages
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             int storeId = 0, bool? isActive = null, int customerRoleId = 0,
             int pageIndex = 0, int pageSize = int.MaxValue);
+
+        Task<NewsLetterSubscriptionService.ApiResponse> SubscribeWithPhone(string email, string phone, bool subscribe);
     }
 }

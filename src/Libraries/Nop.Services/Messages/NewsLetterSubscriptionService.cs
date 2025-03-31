@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Nop.Core;
+using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Messages;
 using Nop.Core.Events;
@@ -22,6 +28,8 @@ namespace Nop.Services.Messages
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<CustomerCustomerRoleMapping> _customerCustomerRoleMappingRepository;
         private readonly IRepository<NewsLetterSubscription> _subscriptionRepository;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly HttpClient _httpClient;
 
         #endregion
 
@@ -31,13 +39,15 @@ namespace Nop.Services.Messages
             IEventPublisher eventPublisher,
             IRepository<Customer> customerRepository,
             IRepository<CustomerCustomerRoleMapping> customerCustomerRoleMappingRepository,
-            IRepository<NewsLetterSubscription> subscriptionRepository)
+            IRepository<NewsLetterSubscription> subscriptionRepository,
+            IHttpClientFactory clientFactory)
         {
             _customerService = customerService;
             _eventPublisher = eventPublisher;
             _customerRepository = customerRepository;
             _customerCustomerRoleMappingRepository = customerCustomerRoleMappingRepository;
             _subscriptionRepository = subscriptionRepository;
+            _clientFactory = clientFactory;
         }
 
         #endregion
@@ -314,6 +324,183 @@ namespace Nop.Services.Messages
             }
         }
 
+        public async Task<ApiResponse> SubscribeWithPhone(string email, string phone, bool subscribe)
+        {
+            var client = _clientFactory.CreateClient("ThirdPartyAPI");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.thirdparty.com/subscribe")
+            {
+                Content = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("email", email),
+                    new KeyValuePair<string, string>("phone", phone),
+                    new KeyValuePair<string, string>("subscribe", subscribe.ToString())
+                })
+            };
+
+            var response = await client.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return new ApiResponse
+            {
+                Success = response.IsSuccessStatusCode,
+                Message = content
+            };
+        }
+
+        public class ApiResponse
+        {
+            public bool Success { get; set; }
+            public bool IsSuccess { get; set; }
+            public string Message { get; set; }
+        }
+
         #endregion
+
+    public async Task<string> GetTokenAsync()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token")
+            {
+                // Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                // {
+                //     { "client_id", _listrakApiSettings.ClientId },
+                //     { "client_secret", _listrakApiSettings.ClientSecret },
+                //     { "grant_type", "client_credentials" }
+                // })
+                Content = new FormUrlEncodedContent(new Dictionary<string, string>
+                {
+                    { "client_id", "ao1xkc57sz7t1dw1qawh" },
+                    { "client_secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
+                    { "grant_type", "client_credentials" }
+                })
+            };
+
+            request.Headers.Add("Accept", "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            var content = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine($"Response Content: {content}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to retrieve token. Status Code: {response.StatusCode}, Response: {content}");
+            }
+
+            var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(content);
+            return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to retrieve the API token.", ex);
+        }
+    }
+
+    public HttpClient GetHttpClient(String token)
+    {
+        var client = _clientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        return client;
+    }
+
+    public ApiResponse SendBillingAddress(string token, Address billingAddress, bool isSmsChecked, bool isMarketingChecked)
+    {
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new ArgumentNullException(nameof(token), "Token is null or empty");
+        }
+
+        if (billingAddress == null)
+        {
+            throw new ArgumentNullException(nameof(billingAddress), "Billing address is null");
+        }
+
+        var client = GetHttpClient(token);
+        HttpResponseMessage marketingSmsResponse = null;
+
+        marketingSmsResponse = MarketingSub(token, billingAddress.PhoneNumber, client);
+
+        return new ApiResponse
+        {
+            IsSuccess = marketingSmsResponse.IsSuccessStatusCode,
+            Message = marketingSmsResponse.ReasonPhrase
+        };   
+
+    }
+
+    public HttpResponseMessage MarketingSub(string token, String phoneNumber, HttpClient client)
+    {
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                ShortCodeId = "1026",
+                PhoneNumber = phoneNumber,
+                PhoneListId = "151"
+            }
+        };
+
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/Contact/{phoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+
+        return response;
+    }
+
+    public ApiResponse CheckSubList(String phoneNumber)
+    {
+        var token = GetTokenAsync();
+        var client = _clientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.ToString());
+
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                SenderCode = "1026",
+                PhoneNumber = phoneNumber
+            }
+        };
+
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.SenderCode}/Contact/1{phoneNumber}", listrakData).Result;
+
+        return new ApiResponse
+        {
+            IsSuccess = response.IsSuccessStatusCode,
+            Message = response.ReasonPhrase
+        };
+    }
+
+    public ApiResponse UnsubListrak(string token, String phoneNumber)
+    {
+        var client = _clientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var listrakData = new 
+        {
+            ListrakData = new 
+            {
+                ShortCodeId = "1026",
+                PhoneNumber = phoneNumber,
+                PhoneListId = "152"
+            }
+        };
+
+        var response = client.PostAsJsonAsync($"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ListrakData.ShortCodeId}/ContactUnsubscribe/{phoneNumber}/PhoneList/{listrakData.ListrakData.PhoneListId}", listrakData).Result;
+
+        return new ApiResponse
+        {
+            IsSuccess = response.IsSuccessStatusCode,
+            Message = response.ReasonPhrase
+        };
+    }
+
+    public class TokenResponse
+    {
+        public string AccessToken { get; set; }
+        public string TokenType { get; set; }
+        public int ExpiresIn { get; set; }
+    }
+    
     }
 }

@@ -104,66 +104,36 @@ namespace Nop.Web.Controllers
         [CheckAccessClosedStore(true)]
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual async Task<IActionResult> SubscribeNewsletterWithPhone(string email, bool subscribe)
+        public async Task<IActionResult> SubscribeNewsletterWithPhone(string email, string phone, bool subscribe)
         {
-            string result;
-            var success = false;
-
-            if (!CommonHelper.IsValidEmail(email))
+            if (string.IsNullOrWhiteSpace(email) || !CommonHelper.IsValidEmail(email))
             {
-                result = await _localizationService.GetResourceAsync("Newsletter.Email.Wrong");
+                return Json(new { Success = false, Result = "Invalid email address." });
             }
-            else
+
+            if (string.IsNullOrWhiteSpace(phone))
             {
-                email = email.Trim();
+                return Json(new { Success = false, Result = "Phone number is required." });
+            }
 
-                var subscription = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(email, (await _storeContext.GetCurrentStoreAsync()).Id);
-                if (subscription != null)
-                {
-                    if (subscribe)
-                    {
-                        if (!subscription.Active)
-                        {
-                            await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(subscription, (await _workContext.GetWorkingLanguageAsync()).Id);
-                        }
-                        result = await _localizationService.GetResourceAsync("Newsletter.SubscribeEmailSent");
-                    }
-                    else
-                    {
-                        if (subscription.Active)
-                        {
-                            await _workflowMessageService.SendNewsLetterSubscriptionDeactivationMessageAsync(subscription, (await _workContext.GetWorkingLanguageAsync()).Id);
-                        }
-                        result = await _localizationService.GetResourceAsync("Newsletter.UnsubscribeEmailSent");
-                    }
-                }
-                else if (subscribe)
-                {
-                    subscription = new NewsLetterSubscription
-                    {
-                        NewsLetterSubscriptionGuid = Guid.NewGuid(),
-                        Email = email,
-                        Active = false,
-                        StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
-                        CreatedOnUtc = DateTime.UtcNow
-                    };
-                    await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(subscription);
-                    await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(subscription, (await _workContext.GetWorkingLanguageAsync()).Id);
+            try
+            {
+                // Await the asynchronous call to get the result
+                var apiResponse = await _newsLetterSubscriptionService.SubscribeWithPhone(email, phone, subscribe);
 
-                    result = await _localizationService.GetResourceAsync("Newsletter.SubscribeEmailSent");
+                if (apiResponse.Success)
+                {
+                    return Json(new { Success = true, Result = "Successfully subscribed!" });
                 }
                 else
                 {
-                    result = await _localizationService.GetResourceAsync("Newsletter.UnsubscribeEmailSent");
+                    return Json(new { Success = false, Result = apiResponse.Message });
                 }
-                success = true;
             }
-
-            return Json(new
+            catch (Exception ex)
             {
-                Success = success,
-                Result = result,
-            });
+                return Json(new { Success = false, Result = "An error occurred. Please try again later." });
+            }
         }
 
         //available even when a store is closed
