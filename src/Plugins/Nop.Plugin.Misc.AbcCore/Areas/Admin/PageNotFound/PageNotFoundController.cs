@@ -29,7 +29,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
     {
         private readonly ICustomerService _customerService;
         private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly IExportManager _exportManager;
+        private readonly IAbcExportManager _exportManager;
         private readonly INotificationService _notificationService;
         private readonly IAbcLogger _logger;
         // temporary
@@ -38,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
         public PageNotFoundController(
             ICustomerService customerService,
             IDateTimeHelper dateTimeHelper,
-            IExportManager exportManager,
+            IAbcExportManager exportManager,
             INotificationService notificationService,
             ICategoryService categoryService,
             IAbcLogger logger)
@@ -51,29 +51,15 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
             _logger = logger;
         }
 
-        public virtual async Task<IActionResult> ExportXml()
-        {
-            try
-            {
-                var xml = await _exportManager.ExportCategoriesToXmlAsync();
-
-                return File(Encoding.UTF8.GetBytes(xml), "application/xml", "categories.xml");
-            }
-            catch (Exception exc)
-            {
-                await _notificationService.ErrorNotificationAsync(exc);
-                return RedirectToAction("List");
-            }
-        }
-
         public virtual async Task<IActionResult> ExportXlsx()
         {
             try
             {
+                var logs = _logger.GetPageNotFoundLogs();
                 var bytes = await _exportManager
-                    .ExportCategoriesToXlsxAsync((await _categoryService.GetAllCategoriesAsync(showHidden: true)).ToList());
+                    .ExportPageNotFoundRecordsToXlsxAsync(logs);
 
-                return File(bytes, MimeTypes.TextXlsx, "categories.xlsx");
+                return File(bytes, MimeTypes.TextXlsx, "page-not-found-records.xlsx");
             }
             catch (Exception exc)
             {
