@@ -134,7 +134,11 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         {
             var properties = new[]
             {
-                new PropertyByName<Log>("LogId", l => l.Id)
+                new PropertyByName<Log>("Slug", l => l.PageUrl),
+                new PropertyByName<Log>("Referrer", l => l.ReferrerUrl),
+                new PropertyByName<Log>("Customer", l => l.CustomerId),
+                new PropertyByName<Log>("IpAddress", l => l.IpAddress),
+                new PropertyByName<Log>("Date", l => l.CreatedOnUtc),
             };
 
             return await new PropertyManager<Log>(properties, _catalogSettings).ExportToXlsxAsync(logs);
