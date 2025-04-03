@@ -97,7 +97,7 @@
                 }
             </div>
             
-            <div class="hoursNaccount ">
+           
             
              <div class="header-links-wrapper">
                     <a href="/customer/info">
@@ -116,12 +116,14 @@
                         
                         </a>
                     @await Component.InvokeAsync("HeaderLinks")
-                </div>
-             <div class="hours-desktop">
+
+                    <div class="hours-desktop">
                 @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
                 
             </div>
-             </div>
+                </div>
+             
+           
            
 
                 <div class="header-menu-parent">
