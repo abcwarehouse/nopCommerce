@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Messages;
+using static Nop.Services.Messages.NewsLetterSubscriptionService;
 
 namespace Nop.Services.Messages
 {
@@ -86,6 +87,13 @@ namespace Nop.Services.Messages
             int storeId = 0, bool? isActive = null, int customerRoleId = 0,
             int pageIndex = 0, int pageSize = int.MaxValue);
 
-        Task<NewsLetterSubscriptionService.ApiResponse> SubscribeWithPhone(string email, string phone, bool subscribe);
+        /// <summary>
+        /// Subscribes or unsubscribes a phone number to the newsletter
+        /// </summary>
+        /// <param name="email">Email associated with the subscription</param>
+        /// <param name="phone">Phone number to subscribe or unsubscribe</param>
+        /// <param name="subscribe">True to subscribe, false to unsubscribe</param>
+        /// <returns>A task that represents the asynchronous operation</returns>
+        Task<ApiResponse> SubscribeWithPhone(string email, string phone, bool subscribe);
     }
 }

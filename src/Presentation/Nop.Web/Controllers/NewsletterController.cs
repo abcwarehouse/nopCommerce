@@ -118,7 +118,6 @@ namespace Nop.Web.Controllers
 
             try
             {
-                // Await the asynchronous call to get the result
                 var apiResponse = await _newsLetterSubscriptionService.SubscribeWithPhone(email, phone, subscribe);
 
                 if (apiResponse.Success)
@@ -132,7 +131,7 @@ namespace Nop.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { Success = false, Result = "An error occurred. Please try again later." });
+                return Json(new { Success = false, Result = "An error occurred. Please try again later." + ex });
             }
         }
 
