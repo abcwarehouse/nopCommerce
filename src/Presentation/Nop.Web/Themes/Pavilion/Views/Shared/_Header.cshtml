@@ -59,8 +59,28 @@
                         <a href="/sale-ad">Weekly Ad</a>
                     </li>
                     <li>
-                        <a href="/customer/info"><label>@T("SevenSpikes.Themes.Pavilion.Header.MyAccount")</label></a>
-                        @await Component.InvokeAsync("HeaderLinks")
+                           <div class="header-links-wrapper">
+                    <a href="/customer/info">
+                        
+                        @* Code for the Account  *@
+                        @* This basically just checks if the user is logged in, if they are then it displays their name
+                         instead of MyAccount and if they arent it just displays MyAccount *@
+                        @if (headerLinksModel.IsAuthenticated)
+                        {
+                            <label id="customerName">@headerLinksModel.CustomerName</label>
+                            }
+                        else {
+                       <label> @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")</label>
+                        }
+                        
+                        
+                        </a>
+                    @await Component.InvokeAsync("HeaderLinks")
+                </div>
+                        
+
+                        @* <a href="/customer/info"><label>@T("SevenSpikes.Themes.Pavilion.Header.MyAccount")</label></a>
+                        @await Component.InvokeAsync("HeaderLinks") *@
                     </li>
                 </ul>
             </div>
@@ -99,24 +119,7 @@
             
            
             
-             <div class="header-links-wrapper">
-                    <a href="/customer/info">
-                        
-                        @* Code for the Account  *@
-                        @* This basically just checks if the user is logged in, if they are then it displays their name
-                         instead of MyAccount and if they arent it just displays MyAccount *@
-                        @if (headerLinksModel.IsAuthenticated)
-                        {
-                            <label id="customerName">@headerLinksModel.CustomerName</label>
-                            }
-                        else {
-                       <label> @T("SevenSpikes.Themes.Pavilion.Header.MyAccount")</label>
-                        }
-                        
-                        
-                        </a>
-                    @await Component.InvokeAsync("HeaderLinks")
-                </div>
+          
              <div class="hours-desktop">
                 @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
                 
