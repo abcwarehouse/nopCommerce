@@ -124,9 +124,8 @@
                     </div>
                 </div>
                 @await Component.InvokeAsync("FlyoutShoppingCart")
-            </div>
 
-             <div class="header-links-wrapper">
+                 <div class="header-links-wrapper">
                     <a href="/customer/info">
                         
                         @* Code for the Account  *@
@@ -144,6 +143,9 @@
                         </a>
                     @await Component.InvokeAsync("HeaderLinks")
                 </div>
+            </div>
+
+            
         </div>
     }
     else
