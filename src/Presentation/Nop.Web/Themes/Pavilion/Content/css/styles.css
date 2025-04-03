@@ -6657,6 +6657,14 @@ div#storeDropDown div {
 	}
 }
 
+/* Hawthorne only grid change */
+@media (min-width: 1281px) {
+    .storeId8 .top-level-manufacturer .item-box.item-box:nth-child(3n+1) {
+        clear: both;
+        margin-left: 0;
+    }
+}
+
 /*Angelo*/
  /* Mobile Menu Padding Fix*/
   .mega-menu-responsive.mobile-sidebar-category .sublist-wrap.active { 
