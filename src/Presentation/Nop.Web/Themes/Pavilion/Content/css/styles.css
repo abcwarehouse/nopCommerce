@@ -7412,3 +7412,42 @@ div#storeDropDown div {
 	}
   }
   
+
+body .cart-slideout__delivery-not-available {
+color: #4f4f4f;
+}
+a.us-ap-button {
+    color: #fff;
+    background: #ec2229;
+    padding: 7px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.cart-slideout__delivery-not-available i {
+    padding-top: 40px;
+    line-height: 42px;
+}
+
+.measurement-confirmation {
+    padding-bottom: 20px;
+}
+@media (min-width: 1025px)
+{
+.category-navigation-list .sublist-wrap.categories.with-pictures.fullWidth.boxes-3 .inner-wrap {
+        width: 72%;
+        padding-right: 30px;
+}
+}
+
+li.mega-menu-categories.hawthorne-link {
+    display: none;
+}
+.flyout-cart {
+    top: 70px;
+}
+
+.header-links ul {
+ margin-left: -6px; }
+.header-links {
+  left: -10px !important;
+    }
