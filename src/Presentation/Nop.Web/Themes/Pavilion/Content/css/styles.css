@@ -6259,6 +6259,11 @@ width: 250px !important;
 	left: -20px;
 	margin-top: 52px;
   }
+
+  .storeId8 .header-links {
+	
+	margin-top: 20px;
+  }
 .header-links-wrapper label:hover {
     cursor: pointer;
 }
