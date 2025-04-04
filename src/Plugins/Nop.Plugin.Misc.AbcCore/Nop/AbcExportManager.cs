@@ -46,6 +46,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
     public class AbcExportManager : ExportManager, IAbcExportManager
     {
         private readonly CatalogSettings _catalogSettings;
+        private readonly ICustomerService _customerService;
+        private readonly IDateTimeHelper _dateTimeHelper;
 
         public AbcExportManager(AddressSettings addressSettings,
             CatalogSettings catalogSettings,
@@ -128,6 +130,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             )
         {
             _catalogSettings = catalogSettings;
+            _customerService = customerService;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<Log> logs)
@@ -136,9 +140,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             {
                 new PropertyByName<Log>("Slug", l => l.PageUrl),
                 new PropertyByName<Log>("Referrer", l => l.ReferrerUrl),
-                new PropertyByName<Log>("Customer", l => l.CustomerId),
+                new PropertyByName<Log>("Customer", async l => (await _customerService.GetCustomerByIdAsync(l.CustomerId.Value)).Email),
                 new PropertyByName<Log>("IpAddress", l => l.IpAddress),
-                new PropertyByName<Log>("Date", l => l.CreatedOnUtc),
+                new PropertyByName<Log>("Date", async l => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
             };
 
             return await new PropertyManager<Log>(properties, _catalogSettings).ExportToXlsxAsync(logs);

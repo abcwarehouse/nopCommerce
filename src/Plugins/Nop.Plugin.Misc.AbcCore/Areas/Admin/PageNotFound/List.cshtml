@@ -34,22 +34,12 @@
     </h1>
     <div class="float-right">
         <div class="btn-group">
-            <button type="button" class="btn btn-success">
-                <i class="fas fa-download"></i>
-                @T("Admin.Common.Export")
-            </button>
-            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span>
-                <span class="sr-only">&nbsp;</span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-item">
-                    <a href="/Admin/PageNotFound/ExportXlsx">
-                        <i class="far fa-file-excel"></i>
-                        @T("Admin.Common.ExportToExcel")
-                    </a>
-                </li>
-            </ul>
+            <a href="/Admin/PageNotFound/ExportXlsx">
+                <button type="button" class="btn btn-success">
+                    <i class="fas fa-download"></i>
+                    @T("Admin.Common.ExportToExcel")
+                </button>
+            </a>
         </div>
     </div>
 </div>
