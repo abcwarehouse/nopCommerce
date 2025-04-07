@@ -138,6 +138,14 @@
 	margin: 4px 0 0 10px;
 	transition: all 0.2s ease;
 }
+
+.storeId8 .header-links-wrapper,
+.header-selectors-wrapper {
+	
+	float: none;
+	
+}
+
 .header-links-wrapper label,
 .header-selectors-wrapper label {
 	display: block;
