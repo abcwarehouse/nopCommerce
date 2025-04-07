@@ -143,6 +143,7 @@
 .header-selectors-wrapper {
 	
 	float: none;
+	transition: opacity 0.3s, visibility 0.3s, all 0.2s ease;
 	
 }
 
@@ -286,7 +287,7 @@
 }
 
 .storeId8 .ico-account {
-    margin-right: 38px;
+    margin-right: 39px;
 }
 
 .storeId8 .ico-login {
