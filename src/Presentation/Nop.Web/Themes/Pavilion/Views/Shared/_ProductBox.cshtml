@@ -344,6 +344,19 @@
 
             <div class="product-box-review" data-bv-show="inline_rating" data-bv-product-id="@Model.Id"></div>
 
+            <script type="application/ld+json">
+                {
+                "context" : "https://schema.org",
+                "type" : "Product",
+                "id" : "@bvProductUrl",
+                "name" : "@Model.Name",
+                "image" : "@productImageUrl",
+                "description" : "@Model.ShortDescription",
+                "sku" : "@Model.Sku",
+                "brand": "@(string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)))"
+                }
+            </script>
+
             <!-- ABC: custom - adds widget zone for reviews -->
             @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductBoxAddinfoReviews, additionalData = Model })
 
