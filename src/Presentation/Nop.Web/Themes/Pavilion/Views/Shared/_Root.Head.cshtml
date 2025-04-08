@@ -169,6 +169,57 @@
     &noscript=1"/>
     </noscript>
     <!-- End Meta Pixel Code -->
+
+    @if(storeId == 8)
+    {
+        <!-- Accessibility Code for "hawthorne.abcwarehouse.com" -->
+        <script>
+        /*
+
+        Want to customize your button? visit our documentation page:
+
+        https://login.equalweb.com/custom-button.taf
+
+        */
+        window.interdeal = {
+            "sitekey": "00d9ac96d6c386d6b51f9388ba5b4796",
+            "Position": "Left",
+            "domains": {
+                "js": "https://cdn.equalweb.com/",
+                "acc": "https://access.equalweb.com/"
+            },
+            "Menulang": "EN",
+            "btnStyle": {
+                "vPosition": [
+                    "80%",
+                    "80%"
+                ],
+                "scale": [
+                    "0.5",
+                    "0.5"
+                ],
+                "color": {
+                    "main": "#02463b",
+                    "second": "#ffffff"
+                },
+                "icon": {
+                    "outline": false,
+                    "type": 11,
+                    "shape": "circle"
+                }
+            }
+        };
+        (function(doc, head, body){
+            var coreCall             = doc.createElement('script');
+            coreCall.src             = interdeal.domains.js + 'core/5.0.13/accessibility.js';
+            coreCall.defer           = true;
+            coreCall.integrity       = 'sha512-pk3CeR0KGJu+GfK2x2ybTSZ1o1qfua6XW2PRAxMWOhC85M3+CanPYmvRp6BOiW0/riZjWGerRN7+JH4wEF0wJQ==';
+            coreCall.crossOrigin     = 'anonymous';
+            coreCall.setAttribute('data-cfasync', true );
+            body? body.appendChild(coreCall) : head.appendChild(coreCall);
+        })(document, document.head, document.body);
+        </script>
+    }
 </head>
 
 @functions {
