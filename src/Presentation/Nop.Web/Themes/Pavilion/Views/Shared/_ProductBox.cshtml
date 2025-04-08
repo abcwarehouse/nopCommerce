@@ -348,12 +348,10 @@
                 {
                 "context" : "https://schema.org",
                 "type" : "Product",
-                "id" : "@bvProductUrl",
+                "id" : "@Model.Id",
                 "name" : "@Model.Name",
-                "image" : "@productImageUrl",
                 "description" : "@Model.ShortDescription",
-                "sku" : "@Model.Sku",
-                "brand": "@(string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)))"
+                "sku" : "@Model.Sku"
                 }
             </script>
 
