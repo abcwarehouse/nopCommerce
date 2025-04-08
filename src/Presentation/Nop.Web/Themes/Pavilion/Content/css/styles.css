@@ -6301,7 +6301,7 @@ width: 250px !important;
 }
 .hawthorne.top-menu li {
     padding: 0px 15px;
-    border-left: solid 1px #515151;
+    border-right: solid 1px #515151;
 }
 .hawthorne.top-menu li a {
 	color: #515151
