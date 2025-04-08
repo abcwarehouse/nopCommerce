@@ -287,9 +287,11 @@
 }
 
 .storeId8 .ico-account {
-    margin-right: 39px;
-	width: 81px;
+    /* margin-right: 39px; */
+	width: 120px;
 	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .storeId8 .ico-login {
