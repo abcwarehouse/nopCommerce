@@ -6239,10 +6239,12 @@ width: 250px !important;
 	text-align: left;
 }
 
+@media screen and (min-width: 1025px)
+{
 label#hawthMyAccount {
 	margin-left: -20px;
 }
-
+}
 
 @media screen and (max-width: 1024px) {
 #customerName {
