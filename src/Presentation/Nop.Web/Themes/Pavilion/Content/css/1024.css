@@ -742,6 +742,14 @@
     margin-left: 9px;
 }
 
+.storeId8 li.linkedin {
+    display: none;
+}
+
+.storeId8 li.tiktok {
+    display: none;
+}
+
 .storeId8 .footer-upper, .ui-datepicker-header, .ui-datepicker-calendar .ui-state-active {
     background-color: #02463b;
 }
