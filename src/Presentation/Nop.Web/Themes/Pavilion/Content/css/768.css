@@ -923,9 +923,13 @@ opacity: 1 !important;
 	left: -20px !important;
   }
 
+  .storeId3 .header-links {
+	left: -6px !important;
+  }
+
   .storeId8 .header-links {
     margin-left: -6px;
-	top: 25px;
+	top: 22px;
 }
 
 
