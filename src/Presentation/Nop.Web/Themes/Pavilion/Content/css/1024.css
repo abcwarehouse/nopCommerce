@@ -736,6 +736,15 @@
 
 /* FOOTER */
 
+
+.storeId8 #newsletter-subscribe-block {
+    background-color: white;
+    margin-left: 9px;
+}
+
+.storeId8 .footer-upper, .ui-datepicker-header, .ui-datepicker-calendar .ui-state-active {
+    background-color: #02463b;
+}
 .footer {
 	text-align: left;
 }
