@@ -742,6 +742,10 @@
     margin-left: 9px;
 }
 
+.storeId8 li.pinterest {
+    display: none;
+} 
+
 .storeId8 li.linkedin {
     display: none;
 }
