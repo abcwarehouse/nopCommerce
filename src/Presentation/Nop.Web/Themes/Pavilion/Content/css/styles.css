@@ -6232,8 +6232,7 @@ width: 250px !important;
 .storeId8 #customerName {
     font-size: 1em;
     display: inline-block;
-    width: 135px; 
-    max-width: fit-content;
+    width: 111px; 
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
