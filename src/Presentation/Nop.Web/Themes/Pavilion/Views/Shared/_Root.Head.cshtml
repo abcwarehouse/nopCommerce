@@ -163,8 +163,16 @@
     fbq('init', '279056429645080'); 
     fbq('track', 'PageView');
 
-    document.querySelector('.storeId8 li.instagram a').href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
-    
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if .storeId8 exists
+  if (document.querySelector('.storeId8')) {
+    // Update Instagram link only if .storeId8 is present
+    const instagramLink = document.querySelector('li.instagram a');
+    if (instagramLink) {
+      instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+    }
+  }
+});    
 
 
     </script>
