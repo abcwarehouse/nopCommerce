@@ -6149,7 +6149,7 @@ h1.search-page-title {
 	margin-right: -30px;
 }
 .hawthorne-lower.header-lower {
-    padding: 40px 0;
+    /* padding: 40px 0; */
 	margin-top: -16px;
 }
 .hawthorne.top-menu li a label:hover {
