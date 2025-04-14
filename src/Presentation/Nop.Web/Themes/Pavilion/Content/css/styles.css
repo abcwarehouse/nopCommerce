@@ -6425,6 +6425,11 @@ img.hawthorne-logo {
 .header-menu ul.mega-menu {
     padding-top: 35px;
 }
+@media (min-width: 1025px) {
+.storeId8 .header-menu ul.mega-menu {
+    padding-top: 40px;
+}
+}
 
 @media screen and (min-width: 1025px) {
 .storeId8 .header-lower.hawthorne-lower {
