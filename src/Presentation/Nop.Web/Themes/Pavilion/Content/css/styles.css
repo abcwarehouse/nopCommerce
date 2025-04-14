@@ -6376,6 +6376,15 @@ img.hawthorne-logo {
     float: none;
 	
 }
+
+@media (min-width: 1025px) {
+    .storeId8 .header-logo.desktop {
+       
+        min-width: 270px;
+    }
+}
+
+
 .hawthorne-lower .header-menu {
     overflow-y: visible;
 }
