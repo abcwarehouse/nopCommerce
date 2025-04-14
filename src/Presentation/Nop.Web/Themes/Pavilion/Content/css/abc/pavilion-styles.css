@@ -85,6 +85,11 @@
     display: flex;
 }
 
+@media (min-width: 1025px) {
+.storeId8 .header-logo.desktop {
+    margin-top: -12px;
+}
+}
 /* Have logo match category width - other header logo fixes */
 .header-logo {
     width: 250px;

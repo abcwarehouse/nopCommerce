@@ -6347,6 +6347,12 @@ img.hawthorne-logo {
     /* width: 70%; */
 }
 
+@media (min-width: 1025px) { 
+.storeId8 .header-logo.desktop {
+    width: 28%;
+}
+}
+
 .header-logo.desktop {
     width: 19%;
 }
@@ -6368,7 +6374,7 @@ img.hawthorne-logo {
     
     display: inline-block;
     float: none;
-	margin-bottom: -8px;
+	
 }
 .hawthorne-lower .header-menu {
     overflow-y: visible;
