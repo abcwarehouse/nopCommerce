@@ -6414,6 +6414,20 @@ img.hawthorne-logo {
     padding-top: 35px;
 }
 
+@media screen and (min-width: 1025px) {
+.storeId8 .header-lower.hawthorne-lower {
+ 
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-content: center;
+	flex-direction: row;
+}
+ }
+
+
+
+
 @media screen and (max-width: 1024px) {
 body.storeId3 .header-lower {
 	background-color: white !important;
