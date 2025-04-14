@@ -6365,7 +6365,7 @@ img.hawthorne-logo {
 
 /* Angelo Change */
 .header-lower.hawthorne-lower div#flyout-cart {
-    width: 15%;
+    
     display: inline-block;
     float: none;
 	margin-bottom: -8px;
@@ -6375,7 +6375,7 @@ img.hawthorne-logo {
 }
 .storeId8 .hawthorne-lower #flyout-cart {
     margin-right: 0;
-    padding-left: 50px;
+   
 }
 .hawthorne-lower .cart-trigger {
 	background: #fff;
@@ -6436,10 +6436,7 @@ body.storeId3 .header-lower {
 .storeId8 .home-page-body .header-lower {
     background: #02463b !important;
 }
-/* //Angelo Change */
-.storeId8 li.has-sublist.mega-menu-categories.root-category-items {
-	padding-right: 30px;
-}
+
 .storeId8 .hawthorne-lower .search-cart-wrapper {
     width: 45% !important;
 }
@@ -6480,6 +6477,9 @@ body.storeId3 .header-lower {
 
 ul.mega-menu.hawthorne {
     margin-bottom: 0rem !important;
+	display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 
