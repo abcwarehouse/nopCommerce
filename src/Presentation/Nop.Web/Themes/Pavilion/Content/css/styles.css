@@ -6344,7 +6344,7 @@ img.hawthorne-logo {
 }
 
 .hawthorne-lower .search-cart-wrapper {
-    width: 70%;
+    /* width: 70%; */
 }
 
 .header-logo.desktop {
@@ -6438,28 +6438,28 @@ body.storeId3 .header-lower {
 }
 
 .storeId8 .hawthorne-lower .search-cart-wrapper {
-    width: 45% !important;
+   
 }
 
 .storeId8 .item-box.water {
     display: none;
 }
 
-@media (max-width: 1645px) {
+/* @media (max-width: 1645px) {
 	
 	
 	.storeId8 .hawthorne-lower .search-cart-wrapper {
 		width: 34% !important;
 	}
-}
+} */
 
-@media (max-width: 1400px) {
+/* @media (max-width: 1400px) {
 	
 	
 	.storeId8 .hawthorne-lower .search-cart-wrapper {
 		width: 25% !important;
 	}
-}
+} */
 
 
 @media (max-width: 1240px) {
