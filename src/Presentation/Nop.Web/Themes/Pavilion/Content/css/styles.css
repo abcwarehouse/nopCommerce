@@ -6554,11 +6554,15 @@ ul.mega-menu.hawthorne {
 
 
 	@media (min-width: 1025px) {
-div.eapps-widget {
-    position: relative;
-    top: 4px !important;
+		.storeId8 .HawDeskHeader {
+			padding-left: 0px;
+			display: flex;
+			align-items: center;
+			flex-direction: row;
+			justify-content: flex-end;
+		}
 }
-	}
+	
 
 /* Fireworks Logo Changes */
 @media (min-width: 1020px) {
