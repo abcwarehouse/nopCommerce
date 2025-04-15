@@ -6563,7 +6563,7 @@ ul.mega-menu.hawthorne {
 		}
 }
 
-@media (min-width: 1024px) {
+@media (max-width: 1024px) {
 .storeId8 .mobile-header-content-row {
     background-color: #02463b;
     margin-top: 53px;
