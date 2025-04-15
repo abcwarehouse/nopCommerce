@@ -52,7 +52,7 @@ $(document).ready(function () {
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
 
-        if(isHawthorne == false)
+        if(!isHawthorne)
         {
             selectCategory.attr("href", baseURL1 + "filterSearch");
         }
