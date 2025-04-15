@@ -201,8 +201,14 @@
 }
 .header-menu .close-menu,
 .header-menu .back-button {
-	background-color: #f6f6f6;
+	background-color: #02463b;
 	cursor: pointer;
+}
+
+.storeId8 .header-menu .close-menu,
+.header-menu .back-button {
+	background-color: #f6f6f6;
+	
 }
 .header-menu .close-menu span,
 .header-menu .back-button span {
