@@ -16,6 +16,7 @@ var imageArray = new Array('Default.png', 'HomeButton.png', 'LocationsButton.png
 var element;
 var elementArray = new Array();
 var categoryArray = new Array();
+var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
 categoryArray[0] = "SHOP ALL CATEGORIES";
 
 $(document).ready(function () {
