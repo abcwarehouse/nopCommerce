@@ -16,7 +16,7 @@ var imageArray = new Array('Default.png', 'HomeButton.png', 'LocationsButton.png
 var element;
 var elementArray = new Array();
 var categoryArray = new Array();
-var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
 categoryArray[0] = "SHOP ALL CATEGORIES";
 
 $(document).ready(function () {
@@ -48,7 +48,7 @@ $(document).ready(function () {
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
 
-        if(storeId == 8)
+        if(storeFlag == "haw")
         {
             selectCategory.attr("href", baseURL1 + "filterSearch");
         }
