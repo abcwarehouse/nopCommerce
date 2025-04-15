@@ -996,6 +996,6 @@ body ul {
 }
 @media screen and (max-width: 1024px) {
 	.storeId8 .hours-desktop {
-		padding-top: 3px;
+		/* padding-top: 3px; */
 	}
 }
