@@ -15,14 +15,18 @@
 
     //page class
     Html.AppendPageCssClassParts("html-promo-listing-page");
+    var currentStore = await storeContext.GetCurrentStoreAsync();
+    int storeId = currentStore.Id;
 }
+
+
 
 <div class="page category-page">
     <div class="page-title">
         <h1>Rebates and Promos</h1>
     </div>
    
-        @if(storeId == 3) {
+        @if (storeId == 3) {
             <picture class = "abcRebate">
             <source media="(max-width: 767px)" srcset="https://www.abcwarehouse.com/images/1200x500RebateMobile.jpg">
             <img src="https://www.abcwarehouse.com/images/1200x1000Rebate.jpg" alt="RebateBanner" class="responsive-banner">
