@@ -6562,7 +6562,17 @@ ul.mega-menu.hawthorne {
 			justify-content: flex-end;
 		}
 }
-	
+
+@media (min-width: 1024px) {
+.storeId8 .mobile-header-content-row {
+    background-color: #02463b;
+    margin-top: 53px;
+}
+
+.storeId8 #small-search-box-form {
+    background: #02463b;
+}
+}
 
 /* Fireworks Logo Changes */
 @media (min-width: 1020px) {
