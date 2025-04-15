@@ -6553,6 +6553,13 @@ ul.mega-menu.hawthorne {
 	
 
 
+	@media (min-width: 1025px) {
+div.eapps-widget {
+    position: relative;
+    top: 4px !important;
+}
+	}
+
 /* Fireworks Logo Changes */
 @media (min-width: 1020px) {
 	.header-upper .header-links-wrapper {
