@@ -926,7 +926,7 @@ label, label + * {
 
 @media (min-width: 1025px) {
     .storeId8 .store-search-box .search-box-button {
-        margin: -10px 0px 0 5px !important;
+        
     }
 }
 
@@ -6368,7 +6368,11 @@ img.hawthorne-logo {
     margin-left: -30px;
 }
 
-
+@media (min-width: 1025px) {
+.storeId8 .hawthorne-logo {
+    margin-top: 0px;
+}
+}
 /* Angelo Change */
 .header-lower.hawthorne-lower div#flyout-cart {
     
@@ -6420,14 +6424,14 @@ img.hawthorne-logo {
 }
 .hawthorne-lower input#sli_search_1 {
     font-size: 14px;
-	margin-top:-11px;
+	margin-top: 0px;
 }
 .header-menu ul.mega-menu {
     padding-top: 35px;
 }
 @media (min-width: 1025px) {
 .storeId8 .header-menu ul.mega-menu {
-    padding-top: 40px;
+    padding-top: 0px;
 }
 }
 
@@ -6533,7 +6537,7 @@ ul.mega-menu.hawthorne {
 	margin-right: auto;}
 
 .storeId8 .has-sublist.mega-menu-categories.root-category-items {
-		padding-bottom: 40px !important;
+		padding-bottom: 0px !important;
 	}
 
 	
@@ -6554,9 +6558,7 @@ ul.mega-menu.hawthorne {
 	.header-upper .header-links-wrapper {
 		padding-top: 20px;
 	}
-	.storeId8 #flyout-cart {
-		padding-top: 3px;
-	}
+	
 	.storeId3 #flyout-cart {
 		padding-top: 20px;
 	}
