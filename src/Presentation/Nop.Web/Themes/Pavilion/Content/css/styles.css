@@ -6397,7 +6397,7 @@ img.hawthorne-logo {
 	background: #fff;
 }
 .hawthorne-lower .header-menu .mega-menu-categories .sublist-wrap {
-    top: 95px;
+    top: 54px;
 }
 .header-lower.hawthorne-lower .with-subcategories {
 	color: #fff;
@@ -6411,7 +6411,7 @@ img.hawthorne-logo {
 .hawthorne-lower .header-menu>ul>li>.sublist-wrap {
 	margin: 0px;
 	margin-left: 320px;
-	left: 20px;
+	left: -243px;
 }
 .hawthorne-lower .header-menu>ul>li>.sublist-wrap .sublist-wrap {
 	display: none;
