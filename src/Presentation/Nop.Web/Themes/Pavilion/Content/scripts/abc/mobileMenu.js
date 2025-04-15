@@ -42,7 +42,7 @@ $(document).ready(function () {
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
         const baseURL = "https://abcwarehouse.com/";
-        const baseURL1 = "https://hawthorne.abcwarehouse.com";
+        const baseURL1 = "https://hawthorne.abcwarehouse.com/";
 
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
@@ -51,7 +51,9 @@ $(document).ready(function () {
         {
             selectCategory.attr("href", baseURL1 + "filterSearch");
         }
+        else {
         selectCategory.attr("href", baseURL + "filterSearch");
+        }
         return;
     }
       // Special case for "dishwashers"
