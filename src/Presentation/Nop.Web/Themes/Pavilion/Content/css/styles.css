@@ -458,6 +458,23 @@ label, label + * {
 		width: 100%;
 		z-index: 100;
 	}
+	.storeId8 .header-menu.categories-in-side-panel.open #select_category_item {
+		display: none;
+	}
+	.storeId8 .header-menu .mobile-sidebar-title .back-button {
+		background-color: #02463b;
+		color: #fff;
+		height: 35px;
+		padding-top: 10px;
+	}
+	.storeId8 .header-menu .mobile-sidebar-title {
+		background: #02463b;
+		margin-top: -10px;
+		height: 50px;
+	}
+	.storeId8 ul.sublist li {
+		width: 100% !important;
+	}
 }
 
 /*********** NOTIFICATIONS & POPUPS  ***********/
