@@ -971,6 +971,11 @@ input#sli_search_1 {
 	background-color: #00a1b1;
 	padding: 25px 0 20px;
 }
+
+.storeId8 .footer-upper {
+	background-color: #02463b !important;
+	padding: 25px 0 20px;
+}
 .newsletter .title {
 	margin: 0 0 10px;
 	line-height: 28px;
