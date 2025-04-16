@@ -159,6 +159,19 @@ label, label + * {
 .center-2, .side-2 {
 	margin: 0 0 70px;
 }
+
+@media (max-width: 1024px) {
+	.storeId8 .center-2, .side-2 {
+		margin: -37px 0px 70px;
+	}
+}
+
+@media (max-width: 1024px) {
+ .storeId8 .title-bar {
+
+	border-bottom: 1px solid #02463b;
+ }
+}
 .side-2:after {
 	content: "";
 	display: block;
