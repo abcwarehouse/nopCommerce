@@ -762,7 +762,7 @@
 }
 
 .storeId8 .footer-upper, .ui-datepicker-header, .ui-datepicker-calendar .ui-state-active {
-    background-color: #02463b;
+    background-color: #02463b !important;
 }
 .footer {
 	text-align: left;
