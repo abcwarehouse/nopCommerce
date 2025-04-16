@@ -459,7 +459,8 @@ label, label + * {
 		z-index: 100;
 	}
 	.storeId8 .header-menu.categories-in-side-panel.open #select_category_item {
-		display: none;
+		background: #02463b;
+        color: #fff;
 	}
 	.storeId8 .header-menu .mobile-sidebar-title .back-button {
 		background-color: #02463b;
