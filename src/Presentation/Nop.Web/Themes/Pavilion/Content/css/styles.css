@@ -443,6 +443,23 @@ label, label + * {
 }
 
 
+/*********** Hawthorne Header Changes  ***********/
+@media (max-width: 1024px) {
+    .storeId8 #small-search-box-form {
+        background: #02463b;
+        height: 53px;
+    }
+	.storeId8 div#header {
+		margin-top: 102px;
+	}
+	.storeId8 .mobile-header-content-row {
+		position: fixed;
+		top: 0px;
+		width: 100%;
+		z-index: 100;
+	}
+}
+
 /*********** NOTIFICATIONS & POPUPS  ***********/
 
 
