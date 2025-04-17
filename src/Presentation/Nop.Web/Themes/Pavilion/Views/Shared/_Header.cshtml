@@ -112,17 +112,9 @@
                 <div class="close-button close-menu">
                     <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
                 </div>
-                @{
-                    var menu = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
-                }
-                @if (String.IsNullOrEmpty(await menu.RenderHtmlContentAsync()))
-                {
-                    @await Component.InvokeAsync("TopMenu")
-                }
-                else
-                {
-                    @menu
-                }
+                <div class="header-menu-parent">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
+                </div>
             </div>
             
            
