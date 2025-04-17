@@ -126,12 +126,6 @@
             </div>
             
            
-            
-          
-             
-           
-           
-
                 <div class="header-menu-parent">
                     <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
                         <div class="close-menu">
@@ -150,12 +144,10 @@
 
             <div class="search-cart-wrapper">
                 <div class="search-box store-search-box nav-panel">
-                    <div class="close-button close-search">
-                        <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
+                    <div class="search-box store-search-box"></div>
+                        @await Component.InvokeAsync("SearchBox")
                     </div>
                 </div>
-                
-
                 
             </div>
 
