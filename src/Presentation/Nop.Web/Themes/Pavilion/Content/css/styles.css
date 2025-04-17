@@ -166,12 +166,18 @@ label, label + * {
 	}
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 1025px) {
+.storeId8 .title-bar {
+
+	margin-top: -24px;
+ }
+}
+
  .storeId8 .title-bar {
 
 	border-bottom: 1px solid #02463b;
  }
-}
+
 .side-2:after {
 	content: "";
 	display: block;
