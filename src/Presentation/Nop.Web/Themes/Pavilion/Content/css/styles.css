@@ -7600,3 +7600,10 @@ a.us-ap-button {
 .header-links {
   left: -10px !important;
     }
+
+	.storeId8 .hours-desktop {
+		display: inline-flex;
+	}
+	.storeId8 .lookbook {
+		border-left: solid 1px #515151;
+	}
