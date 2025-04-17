@@ -117,8 +117,9 @@
            
             
           
-             <div class="hours-desktop"></div>
+             <div class="hours-desktop">
                 @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
+            </div>
 
                 <div class="header-menu-parent test1">
                     <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
@@ -204,8 +205,12 @@
                         </div>
                         @if(storeId == 8)
                         {
-                            <div class="header-menu-parent">
-                                @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
+                            <div class="header-menu-parent test3">
+                                <div class="header-menu categories-in-side-panel open">
+                                    <div class="header-menu-parent">
+                                        @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
+                                    </div>
+                                </div>
                             </div>
                         }
                         else
