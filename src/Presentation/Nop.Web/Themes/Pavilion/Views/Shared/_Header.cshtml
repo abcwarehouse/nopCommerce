@@ -117,12 +117,8 @@
            
             
           
-             <div class="hours-desktop">
+             <div class="hours-desktop"></div>
                 @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
-                
-            </div>
-           
-           
 
                 <div class="header-menu-parent test1">
                     <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
@@ -206,9 +202,24 @@
                         <div class="close-menu">
                             <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
                         </div>
-                        <div class="header-menu-parent"></div>
-                            @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
-                        </div>
+                        @if(storeId == 8)
+                        {
+                            <div class="header-menu-parent">
+                                @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
+                            </div>
+                        }
+                        else
+                        {
+                            @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
+                            {
+                                @menuHtml
+                            }
+                            else
+                            {
+                                @await Component.InvokeAsync("TopMenu")
+                            }
+                        }
+                        
                     </div>
                 </div>
                 @* Old location of the cart *@
