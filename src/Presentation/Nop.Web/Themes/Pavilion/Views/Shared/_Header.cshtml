@@ -55,7 +55,7 @@
                     <div class="hours-desktop">
                         @await Component.InvokeAsync("Widget", new { widgetZone = "hawthorne_hours" })
                     </div>
-                    <li>
+                    <li class="lookbook">
                         <a href="/hawthorne-lookbook">Lookbook</a>
                     </li>
                     <li>
@@ -201,12 +201,8 @@
                         </div>
                         @if(storeId == 8)
                         {
-                            <div class="header-menu-parent test3">
-                                <div class="header-menu categories-in-side-panel open">
-                                    <div class="header-menu-parent">
-                                        @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
-                                    </div>
-                                </div>
+                            <div class="header-menu-parent">
+                                @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
                             </div>
                         }
                         else
