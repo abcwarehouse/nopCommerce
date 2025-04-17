@@ -6192,9 +6192,7 @@ h1.search-page-title {
 
 
 /* Hawthorne Mobile Header Changes */
-.header-menu.categories-in-side-panel.open {
-    background: #f6f6f6;
-}
+
 
 .storeId8 ul.mega-menu-responsive.haw-mobile-menu {
 	background-color: #f6f6f6;
@@ -6202,11 +6200,11 @@ h1.search-page-title {
 }
 
 
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
 .header-middle .hours-desktop {
 	margin-top: 32px;
 }
-}
+} */
 .header-logo.header-logo img {
 	width: 270px;
 }
