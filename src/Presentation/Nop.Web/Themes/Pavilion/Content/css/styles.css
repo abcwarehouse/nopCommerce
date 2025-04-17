@@ -6190,10 +6190,21 @@ h1.search-page-title {
     text-align: center;
 }
 
+
+/* Hawthorne Mobile Header Changes */
+
+
+.storeId8 ul.mega-menu-responsive.haw-mobile-menu {
+	background-color: #f6f6f6;
+    margin-top: 137px;
+}
+
+
+/* @media (max-width: 1024px) {
 .header-middle .hours-desktop {
 	margin-top: 32px;
-   
 }
+} */
 .header-logo.header-logo img {
 	width: 270px;
 }
