@@ -144,13 +144,10 @@
 
             <div class="search-cart-wrapper">
                 <div class="search-box store-search-box nav-panel">
-                    <div class="close-button close-search">
-                        <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
+                    <div class="search-box store-search-box">
+                        @await Component.InvokeAsync("SearchBox")
                     </div>
                 </div>
-                
-
-                
             </div>
 
             @await Component.InvokeAsync("FlyoutShoppingCart")
