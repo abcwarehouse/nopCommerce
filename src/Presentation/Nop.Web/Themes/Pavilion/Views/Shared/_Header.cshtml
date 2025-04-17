@@ -127,25 +127,13 @@
             
            
                 <div class="header-menu-parent">
-                    <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
-                        <div class="close-menu">
-                            <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
-                        </div>
-                        @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
-                        {
-                            @menuHtml
-                        }
-                        else
-                        {
-                            @await Component.InvokeAsync("TopMenu")
-                        }
-                    </div>
+                    @await Component.InvokeAsync("Widget", new { widgetZone = "mobile_menu" });
                 </div>
 
             <div class="search-cart-wrapper">
                 <div class="search-box store-search-box nav-panel">
-                    <div class="search-box store-search-box">
-                        @await Component.InvokeAsync("SearchBox")
+                    <div class="close-button close-search">
+                        <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
                     </div>
                 </div>
             </div>
