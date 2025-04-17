@@ -6199,6 +6199,11 @@ h1.search-page-title {
     margin-top: 137px;
 }
 
+@media (max-width: 1024px) {
+.storeId8 .has-sublist {
+    padding: 26px 0px 36px 16px;
+}
+}
 
 /* @media (max-width: 1024px) {
 .header-middle .hours-desktop {
