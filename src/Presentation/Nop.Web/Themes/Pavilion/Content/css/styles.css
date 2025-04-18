@@ -6195,13 +6195,19 @@ h1.search-page-title {
 
 
 .storeId8 ul.mega-menu-responsive.haw-mobile-menu {
-	background-color: #f6f6f6;
-    margin-top: 137px;
+	background-color: white;
+    margin-top: 85px;
 }
 
 @media (max-width: 1024px) {
 .storeId8 .has-sublist {
     padding: 26px 0px 36px 16px;
+}
+
+
+.mega-menu-responsive a, .mega-menu-responsive a + .plus-button
+{
+	margin-top: -18px;
 }
 }
 
