@@ -6216,6 +6216,13 @@ h1.search-page-title {
     }
 }
 
+@media screen and (max-width: 999px) {
+    .storeId8 .sublist {
+        
+        margin-top: 45px;
+    }
+}
+
 
 .mega-menu-responsive a, .mega-menu-responsive a + .plus-button
 {
