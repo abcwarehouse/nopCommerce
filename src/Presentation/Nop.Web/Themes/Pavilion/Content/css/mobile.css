@@ -26,7 +26,7 @@
 	z-index: 1020;
 	width: 100%;
 	height: 53px !important; /*override inline height*/
-	border-top: 3px solid #00a1b1;
+	border-top: 3px solid #02463b;
 	background-color: #02463b;
 }
 
@@ -199,10 +199,16 @@
     -ms-transform: translate(0);
     transform: translate(0);
 }
-.header-menu .close-menu,
+.storeId8 .header-menu .close-menu,
 .header-menu .back-button {
-	background-color: #f6f6f6;
+	background-color: #02463b;
 	cursor: pointer;
+}
+
+.storeId8 .header-menu .close-menu,
+.header-menu .back-button {
+	background-color: #02463b;
+	
 }
 .header-menu .close-menu span,
 .header-menu .back-button span {
