@@ -182,7 +182,7 @@
 .header-menu {
     position: fixed;
     top: 0; left: 0;
-    width: 320px;
+    width: 313px;
     height: 100%;
     text-align: left;
     background-color: #f6f6f6;
@@ -192,6 +192,10 @@
     -webkit-transform: translate(-320px);
     -ms-transform: translate(-320px);
     transform: translate(-320px);
+}
+
+.storeId8 .sublist-wrap.active {
+	    border-top: solid 42px #02463b;
 }
 .header-menu.open {
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
