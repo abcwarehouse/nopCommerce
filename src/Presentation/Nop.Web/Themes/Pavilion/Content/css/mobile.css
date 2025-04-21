@@ -193,6 +193,10 @@
     -ms-transform: translate(-320px);
     transform: translate(-320px);
 }
+
+.storeId8 .sublist-wrap.active {
+	    border-top: solid 42px #02463b;
+}
 .header-menu.open {
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
     -webkit-transform: translate(0);
