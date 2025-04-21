@@ -138,9 +138,10 @@
                     <div class="close-button close-search">
                         <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
                     </div>
-                        @await Component.InvokeAsync("SearchBox")
 
                 </div>
+                @await Html.PartialAsync("InstantSearch")
+
                 @await Component.InvokeAsync("FlyoutShoppingCart")
 
                 
