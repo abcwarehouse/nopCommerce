@@ -140,7 +140,7 @@
                     </div>
 
                 </div>
-                @await Html.PartialAsync("~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Views/Components/InstantSearch/InstantSearch.cshtml")
+                @await Component.InvokeAsync("InstantSearch")
                 @await Component.InvokeAsync("FlyoutShoppingCart")
 
                 
