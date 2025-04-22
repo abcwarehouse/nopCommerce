@@ -6221,8 +6221,11 @@ h1.search-page-title {
         
         margin-top: 45px;
     }
+	
 }
-
+.storeId8 .search-cart-wrapper {
+    text-align: right;
+}
 
 .mega-menu-responsive a, .mega-menu-responsive a + .plus-button
 {
