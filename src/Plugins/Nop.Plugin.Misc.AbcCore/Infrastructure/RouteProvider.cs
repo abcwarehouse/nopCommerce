@@ -16,6 +16,11 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
+            // use custom Category controller
+            endpointRouteBuilder.MapControllerRoute("AbcCategoryEdit",
+                            "Admin/Category/Edit/{id}",
+                            new { controller = "AbcCategory", action = "Edit", area = "Admin" });
+
             endpointRouteBuilder.MapControllerRoute("AbcPromoProductList",
                             "Admin/AbcPromo/Products/{abcPromoId}",
                             new { controller = "AbcPromo", action = "Products", area = "Admin" });
