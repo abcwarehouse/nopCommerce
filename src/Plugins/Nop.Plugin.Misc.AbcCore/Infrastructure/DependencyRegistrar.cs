@@ -18,6 +18,7 @@ using Nop.Services.Shipping;
 using Nop.Services.Logging;
 using SevenSpikes.Nop.Services.Catalog;
 using Nop.Services.Catalog;
+using ICategoryModelFactory = Nop.Web.Areas.Admin.Factories.ICategoryModelFactory;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
@@ -81,6 +82,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<IAbcExportManager, AbcExportManager>();
             // Overrides AJAX filter functionality
             services.AddScoped<IManufacturerService7Spikes, AbcManufacturerService7Spikes>();
+
+            services.AddScoped<ICategoryModelFactory, AbcCategoryModelFactory>();
         }
     }
 }

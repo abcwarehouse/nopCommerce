@@ -43,6 +43,9 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
 {
     public class AbcCategoryController : CategoryController
     {
+        private readonly ICategoryService _categoryService;
+        private readonly IGenericAttributeService _genericAttributeService;
+
         public AbcCategoryController(
             IAclService aclService,
             ICategoryModelFactory categoryModelFactory,
@@ -62,7 +65,9 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             IStoreMappingService storeMappingService,
             IStoreService storeService,
             IUrlRecordService urlRecordService,
-            IWorkContext workContext
+            IWorkContext workContext,
+            // custom
+            IGenericAttributeService genericAttributeService
         ) : base(
             aclService,
             categoryModelFactory,
@@ -84,7 +89,10 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             urlRecordService,
             workContext
         )
-        {}
+        {
+            _categoryService = categoryService;
+            _genericAttributeService = genericAttributeService;
+        }
 
         public override async Task<IActionResult> Edit(int id)
         {
@@ -94,12 +102,15 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
         public override async Task<IActionResult> Edit(CategoryModel model, bool continueEditing)
         {
-            // // Saves PLP description
-            // var plpDescription = Request.Form["PLPDescription"].ToString();
-            // var product = await _productService.GetProductByIdAsync(model.Id);
-            // await _genericAttributeService.SaveAttributeAsync<string>(
-            //     product, "PLPDescription", plpDescription
-            // );
+            // Saves Hawthorne picture ID
+            var hawthornePictureId = Convert.ToInt32(Request.Form["HawthornePictureId"].ToString());
+            if (hawthornePictureId != 0)
+            {
+                var category = await _categoryService.GetCategoryByIdAsync(model.Id);
+                await _genericAttributeService.SaveAttributeAsync<int>(
+                    category, "HawthornePictureId", hawthornePictureId
+                );
+            }
 
             return await base.Edit(model, continueEditing);
         }
