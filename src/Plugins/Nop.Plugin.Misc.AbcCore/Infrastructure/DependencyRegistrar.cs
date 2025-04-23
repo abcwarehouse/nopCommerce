@@ -82,8 +82,6 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<IAbcExportManager, AbcExportManager>();
             // Overrides AJAX filter functionality
             services.AddScoped<IManufacturerService7Spikes, AbcManufacturerService7Spikes>();
-
-            services.AddScoped<ICategoryModelFactory, AbcCategoryModelFactory>();
         }
     }
 }
