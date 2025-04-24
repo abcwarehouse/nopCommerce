@@ -14,14 +14,15 @@
     var orderTotal = ViewBag.OrderTotal as string;
     var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
-    var orderDiscount = order.OrderDiscount + order.OrderSubTotalDiscountInclTax;
-
-
+    decimal orderDiscount = 0;
     var customerEmail = "Unknown";
+
     if (order != null && order.CustomerId > 0)
     {
         var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
         customerEmail = customer?.Email ?? "Unknown";
+
+        orderDiscount = order.OrderDiscount + order.OrderSubTotalDiscountInclTax;
     }
     else
     {
@@ -29,7 +30,7 @@
             console.error("Invalid order or missing CustomerId.");
         </script>
     }
-        
+
     if (orderItems == null || !orderItems.Any())
     {
         <script>
@@ -42,7 +43,7 @@
 <div class="page checkout-page order-completed-page">
     @if (!Model.OnePageCheckoutEnabled)
     {
-        @await Component.InvokeAsync("CheckoutProgress",  new { step = CheckoutProgressStep.Complete })
+        @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Complete })
     }
     <div class="page-title">
         <h1>@T("Checkout.ThankYou")</h1>
@@ -81,7 +82,7 @@ window.bvCallback = function (BV) {
         {
             var item = orderItems[i];
             @Html.Raw($"{{\"price\": \"{item.UnitPriceInclTax.ToString("0.00")}\", \"quantity\": \"{item.Quantity}\", \"productId\": \"{item.ProductId}\"}}")
-            @if (i < orderItems.Count || orderDiscount > 0)
+            @if (i < orderItems.Count - 1 || orderDiscount > 0)
             {
                 @Html.Raw(",")
             }
@@ -91,8 +92,8 @@ window.bvCallback = function (BV) {
         {
             @Html.Raw($"{{\"price\": \"-{orderDiscount.ToString("0.00")}\", \"quantity\": \"1\", \"productId\": \"Discount\"}}")
         }
-        ],
-    "email" : "@customerEmail"
+    ],
+    "email": "@customerEmail"
   });
 };
 </script>
