@@ -194,12 +194,24 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- End Meta Pixel Code -->
 
     <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval';
-    style-src 'self' 'unsafe-inline';
-    media-src *;
-    script-src 'self' https://static.elfsight.com http://onlineerp.solution.quebec 'unsafe-inline' 'unsafe-eval';
-    connect-src 'self' https://core.service.elfsight.com https://*.google.com https://*.googletagmanager.com;
+    default-src 'self' data: gap: https://ssl.gstatic.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' 
+        https://static.elfsight.com 
+        https://www.googletagmanager.com 
+        https://www.google-analytics.com 
+        https://connect.facebook.net 
+        https://apps.bazaarvoice.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    connect-src 'self' 
+        https://core.service.elfsight.com 
+        https://www.google.com 
+        https://www.googletagmanager.com 
+        https://apps.bazaarvoice.com;
+    frame-src https://www.googletagmanager.com https://*.rlets.com;
+    img-src 'self' data: https:; 
+    font-src 'self' https://fonts.gstatic.com;
     ">
+
 
     </head>
 
