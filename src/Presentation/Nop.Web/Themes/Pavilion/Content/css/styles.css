@@ -499,6 +499,8 @@ label, label + * {
 
 .storeId8 .MobileLoc {
     width: 37px;
+	margin-top: 5px;
+
 }
 
 /*********** NOTIFICATIONS & POPUPS  ***********/
