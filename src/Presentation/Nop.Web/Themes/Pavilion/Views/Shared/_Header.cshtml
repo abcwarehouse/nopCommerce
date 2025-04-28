@@ -155,17 +155,8 @@
             @* <div class="admin-header-links">
                 <a href="/Admin" class="administration">Administration</a>
             </div> *@
+
             @await Component.InvokeAsync("AdminHeaderLinks")
-                @{
-                    var taxTypeSelectorHtml = await Component.InvokeAsync("TaxTypeSelector");
-                    var currencySelectorHtml = await Component.InvokeAsync("CurrencySelector");
-                    var languageSelectorHtml = await Component.InvokeAsync("LanguageSelector");
-                    var headerSelectorWidgetHtml = await Component.InvokeAsync("Widget", new { widgetZone = "header_selectors" });
-                }
-
-
-
-
 
         </div>
     }
