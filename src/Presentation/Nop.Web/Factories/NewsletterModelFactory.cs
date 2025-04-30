@@ -48,6 +48,23 @@ namespace Nop.Web.Factories
         }
 
         /// <summary>
+        /// Prepare the newsletter SMS box model
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the newsletter SMS box model
+        /// </returns>
+        public virtual Task<NewsletterSmsModel> PrepareNewsletterSmsModelAsync()
+        {
+            var model = new NewsletterSmsModel
+            {
+                AllowToUnsubscribe = _customerSettings.NewsletterBlockAllowToUnsubscribe
+            };
+
+            return Task.FromResult(model);
+        }
+
+        /// <summary>
         /// Prepare the subscription activation model
         /// </summary>
         /// <param name="active">Whether the subscription has been activated</param>

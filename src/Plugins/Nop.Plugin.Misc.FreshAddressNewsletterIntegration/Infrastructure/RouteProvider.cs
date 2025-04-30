@@ -29,6 +29,12 @@ namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Infrastructure
                  $"subscribenewsletter",
                  new { controller = "CustomNewsletter", action = "SubscribeNewsletter" }
             );
+
+            endpointRouteBuilder.MapControllerRoute(
+                "CustomSubscribeSmsNewsletter",
+                "MarketingSub",
+                new { controller = "ListrakApiService", action = "MarketingSub" }
+            );
         }
     }
 }

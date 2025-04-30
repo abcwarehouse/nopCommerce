@@ -18,6 +18,15 @@ namespace Nop.Web.Factories
         Task<NewsletterBoxModel> PrepareNewsletterBoxModelAsync();
 
         /// <summary>
+        /// Prepare the newsletter Sms model
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the newsletter Sms model
+        /// </returns>
+        Task<NewsletterSmsModel> PrepareNewsletterSmsModelAsync();
+
+        /// <summary>
         /// Prepare the subscription activation model
         /// </summary>
         /// <param name="active">Whether the subscription has been activated</param>
