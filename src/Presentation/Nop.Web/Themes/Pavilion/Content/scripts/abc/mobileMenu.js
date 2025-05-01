@@ -42,8 +42,8 @@ $(document).ready(function () {
 
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
-        const baseURL1 = "https://abcwarehouse.com/";
-        const baseURL = "https://hawthorne.abcwarehouse.com/";
+        
+        
 
          // Check if we're on Hawthorne store by checking if createForHawthorne exists
     const isHawthorne = typeof createForHawthorne !== 'undefined' && 
@@ -52,12 +52,14 @@ $(document).ready(function () {
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
 
-        if(isHawthorne != true)
+        if(isHawthorne == true)
         {
-            selectCategory.attr("href", baseURL + "filterSearch");
+            const baseURL = "https://hawthorne.abcwarehouse.com/";
+            selectCategory.attr("href", baseURL1 + "filterSearch");
         }
         else {
-        selectCategory.attr("href", baseURL1 + "filterSearch");
+        const baseURL = "https://abcwarehouse.com/";
+        selectCategory.attr("href", baseURL + "filterSearch");
         }
         return;
     }
