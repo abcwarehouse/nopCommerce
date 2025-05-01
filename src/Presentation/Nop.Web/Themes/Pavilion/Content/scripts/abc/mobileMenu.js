@@ -47,11 +47,12 @@ $(document).ready(function () {
 
          // Check if we're on Hawthorne store by checking if createForHawthorne exists
     const isHawthorne = typeof createForHawthorne !== 'undefined' && 
-    window.location.href.indexOf("hawthorneonline") > -1;
+    window.location.href.indexOf("https://hawthorne.abcwarehouse.com/") > -1;
 
     if (categoryName.toLowerCase() === "shop all categories") {
         if (isHawthorne) {
             selectCategory.attr("href", baseURLHawthorne + "filterSearch");
+
         } else {
             selectCategory.attr("href", baseURL + "filterSearch");
         }
