@@ -43,7 +43,7 @@ $(document).ready(function () {
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
         const baseURL = "https://abcwarehouse.com/";
-        const baseURL1 = "https://hawthorne.abcwarehouse.com/";
+        const baseURLHawthorne = "https://hawthorne.abcwarehouse.com/";
 
          // Check if we're on Hawthorne store by checking if createForHawthorne exists
     const isHawthorne = typeof createForHawthorne !== 'undefined' && 
