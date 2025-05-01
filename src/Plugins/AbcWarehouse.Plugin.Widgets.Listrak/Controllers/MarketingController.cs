@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -16,17 +17,27 @@ public class MarketingController : ControllerBase
     [HttpPost("subscribe")]
     public async Task<IActionResult> Subscribe([FromBody] MarketingSmsModel request)
     {
-        if (!Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
-            return BadRequest(new { message = "Invalid phone number." });
-
-        var response = await _listrakService.SubscribePhoneNumberAsync(request.PhoneNumber);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return Ok(new { message = "Successfully subscribed!" });
-        }
+            if (!Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
+                return BadRequest(new { message = "Invalid phone number." });
 
-        return StatusCode((int)response.StatusCode, new { message = "Subscription failed." });
+            var response = await _listrakService.SubscribePhoneNumberAsync(request.PhoneNumber);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Ok(new { message = "Successfully subscribed!" });
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return StatusCode((int)response.StatusCode, new { message = $"Subscription failed: {content}" });
+        }
+        catch (Exception ex)
+        {
+            // TODO: Use your plugin's logger
+            Console.WriteLine(ex);
+            return StatusCode(500, new { message = "An unexpected error occurred." });
+        }
     }
 }
 
