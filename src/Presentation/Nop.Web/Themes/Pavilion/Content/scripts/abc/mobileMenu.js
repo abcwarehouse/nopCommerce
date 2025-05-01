@@ -42,6 +42,7 @@ $(document).ready(function () {
 
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
+
         
         
 
@@ -49,18 +50,21 @@ $(document).ready(function () {
     const isHawthorne = typeof createForHawthorne !== 'undefined' && 
     window.location.href.indexOf("hawthorneonline") > -1;
 
-    if(isHawthorne === true)
-    {
-        const baseURL = "https://hawthorne.abcwarehouse.com/";  
-    }
-    else {
-        const baseURL = "https://abcwarehouse.com/";
-    }
+
+    if(isHawthorne != true)
+        {
+            const baseURL = "https://abcwarehouse.com/";
+        }
+        else {
+            const baseURL = "https://hawthorne.abcwarehouse.com/";
+        }
+    
 
 
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
-            selectCategory.attr("href", baseURL + "filterSearch");
+
+            selectCategory.attr("href", baseURL1 + "filterSearch");
         return;
     }
       // Special case for "dishwashers"
