@@ -55,7 +55,7 @@ $(document).ready(function () {
         if(isHawthorne == true)
         {
             const baseURL = "https://hawthorne.abcwarehouse.com/";
-            selectCategory.attr("href", baseURL1 + "filterSearch");
+            selectCategory.attr("href", baseURL + "filterSearch");
         }
         else {
         const baseURL = "https://abcwarehouse.com/";
