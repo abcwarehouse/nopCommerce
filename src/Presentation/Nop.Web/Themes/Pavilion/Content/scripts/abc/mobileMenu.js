@@ -49,31 +49,18 @@ $(document).ready(function () {
     const isHawthorne = typeof createForHawthorne !== 'undefined' && 
     window.location.href.indexOf("hawthorneonline") > -1;
 
+    if(isHawthorne === true)
+    {
+        const baseURL = "https://hawthorne.abcwarehouse.com/";  
+    }
+    else {
+        const baseURL = "https://abcwarehouse.com/";
+    }
 
-    if(isHawthorne == true)
-       
-        {
-            const baseURL = "https://hawthorne.abcwarehouse.com/"; 
-            console.log("Hawthorne store detected");     
-        }
-        else {
-         const baseURL = "https://abcwarehouse.com/";
-         console.log("Abc store detected");     
-        }
-        
-        selectCategory.attr("href", baseURL + "filterSearch");
-     
-       
-            
-           
 
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
-
-      
-            
             selectCategory.attr("href", baseURL + "filterSearch");
-        
         return;
     }
       // Special case for "dishwashers"
