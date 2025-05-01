@@ -54,10 +54,10 @@ $(document).ready(function () {
 
         if(isHawthorne != true)
         {
-            selectCategory.attr("href", baseURL1 + "filterSearch");
+            selectCategory.attr("href", baseURL + "filterSearch");
         }
         else {
-        selectCategory.attr("href", baseURL + "filterSearch");
+        selectCategory.attr("href", baseURL1 + "filterSearch");
         }
         return;
     }
