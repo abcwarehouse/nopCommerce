@@ -47,16 +47,13 @@ public class ListrakService : IListrakService
 
         var listrakData = new
         {
-            ListrakData = new
-            {
-                ShortCodeId = "1026",
-                PhoneNumber = phoneNumber,
-                PhoneListId = "151"
-            }
+            ShortCodeId = "1026",
+            PhoneNumber = phoneNumber,
+            PhoneListId = "152"
         };
 
         return await client.PostAsJsonAsync(
-            $"https://api.listrak.com/sms/v1/ShortCode/1026/Contact/{phoneNumber}/PhoneList/151",
+            $"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ShortCodeId}/Contact/{listrakData.PhoneNumber}/PhoneList/{listrakData.PhoneListId}",
             listrakData
         );
     }
