@@ -1,7 +1,8 @@
 ﻿@model NewsletterBoxModel
 <form id="marketingForm" novalidate>
   <input type="email" id="email" name="email" placeholder="Email Address" required />
-  <input type="tel" id="phone" name="phoneNumber" placeholder="Phone Number" pattern="^\d{10}$" required />
+  <input type="tel" id="phone" name="phoneNumber" placeholder="Phone Number" 
+         pattern="^(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$" required />
   <button type="submit">Subscribe</button>
 </form>
 
@@ -10,10 +11,11 @@
     e.preventDefault();
 
     const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
+    const rawPhone = document.getElementById("phone").value.trim();
+    const phone = rawPhone.replace(/\D/g, ''); // Remove all non-digit characters
 
-    if (!email || !phone.match(/^\d{10}$/)) {
-      alert("Please enter a valid email and phone number.");
+    if (!email || phone.length !== 10) {
+      alert("Please enter a valid email and 10-digit phone number.");
       return;
     }
 

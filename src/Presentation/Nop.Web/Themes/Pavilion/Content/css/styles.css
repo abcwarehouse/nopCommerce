@@ -6252,6 +6252,20 @@ h1.search-page-title {
 }
 }
 
+form#marketingForm {
+    max-width: 550px;
+    float: left;
+}
+form#marketingForm button {
+    background: #ec232a;
+    color: #fff;
+    padding: 8px 15px;
+    border: solid 2px #454545;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-left: 5px;
+}
+
 /* @media (max-width: 1024px) {
 .header-middle .hours-desktop {
 	margin-top: 32px;
