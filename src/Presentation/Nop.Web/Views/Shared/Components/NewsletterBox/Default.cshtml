@@ -19,6 +19,39 @@
       return;
     }
 
+    if(phone.length == 0 || phone == null) {
+      function newsletter_subscribe(subscribe) {
+            var subscribeProgress = $("#subscribe-loading-progress");
+            subscribeProgress.show();
+            var postData = {
+                subscribe: subscribe,
+                email: $("#newsletter-email").val()
+            };
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "@(Url.RouteUrl("SubscribeNewsletter"))",
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    $("#newsletter-result-block").html(data.Result);
+                    if (data.Success) {
+                        $('#newsletter-subscribe-block').hide();
+                        $('#newsletter-result-block').show();
+                        // ABC: add to Listrak
+                        _ltk.Signup.New('newsletter-abc', 'newsletter-email', _ltk.Signup.TYPE.CLICK, 'newsletter-subscribe-button');
+                    } else {
+                        $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Failed to subscribe.');
+                },
+                complete: function (jqXHR, textStatus) {
+                    subscribeProgress.hide();
+                }
+            });
+        }
+    }
     const response = await fetch('/api/marketingSms/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
