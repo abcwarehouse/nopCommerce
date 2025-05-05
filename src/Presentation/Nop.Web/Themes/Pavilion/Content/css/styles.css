@@ -6287,6 +6287,9 @@ form#marketingForm button {
 form#marketingForm input {
 	padding: 0 10px;
 }
+form#marketingForm button {
+	width: 90%;
+}
 @media screen and (max-width: 1024px) {
 	.newsletter-signup {
 		padding-top: 0px;
