@@ -50,6 +50,31 @@
                     subscribeProgress.hide();
                 }
             });
+
+            $(document).ready(function () {
+              $('#newsletter-subscribe-button').on('click', function () {
+                  @if (Model.AllowToUnsubscribe)
+                  {
+                      <text>if ($('#newsletter_subscribe').is(':checked')) {
+                      newsletter_subscribe('true');
+                  } else {
+                      newsletter_subscribe('false');
+                  }</text>
+                  }
+                  else
+                  {
+                      <text>newsletter_subscribe('true');</text>
+                  }
+              });
+              $("#newsletter-email").on("keydown", function (event) {
+                  if (event.keyCode == 13) {
+                      $("#newsletter-subscribe-button").trigger("click");
+                      return false;
+                  }
+              });
+          });
+
+
         }
     }
     else
