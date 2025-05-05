@@ -14,12 +14,12 @@
     const rawPhone = document.getElementById("phone").value.trim();
     const phone = rawPhone.replace(/\D/g, ''); // Remove all non-digit characters
 
-    if (!email || phone.length !== 10) {
-      alert("Please enter a valid email and 10-digit phone number.");
-      return;
-    }
-
     if(phone.length == 0 || phone == null) {
+      if (!email) {
+        alert("Please enter a valid email.");
+        return;
+      }
+
       function newsletter_subscribe(subscribe) {
             var subscribeProgress = $("#subscribe-loading-progress");
             subscribeProgress.show();
@@ -54,6 +54,11 @@
     }
     else
     {
+      if (phone.length !== 10) {
+        alert("Please enter a valid 10-digit phone number.");
+        return;
+      }
+
       const response = await fetch('/api/marketingSms/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
