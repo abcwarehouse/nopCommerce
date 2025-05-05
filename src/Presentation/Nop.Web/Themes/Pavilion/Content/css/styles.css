@@ -6254,8 +6254,8 @@ h1.search-page-title {
 
 form#marketingForm {
     max-width: 550px;
-    float: left;
-	padding-top: 3px;
+    margin-left: auto;
+    margin-right: auto;
 }
 form#marketingForm button {
     background: #ec232a;
@@ -6265,6 +6265,24 @@ form#marketingForm button {
     font-weight: bold;
     border-radius: 4px;
     margin-left: 5px;
+}
+.newsletter-signup {
+    text-align: center;
+    padding: 30px 10px;
+}
+.sms-disclaimer p {
+    max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 10px;
+    font-size: 10px;
+}
+.newsletter-signup h2 {
+    font-size: 45px;
+}
+.footer h3 {
+    font-size: 26px;
+    padding-bottom: 10px;
 }
 
 /* @media (max-width: 1024px) {
