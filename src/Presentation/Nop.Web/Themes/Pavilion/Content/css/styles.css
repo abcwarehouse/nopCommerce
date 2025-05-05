@@ -6284,6 +6284,19 @@ form#marketingForm button {
     font-size: 26px;
     padding-bottom: 10px;
 }
+form#marketingForm input {
+	padding: 0 10px;
+}
+@media screen and (max-width: 1024px) {
+	.newsletter-signup {
+		padding-top: 0px;
+	}
+	form#marketingForm input {
+		width: 90%;
+		margin: 10px 10px;
+	}
+	
+}
 
 /* @media (max-width: 1024px) {
 .header-middle .hours-desktop {
