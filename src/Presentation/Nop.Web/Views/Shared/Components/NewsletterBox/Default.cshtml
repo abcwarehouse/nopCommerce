@@ -2,7 +2,7 @@
 <form id="marketingForm" novalidate>
   <input type="email" id="email" name="email" placeholder="Email Address" required />
   <input type="tel" id="phone" name="phoneNumber" placeholder="Phone Number" 
-         pattern="^(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$" required />
+         pattern="^(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$" />
   <button type="submit">Subscribe</button>
 </form>
 
@@ -52,13 +52,16 @@
             });
         }
     }
-    const response = await fetch('/api/marketingSms/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ emailAddress: email, phoneNumber: phone })
-    });
+    else
+    {
+      const response = await fetch('/api/marketingSms/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailAddress: email, phoneNumber: phone })
+      });
 
-    const result = await response.json();
-    alert(result.message);
+      const result = await response.json();
+      alert(result.message);
+    }
   });
 </script>
