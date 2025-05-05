@@ -1,7 +1,8 @@
 ﻿@model NewsletterBoxModel
+
 <form id="marketingForm" novalidate>
   <input type="email" id="newsletter-email" name="email" placeholder="Email Address" required />
-  <input type="tel" id="phone" name="phoneNumber" placeholder="Phone Number" 
+  <input type="tel" id="phone" name="phoneNumber" placeholder="Phone Number"
          pattern="^(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$" />
   <button type="submit">Subscribe</button>
 </form>
@@ -12,86 +13,78 @@
 
     const email = document.getElementById("newsletter-email").value.trim();
     const rawPhone = document.getElementById("phone").value.trim();
-    const phone = rawPhone.replace(/\D/g, ''); // Remove all non-digit characters
+    const phone = rawPhone.replace(/\D/g, ''); // Digits only
 
-    if(phone.length == 0 || phone == null) {
-      if (!email) {
-        alert("Please enter a valid email.");
-        return;
-      }
-
-      function newsletter_subscribe(subscribe) {
-            var subscribeProgress = $("#subscribe-loading-progress");
-            subscribeProgress.show();
-            var postData = {
-                subscribe: subscribe,
-                email: $("#newsletter-email").val()
-            };
-            $.ajax({
-                cache: false,
-                type: "POST",
-                url: "@(Url.RouteUrl("SubscribeNewsletter"))",
-                data: postData,
-                success: function (data, textStatus, jqXHR) {
-                    $("#newsletter-result-block").html(data.Result);
-                    if (data.Success) {
-                        $('#newsletter-subscribe-block').hide();
-                        $('#newsletter-result-block').show();
-                        // ABC: add to Listrak
-                        _ltk.Signup.New('newsletter-abc', 'newsletter-email', _ltk.Signup.TYPE.CLICK, 'newsletter-subscribe-button');
-                    } else {
-                        $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Failed to subscribe.');
-                },
-                complete: function (jqXHR, textStatus) {
-                    subscribeProgress.hide();
-                }
-            });
-
-            $(document).ready(function () {
-              $('#newsletter-subscribe-button').on('click', function () {
-                  @if (Model.AllowToUnsubscribe)
-                  {
-                      <text>if ($('#newsletter_subscribe').is(':checked')) {
-                      newsletter_subscribe('true');
-                  } else {
-                      newsletter_subscribe('false');
-                  }</text>
-                  }
-                  else
-                  {
-                      <text>newsletter_subscribe('true');</text>
-                  }
-              });
-              $("#newsletter-email").on("keydown", function (event) {
-                  if (event.keyCode == 13) {
-                      $("#newsletter-subscribe-button").trigger("click");
-                      return false;
-                  }
-              });
-          });
-
-
-        }
+    if (!email) {
+      alert("Please enter a valid email.");
+      return;
     }
-    else
-    {
+
+    const subscribeToNewsletter = () => {
+      const subscribeProgress = $("#subscribe-loading-progress");
+      subscribeProgress.show();
+      const postData = {
+        subscribe: true,
+        email: $("#newsletter-email").val()
+      };
+
+      $.ajax({
+        cache: false,
+        type: "POST",
+        url: "@(Url.RouteUrl("SubscribeNewsletter"))",
+        data: postData,
+        success: function (data) {
+          $("#newsletter-result-block").html(data.Result);
+          if (data.Success) {
+            $('#newsletter-subscribe-block').hide();
+            $('#newsletter-result-block').show();
+            _ltk.Signup.New('newsletter-abc', 'newsletter-email', _ltk.Signup.TYPE.CLICK, 'newsletter-subscribe-button');
+          } else {
+            $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
+          }
+        },
+        error: function () {
+          alert('Failed to subscribe to newsletter.');
+        },
+        complete: function () {
+          subscribeProgress.hide();
+        }
+      });
+    };
+
+    const subscribeToSms = async () => {
       if (phone.length !== 10) {
         alert("Please enter a valid 10-digit phone number.");
         return;
       }
 
-      const response = await fetch('/api/marketingSms/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emailAddress: email, phoneNumber: phone })
-      });
+      try {
+        const response = await fetch('/api/marketingSms/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ emailAddress: email, phoneNumber: phone })
+        });
 
-      const result = await response.json();
-      alert(result.message);
+        const result = await response.json();
+        alert(result.message || "SMS subscription successful.");
+      } catch (error) {
+        alert("Failed to subscribe to SMS.");
+      }
+    };
+
+    subscribeToNewsletter();
+    if (phone.length > 0) {
+      await subscribeToSms();
     }
+  });
+
+  $(document).ready(function () {
+    $("#newsletter-email").on("keydown", function (event) {
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        $("#marketingForm").submit();
+        return false;
+      }
+    });
   });
 </script>
