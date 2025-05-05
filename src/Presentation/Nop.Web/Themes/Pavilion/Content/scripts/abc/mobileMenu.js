@@ -64,7 +64,7 @@ $(document).ready(function () {
 
         if(!isHawthorne)
         {
-            selectCategory.attr("href", baseURL1 + "filterSearch");
+            selectCategory.attr("href", baseURLHawthorne + "filterSearch");
         }
         else {
         selectCategory.attr("href", baseURL + "filterSearch");
