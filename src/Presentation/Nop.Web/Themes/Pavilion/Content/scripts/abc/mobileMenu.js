@@ -62,12 +62,14 @@ $(document).ready(function () {
          // Special case for "shop-all-categories"
     if (categoryName.toLowerCase() === "shop all categories") {
 
-        if(!isHawthorne)
+        if(isHawthorne)
         {
             selectCategory.attr("href", baseURLHawthorne + "filterSearch");
+            console.log("HAWTHORNE");
         }
         else {
         selectCategory.attr("href", baseURL + "filterSearch");
+        console.log("ABC");
         }
         return;
     }
