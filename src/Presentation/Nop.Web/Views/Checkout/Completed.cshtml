@@ -75,8 +75,13 @@
       @* Subtract shipping if it exists *@
       @if (order != null && order.OrderShippingInclTax > 0)
       {
+        console.log("order shipping before" + orderShipping);
+        console.log("order.OrderShippingInclTax" + order.OrderShippingInclTax);
         orderShipping = order.OrderShippingInclTax - orderTotal;
+        console.log("orderShipping after" + orderShipping);
+        console.log("orderTotal before" + orderDiscount);
         orderTotal = orderTotal - orderShipping;
+        console.log("orderTotal after" + orderTotal);
       }
 
 <!-- Load Transaction Event and Parameters -->
