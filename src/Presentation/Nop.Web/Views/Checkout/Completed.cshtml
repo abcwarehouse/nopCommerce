@@ -41,22 +41,6 @@
     }
 }
 
-<script>
-  console.log("Debug: orderTotal = @orderTotal");
-  console.log("Debug: order.OrderSubTotalDiscountInclTax = @order?.OrderSubTotalDiscountInclTax");
-  console.log("Debug: Calculated orderDiscount = @orderDiscount");
-
-  @if (order == null)
-  {
-      @:console.warn("Debug: Order object is null.");
-  }
-  else
-  {
-      @:console.log("Debug: Order found with ID = @order.Id");
-      @:console.log("Debug: OrderSubTotalDiscountInclTax = @order.OrderSubTotalDiscountInclTax");
-  }
-</script>
-
 <div class="page checkout-page order-completed-page">
     @if (!Model.OnePageCheckoutEnabled)
     {
@@ -87,6 +71,12 @@
     </div>
 </div>
 
+      @* Subtract shipping if it exists *@
+      @if (order != null && order.OrderShippingInclTax > 0)
+      {
+        orderTotal = orderTotal - order.OrderShippingInclTax;
+      }
+
 <!-- Load Transaction Event and Parameters -->
 <script>
 window.bvCallback = function (BV) {
@@ -106,15 +96,6 @@ window.bvCallback = function (BV) {
           @:   "quantity": "@item.Quantity",
           @:   "productId": "@item.ProductId"
           @: }@(i < orderItems.Count - 1 || (order != null && order.OrderShippingInclTax > 0) ? "," : "")
-      }
-      @* Add shipping as a separate item if it exists *@
-      @if (order != null && order.OrderShippingInclTax > 0)
-      {
-          @: {
-          @:   "price": "@order.OrderShippingInclTax.ToString("0.00")",
-          @:   "quantity": 1,
-          @:   "productId": "SHIPPING"
-          @: }
       }
     ],
     email: "@customerEmail"
