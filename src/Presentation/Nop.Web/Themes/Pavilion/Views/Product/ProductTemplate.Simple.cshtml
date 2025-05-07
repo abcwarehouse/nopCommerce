@@ -70,6 +70,31 @@
     }
 }
 
+<script type="application/ld+json">
+    {
+       "context" : "https://schema.org",
+       "type" : "Product",
+       "id" : "@bvProductUrl",
+       "name" : "@Model.Name",
+       "image" : "@productImageUrl",
+       "description" : "@Model.ShortDescription",
+       "sku" : "@Model.Sku",
+       "brand": "@(string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)))"
+    }
+</script>
+    <!--BV injected code-->
+    <script>
+        // Make sure that BV.configure is defined before running this script
+        BV.configure('global', {
+            events : {
+                bvRender : function (data) {
+                // JavaScript code that executes when the Bazaarvoice application renders.
+                }
+            }
+        });
+    </script>
+
+
 <!--product breadcrumb-->
 @section Breadcrumb
             {
@@ -356,26 +381,3 @@
     var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 }
-<script type="application/ld+json">
-    {
-       "context" : "https://schema.org",
-       "type" : "Product",
-       "id" : "@bvProductUrl",
-       "name" : "@Model.Name",
-       "image" : "@productImageUrl",
-       "description" : "@Model.ShortDescription",
-       "sku" : "@Model.Sku",
-       "brand": "@(string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)))"
-    }
-</script>
-    <!--BV injected code-->
-    <script>
-        // Make sure that BV.configure is defined before running this script
-        BV.configure('global', {
-            events : {
-                bvRender : function (data) {
-                // JavaScript code that executes when the Bazaarvoice application renders.
-                }
-            }
-        });
-    </script>
