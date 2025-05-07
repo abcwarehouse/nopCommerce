@@ -46,8 +46,8 @@ $(document).ready(function () {
         const baseURLHawthorne = "https://hawthorne.abcwarehouse.com/";
 
          // Check if we're on Hawthorne store by checking if createForHawthorne exists
-    const isHawthorne = typeof createForHawthorne !== 'undefined' || 
-    window.location.href.indexOf("hawthorneonline") > -1;
+    const isHawthorne = typeof createForHawthorne !== 'undefined' && 
+    window.location.href.indexOf("hawthorne.abcwarehouse") > -1;
 
              // Special case for "shop-all-categories"
 
