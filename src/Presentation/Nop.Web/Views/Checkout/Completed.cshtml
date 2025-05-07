@@ -18,7 +18,7 @@
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
     decimal orderDiscount = 0;
     var customerEmail = "Unknown";
-    decimal orderShipping = 0.00;
+    double orderShipping = 0.00;
 
     if (order != null)
     {
