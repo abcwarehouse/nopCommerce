@@ -12,7 +12,7 @@
     Html.AppendPageCssClassParts("html-checkout-page");
     Html.AppendPageCssClassParts("html-order-completed-page");
 
-    var orderTotal = ViewBag.OrderTotal as string;
+    var orderTotal = ViewBag.OrderTotal as decimal? ?? 0;
     var orderId = Model.OrderId;
     var order = await _orderService.GetOrderByIdAsync(orderId);
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
