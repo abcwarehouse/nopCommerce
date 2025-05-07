@@ -18,6 +18,7 @@
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
     decimal orderDiscount = 0;
     var customerEmail = "Unknown";
+    decimal orderShipping = 0.00;
 
     if (order != null)
     {
@@ -74,7 +75,8 @@
       @* Subtract shipping if it exists *@
       @if (order != null && order.OrderShippingInclTax > 0)
       {
-        orderTotal = orderTotal - order.OrderShippingInclTax;
+        orderShipping = orderTotal - order.OrderShippingInclTax;
+        orderTotal = orderTotal - orderShipping;
       }
 
 <!-- Load Transaction Event and Parameters -->
