@@ -12,13 +12,13 @@
     Html.AppendPageCssClassParts("html-checkout-page");
     Html.AppendPageCssClassParts("html-order-completed-page");
 
-    var orderTotal = ViewBag.OrderTotal as decimal? ?? 0;
+    var orderTotal = ViewBag.OrderTotal as decimal? ?? 0.00M;
     var orderId = Model.OrderId;
     var order = await _orderService.GetOrderByIdAsync(orderId);
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
     decimal orderDiscount = 0;
     var customerEmail = "Unknown";
-    decimal orderShipping = 0.00;
+    decimal orderShipping = 0.00M;
 
     if (order != null)
     {
