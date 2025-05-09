@@ -368,20 +368,14 @@
         ["image"] = productImageUrl,
         ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
-        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
-    };
-
-    var overview = Model.ProductReviewOverview;
-    if (overview != null && overview.TotalReviews > 0)
-    {
-        var avg = overview.RatingSum / (double)overview.TotalReviews;
+        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)),
         schema["aggregateRating"] = new Dictionary<string, object>
         {
             ["@type"] = "AggregateRating",
-            ["ratingValue"] = @Model.Product.ProductReviewOverviewModel.RatingSum,
-            ["reviewCount"] = @Model.Product.ProductReviewOverviewModel.TotalReviews
+            ["ratingValue"] = data.ratingValue,
+            ["reviewCount"] = data.reviewCount
         };
-    }
+    };
 
     var jsonLd = JsonConvert.SerializeObject(schema, Formatting.Indented);
 }
