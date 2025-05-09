@@ -372,8 +372,8 @@
         ["aggregateRating"] = new Dictionary<string, object>
         {
             ["@type"] = "AggregateRating",
-            ["ratingValue"] = "",
-            ["reviewCount"] = ""
+            ["ratingValue"] = Model.Product.ProductReviewOverviewModel.RatingSum,
+            ["reviewCount"] = Model.Product.ProductReviewOverviewModel.TotalReviews
         }
     };
 
