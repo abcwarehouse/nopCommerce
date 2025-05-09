@@ -353,6 +353,10 @@
 </div>
 
 @{
+    var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+    var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
+}
+@{
     string CleanDescription(string html)
     {
         return Regex.Replace(html ?? "", "<.*?>", string.Empty);
@@ -374,7 +378,6 @@
 <script type="application/ld+json">
 @Html.Raw(jsonLd)
 </script>
-
     <!--BV injected code-->
     <script>
         // Make sure that BV.configure is defined before running this script
