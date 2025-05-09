@@ -358,38 +358,31 @@
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 }
 @{
-    string CleanDescription(string html)
-    {
-        return Regex.Replace(html ?? "", "<.*?>", string.Empty);
-    }
-
-    var productSchema = new Dictionary<string, object>
+    var schema = new Dictionary<string, object>
     {
         ["@context"] = "https://schema.org",
         ["@type"] = "Product",
         ["@id"] = bvProductUrl,
         ["name"] = Model.Name,
         ["image"] = productImageUrl,
-        ["description"] = CleanDescription(Model.ShortDescription),
+        ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
         ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
     };
 
-    // Only include aggregateRating if there are reviews
     var overview = Model.ProductReviewOverview;
     if (overview != null && overview.TotalReviews > 0)
     {
-        // Calculate average to one decimal place
         var avg = overview.RatingSum / (double)overview.TotalReviews;
         schema["aggregateRating"] = new Dictionary<string, object>
         {
-            ["@type"]       = "AggregateRating",
-            ["ratingValue"] = "",
-            ["reviewCount"] = ""
+            ["@type"] = "AggregateRating",
+            ["ratingValue"] = avg.ToString("0.0", CultureInfo.InvariantCulture),
+            ["reviewCount"] = overview.TotalReviews
         };
     }
 
-    var jsonLd = JsonConvert.SerializeObject(productSchema, Formatting.Indented);
+    var jsonLd = JsonConvert.SerializeObject(schema, Formatting.Indented);
 }
 <script type="application/ld+json">
 @Html.Raw(jsonLd)
