@@ -362,15 +362,16 @@
         return Regex.Replace(html ?? "", "<.*?>", string.Empty);
     }
 
-    var productSchema = new {
-        @context = "https://schema.org",
-        @type = "Product",
-        @id = bvProductUrl,
-        name = Model.Name,
-        image = productImageUrl,
-        description = CleanDescription(Model.ShortDescription),
-        sku = Model.Sku,
-        brand = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
+    var productSchema = new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "Product",
+        ["@id"] = bvProductUrl,
+        ["name"] = Model.Name,
+        ["image"] = productImageUrl,
+        ["description"] = CleanDescription(Model.ShortDescription),
+        ["sku"] = Model.Sku,
+        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
     };
 
     var jsonLd = JsonConvert.SerializeObject(productSchema, Formatting.Indented);
