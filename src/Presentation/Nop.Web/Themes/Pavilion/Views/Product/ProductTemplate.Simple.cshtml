@@ -369,7 +369,7 @@
         ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
         ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)),
-        schema["aggregateRating"] = new Dictionary<string, object>
+        ["aggregateRating"] = new Dictionary<string, object>
         {
             ["@type"] = "AggregateRating",
             ["ratingValue"] = data.ratingValue,
