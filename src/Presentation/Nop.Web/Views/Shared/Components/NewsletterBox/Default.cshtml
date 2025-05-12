@@ -8,12 +8,17 @@
   <div id="form-message" style="margin-top: 10px; color: #fff; padding: 10px; display: none; border-radius: 5px;"></div>
 </form>
 
-<script>
+ <script>
   const formMessage = document.getElementById("form-message");
 
-  function showMessage(message, isSuccess = true) {
+  function showMessage(message, type = "success") {
+    const colors = {
+      success: "#28a745",
+      error: "#dc3545",
+      warning: "#ffc107"
+    };
     formMessage.style.display = "block";
-    formMessage.style.backgroundColor = isSuccess ? "#28a745" : "#dc3545"; // green or red
+    formMessage.style.backgroundColor = colors[type] || colors.success;
     formMessage.textContent = message;
   }
 
@@ -25,7 +30,7 @@
     const phone = rawPhone.replace(/\D/g, ''); // Only digits
 
     if (!email) {
-      showMessage("Please enter a valid email address.", false);
+      showMessage("Please enter your email address.", "error");
       return;
     }
 
@@ -42,12 +47,12 @@
 
         const result = await response.json();
         if (result.Success) {
-          showMessage(result.Result || "You've been subscribed to our newsletter!");
+          showMessage(result.Result || "Thanks for subscribing to our newsletter!");
         } else {
-          showMessage(result.Result || "Unable to subscribe to newsletter.", false);
+          showMessage(result.Result || "We couldn't complete your newsletter signup. Please try again.", "error");
         }
       } catch (error) {
-        showMessage("There was a problem subscribing to the newsletter.", false);
+        showMessage("Sorry! Something went wrong with the newsletter signup.", "error");
       }
     };
 
@@ -55,7 +60,7 @@
       if (phone.length === 0) return;
 
       if (phone.length !== 10) {
-        showMessage("Please enter a valid 10-digit phone number.", false);
+        showMessage("Please enter a valid 10-digit phone number.", "warning");
         return;
       }
 
@@ -67,9 +72,21 @@
         });
 
         const result = await response.json();
-        showMessage(result.message || "You're signed up for SMS alerts!");
+
+        if (response.status === 400) {
+          if (result.error === "ERROR_SUBSCRIBED_PHONE_NUMBER") {
+            showMessage("You're already signed up to receive SMS alerts at this number.", "warning");
+          } else {
+            showMessage(result.message || "There was an issue with your phone number.", "warning");
+          }
+        } else if (!response.ok) {
+          showMessage("Something went wrong with SMS signup. Please try again later.", "error");
+        } else {
+          showMessage(result.message || "You're signed up for SMS alerts!");
+        }
+
       } catch (error) {
-        showMessage("There was a problem signing up for SMS alerts.", false);
+        showMessage("Sorry! We couldn't complete your SMS signup.", "error");
       }
     };
 
