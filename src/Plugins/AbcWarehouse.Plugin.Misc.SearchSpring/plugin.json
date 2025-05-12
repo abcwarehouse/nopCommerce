@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Misc",
+  "FriendlyName": "SearchSpring",
+  "SystemName": "Misc.SearchSpring",
+  "Version": "4.40.0",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "Mike Schwartz",
+  "DisplayOrder": 1,
+  "FileName": "AbcWarehouse.Plugin.Misc.SearchSpring.dll",
+  "Description": "Activates SearchSpring Search"
+}
