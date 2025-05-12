@@ -71,29 +71,37 @@
           body: JSON.stringify({ emailAddress: email, phoneNumber: phone })
         });
 
-        const result = await response.json();
+        let result = await response.json();
+
+        // Handle stringified JSON in result.message
+        let parsedMessage = result.message;
+        try {
+          const maybeParsed = JSON.parse(result.message);
+          if (maybeParsed && typeof maybeParsed.message === "string") {
+            parsedMessage = maybeParsed.message;
+          }
+        } catch (e) {
+          // result.message is not JSON, proceed as-is
+        }
 
         if (response.status === 400) {
-          if (response.status === 400) {
-            let message = result.message || "There was an issue with your phone number.";
-
-            // Optional: translate known errors into friendlier language
-            if (result.error === "ERROR_SUBSCRIBED_PHONE_NUMBER") {
-              message = "You're already subscribed to SMS alerts at this number.";
-            }
-
-            showMessage(message, "warning");
+          // Friendly override for known error
+          if (result.error === "ERROR_SUBSCRIBED_PHONE_NUMBER") {
+            parsedMessage = "You're already subscribed to SMS alerts at this number.";
           }
+
+          showMessage(parsedMessage, "warning");
         } else if (!response.ok) {
           showMessage("Something went wrong with SMS signup. Please try again later.", "error");
         } else {
-          showMessage(result.message || "You're signed up for SMS alerts!");
+          showMessage(parsedMessage || "You're signed up for SMS alerts!");
         }
 
       } catch (error) {
         showMessage("Sorry! We couldn't complete your SMS signup.", "error");
       }
     };
+
 
     await subscribeToNewsletter();
     await subscribeToSms();
