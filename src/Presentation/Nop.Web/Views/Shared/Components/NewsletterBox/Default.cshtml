@@ -74,10 +74,15 @@
         const result = await response.json();
 
         if (response.status === 400) {
-          if (result.error === "ERROR_SUBSCRIBED_PHONE_NUMBER") {
-            showMessage("You're already signed up to receive SMS alerts at this number.", "warning");
-          } else {
-            showMessage(result.message || "There was an issue with your phone number.", "warning");
+          if (response.status === 400) {
+            let message = result.message || "There was an issue with your phone number.";
+
+            // Optional: translate known errors into friendlier language
+            if (result.error === "ERROR_SUBSCRIBED_PHONE_NUMBER") {
+              message = "You're already subscribed to SMS alerts at this number.";
+            }
+
+            showMessage(message, "warning");
           }
         } else if (!response.ok) {
           showMessage("Something went wrong with SMS signup. Please try again later.", "error");
