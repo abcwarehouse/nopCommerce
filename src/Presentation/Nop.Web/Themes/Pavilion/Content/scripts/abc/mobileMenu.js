@@ -43,24 +43,27 @@ $(document).ready(function () {
     //Update Link based on category name, gonna remove stage if it works
     function updateCategoryLink(categoryName) {
         const baseURL = "https://abcwarehouse.com/";
-        const baseURL1 = "https://hawthorne.abcwarehouse.com/";
+        const baseURLHawthorne = "https://hawthorne.abcwarehouse.com/";
 
          // Check if we're on Hawthorne store by checking if createForHawthorne exists
     const isHawthorne = typeof createForHawthorne !== 'undefined' && 
-    window.location.href.indexOf("hawthorneonline") > -1;
+    window.location.href.indexOf("hawthorne.abcwarehouse") > -1;
 
-         // Special case for "shop-all-categories"
+             // Special case for "shop-all-categories"
+
     if (categoryName.toLowerCase() === "shop all categories") {
-
-        if(!isHawthorne)
-        {
-            selectCategory.attr("href", baseURL1 + "filterSearch");
-        }
-        else {
-        selectCategory.attr("href", baseURL + "filterSearch");
+        if (isHawthorne) {
+            selectCategory.attr("href", baseURLHawthorne + "filterSearch");
+            console.log("HAWTHORNE");
+            
+        } else {
+            selectCategory.attr("href", baseURL + "filterSearch");
+            console.log("ABC");
         }
         return;
     }
+
+    
       // Special case for "dishwashers"
     else if (categoryName.toLowerCase() === "dishwashers") {
         selectCategory.attr("href", baseURL + "dishwashers-3");

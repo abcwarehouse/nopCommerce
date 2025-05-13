@@ -39,13 +39,13 @@
         {
             Html.AppendPageCssClassParts("html-home-page hawthorne-home-content");
 
-            <video autoplay controls muted loop controls disablepictureinpicture controlslist="nodownload noplaybackrate " id="background-video">
+            <video autoplay controls muted loop controls playsinline disablepictureinpicture controlslist="nodownload noplaybackrate " id="background-video">
                 <source src="https://www.abcwarehouse.com/images/videos/hawthorne-vid.mp4" type="video/mp4">
             </video>
             <div class="video-text-container">
                 <div class="video-text">
                     <h2>Shop our selection of luxury appliance brands</h2>
-                    <a href="/appliances" class="video-button">Explore Brands</a>
+                    <a href="https://hawthorne.abcwarehouse.com/manufacturer/all" class="video-button">Explore Brands</a>
                 </div>
             </div>
             @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })

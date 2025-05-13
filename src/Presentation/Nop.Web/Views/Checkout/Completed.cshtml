@@ -1,25 +1,29 @@
 ﻿@model CheckoutCompletedModel
 @using Nop.Services.Customers
+@using Nop.Services.Orders
 @inject ICustomerService _customerService
+@inject IOrderService _orderService
 
 @{
     Layout = "_ColumnsOne";
 
-    //title
+    // title
     Html.AddTitleParts(T("PageTitle.Checkout").Text);
-    //page class
     Html.AppendPageCssClassParts("html-checkout-page");
     Html.AppendPageCssClassParts("html-order-completed-page");
 
     var orderTotal = ViewBag.OrderTotal as string;
-    var order = ViewBag.Order as Nop.Core.Domain.Orders.Order;
+    var orderId = Model.OrderId;
+    var order = await _orderService.GetOrderByIdAsync(orderId);
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
-
+    decimal orderDiscount = 0;
     var customerEmail = "Unknown";
-    if (order != null && order.CustomerId > 0)
+
+    if (order != null)
     {
         var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
         customerEmail = customer?.Email ?? "Unknown";
+        orderDiscount = order.OrderSubTotalDiscountInclTax;
     }
     else
     {
@@ -27,7 +31,7 @@
             console.error("Invalid order or missing CustomerId.");
         </script>
     }
-        
+
     if (orderItems == null || !orderItems.Any())
     {
         <script>
@@ -37,10 +41,26 @@
     }
 }
 
+<script>
+  console.log("Debug: orderTotal = @orderTotal");
+  console.log("Debug: order.OrderSubTotalDiscountInclTax = @order?.OrderSubTotalDiscountInclTax");
+  console.log("Debug: Calculated orderDiscount = @orderDiscount");
+
+  @if (order == null)
+  {
+      @:console.warn("Debug: Order object is null.");
+  }
+  else
+  {
+      @:console.log("Debug: Order found with ID = @order.Id");
+      @:console.log("Debug: OrderSubTotalDiscountInclTax = @order.OrderSubTotalDiscountInclTax");
+  }
+</script>
+
 <div class="page checkout-page order-completed-page">
     @if (!Model.OnePageCheckoutEnabled)
     {
-        @await Component.InvokeAsync("CheckoutProgress",  new { step = CheckoutProgressStep.Complete })
+        @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Complete })
     }
     <div class="page-title">
         <h1>@T("Checkout.ThankYou")</h1>
@@ -70,22 +90,38 @@
 <!-- Load Transaction Event and Parameters -->
 <script>
 window.bvCallback = function (BV) {
+  console.log("bvCallback triggered");
+  console.log("bvCallback: orderDiscount = @orderDiscount");
+
   BV.pixel.trackTransaction({
-    "currency": "USD",
-    "orderId": "@Model.CustomOrderNumber",
-    "total": "@Convert.ToDecimal(orderTotal).ToString("0.00")",
-    "items": [
+    currency: "USD",
+    orderId: "@Model.CustomOrderNumber",
+    total: "@(Convert.ToDecimal(orderTotal).ToString("0.00"))",
+    items: [
       @for (int i = 0; i < orderItems.Count; i++)
       {
           var item = orderItems[i];
-          @Html.Raw($"{{\"price\": \"{item.UnitPriceInclTax.ToString("0.00")}\", \"quantity\": \"{item.Quantity}\", \"productId\": \"{item.ProductId}\"}}")
-          @if (i < orderItems.Count - 1)
-          {
-              @Html.Raw(",")
-          }
+          @: {
+          @:   "price": "@item.UnitPriceInclTax.ToString("0.00")",
+          @:   "quantity": "@item.Quantity",
+          @:   "productId": "@item.ProductId"
+          @: }@(i < orderItems.Count - 1 || (order != null && order.OrderShippingInclTax > 0) ? "," : "")
+      }
+      @* Add shipping as a separate item if it exists *@
+      @if (order != null && order.OrderShippingInclTax > 0)
+      {
+          @: {
+          @:   "price": "@order.OrderShippingInclTax.ToString("0.00")",
+          @:   "quantity": 1,
+          @:   "productId": "SHIPPING"
+          @: }
       }
     ],
-    "email" : "@customerEmail"
+    email: "@customerEmail"
+    @if (orderDiscount > 0)
+    {
+      @:,"discount": "@orderDiscount"
+    }
   });
 };
 </script>

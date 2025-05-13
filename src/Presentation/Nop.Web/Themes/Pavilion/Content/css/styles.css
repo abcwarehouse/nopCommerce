@@ -497,6 +497,17 @@ label, label + * {
 	}
 }
 
+.storeId8 img.MobileLoc {
+    width: 30px;
+    margin-top: 10px;
+
+}
+
+.storeId3 .jcarousel li {   
+    margin: 0px 10px;
+}
+
+
 /*********** NOTIFICATIONS & POPUPS  ***********/
 
 
@@ -1131,6 +1142,19 @@ input#sli_search_1 {
 	background-position: -224px 0;
 }
 
+
+.storeId8 .social-sharing .pinterest a {
+	display: none;
+}
+
+.storeId8 .social-sharing .linkedin a {
+	display: none;
+}
+
+.storeId8 .social-sharing .tiktok a {
+	display: none;
+}
+
 .footer-middle {
 	overflow: hidden;
 	background-color: #f6f6f6;
@@ -1649,7 +1673,7 @@ input#sli_search_1 {
 .item-box .picture img {
 	position: absolute;
 	top: 0;
-	right: 0;
+	right: 0px;
 	bottom: 0;
 	left: 0;
 	max-width: 100%;
@@ -3715,7 +3739,7 @@ input#sli_search_1 {
 	background: url('../img/fb-login.png') center no-repeat !important;
 }
 .password-recovery-page .tooltip {
-	margin: 0 0 30px;
+	/* margin: 0 0 30px; */
 }
 .password-recovery-page .result {
 	margin: 0 0 20px;
@@ -6233,6 +6257,143 @@ h1.search-page-title {
 }
 }
 
+.ui-tabs-panel {
+	margin-bottom: 30px;
+	}
+	a.us-ap-button {
+		clear: both;
+		display: table;
+		margin-top: 20px;
+	}
+	.storeId8 .search-cart-wrapper {
+		text-align: right;
+	}
+	.storeId8 .hours-desktop {
+		padding-right: 15px;
+	}
+	@media (max-width: 1024px) {
+		.storeId8 ul.sublist li {
+			padding: 26px 0px 16px 16px;
+			font-size: 14px;
+			font-family: Open Sans, sans-serif;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			line-height: normal;
+		}
+	body.storeId3 .header-menu .mobile-sidebar-category.second {
+		margin-top: 73px !important;
+	}
+	body.storeId3 .close-menu {
+		background: #fff;
+	}
+	body.storeId3 .header-menu .mobile-sidebar-title {
+	top: 180px;
+	}
+	}
+	
+	.storeId3 .hours-desktop {
+		margin-top: 32px;
+	}
+	.storeId3 .mobileLocation {
+		display: none;
+	}
+	
+	@media (max-width: 1024px) {
+	
+	.storeId8 .responsive-nav-wrapper>div>a.logo {
+		height: 0;
+	}
+	
+	.storeId8 div#header {
+			margin-top: 100px;
+		}
+	
+	
+	.storeId8 .category-page-body .page-title, .manufacturer-page-body .page-title, .manufacturer-all-page-body .page-title, .vendor-all-page-body .page-title, .vendor-page-body .page-title, .product-tags-all-page-body .page-title, .products-by-tag-page-body .page-title, .recently-viewed-products-page-body .page-title, .recently-added-products-page-body .page-title, .compare-products-page-body .page-title{
+			margin-top: 58px;
+	}
+	
+	
+	
+		.storeId8 .responsive-nav-wrapper>div, .plus-button {
+			background-color: grey;
+		}
+	
+	
+	
+	}
+	
+	
+	@media screen and (max-width: 570px) {
+		.storeId8 .elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
+			width: 50% !important;
+		}
+	}
+	
+	@media (max-width: 1024px) {
+	.storeId3 .jcarousel li {
+		margin: 0px 7px !important;
+	}
+	
+	}
+	
+	.storeId3 .jcarousel li {
+		margin: 0px 10px;
+	}
+
+form#marketingForm {
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+form#marketingForm button {
+    background: #ec232a;
+    color: #fff;
+    padding: 8px 15px;
+    border: solid 2px #454545;
+    font-weight: bold;
+    border-radius: 4px;
+    margin-left: 5px;
+}
+.newsletter-signup {
+    text-align: center;
+    padding: 30px 10px;
+}
+.sms-disclaimer p {
+    max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px 10px;
+    font-size: 10px;
+}
+.newsletter-signup h2 {
+    font-size: 45px;
+	color: #ec232a;
+}
+.footer h3 {
+    font-size: 26px;
+    padding-bottom: 10px;
+}
+form#marketingForm input {
+	padding: 0 10px;
+}
+@media screen and (max-width: 560px) {
+	form#marketingForm button {
+		width: 90%;
+	}
+}
+@media screen and (max-width: 1024px) {
+	.newsletter-signup {
+		padding-top: 0px;
+	}
+	form#marketingForm input {
+		width: 90%;
+		margin: 10px 10px;
+	}
+	
+}
+
 /* @media (max-width: 1024px) {
 .header-middle .hours-desktop {
 	margin-top: 32px;
@@ -6847,7 +7008,12 @@ div#storeDropDown div {
 
 /* Hawthorne only grid change */
  @media (min-width: 1281px) {
-    .storeId8 .top-level-manufacturer .item-box.item-box:nth-child(3n+1) {
+    .storeId8 .catalog-manufacturerall .top-level-manufacturer .item-box.item-box:nth-child(3n+1) {
+        clear: none;
+        margin-left: 2%;
+    }
+
+	.storeId8 .top-level-manufacturer .item-box.item-box:nth-child(2n+1) {
         clear: none;
         margin-left: 2%;
     }
@@ -7651,6 +7817,9 @@ a.us-ap-button {
 .flyout-cart {
     top: 70px;
 }
+.storeId8 .hawHours {
+    vertical-align: middle;
+}
 
 .header-links ul {
  margin-left: -6px; }
@@ -7662,6 +7831,6 @@ a.us-ap-button {
 		display: inline-flex;
 	}
 	.storeId8 .lookbook {
-		border-left: solid 1px #515151;
+		
 	}
 	
