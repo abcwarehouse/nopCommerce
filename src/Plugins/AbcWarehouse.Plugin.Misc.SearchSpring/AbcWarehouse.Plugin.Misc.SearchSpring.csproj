@@ -7,7 +7,7 @@
     <Authors>Mike Schwartz</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
     <RepositoryType>Git</RepositoryType>
-    <OutputPath>..\..\Presentation\Nop.Web\Plugins\Misc.SearchSpring</OutputPath>
+    <OutputPath>..\..\Presentation\Nop.Web\Plugins\Widgets.SearchSpring</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
     <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your project.
     You need to set this parameter to true if your plugin has a nuget package 
@@ -18,7 +18,6 @@
   <ItemGroup>
     <None Remove="logo.png" />
     <None Remove="plugin.json" />
-    <None Remove="Views/Shared/Components/SearchBox/Default.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,20 +27,28 @@
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views/Shared/Components/SearchBox/Default.cshtml">
+    <Content Include="Views/_ViewImports.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views/AddShippingInfo.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views/AddToCart.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views/Configure.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views/Tag.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
+    <ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
+    <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
     <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="SevenSpikes.Nop.Framework">
-      <HintPath>..\..\Presentation\Nop.Web\Plugins\SevenSpikes.Core\SevenSpikes.Nop.Framework.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
