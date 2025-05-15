@@ -81,7 +81,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessage", "Plugins\AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessage\AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessage.csproj", "{D0847C89-9E93-453D-9A0C-8E52DF8A88A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.SearchSpring", "Plugins\AbcWarehouse.Plugin.Widgets.SearchSpring\AbcWarehouse.Plugin.Widgets.SearchSpring.csproj", "{D0847C89-9E93-453D-9A0C-8E52DF8A88A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Misc.SearchSpring", "Plugins\AbcWarehouse.Plugin.Misc.SearchSpring\AbcWarehouse.Plugin.Misc.SearchSpring.csproj", "{D0847C89-9E93-453D-9A0C-8E52DF8A88A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
