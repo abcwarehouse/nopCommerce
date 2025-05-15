@@ -1,4 +1,4 @@
-﻿using AbcWarehouse.Plugin.Misc.SearchSpring.ViewEngines;
+﻿using AbcWarehouse.Plugin.Misc.SearchSpring;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +15,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Infrastructure
         {
             services.Configure<RazorViewEngineOptions>(options =>
             {
-                options.ViewLocationExpanders.Add(new CustomViewEngine());
+
             });
         }
 
