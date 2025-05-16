@@ -6,7 +6,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Components
     {
         public IViewComponentResult Invoke()
         {
-            return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Default.cshtml");
+            return View();
         }
     }
 }
