@@ -7,7 +7,7 @@
     <Authors>Mike Schwartz</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
     <RepositoryType>Git</RepositoryType>
-    <OutputPath>..\..\Presentation\Nop.Web\Plugins\Widgets.SearchSpring</OutputPath>
+    <OutputPath>..\..\Presentation\Nop.Web\Plugins\AbcWarehouse.Plugin.Misc.SearchSpring</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
     <!--Set this parameter to true to get the dlls copied from the NuGet cache to the output of your project.
     You need to set this parameter to true if your plugin has a nuget package 
@@ -27,10 +27,9 @@
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views/Configure.cshtml">
+    <Content Include="Views\**\*.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\**\*.cshtml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
