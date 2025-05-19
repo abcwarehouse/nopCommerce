@@ -5,8 +5,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Components
 {
     public class SearchSpringViewComponent : Nop.Web.Framework.Components.NopViewComponent
 {
-    public async Task<IViewComponentResult> Invoke()
+    public async Task<IViewComponentResult> InvokeAsync()
     {
+        await Task.CompletedTask;
         return View("/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Shared/Components/SearchSpring/Default.cshtml");
     }
 }
