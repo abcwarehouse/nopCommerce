@@ -7,7 +7,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Components
 {
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Shared/Components/SearchSpring/Default.cshtml");
+        return View("/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Shared/Components/SearchSpring/Default.cshtml");
     }
 }
 }
