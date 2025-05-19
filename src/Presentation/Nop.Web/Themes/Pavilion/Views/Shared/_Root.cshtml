@@ -57,6 +57,14 @@
             </a>
             </div>
             }
+            @* ABC: search bar for mobile *@
+    <div class="mobile-header-content-row">
+        <div class="mobile-menu" onClick="toggleMobileMenu()">
+            <span>Menu</span>
+        </div>
+        @await Component.InvokeAsync("SearchBox")
+    </div>
+
 
             <div id="mobile-header-logo">
                 @await Component.InvokeAsync("Logo")
@@ -75,14 +83,7 @@
             </div>
         </div>
     </div>
-    @* ABC: search bar for mobile *@
-    <div class="mobile-header-content-row">
-        <div class="mobile-menu" onClick="toggleMobileMenu()">
-            <span>Menu</span>
-        </div>
-        @await Component.InvokeAsync("SearchBox")
-    </div>
-
+    
     @* ABC: moved header to below *@
     @await Html.PartialAsync("_Header")
     <script asp-location="Footer">
