@@ -122,7 +122,7 @@
                     <div class="you-save-amt" style="display: none"></div>
                 }
                 @* ABC: disallow non-discounted-proce*@
-                <div class="product-price">
+                <div class="product-price first-price-block">
                     @if (!String.IsNullOrWhiteSpace(savedStr))
                     {
                         <label class="price-sale-label">Sale: </label>
@@ -190,7 +190,7 @@
     }
     if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox())
     {
-        <div class="product-price">
+        <div class="product-price secondary-price-block">
             @* MAP Discount Question Mark Tooltip *@
             @if (priceBucketCodeImageUrl.Contains("Map") && !product.DisableBuyButton)
             {
