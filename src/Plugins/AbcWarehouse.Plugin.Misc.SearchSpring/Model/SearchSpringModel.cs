@@ -1,10 +1,38 @@
-using Nop.Web.Framework.Models;
-using Nop.Web.Framework.Mvc.ModelBinding;
+using System.Collections.Generic;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 {
     public class SearchSpringModel
     {
-        public string SearchStuff { get; set; }
+        /// <summary>
+        /// Searchspring site ID
+        /// </summary>
+        public string SiteId { get; set; }
+
+        /// <summary>
+        /// The current search query
+        /// </summary>
+        public string Query { get; set; }
+
+        /// <summary>
+        /// List of filters applied (e.g., brand, price, etc.)
+        /// </summary>
+        public List<string> AppliedFilters { get; set; }
+
+        /// <summary>
+        /// Indicates whether Searchspring JavaScript should be injected
+        /// </summary>
+        public bool EnableSearchspring { get; set; }
+
+        /// <summary>
+        /// Additional config parameters for JavaScript integration
+        /// </summary>
+        public Dictionary<string, string> JsConfigParameters { get; set; }
+
+        public SearchSpringModel()
+        {
+            AppliedFilters = new List<string>();
+            JsConfigParameters = new Dictionary<string, string>();
+        }
     }
 }
