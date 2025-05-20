@@ -3,8 +3,8 @@ using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 {
-    public record SearchSpringModel : BaseNopModel
+    public class SearchSpringModel
     {
-
+        public string SearchStuff { get; set; }
     }
 }
