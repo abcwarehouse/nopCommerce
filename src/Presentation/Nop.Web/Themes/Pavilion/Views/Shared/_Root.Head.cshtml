@@ -145,13 +145,14 @@
     @await Component.InvokeAsync("Favicon")
     @if (displayMiniProfiler)
     {
+    
         <mini-profiler />
     }
     @Html.NopInlineScripts(ResourceLocation.Head)
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
 
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
-    <script src="https://kit.fontawesome.com/faa7b6ed36.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Meta Pixel Code -->
     <script>
@@ -170,17 +171,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // Check if .storeId8 exists
   if (document.querySelector('.storeId8')) {
 
-        (function(a,b,c,d){
+<!-- Begin Adtaxi Container Tag - Loading asynchronously -->
+    (function(a,b,c,d){
         a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
         b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/java"+c;d.async=true;
         a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-        })();
+    })();
     <!-- End Adtaxi Container Tag -->
 
     @* This forces the webpage to always scroll to teh top on a refresh *@
     window.onload = function() {
-  window.scrollTo(0, 0);
-};
+        window.scrollTo(0, 0);
+    };
 
 
 

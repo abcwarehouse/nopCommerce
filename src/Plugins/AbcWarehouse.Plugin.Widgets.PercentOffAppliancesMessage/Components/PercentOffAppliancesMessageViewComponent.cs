@@ -8,6 +8,7 @@ using Nop.Web.Models.Catalog;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore.Nop;
 using System.Linq;
+using Nop.Core;
 
 namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.Components
 {
@@ -20,6 +21,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
         private readonly IProductService _productService;
+        private readonly IStoreContext _storeContext;
 
         public PercentOffAppliancesMessageViewComponent(
             ILogger logger,
@@ -27,7 +29,8 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             IManufacturerService manufacturerService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
-            IProductService productService
+            IProductService productService,
+            IStoreContext storeContext
         )
         {
             _logger = logger;
@@ -36,17 +39,33 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             _priceCalculationService = priceCalculationService;
             _priceFormatter = priceFormatter;
             _productService = productService;
+            _storeContext = storeContext;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, int additionalData)
         {
+            // Don't display for Hawthorne
+            var isHawthorne = (await _storeContext.GetCurrentStoreAsync()).Id == 8;
+            if (isHawthorne)
+            {
+                return Content("");
+            }
+
             int productId = additionalData;
             Product product = await _productService.GetProductByIdAsync(productId);
             if (product == null)
             {
                 await _logger.WarningAsync($"Percent Off Appliances Message Widget: Unable to find product with ID '{productId}', was the product ID passed in?");
+                return Content("");
             }
 
+            // Don't display for call for pricing products
+            if (product.CallForPrice)
+            {
+                return Content("");
+            }
+
+            // exclude specific brands
             var exceptionBrands = new string[] {
                 "LG",
                 "LG SIGNATURE",
@@ -57,8 +76,6 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 "GE MONOGRAM",
                 "GE PROFILE",
             };
-
-            // exclude LG and GE
             var pms = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
             foreach (var pm in pms)
             {
