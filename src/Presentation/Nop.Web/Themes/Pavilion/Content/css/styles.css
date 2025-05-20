@@ -66,6 +66,11 @@ script {
     display: none !important;
 }
 
+/************** SearchSpring ***************/
+.search-spring-container {
+    padding-left: 300px;
+}
+
 
 /*********** GLOBAL STYLES **********/
 body {
