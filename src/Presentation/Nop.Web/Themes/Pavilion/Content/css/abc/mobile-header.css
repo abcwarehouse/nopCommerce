@@ -95,10 +95,14 @@ div.mobile-cart-qty {
 }
 .mobile-menu2 {
     float: right;
-    background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-menu.png);
+    /* background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-menu.png); */
     background-size: 52px;
     width: 52px;
     height: 50px;
+}
+.storeId8 .fa-solid.fa-bars {
+    margin-top: 17px;
+    margin-left: 11px;
 }
 
 /* styles search box input */
