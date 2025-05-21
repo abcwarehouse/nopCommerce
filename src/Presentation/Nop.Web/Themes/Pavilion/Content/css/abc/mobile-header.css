@@ -94,7 +94,7 @@ div.mobile-cart-qty {
     font-size: 0;
 }
 .mobile-menu2 {
-    float: left;
+    float: right;
     background-image: url(/Plugins/Misc.AbcFrontend/Images/mobile-menu.png);
     background-size: 52px;
     width: 52px;
