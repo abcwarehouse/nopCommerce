@@ -24,13 +24,14 @@
         "//appliances.abcwarehouse.com/search";
 }
 
-<!-- Spring Container -->
+    <!-- Spring Container -->
     <div class="search-container">
-        <form id="searchForm" method="get">
-            <input type="text" name="q" id="searchInput" placeholder="Buy Or Face The Wrath Of IT..." autocomplete="off" required />
+        <form id="searchForm" method="get" action="/SearchSpring/Results">
+            <input type="text" name="term" id="searchInput" placeholder="Buy Or Face The Wrath Of IT..." autocomplete="off" required />
             <button type="submit">Search Or Else!</button>
         </form>
     </div>
+
 
     <!-- Container to display the search results -->
     <div id="searchResults" class="search-container">
@@ -38,36 +39,15 @@
     </div>
 
     <script>
-        // Attach event listener for the search form submission
         document.getElementById('searchForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent full page refresh
+            event.preventDefault(); // Prevent default form behavior
 
-            var query = document.getElementById('searchInput').value.trim();
-            if (!query) return; // Do nothing if the query is empty
+            const input = document.getElementById('searchInput');
+            const query = input.value.trim();
 
-            var resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = 'Loading...';
-
-            var apiUrl = 'https://api.searchspring.net/api/search?q=' + encodeURIComponent(query);
-
-            fetch(apiUrl)
-                .then(function (response) { return response.json(); })
-                .then(function (data) {
-                    resultsContainer.innerHTML = ''; // Clear the "Loading" message
-
-                    if (data && data.results && data.results.length > 0) {
-                        data.results.forEach(function (item) {
-                            var itemDiv = document.createElement('div');
-                            itemDiv.textContent = item.title;
-                            resultsContainer.appendChild(itemDiv);
-                        });
-                    } else {
-                        resultsContainer.textContent = 'No results found.';
-                    }
-                })
-                .catch(function (error) {
-                    console.error('Error fetching search results:', error);
-                    resultsContainer.textContent = 'An error occurred while searching.';
-                });
+            if (query) {
+                const targetUrl = '/SearchSpring/Results?term=' + encodeURIComponent(query);
+                window.location.href = targetUrl; // Redirect to results page
+            }
         });
     </script>

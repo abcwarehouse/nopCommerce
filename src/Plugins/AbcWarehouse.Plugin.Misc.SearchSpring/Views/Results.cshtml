@@ -1,0 +1,31 @@
+@model List<AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchSpringProductModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Or the correct layout if different
+    ViewBag.Title = "SearchSpring Results";
+}
+
+<h2>SearchSpring Results</h2>
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100">
+                    <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">$@product.Price</p>
+                        <a href="@product.Url" class="btn btn-primary" target="_blank">View Product</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No products found for this search.</p>
+}

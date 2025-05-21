@@ -1,0 +1,30 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using AbcWarehouse.Plugin.Misc.SearchSpring.Services;
+
+namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
+{
+    public class SearchSpringController : Controller
+    {
+        private readonly SearchSpringService _searchSpringService;
+
+        public SearchSpringController(SearchSpringService searchSpringService)
+        {
+            _searchSpringService = searchSpringService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Query(string term)
+        {
+            var results = await _searchSpringService.SearchAsync(term);
+            return Json(results);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Results(string term)
+        {
+            var results = await _searchSpringService.SearchAsync(term);
+            return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
+        }
+    }
+}
