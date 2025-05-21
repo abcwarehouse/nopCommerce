@@ -58,6 +58,13 @@
             </div>
             }
 
+            @if (storeId == 8)
+            {
+                <div class="mobile-menu" onClick="toggleMobileMenu()">
+                <span>Menu</span>
+                </div>
+            }
+         
             <div id="mobile-header-logo">
                 @await Component.InvokeAsync("Logo")
             </div>
@@ -76,20 +83,6 @@
         </div>
     </div>
 
-    @if (storeId == 8)
-            {
-
-    @* Hawthorne: search bar for mobile *@
-    <div class="mobile-header-content-row">
-        <div class="mobile-menu" onClick="toggleMobileMenu()">
-            <span>Menu</span>
-        </div>
-         @await Component.InvokeAsync("SearchBox")  
-    </div>
-            }
-
-
-
 
      @if (storeId == 3)
             {
@@ -98,7 +91,7 @@
         <div class="mobile-menu" onClick="toggleMobileMenu()">
             <span>Menu</span>
         </div>
-         @* @await Component.InvokeAsync("SearchBox")  *@
+          @await Component.InvokeAsync("SearchBox")  
     </div>
             }
 
