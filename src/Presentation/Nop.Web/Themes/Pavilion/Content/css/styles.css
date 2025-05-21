@@ -70,6 +70,12 @@ script {
 .search-spring-container {
     padding-left: 300px;
 }
+input#searchInput {
+    width: 560px;
+}
+.search-container {
+    width: 100%;
+}
 
 
 /*********** GLOBAL STYLES **********/
