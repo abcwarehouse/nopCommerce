@@ -46,14 +46,15 @@
 @await Html.PartialAsync("_OldInternetExplorerWarning")
 
 <div class="master-wrapper-page @stickyLogoClass">
-     @* Hawthrone Menu Icon *@
+  
+    <div class="responsive-nav-wrapper-parent">
+           @* Hawthrone Menu Icon *@
                @if (storeId == 8)
             {
         <div class="mobile-menu2" onClick="toggleMobileMenu()">
             <span>Menu</span>
         </div>
            }
-    <div class="responsive-nav-wrapper-parent">
         <div class="responsive-nav-wrapper">
 
             @if (storeId == 8)
