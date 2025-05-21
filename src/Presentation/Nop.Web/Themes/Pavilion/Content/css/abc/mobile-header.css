@@ -104,7 +104,7 @@ div.mobile-cart-qty {
     margin-top: 15px;
     margin-left: 11px;
 }
-.fa-bars:before, .fa-navicon:before {
+.storeId8 .fa-bars:before, .fa-navicon:before {
     content: "\f0c9";
     font-size: 20px;
 }
