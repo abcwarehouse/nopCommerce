@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -8,26 +10,29 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
     public class SearchSpringService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
 
-        public SearchSpringService(HttpClient httpClient)
+        public SearchSpringService(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<List<SearchSpringProductModel>> SearchAsync(string query)
+        public async Task<string> SearchAsync(string query)
         {
-            var response = await _httpClient.GetAsync($"https://4lt84w.a.searchspring.io/api/search/search.json?resultsFormat=json&resultsPerPage=24&page=1&redirectResponse=minimal");
+            var client = _httpClientFactory.CreateClient();
 
-            response.EnsureSuccessStatusCode();
+            var url = $"{_baseUrl}/api/search/search.json?q={WebUtility.UrlEncode(query)}&resultsFormat=json&resultsPerPage=24&page=1&redirectResponse=minimal";
 
-            var content = await response.Content.ReadAsStringAsync();
-            var parsed = JsonSerializer.Deserialize<SearchSpringResponse>(content, new JsonSerializerOptions
+            var response = await client.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
             {
-                PropertyNameCaseInsensitive = true
-            });
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Searchspring returned error {response.StatusCode}: {error}");
+            }
 
-            return parsed?.Results ?? new List<SearchSpringProductModel>();
+            return await response.Content.ReadAsStringAsync();
         }
     }
+
 }
