@@ -10,13 +10,12 @@
 
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
+@inject IWebHelper webHelper
 
 @{
-    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
-
-    string searchBaseUrl = isHawthorne
-        ? "https://hawthorne.abcwarehouse.com/search?w="
-        : "/search?w=";
+    // Dynamically get the current store's base URL
+    var storeUrl = webHelper.GetStoreLocation(); // includes trailing slash
+    var searchBaseUrl = $"{storeUrl}searchspring/results?q=";
 }
 
 <!-- Search Form -->
