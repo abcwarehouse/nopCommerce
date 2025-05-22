@@ -11,14 +11,6 @@
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
 
-@{
-    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
-
-    string searchBaseUrl = isHawthorne
-        ? "https://hawthorne.abcwarehouse.com/search?w="
-        : "https://appliances.abcwarehouse.com/search?w=";
-}
-
 <!-- Search Form -->
 <div class="search-container">
     <form id="searchForm">
