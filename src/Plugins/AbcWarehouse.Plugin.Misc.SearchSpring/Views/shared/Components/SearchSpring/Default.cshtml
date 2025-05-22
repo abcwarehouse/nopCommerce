@@ -1,73 +1,42 @@
 @model AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchSpringModel
-@using Nop.Web.Models.Catalog;
+@using Nop.Web.Models.Catalog
 @using Nop.Web.Framework
 @using Nop.Web.Framework.UI
 @using Nop.Core
-@using Nop.Core.Infrastructure;
+@using Nop.Core.Infrastructure
 @using Nop.Plugin.Misc.AbcFrontend.Services
 @using Nop.Web.Framework.Infrastructure
 @using Nop.Plugin.Misc.AbcCore.Services
 
 @inject FrontEndService frontEndService
-@* custom *@
 @inject IStoreContext storeContext
 
 @{
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
 
-    string url = isHawthorne ?
-                "https://hawthorne.abcwarehouse.com/search?w=" :
-                "https://appliances.abcwarehouse.com/search?w=";
-
-    string action = isHawthorne ?
-        "//hawthorne.abcwarehouse.com/search" :
-        "//appliances.abcwarehouse.com/search";
+    string searchBaseUrl = isHawthorne
+        ? "https://hawthorne.abcwarehouse.com/search?w="
+        : "https://appliances.abcwarehouse.com/search?w=";
 }
 
-<!-- Spring Container -->
-    <div class="search-container">
-        <form id="searchForm" method="get">
-            <input type="text" name="q" id="searchInput" placeholder="Buy Or Face The Wrath Of IT..." autocomplete="off" required />
-            <button type="submit">Search Or Else!</button>
-        </form>
-    </div>
+<!-- Search Form -->
+<div class="search-container">
+    <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Type to search..." autocomplete="off" />
+        <button type="submit">Search</button>
+    </form>
+</div>
 
-    <!-- Container to display the search results -->
-    <div id="searchResults" class="search-container">
+<!-- Optional: Could keep this if you want inline AJAX results -->
+<div id="searchResults" class="search-container"></div>
 
-    </div>
-
-    <script>
-        // Attach event listener for the search form submission
-        document.getElementById('searchForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent full page refresh
-
-            var query = document.getElementById('searchInput').value.trim();
-            if (!query) return; // Do nothing if the query is empty
-
-            var resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = 'Loading...';
-
-            var apiUrl = 'https://api.searchspring.net/api/search?q=' + encodeURIComponent(query);
-
-            fetch(apiUrl)
-                .then(function (response) { return response.json(); })
-                .then(function (data) {
-                    resultsContainer.innerHTML = ''; // Clear the "Loading" message
-
-                    if (data && data.results && data.results.length > 0) {
-                        data.results.forEach(function (item) {
-                            var itemDiv = document.createElement('div');
-                            itemDiv.textContent = item.title;
-                            resultsContainer.appendChild(itemDiv);
-                        });
-                    } else {
-                        resultsContainer.textContent = 'No results found.';
-                    }
-                })
-                .catch(function (error) {
-                    console.error('Error fetching search results:', error);
-                    resultsContainer.textContent = 'An error occurred while searching.';
-                });
-        });
-    </script>
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value.trim();
+        if (query) {
+            const searchUrl = '@searchBaseUrl' + encodeURIComponent(query);
+            window.location.href = searchUrl;
+        }
+    });
+</script>
