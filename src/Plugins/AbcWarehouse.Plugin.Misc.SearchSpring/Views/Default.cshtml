@@ -24,11 +24,11 @@
         "//appliances.abcwarehouse.com/search";
 }
 
-    <!-- Spring Container -->
+    <!-- Search Form -->
     <div class="search-container">
-        <form id="searchForm" method="get" action="/SearchSpring/Results">
-            <input type="text" name="term" id="searchInput" placeholder="Buy Or Face The Wrath Of IT..." autocomplete="off" required />
-            <button type="submit">Search Or Else!</button>
+        <form id="searchForm">
+            <input type="text" id="searchInput" placeholder="Type to search..." autocomplete="off" />
+            <button type="submit">Search</button>
         </form>
     </div>
 
@@ -40,14 +40,10 @@
 
     <script>
         document.getElementById('searchForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent default form behavior
-
-            const input = document.getElementById('searchInput');
-            const query = input.value.trim();
-
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value.trim();
             if (query) {
-                const targetUrl = '/SearchSpring/Results?term=' + encodeURIComponent(query);
-                window.location.href = targetUrl; // Redirect to results page
+                window.location.href = '/searchspring/results?q=' + encodeURIComponent(query);
             }
         });
     </script>

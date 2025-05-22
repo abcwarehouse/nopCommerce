@@ -17,7 +17,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
         public async Task<List<SearchSpringProductModel>> SearchAsync(string query)
         {
-            var response = await _httpClient.GetAsync($"https://api.searchspring.net/api/search/search.json?q={query}&siteId=4lt84w");
+            var response = await _httpClient.GetAsync($"https://4lt84w.a.searchspring.io/api/search/search.json?resultsFormat=json&resultsPerPage=24&page=1&redirectResponse=minimal");
 
             response.EnsureSuccessStatusCode();
 
