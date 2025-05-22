@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Widgets.AbcPicku
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Widgets.AbcPromos", "Plugins\Nop.Plugin.Widgets.AbcPromos\Nop.Plugin.Widgets.AbcPromos.csproj", "{5BBC8162-0117-47AD-8334-FD8036E77761}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Misc.SLI", "Plugins\AbcWarehouse.Plugin.Misc.SLI\AbcWarehouse.Plugin.Misc.SLI.csproj", "{A55C970A-E1D8-434B-8C06-1212F3137FFF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.Listrak", "Plugins\AbcWarehouse.Plugin.Widgets.Listrak\AbcWarehouse.Plugin.Widgets.Listrak.csproj", "{949B9A1F-43A3-49D4-946C-A7BFB665C407}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.GA4", "Plugins\AbcWarehouse.Plugin.Widgets.GA4\AbcWarehouse.Plugin.Widgets.GA4.csproj", "{1571C749-4B97-469B-A370-0ACBFAA9BA4B}"
