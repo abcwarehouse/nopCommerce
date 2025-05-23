@@ -19,26 +19,40 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
         public async Task<SearchResultModel> SearchAsync(string query)
         {
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentException("Search query must not be null or empty.", nameof(query));
+
             var client = _httpClientFactory.CreateClient();
 
             var url = $"{_baseUrl}/api/search/search.json?q={WebUtility.UrlEncode(query)}&resultsFormat=json&resultsPerPage=24&page=1&redirectResponse=minimal";
 
+            Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
+
             var response = await client.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine($"[SearchSpring] Response ({(int)response.StatusCode}): {json}");
+
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Searchspring returned error {response.StatusCode}: {error}");
+                throw new Exception($"Searchspring returned error {response.StatusCode}: {json}\nURL: {url}");
             }
-
-            var json = await response.Content.ReadAsStringAsync();
 
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
 
-            var result = JsonSerializer.Deserialize<SearchResultModel>(json, options);
-            return result;
+            try
+            {
+                var result = JsonSerializer.Deserialize<SearchResultModel>(json, options);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SearchSpring] JSON Deserialization failed: {ex.Message}");
+                throw new Exception("Failed to parse Searchspring response.", ex);
+            }
         }
     }
 }
