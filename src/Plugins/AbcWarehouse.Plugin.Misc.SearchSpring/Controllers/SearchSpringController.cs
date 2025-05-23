@@ -6,9 +6,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
     public class SearchSpringController : Controller
     {
-        private readonly SearchSpringService _searchSpringService;
+        private readonly ISearchSpringService _searchSpringService;
 
-        public SearchSpringController(SearchSpringService searchSpringService)
+        public SearchSpringController(ISearchSpringService searchSpringService)
         {
             _searchSpringService = searchSpringService;
         }

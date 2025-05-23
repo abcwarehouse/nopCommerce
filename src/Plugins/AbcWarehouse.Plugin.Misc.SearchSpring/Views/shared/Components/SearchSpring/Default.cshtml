@@ -14,7 +14,7 @@
 
 @{
     // Dynamically get the current store's base URL
-    var storeUrl = webHelper.GetStoreLocation(); // includes trailing slash
+    var storeUrl = webHelper.GetStoreLocation(); 
     var searchBaseUrl = $"{storeUrl}searchspring/results?q=";
 }
 
@@ -25,9 +25,6 @@
         <button type="submit">Search</button>
     </form>
 </div>
-
-<!-- Optional: Could keep this if you want inline AJAX results -->
-<div id="searchResults" class="search-container"></div>
 
 <script>
     document.getElementById('searchForm').addEventListener('submit', function (event) {
