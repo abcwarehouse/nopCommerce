@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
+using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
     public interface ISearchSpringService
     {
-        Task<object> SearchAsync(string term); 
+        Task<SearchResultModel> SearchAsync(string query);
     }
 }

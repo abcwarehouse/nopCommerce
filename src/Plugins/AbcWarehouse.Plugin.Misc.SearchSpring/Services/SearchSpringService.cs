@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
-using AbcWarehouse.Plugin.Misc.SearchSpring.Services;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
@@ -19,7 +17,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<string> SearchAsync(string query)
+        public async Task<SearchResultModel> SearchAsync(string query)
         {
             var client = _httpClientFactory.CreateClient();
 
@@ -32,8 +30,15 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception($"Searchspring returned error {response.StatusCode}: {error}");
             }
 
-            return await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var result = JsonSerializer.Deserialize<SearchResultModel>(json, options);
+            return result;
         }
     }
-
 }
