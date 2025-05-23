@@ -211,6 +211,12 @@
     transform: translate(-320px);
 }
 
+.storeId8 .header-menu.categories-in-side-panel {  
+	  left: 0px;
+}
+.storeId8 .header-menu.categories-in-side-panel.open {  
+	  left: auto;
+}
 
 .storeId8 .sublist-wrap.active {
 	    border-top: solid 42px #02463b;
