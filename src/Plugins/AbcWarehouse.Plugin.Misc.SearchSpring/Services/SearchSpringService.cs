@@ -5,10 +5,11 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
+using AbcWarehouse.Plugin.Misc.SearchSpring.Services;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
-    public class SearchSpringService
+    public class SearchSpringService : ISearchSpringService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
