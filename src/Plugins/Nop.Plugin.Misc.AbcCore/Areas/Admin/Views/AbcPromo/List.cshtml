@@ -2,6 +2,10 @@
 
 @using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
 
+@* fixes "The name 'T' does not exist in the current context" *@
+@inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>
+@addTagHelper *, Nop.Web.Framework
+
 @{
     //page title
     ViewBag.PageTitle = "Promos";
@@ -79,8 +83,10 @@
                             },
                             new ColumnProperty(nameof(AbcPromoModel.Manufacturer))
                             {
-                                Title = "Manufacturer",
-                                Width = "50"
+                                Title = "Brand",
+                                ClassName =  NopColumnClassDefaults.Button,
+                                Width = "50",
+                                Render = new RenderCustom("renderBrandInfo")
                             },
                             new ColumnProperty(nameof(AbcPromoModel.Slug))
                             {
@@ -100,7 +106,18 @@
                                 Render = new RenderButtonView(new DataUrl("~/Admin/AbcPromo/Products/"))
                             }
                         }
-                    })                    
+                    })
+
+                    <script>
+                        function renderBrandInfo(data, type, row, meta) {
+                            if (row.Manufacturer != "") {
+                                var textRenderer = $.fn.dataTable.render.text().display;
+                                return '<a class="btn btn-default" onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/AbcPromos/EditPopup/")' + row.Id + '\', 800, 400, true); return false;\"><i class="fas fa-pencil-alt"></i>' + textRenderer(row.Manufacturer) + '</a>';
+                            } else {
+                                return '<a class="btn btn-default" onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/AbcPromos/EditPopup/")' + row.Id + '\', 800, 400, true); return false;\"><i class="fas fa-pencil-alt" style="padding-right: 0"></i></a>';
+                            }
+                        }
+                    </script>               
                 </div>
             </div>
         </div>
