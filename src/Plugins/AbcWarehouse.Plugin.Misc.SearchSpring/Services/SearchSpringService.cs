@@ -24,7 +24,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var client = _httpClientFactory.CreateClient();
 
-            var url = $"{_baseUrl}/api/search/search?q={WebUtility.UrlEncode(query)}&resultsFormat=json&resultsPerPage=24&page=1&redirectResponse=minimal";
+            var url = $"{_baseUrl}/api/search.json/search?q={WebUtility.UrlEncode(query)}&resultsFormat=json&resultsPerPage=24&page=1&redirectResponse=minimal";
 
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
