@@ -2,16 +2,20 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Services;
 using System;
+using System.Net.Http;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
     public class SearchSpringController : Controller
     {
         private readonly ISearchSpringService _searchSpringService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public SearchSpringController(ISearchSpringService searchSpringService)
+
+        public SearchSpringController(ISearchSpringService searchSpringService, IHttpClientFactory httpClientFactory)
         {
             _searchSpringService = searchSpringService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
