@@ -21,15 +21,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             return Json(results);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Results(string term)
+        public async Task<IActionResult> Results(string q)
         {
-            Console.WriteLine($"[Controller] Received term: {term}");
-
-            if (string.IsNullOrWhiteSpace(term))
+            if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
 
-            var results = await _searchSpringService.SearchAsync(term);
+            var results = await _searchSpringService.SearchAsync(q);
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
     }
