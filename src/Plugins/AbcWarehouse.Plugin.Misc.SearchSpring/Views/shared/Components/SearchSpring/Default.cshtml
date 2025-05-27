@@ -59,7 +59,7 @@
         }
 
         try {
-            const res = await fetch(`https://4lt84w.a.searchspring.io/api/suggest/search?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}`);
             const data = await res.json();
             const suggestions = data?.suggestions || [];
 
