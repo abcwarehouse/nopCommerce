@@ -10,7 +10,7 @@
     const query = params.get('q');
 
     const SEARCHSPRING_SITE_ID = '4lt84w'; 
-    const API_URL = `https://api.searchspring.net/api/search/search.json?siteId=${SEARCHSPRING_SITE_ID}&q=${encodeURIComponent(query)}`;
+    const API_URL = `https://api.searchspring.net/api/search/search?siteId=${SEARCHSPRING_SITE_ID}&q=${encodeURIComponent(query)}`;
 
     fetch(API_URL)
         .then(res => res.json())
