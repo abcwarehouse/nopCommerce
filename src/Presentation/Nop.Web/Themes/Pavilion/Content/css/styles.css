@@ -76,6 +76,9 @@ input#searchInput {
 .search-container {
     width: 100%;
 }
+.ss-autocomplete {
+    z-index: 9999;
+}
 
 
 /*********** GLOBAL STYLES **********/

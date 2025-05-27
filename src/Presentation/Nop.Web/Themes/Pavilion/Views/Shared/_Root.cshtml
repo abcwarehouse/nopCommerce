@@ -123,5 +123,25 @@
     });
 </script>
 
+@* Searchspring autocomplete  *@
+<script>
+    window.intellisuggest = window.intellisuggest || function () {
+        (intellisuggest.q = intellisuggest.q || []).push(arguments);
+    };
+
+    intellisuggest('config', {
+        siteId: '4lt84w',
+        autocomplete: {
+            inputSelector: '#small-searchterms',
+            suggestions: true,
+            products: true,
+            categoryResults: true,
+            resultsPage: '/search?q='
+        }
+    });
+
+    intellisuggest('track', 'pageview');
+</script>
+
 @await Component.InvokeAsync("EuCookieLaw")
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })
