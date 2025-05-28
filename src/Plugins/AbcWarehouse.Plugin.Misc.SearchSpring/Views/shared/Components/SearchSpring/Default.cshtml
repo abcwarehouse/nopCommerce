@@ -44,6 +44,13 @@
 </style>
 
 <script>
+    function getSearchspringSessionData() {
+        if (window.intellisuggest && typeof window.intellisuggest.getTrackingParams === 'function') {
+            return window.intellisuggest.getTrackingParams();
+        }
+        return null;
+    }
+
     const input = document.getElementById('searchInput');
     const resultsContainer = document.getElementById('autocomplete-results');
     const baseUrl = '@searchBaseUrl';
@@ -58,7 +65,20 @@
         }
 
         try {
-            const res = await fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}`);
+            // Get session/user ID
+            function getSearchspringSessionData() {
+                if (window.intellisuggest && typeof window.intellisuggest.getTrackingParams === 'function') {
+                    return window.intellisuggest.getTrackingParams();
+                }
+                return null;
+            }
+
+            const trackingParams = getSearchspringSessionData();
+            const userId = trackingParams?.userId;
+            const sessionId = trackingParams?.sessionId;
+
+            const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}`;
+            const res = await fetch(suggestUrl);
             
             const contentType = res.headers.get('content-type') || '';
             if (!res.ok || !contentType.includes('application/json')) {
