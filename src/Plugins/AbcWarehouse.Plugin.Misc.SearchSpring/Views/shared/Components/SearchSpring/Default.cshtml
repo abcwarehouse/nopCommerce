@@ -44,75 +44,69 @@
 </style>
 
 <script>
-    function getSearchspringSessionData() {
-        if (window.intellisuggest && typeof window.intellisuggest.getTrackingParams === 'function') {
-            return window.intellisuggest.getTrackingParams();
-        }
-        return null;
-    }
-
     const input = document.getElementById('searchInput');
     const resultsContainer = document.getElementById('autocomplete-results');
     const baseUrl = '@searchBaseUrl';
 
-    input.addEventListener('input', async function () {
-        const query = input.value.trim();
+    // Only run autocomplete after intellisuggest is ready
+    document.addEventListener('intellisuggest-ready', () => {
+        const trackingParams = window.intellisuggest.getTrackingParams();
+        const userId = trackingParams?.userId;
+        const sessionId = trackingParams?.sessionId;
 
-        if (query.length < 2) {
-            resultsContainer.innerHTML = '';
-            resultsContainer.style.display = 'none';
+        if (!userId || !sessionId) {
+            console.warn("Searchspring user/session ID missing.");
             return;
         }
 
-        try {
-            // Get session/user ID
-            function getSearchspringSessionData() {
-                if (window.intellisuggest && typeof window.intellisuggest.getTrackingParams === 'function') {
-                    return window.intellisuggest.getTrackingParams();
-                }
-                return null;
-            }
+        input.addEventListener('input', async function () {
+            const query = input.value.trim();
 
-            const trackingParams = getSearchspringSessionData();
-            const userId = trackingParams?.userId;
-            const sessionId = trackingParams?.sessionId;
-
-            const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}`;
-            const res = await fetch(suggestUrl);
-            
-            const contentType = res.headers.get('content-type') || '';
-            if (!res.ok || !contentType.includes('application/json')) {
-                const text = await res.text();
-                console.error("Non-JSON or error response:", text);
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '';
                 resultsContainer.style.display = 'none';
                 return;
             }
 
-            const data = await res.json();
-            const suggestions = data?.suggestions || [];
+            try {
+                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}`;
+                const res = await fetch(suggestUrl);
 
-            resultsContainer.innerHTML = '';
-            if (suggestions.length > 0) {
-                suggestions.forEach(s => {
-                    const item = document.createElement('div');
-                    item.classList.add('suggestion-item');
-                    item.textContent = s.value;
-                    item.addEventListener('click', () => {
-                        input.value = s.value;
-                        window.location.href = baseUrl + encodeURIComponent(s.value);
+                const contentType = res.headers.get('content-type') || '';
+                if (!res.ok || !contentType.includes('application/json')) {
+                    const text = await res.text();
+                    console.error("Non-JSON or error response:", text);
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+
+                const data = await res.json();
+                const suggestions = data?.suggestions || [];
+
+                resultsContainer.innerHTML = '';
+                if (suggestions.length > 0) {
+                    suggestions.forEach(s => {
+                        const item = document.createElement('div');
+                        item.classList.add('suggestion-item');
+                        item.textContent = s.value;
+                        item.addEventListener('click', () => {
+                            input.value = s.value;
+                            window.location.href = baseUrl + encodeURIComponent(s.value);
+                        });
+                        resultsContainer.appendChild(item);
                     });
-                    resultsContainer.appendChild(item);
-                });
-                resultsContainer.style.display = 'block';
-            } else {
+                    resultsContainer.style.display = 'block';
+                } else {
+                    resultsContainer.style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Error fetching suggestions:', err);
                 resultsContainer.style.display = 'none';
             }
-        } catch (err) {
-            console.error('Error fetching suggestions:', err);
-            resultsContainer.style.display = 'none';
-        }
+        });
     });
 
+    // Submit handler
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const query = input.value.trim();
@@ -121,6 +115,7 @@
         }
     });
 
+    // Hide autocomplete when clicking outside
     document.addEventListener('click', function (event) {
         if (!event.target.closest('.search-container')) {
             resultsContainer.style.display = 'none';

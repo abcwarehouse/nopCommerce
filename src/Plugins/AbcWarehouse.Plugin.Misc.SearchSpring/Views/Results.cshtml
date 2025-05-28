@@ -6,51 +6,49 @@
 </div>
 
 <script>
-    // Get query from URL
-    const params = new URLSearchParams(window.location.search);
-    const query = params.get('q');
+    function runSearchspringSearch(query) {
+        const trackingParams = window.intellisuggest.getTrackingParams();
+        const userId = trackingParams?.userId;
+        const sessionId = trackingParams?.sessionId;
 
-    // Step 2: Get Searchspring session data
-    function getSearchspringSessionData() {
-        if (window.intellisuggest && typeof window.intellisuggest.getTrackingParams === 'function') {
-            return window.intellisuggest.getTrackingParams();
+        if (!userId || !sessionId) {
+            console.warn("Searchspring session/user ID not ready yet.");
+            return;
         }
-        return {};
+
+        const API_URL = `https://api.searchspring.net/api/search/search.json?siteId=4lt84w&q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}&resultsPerPage=24&page=1`;
+
+        fetch(API_URL)
+            .then(res => {
+                if (!res.ok) return res.text().then(text => { throw new Error(text); });
+                return res.json();
+            })
+            .then(data => {
+                const resultsContainer = document.getElementById('searchResults');
+                resultsContainer.innerHTML = '';
+
+                if (data?.results?.length > 0) {
+                    data.results.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.innerHTML = `
+                            <h3>${product.name}</h3>
+                            <p>${product.msrp ? '$' + product.msrp : 'No price available'}</p>
+                            <img src="${product.thumb_image}" alt="${product.name}" />
+                        `;
+                        resultsContainer.appendChild(productDiv);
+                    });
+                } else {
+                    resultsContainer.textContent = 'No results found.';
+                }
+            })
+            .catch(err => {
+                console.error('Searchspring API error:', err);
+                document.getElementById('searchResults').textContent = 'An error occurred while fetching search results.';
+            });
     }
 
-    const { userId, sessionId } = getSearchspringSessionData();
-    const SEARCHSPRING_SITE_ID = '4lt84w';
-
-    // Include session and user IDs in the request
-    const API_URL = `https://api.searchspring.net/api/search/search.json?siteId=${SEARCHSPRING_SITE_ID}&q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}&resultsPerPage=24&page=1`;
-
-    fetch(API_URL)
-        .then(res => {
-            if (!res.ok) {
-                return res.text().then(text => { throw new Error(`Searchspring error: ${text}`); });
-            }
-            return res.json();
-        })
-        .then(data => {
-            const resultsContainer = document.getElementById('searchResults');
-            resultsContainer.innerHTML = '';
-
-            if (data && data.results && data.results.length > 0) {
-                data.results.forEach(product => {
-                    const productDiv = document.createElement('div');
-                    productDiv.innerHTML = `
-                        <h3>${product.name}</h3>
-                        <p>${product.msrp ? '$' + product.msrp : 'No price available'}</p>
-                        <img src="${product.thumb_image}" alt="${product.name}" />
-                    `;
-                    resultsContainer.appendChild(productDiv);
-                });
-            } else {
-                resultsContainer.textContent = 'No results found.';
-            }
-        })
-        .catch(err => {
-            console.error('SearchSpring API error:', err);
-            document.getElementById('searchResults').textContent = 'An error occurred while fetching search results.';
-        });
+    document.addEventListener('intellisuggest-ready', () => {
+        const query = new URLSearchParams(window.location.search).get('q');
+        if (query) runSearchspringSearch(query);
+    });
 </script>
