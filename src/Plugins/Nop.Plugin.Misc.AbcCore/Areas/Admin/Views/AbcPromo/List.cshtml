@@ -112,9 +112,9 @@
                         function renderBrandInfo(data, type, row, meta) {
                             if (row.Manufacturer != "") {
                                 var textRenderer = $.fn.dataTable.render.text().display;
-                                return '<a class="btn btn-default" onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/AbcPromos/EditPopup/")' + row.Id + '\', 800, 400, true); return false;\"><i class="fas fa-pencil-alt"></i>' + textRenderer(row.Manufacturer) + '</a>';
+                                return '<a class="btn btn-default" onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/AbcPromo/EditPopup/")' + row.Id + '\', 800, 400, true); return false;\"><i class="fas fa-pencil-alt"></i>' + textRenderer(row.Manufacturer) + '</a>';
                             } else {
-                                return '<a class="btn btn-default" onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/AbcPromos/EditPopup/")' + row.Id + '\', 800, 400, true); return false;\"><i class="fas fa-pencil-alt" style="padding-right: 0"></i></a>';
+                                return '<a class="btn btn-default" onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/AbcPromo/EditPopup/")' + row.Id + '\', 800, 400, true); return false;\"><i class="fas fa-pencil-alt" style="padding-right: 0"></i></a>';
                             }
                         }
                     </script>               

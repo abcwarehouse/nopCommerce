@@ -41,6 +41,25 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             _storeMappingService = storeMappingService;
         }
 
+        public IActionResult EditPopup(int abcPromoId)
+        {
+            var model = new AbcPromoEditPopupModel();
+            model.OverrideBrand = true;
+
+            return View(
+                "~/Plugins/Misc.AbcCore/Areas/Admin/Views/AbcPromo/EditPopup.cshtml",
+                model
+            );
+        }
+
+        [HttpPost]
+        public IActionResult EditPopup(AbcPromoEditPopupModel model)
+        {
+            return View(
+                "~/Plugins/Misc.AbcCore/Areas/Admin/Views/AbcPromo/EditPopup.cshtml"
+            );
+        }
+
         public IActionResult List()
         {
             return View(
