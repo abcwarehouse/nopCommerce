@@ -44,7 +44,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
         public IActionResult EditPopup(int abcPromoId)
         {
             var model = new AbcPromoEditPopupModel();
-            model.OverrideBrand = true;
+            model.IsBrandOverridden = true;
 
             return View(
                 "~/Plugins/Misc.AbcCore/Areas/Admin/Views/AbcPromo/EditPopup.cshtml",
