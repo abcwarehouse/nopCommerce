@@ -2,6 +2,10 @@
 @inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel>
 
 @{
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
+}
+
+@{
     var query = Context.Request.Query["q"].ToString();
 }
 
