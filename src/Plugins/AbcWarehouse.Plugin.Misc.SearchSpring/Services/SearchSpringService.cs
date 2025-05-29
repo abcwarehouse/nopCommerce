@@ -19,7 +19,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<SearchResultModel> SearchAsync(string query, string userId = null, string sessionId = null)
+        public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null)
         {
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
@@ -33,11 +33,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     $"&page=1" +
                     $"&redirectResponse=minimal";
 
-            // Append tracking identifiers if provided
-            if (!string.IsNullOrEmpty(userId))
-                url += $"&userId={WebUtility.UrlEncode(userId)}";
+            // ✅ Append session ID if available
             if (!string.IsNullOrEmpty(sessionId))
-                url += $"&sessionId={WebUtility.UrlEncode(sessionId)}";
+                url += $"&ss-sessionId={WebUtility.UrlEncode(sessionId)}";
 
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
@@ -67,7 +65,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-
 
     }
 }

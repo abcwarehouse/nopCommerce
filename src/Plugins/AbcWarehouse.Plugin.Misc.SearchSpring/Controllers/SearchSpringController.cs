@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Services;
 using System.Net.Http;
 using System.Net;
+using System;
+using Microsoft.AspNetCore.Http;
 
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
@@ -32,9 +34,31 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
 
-            var sessionId = GetSearchSpringSessionId();
-            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId);
+            // Generate/retrieve session ID from cookie or context
+            var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
+
+            var results = await _searchSpringService.SearchAsync(q, sessionId);
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
+        }
+        private string GetOrCreateSearchSpringSessionId(HttpContext context)
+        {
+            const string cookieKey = "ss-sessionId";
+
+            if (context.Request.Cookies.TryGetValue(cookieKey, out var existingSessionId))
+            {
+                return existingSessionId;
+            }
+
+            var newSessionId = Guid.NewGuid().ToString("N");
+            context.Response.Cookies.Append(cookieKey, newSessionId, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(30),
+                HttpOnly = false,
+                Secure = context.Request.IsHttps,
+                SameSite = SameSiteMode.Lax
+            });
+
+            return newSessionId;
         }
 
         private string GetSearchSpringSessionId()
