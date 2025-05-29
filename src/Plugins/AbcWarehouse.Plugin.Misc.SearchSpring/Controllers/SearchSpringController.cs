@@ -36,8 +36,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             // Generate/retrieve session ID from cookie or context
             var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
+            var siteId = "4lt84w";
 
-            var results = await _searchSpringService.SearchAsync(q, sessionId);
+            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId);
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
         private string GetOrCreateSearchSpringSessionId(HttpContext context)
@@ -80,7 +81,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 return BadRequest("Query is required");
 
             var client = _httpClientFactory.CreateClient();
-            var suggestUrl = $"https://4lt84w.a.searchspring.io/api/suggest/search?q={WebUtility.UrlEncode(q)}";
+            var siteId = "4lt84w";
+            var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/search?q={WebUtility.UrlEncode(q)}";
+
 
             var response = await client.GetAsync(suggestUrl);
             if (!response.IsSuccessStatusCode)
