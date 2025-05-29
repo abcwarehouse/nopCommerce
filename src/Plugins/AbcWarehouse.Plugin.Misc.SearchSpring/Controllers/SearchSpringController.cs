@@ -22,7 +22,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         [HttpGet]
         public async Task<IActionResult> Query(string term)
         {
-            var results = await _searchSpringService.SearchAsync(term);
+            var sessionId = GetSearchSpringSessionId();
+            var results = await _searchSpringService.SearchAsync(term, sessionId: sessionId);
             return Json(results);
         }
 
@@ -31,8 +32,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
 
-            var results = await _searchSpringService.SearchAsync(q);
+            var sessionId = GetSearchSpringSessionId();
+            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId);
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
+        }
+
+        private string GetSearchSpringSessionId()
+        {
+            if (Request.Cookies.TryGetValue("_ss_s", out var sessionId))
+                return sessionId;
+
+            // Fallback: generate one if needed (optional)
+            // sessionId = Guid.NewGuid().ToString();
+            // Response.Cookies.Append("_ss_s", sessionId);
+            return sessionId;
         }
 
         [Route("searchspring/suggest")]
