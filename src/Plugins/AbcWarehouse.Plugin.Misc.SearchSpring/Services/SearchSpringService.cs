@@ -45,9 +45,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             Console.WriteLine($"[SearchSpring] Response ({(int)response.StatusCode}): {json}");
 
             if (!response.IsSuccessStatusCode)
-            {
                 throw new Exception($"Searchspring returned error {response.StatusCode}: {json}\nURL: {url}");
-            }
 
             try
             {
@@ -57,29 +55,36 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                // Parse products
-                if (root.TryGetProperty("results", out var resultsElement))
+                // Safe parse: results
+                if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var item in resultsElement.EnumerateArray())
                     {
                         var model = new SearchSpringProductModel
                         {
-                            Name = item.GetProperty("name").GetString(),
-                            ProductUrl = item.GetProperty("url").GetString(),
-                            ImageUrl = item.GetProperty("imageUrl").GetString(),
+                            Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
+                            ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
+                            ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
                             Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : ""
                         };
-
                         productList.Add(model);
                     }
                 }
-
-                // Parse pagination
-                if (root.TryGetProperty("pagination", out var pagination))
+                else
                 {
-                    page = pagination.GetProperty("currentPage").GetInt32();
-                    pageSize = pagination.GetProperty("pageSize").GetInt32();
-                    totalResults = pagination.GetProperty("totalResults").GetInt32();
+                    Console.WriteLine("[SearchSpring] 'results' array not found or malformed.");
+                }
+
+                // Safe parse: pagination
+                if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
+                {
+                    page = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
+                    pageSize = pagination.TryGetProperty("pageSize", out var sizeProp) ? sizeProp.GetInt32() : 24;
+                    totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
+                }
+                else
+                {
+                    Console.WriteLine("[SearchSpring] 'pagination' object not found or malformed.");
                 }
 
                 return new SearchResultModel
@@ -93,8 +98,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"[SearchSpring] JSON Deserialization failed: {ex.Message}");
+                Console.WriteLine($"[SearchSpring] Raw JSON for debugging:\n{json}");
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+
     }
 }
