@@ -8,7 +8,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         public string Name { get; set; }
         public string Url { get; set; }
         public string ImageUrl { get; set; }
-        public decimal Price { get; set; }
+        public string Price { get; set; }
     }
 
     public class SearchSpringResponse

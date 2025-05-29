@@ -21,7 +21,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         public string Name { get; set; }
 
         [JsonPropertyName("price")]
-        public decimal Price { get; set; }
+        public string Price { get; set; }
 
         [JsonPropertyName("imageUrl")]
         public string ImageUrl { get; set; }
