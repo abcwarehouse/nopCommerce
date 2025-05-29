@@ -17,17 +17,23 @@
 }
 else
 {
-    <div class="product-grid">
-        @foreach (var product in Model.Results)
-        {
-            <div class="product-item">
-                <a href="@product.ProductUrl">
-                    <img src="@product.ImageUrl" alt="@product.Name" />
-                    <p>@product.Name</p>
-                    <p>Price: @product.Price</p>
-                </a>
-            </div>
-        }
+    <div class="item-grid">
+        <div class="item-box">
+            @foreach (var product in Model.Results)
+            {
+                <div class="product-item">
+                    <a href="@product.ProductUrl">
+                        <div class="picture">
+                            <div class="image-container">
+                                <img src="@product.ImageUrl" alt="@product.Name" />
+                            </div>
+                        </div>
+                        <h2 class="product-title">@product.Name</h2>
+                        <div class="prices">Price: @product.Price</div>
+                    </a>
+                </div>
+            }
+        </div>
     </div>
 
 
