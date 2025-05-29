@@ -26,16 +26,5 @@ else
         }
     </div>
 
-    <div class="pagination">
-        Page @Model.PageNumber of @Model.TotalPages
 
-        @if (Model.PageNumber > 1)
-        {
-            <a href="?q=@Request.Query["q"]&page=@(Model.PageNumber - 1)">Previous</a>
-        }
-        @if (Model.PageNumber < Model.TotalPages)
-        {
-            <a href="?q=@Request.Query["q"]&page=@(Model.PageNumber + 1)">Next</a>
-        }
-    </div>
 }
