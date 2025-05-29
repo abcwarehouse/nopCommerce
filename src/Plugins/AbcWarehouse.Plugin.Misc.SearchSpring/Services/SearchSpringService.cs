@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
@@ -27,16 +26,16 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             var client = _httpClientFactory.CreateClient();
 
             var url = $"{_baseUrl}/api/search/search.json?" +
-                    $"q={WebUtility.UrlEncode(query)}" +
-                    $"&resultsFormat=json" +
-                    $"&resultsPerPage=24" +
-                    $"&page=1" +
-                    $"&redirectResponse=minimal";
+                      $"q={WebUtility.UrlEncode(query)}" +
+                      $"&resultsFormat=json" +
+                      $"&resultsPerPage=24" +
+                      $"&page=1" +
+                      $"&redirectResponse=minimal";
 
-            // Append session ID if available
             if (!string.IsNullOrEmpty(sessionId))
                 url += $"&ss-sessionId={WebUtility.UrlEncode(sessionId)}";
-                url += $"&siteId={WebUtility.UrlEncode(siteId)}";
+
+            url += $"&siteId={WebUtility.UrlEncode(siteId)}";
 
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
@@ -50,15 +49,46 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception($"Searchspring returned error {response.StatusCode}: {json}\nURL: {url}");
             }
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
             try
             {
-                var result = JsonSerializer.Deserialize<SearchResultModel>(json, options);
-                return result;
+                var productList = new List<SearchSpringProductModel>();
+                int page = 1, pageSize = 24, totalResults = 0;
+
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                // Parse products
+                if (root.TryGetProperty("results", out var resultsElement))
+                {
+                    foreach (var item in resultsElement.EnumerateArray())
+                    {
+                        var model = new SearchSpringProductModel
+                        {
+                            Name = item.GetProperty("name").GetString(),
+                            ProductUrl = item.GetProperty("url").GetString(),
+                            ImageUrl = item.GetProperty("imageUrl").GetString(),
+                            Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : ""
+                        };
+
+                        productList.Add(model);
+                    }
+                }
+
+                // Parse pagination
+                if (root.TryGetProperty("pagination", out var pagination))
+                {
+                    page = pagination.GetProperty("currentPage").GetInt32();
+                    pageSize = pagination.GetProperty("pageSize").GetInt32();
+                    totalResults = pagination.GetProperty("totalResults").GetInt32();
+                }
+
+                return new SearchResultModel
+                {
+                    Results = productList,
+                    PageNumber = page,
+                    PageSize = pageSize,
+                    TotalResults = totalResults
+                };
             }
             catch (Exception ex)
             {
@@ -66,6 +96,5 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-
     }
 }

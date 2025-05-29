@@ -1,54 +1,36 @@
-@model List<AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchSpringProductModel>
+@model AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel
 
-<div class="results-wrapper">
-    <h2>Search Results</h2>
-    <div id="searchResults">Loading...</div>
-</div>
+<h2>Search Results</h2>
 
-<script>
-    function runSearchspringSearch(query) {
-        const trackingParams = window.intellisuggest.getTrackingParams();
-        const userId = trackingParams?.userId;
-        const sessionId = trackingParams?.sessionId;
-
-        if (!userId || !sessionId) {
-            console.warn("Searchspring session/user ID not ready yet.");
-            return;
+@if (!Model.Results.Any())
+{
+    <p>No products found.</p>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var product in Model.Results)
+        {
+            <div class="product-item">
+                <a href="@product.ProductUrl">
+                    <img src="@product.ImageUrl" alt="@product.Name" />
+                    <p>@product.Name</p>
+                    <p>Price: @product.Price</p>
+                </a>
+            </div>
         }
+    </div>
 
-        const API_URL = `https://api.searchspring.net/api/search/search.json?siteId=4lt84w&q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}&resultsPerPage=24&page=1`;
+    <div class="pagination">
+        Page @Model.PageNumber of @Model.TotalPages
 
-        fetch(API_URL)
-            .then(res => {
-                if (!res.ok) return res.text().then(text => { throw new Error(text); });
-                return res.json();
-            })
-            .then(data => {
-                const resultsContainer = document.getElementById('searchResults');
-                resultsContainer.innerHTML = '';
-
-                if (data?.results?.length > 0) {
-                    data.results.forEach(product => {
-                        const productDiv = document.createElement('div');
-                        productDiv.innerHTML = `
-                            <h3>${product.name}</h3>
-                            <p>${product.msrp ? '$' + product.msrp : 'No price available'}</p>
-                            <img src="${product.thumb_image}" alt="${product.name}" />
-                        `;
-                        resultsContainer.appendChild(productDiv);
-                    });
-                } else {
-                    resultsContainer.textContent = 'No results found.';
-                }
-            })
-            .catch(err => {
-                console.error('Searchspring API error:', err);
-                document.getElementById('searchResults').textContent = 'An error occurred while fetching search results.';
-            });
-    }
-
-    document.addEventListener('intellisuggest-ready', () => {
-        const query = new URLSearchParams(window.location.search).get('q');
-        if (query) runSearchspringSearch(query);
-    });
-</script>
+        @if (Model.PageNumber > 1)
+        {
+            <a href="?q=@Request.Query["q"]&page=@(Model.PageNumber - 1)">Previous</a>
+        }
+        @if (Model.PageNumber < Model.TotalPages)
+        {
+            <a href="?q=@Request.Query["q"]&page=@(Model.PageNumber + 1)">Next</a>
+        }
+    </div>
+}

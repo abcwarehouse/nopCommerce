@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -5,40 +6,18 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 {
     public class SearchResultModel
     {
-        [JsonPropertyName("results")]
-        public List<SearchProductModel> Results { get; set; }
+        public List<SearchSpringProductModel> Results { get; set; } = new();
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int TotalResults { get; set; }
 
-        [JsonPropertyName("pagination")]
-        public PaginationModel Pagination { get; set; }
-    }
-
-    public class SearchProductModel
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("price")]
-        public string Price { get; set; }
-
-        [JsonPropertyName("imageUrl")]
-        public string ImageUrl { get; set; }
-
-        [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalResults / PageSize);
     }
 
     public class PaginationModel
     {
-        [JsonPropertyName("totalResults")]
         public int TotalResults { get; set; }
-
-        [JsonPropertyName("page")]
         public int Page { get; set; }
-
-        [JsonPropertyName("pageSize")]
         public int PageSize { get; set; }
     }
 }
