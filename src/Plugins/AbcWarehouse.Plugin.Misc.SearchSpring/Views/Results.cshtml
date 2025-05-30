@@ -25,14 +25,15 @@
                 SeName = productUrl
             };
 
-            // Optionally: Load the image
-            var picture = await pictureService.GetPicturesByProductIdAsync(product.Id, 1);
-            if (picture.Count > 0)
+            var pictures = await pictureService.GetPicturesByProductIdAsync(product.Id, 1);
+            if (pictures.Count > 0)
             {
-                var picModel = await pictureService.GetPictureUrlAsync(picture[0]);
+                var picTuple = await pictureService.GetPictureUrlAsync(pictures[0]);
+                var pictureUrl = picTuple.Url;
+
                 model.DefaultPictureModel = new PictureModel
                 {
-                    ImageUrl = picModel,
+                    ImageUrl = pictureUrl,
                     Title = product.Name,
                     AlternateText = product.Name
                 };
