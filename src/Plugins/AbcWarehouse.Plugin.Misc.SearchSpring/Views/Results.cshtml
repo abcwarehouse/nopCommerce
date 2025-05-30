@@ -1,7 +1,9 @@
 @model AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel
 @inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel>
+@inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Nop.Services.Catalog.IProductService productService
 @using Nop.Web.Models.Catalog
+@using Nop.Core.Domain.Catalog
 @using Nop.Web.Factories
 @using Nop.Core.Infrastructure
 
@@ -11,14 +13,14 @@
 
 @{
     var query = Context.Request.Query["q"].ToString();
-    var productModelFactory = EngineContext.Current.Resolve<IProductModelFactory>();
-    var matchingProducts = new List<Nop.Core.Domain.Catalog.Product>();
 }
 
 <h2>Search Results</h2>
 
 @{
-foreach (var item in Model.Results)
+    var matchingProducts = new List<Product>();
+
+    foreach (var item in Model.Results)
     {
         var product = await productService.GetProductBySkuAsync(item.Sku);
         if (product != null)
@@ -36,7 +38,7 @@ foreach (var item in Model.Results)
 
 @foreach (var productModel in productBoxes)
 {
-    await Html.RenderPartialAsync("_ProductBox", productModel);
+    @await Html.PartialAsync("_ProductBox", productModel)
 }
 
 
