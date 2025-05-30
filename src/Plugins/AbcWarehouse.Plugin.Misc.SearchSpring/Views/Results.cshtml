@@ -12,18 +12,31 @@
 @{
     var query = Context.Request.Query["q"].ToString();
     var productModelFactory = EngineContext.Current.Resolve<IProductModelFactory>();
+    var matchingProducts = new List<Nop.Core.Domain.Catalog.Product>();
 }
 
 <h2>Search Results</h2>
 
-@foreach (var searchspringProduct in Model.Results)
-{
-    var product = await productService.GetProductBySkuAsync(searchspringProduct.Sku);
-    if (product != null)
+@{
+foreach (var item in Model.Results)
     {
-        var productBoxModel = await productModelFactory.PrepareProductOverviewModelAsync(product, false);
-        await Html.RenderPartialAsync("_ProductBox", productBoxModel);
+        var product = await productService.GetProductBySkuAsync(item.Sku);
+        if (product != null)
+        {
+            matchingProducts.Add(product);
+        }
     }
+
+    var productBoxes = productModelFactory.PrepareProductOverviewModels(
+        matchingProducts,
+        preparePriceModel: true,
+        preparePictureModel: true
+    );
+}
+
+@foreach (var productModel in productBoxes)
+{
+    await Html.RenderPartialAsync("_ProductBox", productModel);
 }
 
 
