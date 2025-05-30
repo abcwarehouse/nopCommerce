@@ -48,9 +48,12 @@
                                 };
                             }
 
-                            @await Html.PartialAsync("_ProductBox", model)
+                            <div class="item-box">
+                                @await Html.PartialAsync("_ProductBox", model)
+                            </div>
                         }
                     }
+
                 }
             </div>
         </div>
