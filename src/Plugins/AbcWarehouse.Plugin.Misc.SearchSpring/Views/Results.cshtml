@@ -1,5 +1,9 @@
 @model AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel
 @inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel>
+@inject Nop.Services.Catalog.IProductService productService
+@using Nop.Web.Models.Catalog
+@using Nop.Web.Factories
+@using Nop.Core.Infrastructure
 
 @{
     Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
@@ -7,9 +11,24 @@
 
 @{
     var query = Context.Request.Query["q"].ToString();
+    var productModelFactory = EngineContext.Current.Resolve<IProductModelFactory>();
 }
 
 <h2>Search Results</h2>
+
+@foreach (var searchspringProduct in Model.Results)
+{
+    var product = await productService.GetProductBySkuAsync(searchspringProduct.Sku);
+    if (product != null)
+    {
+        var productBoxModel = await productModelFactory.PrepareProductOverviewModelAsync(product, false);
+        await Html.RenderPartialAsync("_ProductBox", productBoxModel);
+    }
+}
+
+
+
+
 
 @if (!Model.Results.Any())
 {
@@ -46,11 +65,6 @@ else
                                         <span class="price actual-price">@product.Price</span>
                                     </div>
                                 </div>
-                                <!-- Add to Cart Form -->
-                                <form method="post" asp-controller="SearchSpring" asp-action="AddToCart">
-                                    <input type="hidden" name="sku" value="@product.Sku" />
-                                    <button type="submit">Add to Cart</button>
-                                </form>
                             </div>
                         </div>
                     }

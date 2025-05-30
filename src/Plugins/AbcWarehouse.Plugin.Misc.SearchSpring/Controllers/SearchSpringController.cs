@@ -5,12 +5,6 @@ using System.Net.Http;
 using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
-using Nop.Services.Catalog;
-using Nop.Services.Orders;
-using Nop.Services.Customers;
-using Nop.Core;
-using Nop.Core.Domain.Orders;
-using System.Linq;
 
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
@@ -19,28 +13,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
     {
         private readonly ISearchSpringService _searchSpringService;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IProductService _productService;
-        private readonly IShoppingCartService _shoppingCartService;
-        private readonly IWorkContext _workContext;
-        private readonly ICustomerService _customerService;
-        private readonly IStoreContext _storeContext;
 
-        public SearchSpringController(
-        ISearchSpringService searchSpringService,
-        IHttpClientFactory httpClientFactory,
-        IProductService productService,
-        IShoppingCartService shoppingCartService,
-        IWorkContext workContext,
-        ICustomerService customerService,
-        IStoreContext storeContext)
+
+        public SearchSpringController(ISearchSpringService searchSpringService, IHttpClientFactory httpClientFactory)
         {
             _searchSpringService = searchSpringService;
             _httpClientFactory = httpClientFactory;
-            _productService = productService;
-            _shoppingCartService = shoppingCartService;
-            _workContext = workContext;
-            _customerService = customerService;
-            _storeContext = storeContext;
         }
 
         [HttpGet]
@@ -117,33 +95,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var content = await response.Content.ReadAsStringAsync();
             return Content(content, "application/json");
         }
-
-        [HttpPost]
-        public async Task<IActionResult> AddToCart(string sku)
-        {
-            var product = await _productService.GetProductBySkuAsync(sku);
-            if (product == null)
-                return NotFound();
-
-            var customer = await _workContext.GetCurrentCustomerAsync();
-            var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
-
-            var warnings = await _shoppingCartService.AddToCartAsync(
-                customer,
-                product,
-                ShoppingCartType.ShoppingCart,
-                storeId,
-                string.Empty, // attributes
-                1);           // quantity
-
-            if (warnings.Any())
-            {
-                TempData["AddToCartError"] = string.Join(", ", warnings);
-            }
-
-            return RedirectToAction("Search", "SearchSpring", new { query = "" }); // Adjust redirect as needed
-        }
-
 
     }
 }
