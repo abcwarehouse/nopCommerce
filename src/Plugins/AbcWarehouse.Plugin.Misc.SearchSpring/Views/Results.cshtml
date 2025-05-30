@@ -14,48 +14,55 @@
     Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
 }
 
-<div class="products-container">
-    <div class="products-wrapper">
-        <div class="product-grid">
-            <div class="item-grid">
-                @{
+@if (!Model.Results.Any())
+{
+    <p>No products found.</p>
+}
+else
+{
+    <div class="products-container">
+        <div class="products-wrapper">
+            <div class="product-grid">
+                <div class="item-grid">
+                    @{
 
-                    foreach (var item in Model.Results)
-                    {
-                        var product = await productService.GetProductBySkuAsync(item.Sku);
-                        if (product != null)
+                        foreach (var item in Model.Results)
                         {
-                            var productUrl = await urlRecordService.GetSeNameAsync(product);
-
-                            var model = new ProductOverviewModel
+                            var product = await productService.GetProductBySkuAsync(item.Sku);
+                            if (product != null)
                             {
-                                Id = product.Id,
-                                Name = product.Name,
-                                SeName = productUrl
-                            };
+                                var productUrl = await urlRecordService.GetSeNameAsync(product);
 
-                            var pictures = await pictureService.GetPicturesByProductIdAsync(product.Id, 1);
-                            if (pictures.Count > 0)
-                            {
-                                var picTuple = await pictureService.GetPictureUrlAsync(pictures[0]);
-                                var pictureUrl = picTuple.Url;
-
-                                model.DefaultPictureModel = new PictureModel
+                                var model = new ProductOverviewModel
                                 {
-                                    ImageUrl = pictureUrl,
-                                    Title = product.Name,
-                                    AlternateText = product.Name
+                                    Id = product.Id,
+                                    Name = product.Name,
+                                    SeName = productUrl
                                 };
+
+                                var pictures = await pictureService.GetPicturesByProductIdAsync(product.Id, 1);
+                                if (pictures.Count > 0)
+                                {
+                                    var picTuple = await pictureService.GetPictureUrlAsync(pictures[1]);
+                                    var pictureUrl = picTuple.Url;
+
+                                    model.DefaultPictureModel = new PictureModel
+                                    {
+                                        ImageUrl = pictureUrl,
+                                        Title = product.Name,
+                                        AlternateText = product.Name
+                                    };
+                                }
+
+                                <div class="item-box">
+                                    @await Html.PartialAsync("_ProductBox", model)
+                                </div>
                             }
-
-                            <div class="item-box">
-                                @await Html.PartialAsync("_ProductBox", model)
-                            </div>
                         }
-                    }
 
-                }
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
