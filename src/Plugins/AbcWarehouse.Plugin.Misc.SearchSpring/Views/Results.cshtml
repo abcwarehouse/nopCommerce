@@ -21,9 +21,10 @@ else
         <div class="products-wrapper">
             <div class="product-grid">
                 <div class="item-grid">
-                    <div class="item-box">
-                        @foreach (var product in Model.Results)
-                        {
+                    
+                    @foreach (var product in Model.Results)
+                    {
+                        <div class="item-box">
                             <div class="product-item">
                                 
                                     <div class="picture">
@@ -36,8 +37,8 @@ else
                                     <h2 class="product-title"><a href="@product.ProductUrl">@product.Name</a></h2>
                                     <div class="prices">Price: @product.Price</div>
                             </div>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
