@@ -17,29 +17,33 @@
 }
 else
 {
-    <div class="item-grid">
-        <div class="item-box">
-            @foreach (var product in Model.Results)
-            {
-                <div class="product-item">
-                    <a href="@product.ProductUrl">
-                        <div class="picture">
-                            <a href="@product.ProductUrl">
-                                <div class="image-container">
-                                    <img src="@product.ImageUrl" alt="@product.Name" />
-                                </div>
-                                <div class="image-container">
-                                    <img src="@product.ImageUrl" alt="@product.Name" />
-                                </div>
-                            </a>
+    <div class="products-container">
+        <div class="products-wrapper">
+            <div class="product-grid">
+                <div class="item-grid">
+                    <div class="item-box">
+                        @foreach (var product in Model.Results)
+                        {
+                            <div class="product-item">
+                                <a href="@product.ProductUrl">
+                                    <div class="picture">
+                                        <a href="@product.ProductUrl">
+                                            <div class="image-container">
+                                                <img src="@product.ImageUrl" alt="@product.Name" />
+                                            </div>
+                                            <div class="image-container">
+                                                <img src="@product.ImageUrl" alt="@product.Name" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <h2 class="product-title"><a href="@product.ProductUrl">@product.Name</h2>
+                                    <div class="prices">Price: @product.Price</div>
+                                </a>
+                            </div>
                         </div>
-                        <h2 class="product-title"><a href="@product.ProductUrl">@product.Name</h2>
-                        <div class="prices">Price: @product.Price</div>
-                    </a>
+                    }
                 </div>
-            }
+            </div>
         </div>
     </div>
-
-
-}
+    }
