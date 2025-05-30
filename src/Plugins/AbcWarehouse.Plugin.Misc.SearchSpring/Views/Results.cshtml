@@ -36,12 +36,15 @@ else
                                         </div>
                                     </a>
                                 </div>
-                                <h2 class="product-title"><a href="@product.ProductUrl">@product.Name</a></h2>
-                                <div class="prices">
-                                    <span class="price old-price">Compare at @product.RetailPrice</span>
-                                    <span class="price you-save">$124 Off</span>
-                                    <span class="price-sale-tag">Sale</span>
-                                    <span class="price actual-price">@product.Price</span>
+                                <div class="add-info">
+                                    <p class="item-number item-number-style">@product.Sku</p>
+                                    <h2 class="product-title"><a href="@product.ProductUrl">@product.Name</a></h2>
+                                    <div class="prices">
+                                        <span class="price old-price">Compare at @product.RetailPrice</span>
+                                        <span class="price you-save">$124 Off</span>
+                                        <span class="price-sale-tag">Sale</span>
+                                        <span class="price actual-price">@product.Price</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
