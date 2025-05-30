@@ -11,6 +11,10 @@
 @using Nop.Web.Models.Media
 
 @{
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
+}
+
+@{
     foreach (var item in Model.Results)
     {
         var product = await productService.GetProductBySkuAsync(item.Sku);
