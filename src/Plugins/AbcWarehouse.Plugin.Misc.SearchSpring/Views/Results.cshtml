@@ -1,21 +1,13 @@
 @model AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel
-@inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<AbcWarehouse.Plugin.Misc.SearchSpring.Models.SearchResultModel>
-@inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Nop.Services.Catalog.IProductService productService
+@inject Nop.Services.Media.IPictureService pictureService
+@inject Nop.Services.Localization.ILocalizationService localizationService
+@inject Nop.Services.Seo.IUrlRecordService urlRecordService
+@inject Nop.Web.Factories.IProductModelFactory productModelFactory
+@inject Nop.Core.IWebHelper webHelper
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Catalog
-@using Nop.Web.Factories
-@using Nop.Core.Infrastructure
-
-@{
-    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
-}
-
-@{
-    var query = Context.Request.Query["q"].ToString();
-}
-
-<h2>Search Results</h2>
+@using Nop.Web.Extensions
 
 @{
     foreach (var item in Model.Results)
@@ -23,65 +15,29 @@
         var product = await productService.GetProductBySkuAsync(item.Sku);
         if (product != null)
         {
-            // Prepare product overview model (non-async method)
-            var productModel = productModelFactory.PrepareProductOverviewModel(
-                product,
-                preparePriceModel: true,
-                preparePictureModel: true,
-                productThumbPictureSize: null,
-                prepareSpecificationAttributes: false,
-                forceRedirectionAfterAddingToCart: false
-            );
+            var productUrl = await urlRecordService.GetSeNameAsync(product);
 
-            @await Html.PartialAsync("_ProductBox", productModel)
+            var model = new ProductOverviewModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                SeName = productUrl
+            };
+
+            // Optionally: Load the image
+            var picture = await pictureService.GetPicturesByProductIdAsync(product.Id, 1);
+            if (picture.Count > 0)
+            {
+                var picModel = await pictureService.GetPictureUrlAsync(picture[0]);
+                model.DefaultPictureModel = new PictureModel
+                {
+                    ImageUrl = picModel,
+                    Title = product.Name,
+                    AlternateText = product.Name
+                };
+            }
+
+            @await Html.PartialAsync("_ProductBox", model)
         }
     }
 }
-
-
-
-
-
-@if (!Model.Results.Any())
-{
-    <p>No products found.</p>
-}
-else
-{
-    <div class="products-container">
-        <div class="products-wrapper">
-            <div class="product-grid">
-                <div class="item-grid">
-                    
-                    @foreach (var product in Model.Results)
-                    {
-                        <div class="item-box">
-                            <div class="product-item">
-                                <h2 class="product-title">
-                                    <a href="@product.ProductUrl"><span>@product.Brand</span><span class="man-no">@product.ItemNumber</span></a>
-                                </h2>
-                                <div class="picture">
-                                    <a href="@product.ProductUrl">
-                                        <div class="image-container">
-                                            <img src="@product.ImageUrl" alt="@product.Name" />
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="add-info">
-                                    <p class="item-number item-number-style">@product.Sku</p>
-                                    <h2 class="product-title"><a href="@product.ProductUrl">@product.Name</a></h2>
-                                    <div class="prices">
-                                        <span class="price old-price">Compare at @product.RetailPrice</span>
-                                        <span class="price you-save">$ Off</span>
-                                        <span class="price-sale-tag">Sale</span>
-                                        <span class="price actual-price">@product.Price</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-    }
