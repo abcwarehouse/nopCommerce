@@ -18,27 +18,24 @@
 <h2>Search Results</h2>
 
 @{
-    var matchingProducts = new List<Product>();
-
     foreach (var item in Model.Results)
     {
         var product = await productService.GetProductBySkuAsync(item.Sku);
         if (product != null)
         {
-            matchingProducts.Add(product);
+            // Prepare product overview model (non-async method)
+            var productModel = productModelFactory.PrepareProductOverviewModel(
+                product,
+                preparePriceModel: true,
+                preparePictureModel: true,
+                productThumbPictureSize: null,
+                prepareSpecificationAttributes: false,
+                forceRedirectionAfterAddingToCart: false
+            );
+
+            @await Html.PartialAsync("_ProductBox", productModel)
         }
     }
-
-    var productBoxes = productModelFactory.PrepareProductOverviewModels(
-        matchingProducts,
-        preparePriceModel: true,
-        preparePictureModel: true
-    );
-}
-
-@foreach (var productModel in productBoxes)
-{
-    @await Html.PartialAsync("_ProductBox", productModel)
 }
 
 
