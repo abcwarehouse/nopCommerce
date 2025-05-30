@@ -62,10 +62,16 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     {
                         var model = new SearchSpringProductModel
                         {
+                            Id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
                             Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
                             ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
                             ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
-                            Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : ""
+                            Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
+                            Brand = item.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
+                            Category = item.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
+                            ItemNumber = item.TryGetProperty("item_number", out var itemNumProp) ? itemNumProp.GetString() : "",
+                            RetailPrice = item.TryGetProperty("retail_price", out var retailPriceProp) ? retailPriceProp.GetString() : "",
+                            Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
                         };
                         productList.Add(model);
                     }

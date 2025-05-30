@@ -10,6 +10,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         public string ImageUrl { get; set; }
         public string Price { get; set; }
         public string ProductUrl { get; set; }
+        public string Brand { get; set; }
+        public string Category { get; set; }
+        public string ItemNumber { get; set; }
+        public string RetailPrice { get; set; }
+        public string Sku { get; set; }
     }
 
     public class SearchSpringResponse
