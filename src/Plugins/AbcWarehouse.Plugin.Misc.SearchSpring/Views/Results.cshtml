@@ -48,18 +48,13 @@ else
 
                                     model.DefaultPictureModel = new PictureModel
                                     {
-                                        Id = product.Id,
-                                        Name = product.Name,
-                                        SeName = productUrl,
                                         ImageUrl = pictureUrl,
                                         Title = product.Name,
                                         AlternateText = product.Name
                                     };
                                 }
 
-                                <div class="item-box">
-                                    @await Html.PartialAsync("_ProductBox", model)
-                                </div>
+                                @await Html.PartialAsync("_ProductBox", model)
                             }
                         }
 
