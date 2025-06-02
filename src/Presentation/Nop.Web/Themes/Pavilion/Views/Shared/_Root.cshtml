@@ -144,51 +144,69 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.querySelector('#small-searchterms'); // or your custom input ID
-        const resultsContainer = document.createElement('div');
-        resultsContainer.className = 'search-autocomplete';
-        searchInput.parentNode.appendChild(resultsContainer);
+        const searchInput = document.getElementById('searchInput');
+        const resultsContainer = document.getElementById('autocomplete-results');
+
+        if (!searchInput || !resultsContainer) return;
 
         let debounceTimeout;
 
         searchInput.addEventListener('input', function () {
             clearTimeout(debounceTimeout);
-            const query = this.value;
+            const query = searchInput.value.trim();
 
             if (query.length < 2) {
                 resultsContainer.innerHTML = '';
+                resultsContainer.style.display = 'none';
                 return;
             }
 
             debounceTimeout = setTimeout(() => {
-                fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}`)
-                    .then(res => res.json())
+                fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}`)
+                    .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
                     .then(data => {
-                        console.log("Suggest API raw response:", text);
-                        const suggestions = data.search?.suggestions || [];
+                        const suggestions = data?.search?.suggestions || [];
 
                         resultsContainer.innerHTML = '';
+                        resultsContainer.style.display = 'block';
+
+                        if (suggestions.length === 0) {
+                            resultsContainer.innerHTML = '<div class="autocomplete-item">No suggestions found</div>';
+                            return;
+                        }
+
                         suggestions.forEach(s => {
                             const item = document.createElement('div');
                             item.textContent = s.value;
                             item.className = 'autocomplete-item';
+
                             item.addEventListener('click', () => {
                                 searchInput.value = s.value;
-                                document.querySelector('form[action="/search"]').submit();
+                                resultsContainer.innerHTML = '';
+                                document.getElementById('searchForm').submit();
                             });
+
                             resultsContainer.appendChild(item);
                         });
+                    })
+                    .catch(err => {
+                        console.error("Autocomplete error:", err);
+                        resultsContainer.innerHTML = '';
+                        resultsContainer.style.display = 'none';
                     });
-            }, 300);
+            }, 250);
         });
 
         document.addEventListener('click', function (e) {
             if (!resultsContainer.contains(e.target) && e.target !== searchInput) {
                 resultsContainer.innerHTML = '';
+                resultsContainer.style.display = 'none';
             }
         });
     });
 </script>
+
+
 
 
 @await Component.InvokeAsync("EuCookieLaw")
