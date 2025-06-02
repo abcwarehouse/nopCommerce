@@ -142,6 +142,53 @@
 
     intellisuggest('track', 'pageview');
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.querySelector('#small-searchterms'); // or your custom input ID
+        const resultsContainer = document.createElement('div');
+        resultsContainer.className = 'search-autocomplete';
+        searchInput.parentNode.appendChild(resultsContainer);
+
+        let debounceTimeout;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(debounceTimeout);
+            const query = this.value;
+
+            if (query.length < 2) {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            debounceTimeout = setTimeout(() => {
+                fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const suggestions = data.search?.suggestions || [];
+
+                        resultsContainer.innerHTML = '';
+                        suggestions.forEach(s => {
+                            const item = document.createElement('div');
+                            item.textContent = s.value;
+                            item.className = 'autocomplete-item';
+                            item.addEventListener('click', () => {
+                                searchInput.value = s.value;
+                                document.querySelector('form[action="/search"]').submit();
+                            });
+                            resultsContainer.appendChild(item);
+                        });
+                    });
+            }, 300);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!resultsContainer.contains(e.target) && e.target !== searchInput) {
+                resultsContainer.innerHTML = '';
+            }
+        });
+    });
+</script>
+
 
 @await Component.InvokeAsync("EuCookieLaw")
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })
