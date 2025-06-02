@@ -74,6 +74,11 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                 "FREE Delivery, Set-Up and Removal on any mattress purchase set $697 or more."
             );
 
+            await _localizationService.AddOrUpdateLocaleResourceAsync(
+                "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailableNoAppliances",
+                "Home delivery for the zip code entered is not available through ABC Warehouse."
+            );
+
             await base.InstallAsync();
         }
 
