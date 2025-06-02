@@ -17,6 +17,8 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
         [NopResourceDisplayName("Admin.AbcPromo.Fields.IsBrandOverridden")]
         public bool IsBrandOverridden { get; set; }
 
+        public int BrandId { get; set; }
+
         public IList<SelectListItem> AvailableBrands { get; set; }
     }
 }

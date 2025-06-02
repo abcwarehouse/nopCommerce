@@ -84,9 +84,10 @@
                             new ColumnProperty(nameof(AbcPromoModel.Manufacturer))
                             {
                                 Title = "Brand",
-                                ClassName =  NopColumnClassDefaults.Button,
                                 Width = "50",
-                                Render = new RenderCustom("renderBrandInfo")
+                                @* ABC: Reenable when bringing in brand override functionality
+                                   ClassName =  NopColumnClassDefaults.Button,
+                                   Render = new RenderCustom("renderBrandInfo") *@
                             },
                             new ColumnProperty(nameof(AbcPromoModel.Slug))
                             {
