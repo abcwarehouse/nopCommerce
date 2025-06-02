@@ -162,7 +162,7 @@
             }
 
             debounceTimeout = setTimeout(() => {
-                fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}`)
+                fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
                     .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
                     .then(data => {
                         const suggestions = data?.search?.suggestions || [];
