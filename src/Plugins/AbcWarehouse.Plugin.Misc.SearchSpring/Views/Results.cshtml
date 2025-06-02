@@ -36,8 +36,7 @@ else
                                 var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
                                     new[] { product },
                                     true,
-                                    true,
-                                    pictureSize: 200); // or whatever size you need
+                                    true);
 
                                 var model = productOverviewModels.FirstOrDefault();
 
