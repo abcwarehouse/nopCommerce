@@ -147,10 +147,6 @@
         const searchInput = document.getElementById('searchInput');
         const resultsContainer = document.getElementById('autocomplete-results');
 
-        const trackingParams = window.intellisuggest.getTrackingParams();
-        const userId = trackingParams?.userId;
-        const sessionId = trackingParams?.sessionId;
-
         if (!searchInput || !resultsContainer) return;
 
         let debounceTimeout;
@@ -166,6 +162,10 @@
             }
 
             debounceTimeout = setTimeout(() => {
+                const tracking = window.searchspringTracking || {};
+                const userId = tracking.userId || '';
+                const sessionId = tracking.sessionId || '';
+
                 fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
                     .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
                     .then(data => {

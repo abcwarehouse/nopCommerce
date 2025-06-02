@@ -48,11 +48,13 @@
     const resultsContainer = document.getElementById('autocomplete-results');
     const baseUrl = '@searchBaseUrl';
 
-    // Only run autocomplete after intellisuggest is ready
-    document.addEventListener('intellisuggest-ready', () => {
-        const trackingParams = window.intellisuggest.getTrackingParams();
-        const userId = trackingParams?.userId;
-        const sessionId = trackingParams?.sessionId;
+        document.addEventListener('intellisuggest-ready', () => {
+            const trackingParams = window.intellisuggest.getTrackingParams();
+            window.searchspringTracking = {
+                userId: trackingParams?.userId,
+                sessionId: trackingParams?.sessionId
+            };
+        });
 
         if (!userId || !sessionId) {
             console.warn("Searchspring user/session ID missing.");
