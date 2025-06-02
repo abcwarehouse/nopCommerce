@@ -147,6 +147,10 @@
         const searchInput = document.getElementById('searchInput');
         const resultsContainer = document.getElementById('autocomplete-results');
 
+        const trackingParams = window.intellisuggest.getTrackingParams();
+        const userId = trackingParams?.userId;
+        const sessionId = trackingParams?.sessionId;
+
         if (!searchInput || !resultsContainer) return;
 
         let debounceTimeout;
