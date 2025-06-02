@@ -33,30 +33,20 @@ else
                             {
                                 var productUrl = await urlRecordService.GetSeNameAsync(product);
 
-                                var model = new ProductOverviewModel
-                                {
-                                    Id = product.Id,
-                                    Name = product.Name,
-                                    SeName = productUrl
-                                };
+                                var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                    new[] { product },
+                                    true,
+                                    true,
+                                    pictureSize: 200); // or whatever size you need
 
-                                var pictures = await pictureService.GetPicturesByProductIdAsync(product.Id, 1);
-                                if (pictures.Count > 0)
-                                {
-                                    var picTuple = await pictureService.GetPictureUrlAsync(pictures[0]);
-                                    var pictureUrl = picTuple.Url;
+                                var model = productOverviewModels.FirstOrDefault();
 
-                                    model.DefaultPictureModel = new PictureModel
-                                    {
-                                        ImageUrl = pictureUrl,
-                                        Title = product.Name,
-                                        AlternateText = product.Name
-                                    };
+                                if (model != null)
+                                {
+                                    <div class="item-box">
+                                        @await Html.PartialAsync("_ProductBox", model)
+                                    </div>
                                 }
-
-                                <div class="item-box">
-                                    @await Html.PartialAsync("_ProductBox", model)
-                                </div>
                             }
                         }
 
