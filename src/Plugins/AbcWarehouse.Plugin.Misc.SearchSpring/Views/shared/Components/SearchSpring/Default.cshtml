@@ -31,7 +31,6 @@
         z-index: 999;
         max-height: 200px;
         overflow-y: auto;
-        display: none;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Added for better visibility */
     }
 
@@ -142,7 +141,7 @@
             }
 
 
-            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
+            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'block';
 
         } catch (err) {
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
@@ -171,7 +170,7 @@
 
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
-            resultsContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
             input.blur(); // Remove focus from input
         }
     });
