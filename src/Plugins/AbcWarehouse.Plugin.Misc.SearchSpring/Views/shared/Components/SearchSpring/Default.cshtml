@@ -32,7 +32,7 @@
         max-height: 200px;
         overflow-y: auto;
         display: none;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Added for better visibility */
+        box-shadow: 0 4px 8px rgba[0](0,0,0,0.1);
     }
 
     .suggestion-item {
@@ -57,6 +57,7 @@
 
     let intellisuggestIsReady = false;
 
+    // Wait for IntelliSuggest to be ready
     document.addEventListener('intellisuggest-ready', function () {
         const trackingParams = window.intellisuggest?.getTrackingParams?.();
         if (trackingParams?.userId && trackingParams?.sessionId) {
@@ -69,27 +70,29 @@
         }
     });
 
-    input.addEventListener('input', async function () {
-        const query = input.value.trim();
-        if (query.length < 2) {
+    // Function to handle the actual suggestion fetch
+    async function fetchSuggestions(query) {
+        if (!intellisuggestIsReady) {
+            console.warn("⚠️ IntelliSuggest not ready yet. Cannot fetch suggestions with tracking IDs.");
             resultsContainer.innerHTML = '';
             resultsContainer.style.display = 'none';
             return;
         }
 
-        let userId = window.searchspringTracking.userId;
-        let sessionId = window.searchspringTracking.sessionId;
+        const userId = window.searchspringTracking.userId;
+        const sessionId = window.searchspringTracking.sessionId;
 
-        if (!intellisuggestIsReady) {
-            console.warn("⚠️ IntelliSuggest not fully ready. Suggestion might lack personalization.");
+        if (!userId || !sessionId) {
+             console.error("❌ Critical: userId or sessionId are null/undefined even after intellisuggest-ready. This should not happen.");
+             resultsContainer.innerHTML = '';
+             resultsContainer.style.display = 'none';
+             return;
         }
 
         try {
-            let suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}`;
-            // Only add tracking IDs if they are available
-            if (userId && sessionId) {
-                suggestUrl += `&userId=${userId}&sessionId=${sessionId}`;
-            }
+            const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}&userId=${encodeURIComponent(userId)}&sessionId=${encodeURIComponent(sessionId)}`;
+            
+            console.log("Fetching suggestions from:", suggestUrl); // Debugging: Check the full URL being sent
 
             const res = await fetch(suggestUrl);
 
@@ -122,6 +125,19 @@
             console.error("❌ Suggest fetch failed:", err);
             resultsContainer.style.display = 'none';
         }
+    }
+
+    // Watch input changes
+    input.addEventListener('input', function () {
+        const query = input.value.trim();
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'none';
+            return;
+        }
+
+        // Call the fetch function only if IntelliSuggest is ready
+        fetchSuggestions(query);
     });
 
     // Handle search form submission
@@ -135,7 +151,6 @@
 
     // Hide suggestions when clicking outside
     document.addEventListener('click', function (event) {
-        // Check if the click was outside the search container and not on the input itself
         if (!event.target.closest('.search-container') && event.target !== input) {
             resultsContainer.style.display = 'none';
         }
@@ -144,8 +159,7 @@
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             resultsContainer.style.display = 'none';
-            input.blur(); // Remove focus from input
+            input.blur();
         }
     });
-
 </script>
