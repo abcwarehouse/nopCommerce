@@ -48,12 +48,18 @@
     const resultsContainer = document.getElementById('autocomplete-results');
     const baseUrl = '@searchBaseUrl';
 
-        document.addEventListener('intellisuggest-ready', () => {
-            const trackingParams = window.intellisuggest.getTrackingParams();
-            window.searchspringTracking = {
-                userId: trackingParams?.userId,
-                sessionId: trackingParams?.sessionId
-            };
+        window.searchspringTracking = {}; // safe fallback
+
+        document.addEventListener('intellisuggest-ready', function () {
+            const trackingParams = window.intellisuggest?.getTrackingParams?.();
+
+            if (trackingParams) {
+                window.searchspringTracking.userId = trackingParams.userId;
+                window.searchspringTracking.sessionId = trackingParams.sessionId;
+                console.log("Tracking IDs set:", window.searchspringTracking);
+            } else {
+                console.warn("Searchspring tracking params missing.");
+            }
         });
 
         if (!userId || !sessionId) {

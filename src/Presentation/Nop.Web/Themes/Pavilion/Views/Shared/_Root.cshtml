@@ -161,10 +161,11 @@
                 return;
             }
 
-            debounceTimeout = setTimeout(() => {
-                const tracking = window.searchspringTracking || {};
-                const userId = tracking.userId || '';
-                const sessionId = tracking.sessionId || '';
+            function getSearchspringTrackingParams() {
+                return window.searchspringTracking || {};
+            }
+            function fetchSuggestions(query) {
+                const { userId = '', sessionId = '' } = getSearchspringTrackingParams();
 
                 fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
                     .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
