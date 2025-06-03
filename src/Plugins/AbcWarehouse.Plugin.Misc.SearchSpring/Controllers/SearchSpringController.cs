@@ -96,7 +96,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 {
                     suggestUrl += $"&sessionId={HttpUtility.UrlEncode(sessionId)}";
                 }
-                if (!string.IsNullOrWhiteSpace(sessionId))
+                if (!string.IsNullOrWhiteSpace(siteId))
                 {
                     suggestUrl += $"&siteId={HttpUtility.UrlEncode(siteId)}";
                 }
