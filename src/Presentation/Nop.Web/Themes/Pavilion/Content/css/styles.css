@@ -96,6 +96,12 @@ input#searchInput {
 .autocomplete-item:hover {
     background-color: #f0f0f0;
 }
+.autocomplete-list div:first-child,
+.autocomplete-list div:nth-child(n+1):not(.suggestion-item) {
+    background-color: #f8f8f8;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
 
 
 
