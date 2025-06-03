@@ -93,7 +93,7 @@
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
             const suggestions = suggestData?.suggestions || [];
-            const autocompleteItems = autocompleteData?.results?.[0]?.suggestions || [];
+            const autocompleteItems = autocompleteData?.records || [];
 
             resultsContainer.innerHTML = '';
 
@@ -118,20 +118,29 @@
             if (autocompleteItems.length > 0) {
                 const header = document.createElement('div');
                 header.className = 'suggestion-section-header';
-                header.textContent = 'Autocomplete';
+                header.textContent = 'Products';
                 resultsContainer.appendChild(header);
 
-                autocompleteItems.forEach(a => {
+                autocompleteItems.forEach(product => {
                     const item = document.createElement('div');
                     item.className = 'suggestion-item';
-                    item.textContent = a.value;
+
+                    // Add basic image + name
+                    item.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <img src="${product.imageUrl || ''}" alt="${product.name}" style="width: 40px; height: auto; margin-right: 10px;" />
+                            <span>${product.name}</span>
+                        </div>
+                    `;
+
                     item.addEventListener('click', () => {
-                        input.value = a.value;
-                        window.location.href = baseUrl + encodeURIComponent(a.value);
+                        window.location.href = product.url || (baseUrl + encodeURIComponent(product.name));
                     });
+
                     resultsContainer.appendChild(item);
                 });
             }
+
 
             resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
 
