@@ -115,26 +115,22 @@
                 });
             }
 
-            autocompleteItems.forEach(a => {
-                const item = document.createElement('div');
-                item.className = 'suggestion-item';
-                
-                // Example with image and label
-                item.innerHTML = `
-                    <div style="display: flex; align-items: center;">
-                        <img src="${a.thumbnailUrl || '/path/to/fallback.jpg'}" alt="" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px;" />
-                        <span>${a.value}</span>
-                    </div>
-                `;
+            if (autocompleteItems.length > 0) {
+                const header = document.createElement('div');
+                header.className = 'suggestion-section-header';
+                header.textContent = 'Autocomplete';
+                resultsContainer.appendChild(header);
 
-                item.addEventListener('click', () => {
-                    input.value = a.value;
-                    window.location.href = baseUrl + encodeURIComponent(a.value);
+                autocompleteItems.forEach(a => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.textContent = a.value;
+                    item.addEventListener('click', () => {
+                        input.value = a.value;
+                        window.location.href = baseUrl + encodeURIComponent(a.value);
+                    });
+                    resultsContainer.appendChild(item);
                 });
-
-                resultsContainer.appendChild(item);
-            });
-
             }
 
             resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
