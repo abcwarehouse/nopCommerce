@@ -96,10 +96,13 @@
 
             resultsContainer.innerHTML = '';
 
-            const rawHtml = suggestData?.results || ''; 
+            const rawHtml = suggestData?.results || '';
 
-            resultsContainer.innerHTML = rawHtml;
-            resultsContainer.style.display = rawHtml ? 'block' : 'none';
+            const unescapedHtml = new DOMParser().parseFromString(rawHtml, 'text/html').body.innerHTML;
+
+            resultsContainer.innerHTML = unescapedHtml;
+            resultsContainer.style.display = unescapedHtml ? 'block' : 'none';
+
 
             resultsContainer.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', (e) => {
