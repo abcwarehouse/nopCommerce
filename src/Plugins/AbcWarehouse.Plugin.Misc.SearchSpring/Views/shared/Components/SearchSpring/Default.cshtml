@@ -96,52 +96,19 @@
 
             resultsContainer.innerHTML = '';
 
-            if (suggestions.length > 0) {
-                const header = document.createElement('div');
-                header.className = 'suggestion-section-header';
-                header.textContent = 'Suggested Searches';
-                resultsContainer.appendChild(header);
+            const rawHtml = suggestData?.results || ''; 
 
-                suggestions.forEach(s => {
-                    const item = document.createElement('div');
-                    item.className = 'suggestion-item';
-                    item.textContent = s.value;
-                    item.addEventListener('click', () => {
-                        input.value = s.value;
-                        window.location.href = baseUrl + encodeURIComponent(s.value);
-                    });
-                    resultsContainer.appendChild(item);
+            resultsContainer.innerHTML = rawHtml;
+            resultsContainer.style.display = rawHtml ? 'block' : 'none';
+
+            resultsContainer.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
                 });
-            }
-
-            if (autocompleteItems.length > 0) {
-                const header = document.createElement('div');
-                header.className = 'suggestion-section-header';
-                header.textContent = 'Products';
-                resultsContainer.appendChild(header);
-
-                autocompleteItems.forEach(product => {
-                    const item = document.createElement('div');
-                    item.className = 'suggestion-item';
-
-                    // Add basic image + name
-                    item.innerHTML = `
-                        <div style="display: flex; align-items: center;">
-                            <img src="${product.imageUrl || ''}" alt="${product.name}" style="width: 40px; height: auto; margin-right: 10px;" />
-                            <span>${product.name}</span>
-                        </div>
-                    `;
-
-                    item.addEventListener('click', () => {
-                        window.location.href = product.url || (baseUrl + encodeURIComponent(product.name));
-                    });
-
-                    resultsContainer.appendChild(item);
-                });
-            }
+            });
 
 
-            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'block';
+
+            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
 
         } catch (err) {
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
@@ -170,7 +137,7 @@
 
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
-            resultsContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
             input.blur(); // Remove focus from input
         }
     });
