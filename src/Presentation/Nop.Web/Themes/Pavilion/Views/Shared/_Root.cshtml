@@ -163,10 +163,24 @@
     document.addEventListener("intellisuggest-ready", function () {
         const searchInput = document.getElementById('small-searchterms');
         const resultsContainer = document.getElementById('autocomplete-results');
-
         if (!searchInput || !resultsContainer) return;
 
         let debounceTimeout;
+
+        // ✅ Wait until userId and sessionId are available
+        function waitForTrackingIds(callback, retries = 10, delay = 200) {
+            const check = () => {
+                const tracking = window.searchspringTracking || {};
+                if (tracking.userId && tracking.sessionId) {
+                    callback(tracking);
+                } else if (retries > 0) {
+                    setTimeout(() => waitForTrackingIds(callback, retries - 1, delay), delay);
+                } else {
+                    console.warn('Tracking IDs still not available after waiting.');
+                }
+            };
+            check();
+        }
 
         searchInput.addEventListener('input', function () {
             clearTimeout(debounceTimeout);
@@ -179,43 +193,38 @@
                     return;
                 }
 
-                const { userId = '', sessionId = '' } = window.searchspringTracking || {};
+                waitForTrackingIds(({ userId, sessionId }) => {
+                    fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
+                        .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
+                        .then(data => {
+                            const suggestions = data?.search?.suggestions || [];
 
-                if (!userId || !sessionId) {
-                    console.warn('Tracking IDs not available yet.');
-                    return;
-                }
+                            resultsContainer.innerHTML = '';
+                            resultsContainer.style.display = 'block';
 
-                fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
-                    .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
-                    .then(data => {
-                        const suggestions = data?.search?.suggestions || [];
+                            if (suggestions.length === 0) {
+                                resultsContainer.innerHTML = '<div class="autocomplete-item">No suggestions found</div>';
+                                return;
+                            }
 
-                        resultsContainer.innerHTML = '';
-                        resultsContainer.style.display = 'block';
+                            suggestions.forEach(s => {
+                                const item = document.createElement('div');
+                                item.textContent = s.value;
+                                item.className = 'autocomplete-item';
 
-                        if (suggestions.length === 0) {
-                            resultsContainer.innerHTML = '<div class="autocomplete-item">No suggestions found</div>';
-                            return;
-                        }
+                                item.addEventListener('click', () => {
+                                    searchInput.value = s.value;
+                                    resultsContainer.innerHTML = '';
+                                    document.getElementById('searchForm').submit();
+                                });
 
-                        suggestions.forEach(s => {
-                            const item = document.createElement('div');
-                            item.textContent = s.value;
-                            item.className = 'autocomplete-item';
-
-                            item.addEventListener('click', () => {
-                                searchInput.value = s.value;
-                                resultsContainer.innerHTML = '';
-                                document.getElementById('searchForm').submit();
+                                resultsContainer.appendChild(item);
                             });
-
-                            resultsContainer.appendChild(item);
+                        })
+                        .catch(err => {
+                            console.error("Autocomplete error:", err);
                         });
-                    })
-                    .catch(err => {
-                        console.error("Autocomplete error:", err);
-                    });
+                });
             }, 250);
         });
 
