@@ -168,7 +168,7 @@
         let debounceTimeout;
 
         // ✅ Wait until userId and sessionId are available
-        function waitForTrackingIds(callback, retries = 10, delay = 200) {
+        function waitForTrackingIds(callback, retries = 20, delay = 500) {
             const check = () => {
                 const tracking = window.searchspringTracking || {};
                 if (tracking.userId && tracking.sessionId) {
