@@ -86,7 +86,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             {
                 var client = _httpClientFactory.CreateClient();
                 var siteId = "4lt84w"; // Your Site ID
-                var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/search?siteId=4lt84w&q={HttpUtility.UrlEncode(q)}";
+                var suggestUrl = $"https://{siteId}.a?siteId=4lt84w&q={HttpUtility.UrlEncode(q)}";
 
                 if (!string.IsNullOrWhiteSpace(userId))
                 {
