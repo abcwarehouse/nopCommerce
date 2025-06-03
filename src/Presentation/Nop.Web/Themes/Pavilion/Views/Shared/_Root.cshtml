@@ -158,9 +158,9 @@
     });
 </script>
 
-<!-- ✅ Autocomplete handler -->
+<!-- Autocomplete handler -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("intellisuggest-ready", function () {
         const searchInput = document.getElementById('small-searchterms');
         const resultsContainer = document.getElementById('autocomplete-results');
 
@@ -180,6 +180,11 @@
                 }
 
                 const { userId = '', sessionId = '' } = window.searchspringTracking || {};
+
+                if (!userId || !sessionId) {
+                    console.warn('Tracking IDs not available yet.');
+                    return;
+                }
 
                 fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
                     .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
