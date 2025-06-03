@@ -98,15 +98,14 @@
             resultsContainer.innerHTML = '';
 
             if (suggestions.length > 0) {
-                const suggestHeader = document.createElement('div');
-                suggestHeader.textContent = 'Suggested Searches';
-                suggestHeader.style.fontWeight = 'bold';
-                suggestHeader.style.padding = '4px 10px';
-                resultsContainer.appendChild(suggestHeader);
+                const header = document.createElement('div');
+                header.className = 'suggestion-section-header';
+                header.textContent = 'Suggested Searches';
+                resultsContainer.appendChild(header);
 
                 suggestions.forEach(s => {
                     const item = document.createElement('div');
-                    item.classList.add('suggestion-item');
+                    item.className = 'suggestion-item';
                     item.textContent = s.value;
                     item.addEventListener('click', () => {
                         input.value = s.value;
@@ -117,31 +116,31 @@
             }
 
             if (autocompleteItems.length > 0) {
-                const autoHeader = document.createElement('div');
-                autoHeader.textContent = 'Autocomplete Results';
-                autoHeader.style.fontWeight = 'bold';
-                autoHeader.style.padding = '4px 10px';
-                resultsContainer.appendChild(autoHeader);
+                const header = document.createElement('div');
+                header.className = 'suggestion-section-header';
+                header.textContent = 'Autocomplete';
+                resultsContainer.appendChild(header);
 
-                autocompleteItems.forEach(itemData => {
+                autocompleteItems.forEach(a => {
                     const item = document.createElement('div');
-                    item.classList.add('suggestion-item');
-                    item.textContent = itemData.value;
+                    item.className = 'suggestion-item';
+                    item.textContent = a.value;
                     item.addEventListener('click', () => {
-                        input.value = itemData.value;
-                        window.location.href = baseUrl + encodeURIComponent(itemData.value);
+                        input.value = a.value;
+                        window.location.href = baseUrl + encodeURIComponent(a.value);
                     });
                     resultsContainer.appendChild(item);
                 });
             }
 
-            resultsContainer.style.display = (suggestions.length > 0 || autocompleteItems.length > 0) ? 'block' : 'none';
+            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
 
         } catch (err) {
-            console.error("❌ Failed to fetch autocomplete/suggest results:", err);
+            console.error("❌ Failed to fetch autocomplete/suggest:", err);
             resultsContainer.style.display = 'none';
         }
     });
+
 
 
     // Handle search form submission

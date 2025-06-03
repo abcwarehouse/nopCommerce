@@ -103,6 +103,41 @@ input#searchInput {
     text-transform: uppercase;
 }
 
+.autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.suggestion-section-header {
+    font-weight: bold;
+    padding: 8px 12px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+    text-transform: uppercase;
+    font-size: 0.85em;
+}
+
+.suggestion-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+
 
 
 /*********** GLOBAL STYLES **********/
