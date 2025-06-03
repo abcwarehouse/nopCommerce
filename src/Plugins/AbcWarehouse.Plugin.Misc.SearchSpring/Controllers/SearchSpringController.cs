@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
+using Nop.Services.Logging;
+using System.Web; 
 
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
@@ -13,12 +15,16 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
     {
         private readonly ISearchSpringService _searchSpringService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger _logger; // Inject ILogger for better error reporting
 
-
-        public SearchSpringController(ISearchSpringService searchSpringService, IHttpClientFactory httpClientFactory)
+        // Add a logger to the constructor
+        public SearchSpringController(ISearchSpringService searchSpringService, 
+                                      IHttpClientFactory httpClientFactory,
+                                      ILogger logger) 
         {
             _searchSpringService = searchSpringService;
             _httpClientFactory = httpClientFactory;
+            _logger = logger; // Initialize logger
         }
 
         [HttpGet]
@@ -34,13 +40,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
 
-            // Generate/retrieve session ID from cookie or context
             var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
             var siteId = "4lt84w";
 
             var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId);
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
+
         private string GetOrCreateSearchSpringSessionId(HttpContext context)
         {
             const string cookieKey = "ss-sessionId";
@@ -66,35 +72,47 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         {
             if (Request.Cookies.TryGetValue("_ss_s", out var sessionId))
                 return sessionId;
-
-            // Fallback: generate one if needed (optional)
-            // sessionId = Guid.NewGuid().ToString();
-            // Response.Cookies.Append("_ss_s", sessionId);
-            return sessionId;
+            return null;
         }
 
         [Route("searchspring/suggest")]
         [HttpGet]
-        public async Task<IActionResult> Suggest(string q)
+        public async Task<IActionResult> Suggest(string q, string userId, string sessionId)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Query is required");
 
-            var client = _httpClientFactory.CreateClient();
-            var siteId = "4lt84w";
-            var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/search?q={WebUtility.UrlEncode(q)}";
-
-
-            var response = await client.GetAsync(suggestUrl);
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var error = await response.Content.ReadAsStringAsync();
-                return BadRequest($"Searchspring Suggest API error: {error}");
+                var client = _httpClientFactory.CreateClient();
+                var siteId = "4lt84w"; // Your Site ID
+                var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/search?q={HttpUtility.UrlEncode(q)}";
+
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    suggestUrl += $"&userId={HttpUtility.UrlEncode(userId)}";
+                }
+                if (!string.IsNullOrWhiteSpace(sessionId))
+                {
+                    suggestUrl += $"&sessionId={HttpUtility.UrlEncode(sessionId)}";
+                }
+
+                var response = await client.GetAsync(suggestUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    // Log the error for server-side debugging
+                    return StatusCode((int)response.StatusCode, new { error = $"Searchspring Suggest API error: {errorContent}" });
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
             }
-
-            var content = await response.Content.ReadAsStringAsync();
-            return Content(content, "application/json");
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An internal server error occurred while fetching suggestions." });
+            }
         }
-
     }
 }
