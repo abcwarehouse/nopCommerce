@@ -130,7 +130,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             {
                 var client = _httpClientFactory.CreateClient();
                 var siteId = "4lt84w";
-                var autocompleteUrl = $"https://{siteId}.a.searchspring.io/api/suggest/autocomplete?q={HttpUtility.UrlEncode(q)}";
+                var autocompleteUrl = $"https://{siteId}.a.searchspring.io/api/search/autocomplete?q={HttpUtility.UrlEncode(q)}";
 
                 if (!string.IsNullOrWhiteSpace(userId))
                 {
