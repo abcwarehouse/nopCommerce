@@ -18,9 +18,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         private readonly ILogger _logger; // Inject ILogger for better error reporting
 
         // Add a logger to the constructor
-        public SearchSpringController(ISearchSpringService searchSpringService, 
+        public SearchSpringController(ISearchSpringService searchSpringService,
                                       IHttpClientFactory httpClientFactory,
-                                      ILogger logger) 
+                                      ILogger logger)
         {
             _searchSpringService = searchSpringService;
             _httpClientFactory = httpClientFactory;
@@ -85,7 +85,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var siteId = "4lt84w"; // Your Site ID
+                var siteId = "4lt84w";
                 var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/query?q={HttpUtility.UrlEncode(q)}";
 
                 if (!string.IsNullOrWhiteSpace(userId))
@@ -118,5 +118,49 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 return StatusCode(500, new { error = "An internal server error occurred while fetching suggestions." });
             }
         }
+        
+        [Route("searchspring/autocomplete")]
+        [HttpGet]
+        public async Task<IActionResult> Autocomplete(string q, string userId, string sessionId)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest("Query is required");
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var siteId = "4lt84w";
+                var autocompleteUrl = $"https://{siteId}.a.searchspring.io/api/suggest/autocomplete?q={HttpUtility.UrlEncode(q)}";
+
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    autocompleteUrl += $"&userId={HttpUtility.UrlEncode(userId)}";
+                }
+                if (!string.IsNullOrWhiteSpace(sessionId))
+                {
+                    autocompleteUrl += $"&sessionId={HttpUtility.UrlEncode(sessionId)}";
+                }
+                if (!string.IsNullOrWhiteSpace(siteId))
+                {
+                    autocompleteUrl += $"&siteId={HttpUtility.UrlEncode(siteId)}";
+                }
+
+                var response = await client.GetAsync(autocompleteUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new { error = $"Searchspring Autocomplete API error: {errorContent}" });
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An internal server error occurred while fetching autocomplete results." });
+            }
+        }
+
     }
 }
