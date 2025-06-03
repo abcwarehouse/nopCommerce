@@ -10,6 +10,9 @@
     var searchBaseUrl = $"{storeUrl}searchspring/results?q=";
 }
 
+<!-- IntelliSuggest Script (must be loaded globally) -->
+<script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
+
 <!-- Search Form -->
 <div class="search-container" style="position: relative;">
     <form id="searchForm" autocomplete="off">
@@ -48,73 +51,75 @@
     const resultsContainer = document.getElementById('autocomplete-results');
     const baseUrl = '@searchBaseUrl';
 
-        window.searchspringTracking = {}; // safe fallback
+    // Setup global object for tracking
+    window.searchspringTracking = {
+        userId: null,
+        sessionId: null
+    };
 
-        document.addEventListener('intellisuggest-ready', function () {
-            const trackingParams = window.intellisuggest?.getTrackingParams?.();
+    // Wait for IntelliSuggest to be ready
+    document.addEventListener('intellisuggest-ready', function () {
+        const trackingParams = window.intellisuggest?.getTrackingParams?.();
+        if (trackingParams?.userId && trackingParams?.sessionId) {
+            window.searchspringTracking.userId = trackingParams.userId;
+            window.searchspringTracking.sessionId = trackingParams.sessionId;
+            console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
+        } else {
+            console.warn("⚠️ Tracking params missing");
+        }
+    });
 
-            if (trackingParams) {
-                window.searchspringTracking.userId = trackingParams.userId;
-                window.searchspringTracking.sessionId = trackingParams.sessionId;
-                console.log("Tracking IDs set:", window.searchspringTracking);
-            } else {
-                console.warn("Searchspring tracking params missing.");
-            }
-        });
-
-        if (!userId || !sessionId) {
-            console.warn("Searchspring user/session ID missing.");
+    // Watch input changes
+    input.addEventListener('input', async function () {
+        const query = input.value.trim();
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'none';
             return;
         }
 
-        input.addEventListener('input', async function () {
-            const query = input.value.trim();
+        const { userId, sessionId } = window.searchspringTracking;
+        if (!userId || !sessionId) {
+            console.warn("⚠️ Tracking IDs not available yet.");
+            return;
+        }
 
-            if (query.length < 2) {
-                resultsContainer.innerHTML = '';
+        try {
+            const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}`;
+            const res = await fetch(suggestUrl);
+
+            if (!res.ok) {
+                console.error("❌ Suggest API error:", await res.text());
                 resultsContainer.style.display = 'none';
                 return;
             }
 
-            try {
-                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}&userId=${userId}&sessionId=${sessionId}`;
-                const res = await fetch(suggestUrl);
+            const data = await res.json();
+            const suggestions = data?.suggestions || [];
 
-                const contentType = res.headers.get('content-type') || '';
-                if (!res.ok || !contentType.includes('application/json')) {
-                    const text = await res.text();
-                    console.error("Non-JSON or error response:", text);
-                    resultsContainer.style.display = 'none';
-                    return;
-                }
-
-                const data = await res.json();
-                const suggestions = data?.suggestions || [];
-
-                resultsContainer.innerHTML = '';
-                if (suggestions.length > 0) {
-                    suggestions.forEach(s => {
-                        const item = document.createElement('div');
-                        item.classList.add('suggestion-item');
-                        item.textContent = s.value;
-                        item.addEventListener('click', () => {
-                            input.value = s.value;
-                            window.location.href = baseUrl + encodeURIComponent(s.value);
-                        });
-                        resultsContainer.appendChild(item);
+            resultsContainer.innerHTML = '';
+            if (suggestions.length > 0) {
+                suggestions.forEach(s => {
+                    const item = document.createElement('div');
+                    item.classList.add('suggestion-item');
+                    item.textContent = s.value;
+                    item.addEventListener('click', () => {
+                        input.value = s.value;
+                        window.location.href = baseUrl + encodeURIComponent(s.value);
                     });
-                    resultsContainer.style.display = 'block';
-                } else {
-                    resultsContainer.style.display = 'none';
-                }
-            } catch (err) {
-                console.error('Error fetching suggestions:', err);
+                    resultsContainer.appendChild(item);
+                });
+                resultsContainer.style.display = 'block';
+            } else {
                 resultsContainer.style.display = 'none';
             }
-        });
+        } catch (err) {
+            console.error("❌ Suggest fetch failed:", err);
+            resultsContainer.style.display = 'none';
+        }
     });
 
-    // Submit handler
+    // Handle search form submission
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const query = input.value.trim();
@@ -123,7 +128,7 @@
         }
     });
 
-    // Hide autocomplete when clicking outside
+    // Hide suggestions when clicking outside
     document.addEventListener('click', function (event) {
         if (!event.target.closest('.search-container')) {
             resultsContainer.style.display = 'none';

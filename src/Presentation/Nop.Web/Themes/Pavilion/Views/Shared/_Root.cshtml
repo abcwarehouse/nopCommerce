@@ -7,7 +7,6 @@
 
 @inject IStoreContext storeContext
 @inject ISettingService settingService
-@* ABC: custom inject *@
 @inject IWorkContext workContext
 @inject IShoppingCartService shoppingCartService
 
@@ -22,7 +21,6 @@
     bool isLogoStickyOnMobileDevice = await settingService.GetSettingByKeyAsync("pavilionthemesettings.islogostickyonmobiledevice", false, storeId, true);
     string stickyLogoClass = isLogoStickyOnMobileDevice ? "mobile-sticky-logo" : string.Empty;
 
-    // ABC: modifications
     var mobilePhoneNumber = await settingService.GetSettingByKeyAsync("coresettings.mobilephonenumber", "800-981-3866");
     var customer = await workContext.GetCurrentCustomerAsync();
     var shoppingCartItemCount = (await shoppingCartService.GetShoppingCartAsync(
@@ -31,7 +29,6 @@
     )).Count();
 
     var primaryColor = await HtmlHelpers.GetPavilionPrimaryColorAsync();
-
 }
 
 <style>
@@ -48,14 +45,13 @@
 <div class="master-wrapper-page @stickyLogoClass">
     <div class="responsive-nav-wrapper-parent">
         <div class="responsive-nav-wrapper">
-
             @if (storeId == 8)
             {
-            <div class="mobileLocation">
-            <a href="https://stagehawthorne.abcwarehouse.com/hawthorne-store-locations">
-            <img class="MobileLoc" src="https://www.abcwarehouse.com/images/hawthorne/Icons/HawMobileLocation.png" alt="HawLocations" />
-            </a>
-            </div>
+                <div class="mobileLocation">
+                    <a href="https://stagehawthorne.abcwarehouse.com/hawthorne-store-locations">
+                        <img class="MobileLoc" src="https://www.abcwarehouse.com/images/hawthorne/Icons/HawMobileLocation.png" alt="HawLocations" />
+                    </a>
+                </div>
             }
 
             <div id="mobile-header-logo">
@@ -75,7 +71,7 @@
             </div>
         </div>
     </div>
-    @* ABC: search bar for mobile *@
+
     <div class="mobile-header-content-row">
         <div class="mobile-menu" onClick="toggleMobileMenu()">
             <span>Menu</span>
@@ -83,7 +79,6 @@
         @await Component.InvokeAsync("SearchBox")
     </div>
 
-    @* ABC: moved header to below *@
     @await Html.PartialAsync("_Header")
     <script asp-location="Footer">
         var localized_data = {
@@ -91,28 +86,30 @@
         };
         AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
     </script>
+
     <div class="overlayOffCanvas"></div>
 
     <div class="master-wrapper-content">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentBefore })
-		@await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })
+        @await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })
 
         <div class="master-column-wrapper">
             @RenderBody()
         </div>
+
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentAfter })
     </div>
+
     @if (isHomePage && storeId != 8)
     {
-		@await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })
+        @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })
     }
 
     @await Component.InvokeAsync("Footer")
 </div>
 
-@* ABC: move the search box if required  *@
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         const isMobile = window.innerWidth <= 1000;
 
         if (isMobile) {
@@ -123,7 +120,10 @@
     });
 </script>
 
-@* Searchspring autocomplete  *@
+<!-- ✅ IntelliSuggest Library -->
+<script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
+
+<!-- ✅ Setup IntelliSuggest tracking -->
 <script>
     window.intellisuggest = window.intellisuggest || function () {
         (intellisuggest.q = intellisuggest.q || []).push(arguments);
@@ -141,10 +141,27 @@
     });
 
     intellisuggest('track', 'pageview');
+
+    // Setup tracking holder
+    window.searchspringTracking = {
+        userId: null,
+        sessionId: null
+    };
+
+    document.addEventListener('intellisuggest-ready', function () {
+        const params = window.intellisuggest?.getTrackingParams?.();
+        if (params?.userId && params?.sessionId) {
+            window.searchspringTracking.userId = params.userId;
+            window.searchspringTracking.sessionId = params.sessionId;
+            console.log("✅ Searchspring tracking ready:", params);
+        }
+    });
 </script>
+
+<!-- ✅ Autocomplete handler -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const searchInput = document.getElementById('searchInput');
+        const searchInput = document.getElementById('small-searchterms');
         const resultsContainer = document.getElementById('autocomplete-results');
 
         if (!searchInput || !resultsContainer) return;
@@ -155,17 +172,14 @@
             clearTimeout(debounceTimeout);
             const query = searchInput.value.trim();
 
-            if (query.length < 2) {
-                resultsContainer.innerHTML = '';
-                resultsContainer.style.display = 'none';
-                return;
-            }
+            debounceTimeout = setTimeout(() => {
+                if (query.length < 2) {
+                    resultsContainer.innerHTML = '';
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
 
-            function getSearchspringTrackingParams() {
-                return window.searchspringTracking || {};
-            }
-            function fetchSuggestions(query) {
-                const { userId = '', sessionId = '' } = getSearchspringTrackingParams();
+                const { userId = '', sessionId = '' } = window.searchspringTracking || {};
 
                 fetch(`/searchspring/suggest?q=${encodeURIComponent(query)}&t=${Date.now()}&userId=${userId}&sessionId=${sessionId}`)
                     .then(res => res.ok ? res.json() : Promise.reject("Suggest fetch failed"))
@@ -196,8 +210,6 @@
                     })
                     .catch(err => {
                         console.error("Autocomplete error:", err);
-                        resultsContainer.innerHTML = '';
-                        resultsContainer.style.display = 'none';
                     });
             }, 250);
         });
@@ -210,9 +222,6 @@
         });
     });
 </script>
-
-
-
 
 @await Component.InvokeAsync("EuCookieLaw")
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })
