@@ -31,7 +31,7 @@
         z-index: 999;
         max-height: 200px;
         overflow-y: auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Added for better visibility */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .suggestion-item {
@@ -61,7 +61,7 @@
         if (trackingParams?.userId && trackingParams?.sessionId) {
             window.searchspringTracking.userId = trackingParams.userId;
             window.searchspringTracking.sessionId = trackingParams.sessionId;
-            intellisuggestIsReady = true; // Set flag
+            intellisuggestIsReady = true;
             console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
         } else {
             console.warn("⚠️ Tracking params missing after intellisuggest-ready event.");
@@ -91,32 +91,24 @@
             const suggestData = suggestRes.ok ? await suggestRes.json() : null;
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
-            const suggestions = suggestData?.suggestions || [];
-            const autocompleteItems = autocompleteData?.records || [];
+            // Decode HTML-escaped strings
+            const decodeHTML = (escapedStr) => {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = escapedStr || '';
+                return textarea.value;
+            };
 
-            resultsContainer.innerHTML = '';
+            const suggestHTML = decodeHTML(suggestData?.results);
+            const autoHTML = decodeHTML(autocompleteData?.results);
 
-            const rawHtml = autocompleteData?.results || '';
-            const decodedHtml = document.createElement('textarea');
-            decodedHtml.innerHTML = rawHtml; // Automatically decodes \u003c etc.
-            const finalHtml = decodedHtml.value;
+            const combinedHtml = `${suggestHTML}${autoHTML}`;
 
-            resultsContainer.innerHTML = finalHtml;
-            resultsContainer.style.display = finalHtml.trim() ? 'block' : 'none';
+            resultsContainer.innerHTML = combinedHtml;
+            resultsContainer.style.display = combinedHtml.trim() ? 'block' : 'none';
 
-
-
-            resultsContainer.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                });
-            });
-
-            console.log("📦 Suggest rawHtml:", rawHtml);
-            console.log("📦 Parsed HTML:", parsedHtml);
-
-
-
-            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
+            console.log("📦 Suggest rawHtml:", suggestData?.results);
+            console.log("📦 Autocomplete rawHtml:", autocompleteData?.results);
+            console.log("📦 Combined decoded HTML:", combinedHtml);
 
         } catch (err) {
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
@@ -124,9 +116,6 @@
         }
     });
 
-
-
-    // Handle search form submission
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const query = input.value.trim();
@@ -135,9 +124,7 @@
         }
     });
 
-    // Hide suggestions when clicking outside
     document.addEventListener('click', function (event) {
-        // Check if the click was outside the search container and not on the input itself
         if (!event.target.closest('.search-container') && event.target !== input) {
             resultsContainer.style.display = 'none';
         }
@@ -146,8 +133,7 @@
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             resultsContainer.style.display = 'none';
-            input.blur(); // Remove focus from input
+            input.blur();
         }
     });
-
 </script>
