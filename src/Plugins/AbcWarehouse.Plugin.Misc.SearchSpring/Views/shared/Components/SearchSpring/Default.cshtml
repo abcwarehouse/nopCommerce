@@ -15,7 +15,7 @@
 <div class="search-container" style="position: relative;">
     <form id="searchForm" autocomplete="off">
         <input type="text" id="searchInput" placeholder="Type to search..." />
-        <button type="submit">Search</button>
+        <button type="submit"><i class="fas fa-search"></i></button>
     </form>
     <div id="autocomplete-results" class="autocomplete-list"></div>
 </div>
@@ -96,11 +96,14 @@
 
             resultsContainer.innerHTML = '';
 
-            const rawHtml = suggestData?.results || '';
-            const parsedHtml = new DOMParser().parseFromString(rawHtml, 'text/html').body.innerHTML;
+            const rawHtml = autocompleteData?.results || '';
+            const decodedHtml = document.createElement('textarea');
+            decodedHtml.innerHTML = rawHtml; // Automatically decodes \u003c etc.
+            const finalHtml = decodedHtml.value;
 
-            resultsContainer.innerHTML = parsedHtml;
-            resultsContainer.style.display = parsedHtml.trim() ? 'block' : 'none';
+            resultsContainer.innerHTML = finalHtml;
+            resultsContainer.style.display = finalHtml.trim() ? 'block' : 'none';
+
 
 
             resultsContainer.querySelectorAll('a').forEach(link => {
