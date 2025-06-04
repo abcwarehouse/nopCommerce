@@ -31,7 +31,7 @@
         z-index: 999;
         max-height: 200px;
         overflow-y: auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Added for better visibility */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .suggestion-item {
@@ -61,7 +61,7 @@
         if (trackingParams?.userId && trackingParams?.sessionId) {
             window.searchspringTracking.userId = trackingParams.userId;
             window.searchspringTracking.sessionId = trackingParams.sessionId;
-            intellisuggestIsReady = true; // Set flag
+            intellisuggestIsReady = true;
             console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
         } else {
             console.warn("⚠️ Tracking params missing after intellisuggest-ready event.");
@@ -69,6 +69,11 @@
     });
 
     input.addEventListener('input', async function () {
+        if (!intellisuggestIsReady) {
+            console.warn("⚠️ IntelliSuggest not ready yet.");
+            return;
+        }
+
         const query = input.value.trim();
         if (query.length < 2) {
             resultsContainer.innerHTML = '';
@@ -76,8 +81,7 @@
             return;
         }
 
-        let userId = window.searchspringTracking.userId;
-        let sessionId = window.searchspringTracking.sessionId;
+        const { userId, sessionId } = window.searchspringTracking;
 
         const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
         const autocompleteUrl = `/searchspring/autocomplete?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
@@ -91,35 +95,25 @@
             const suggestData = suggestRes.ok ? await suggestRes.json() : null;
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
-            const suggestions = suggestData?.suggestions || [];
-            const autocompleteItems = autocompleteData?.records || [];
-
-            resultsContainer.innerHTML = '';
+            console.log("📦 Suggest Data:", suggestData);
+            console.log("📦 Autocomplete Data:", autocompleteData);
 
             const rawHtml = suggestData?.results || '';
-
             const unescapedHtml = new DOMParser().parseFromString(rawHtml, 'text/html').body.innerHTML;
 
-            resultsContainer.innerHTML = unescapedHtml;
-            resultsContainer.style.display = unescapedHtml ? 'block' : 'none';
-
-
-            resultsContainer.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                });
-            });
-
-
-
-            resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
+            if (unescapedHtml) {
+                resultsContainer.innerHTML = unescapedHtml;
+                resultsContainer.style.display = 'block';
+            } else {
+                resultsContainer.innerHTML = '';
+                resultsContainer.style.display = 'none';
+            }
 
         } catch (err) {
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
             resultsContainer.style.display = 'none';
         }
     });
-
-
 
     // Handle search form submission
     document.getElementById('searchForm').addEventListener('submit', function (event) {
@@ -132,17 +126,16 @@
 
     // Hide suggestions when clicking outside
     document.addEventListener('click', function (event) {
-        // Check if the click was outside the search container and not on the input itself
         if (!event.target.closest('.search-container') && event.target !== input) {
             resultsContainer.style.display = 'none';
         }
     });
 
+    // Hide on Escape key
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             resultsContainer.style.display = 'none';
-            input.blur(); // Remove focus from input
+            input.blur();
         }
     });
-
 </script>
