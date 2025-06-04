@@ -83,39 +83,42 @@
         const autocompleteUrl = `/searchspring/autocomplete?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
 
         try {
+            const [suggestRes, autoRes] = await Promise.all([
+                fetch(suggestUrl),
+                fetch(autocompleteUrl)
+            ]);
+
+            const suggestData = suggestRes.ok ? await suggestRes.json() : null;
+            const autocompleteData = autoRes.ok ? await autoRes.json() : null;
+
+            const suggestions = suggestData?.suggestions || [];
+            const autocompleteItems = autocompleteData?.records || [];
+
             resultsContainer.innerHTML = '';
 
-            // Render suggestData suggestions
-            if (suggestions.length > 0) {
-                const list = document.createElement('div');
-                suggestions.forEach(suggestion => {
-                    const item = document.createElement('div');
-                    item.className = 'suggestion-item';
-                    item.textContent = suggestion;
-                    item.addEventListener('click', () => {
-                        input.value = suggestion;
-                        window.location.href = baseUrl + encodeURIComponent(suggestion);
-                    });
-                    list.appendChild(item);
-                });
-                resultsContainer.appendChild(list);
-            }
+            const rawHtml = suggestData?.results || '';
+            const parsedHtml = new DOMParser().parseFromString(rawHtml, 'text/html').body.innerHTML;
 
-            // Optional: Render autocomplete records too
-            if (autocompleteItems.length > 0) {
-                const list = document.createElement('div');
-                autocompleteItems.forEach(item => {
-                    const link = document.createElement('a');
-                    link.className = 'suggestion-item';
-                    link.href = item.url || '#';
-                    link.textContent = item.name || item.title || 'View';
-                    list.appendChild(link);
+            resultsContainer.innerHTML = parsedHtml;
+            resultsContainer.style.display = parsedHtml.trim() ? 'block' : 'none';
+
+
+            resultsContainer.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
                 });
-                resultsContainer.appendChild(list);
-            }
+            });
+
+            console.log("📦 Suggest rawHtml:", rawHtml);
+            console.log("📦 Parsed HTML:", parsedHtml);
+
+
 
             resultsContainer.style.display = (suggestions.length || autocompleteItems.length) ? 'block' : 'none';
 
+        } catch (err) {
+            console.error("❌ Failed to fetch autocomplete/suggest:", err);
+            resultsContainer.style.display = 'none';
+        }
     });
 
 
