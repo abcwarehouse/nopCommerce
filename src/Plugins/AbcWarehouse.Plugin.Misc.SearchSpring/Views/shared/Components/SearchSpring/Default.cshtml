@@ -55,32 +55,10 @@
     };
 
     let intellisuggestIsReady = false;
+    let queuedQuery = null;
 
-    document.addEventListener('intellisuggest-ready', function () {
-        const trackingParams = window.intellisuggest?.getTrackingParams?.();
-        if (trackingParams?.userId && trackingParams?.sessionId) {
-            window.searchspringTracking.userId = trackingParams.userId;
-            window.searchspringTracking.sessionId = trackingParams.sessionId;
-            intellisuggestIsReady = true;
-            console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
-        } else {
-            console.warn("⚠️ Tracking params missing after intellisuggest-ready event.");
-        }
-    });
-
-    input.addEventListener('input', async function () {
-        if (!intellisuggestIsReady) {
-            console.warn("⚠️ IntelliSuggest not ready yet.");
-            return;
-        }
-
-        const query = input.value.trim();
-        if (query.length < 2) {
-            resultsContainer.innerHTML = '';
-            resultsContainer.style.display = 'none';
-            return;
-        }
-
+    // Core autocomplete function
+    async function performAutocomplete(query) {
         const { userId, sessionId } = window.searchspringTracking;
 
         const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
@@ -113,6 +91,41 @@
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
             resultsContainer.style.display = 'none';
         }
+    }
+
+    document.addEventListener('intellisuggest-ready', function () {
+        const trackingParams = window.intellisuggest?.getTrackingParams?.();
+        if (trackingParams?.userId && trackingParams?.sessionId) {
+            window.searchspringTracking.userId = trackingParams.userId;
+            window.searchspringTracking.sessionId = trackingParams.sessionId;
+            intellisuggestIsReady = true;
+            console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
+
+            // Replay queued input if any
+            if (queuedQuery) {
+                performAutocomplete(queuedQuery);
+                queuedQuery = null;
+            }
+        } else {
+            console.warn("⚠️ Tracking params missing after intellisuggest-ready event.");
+        }
+    });
+
+    input.addEventListener('input', function () {
+        const query = input.value.trim();
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'none';
+            return;
+        }
+
+        if (!intellisuggestIsReady) {
+            console.warn("⚠️ IntelliSuggest not ready yet. Queuing query:", query);
+            queuedQuery = query;
+            return;
+        }
+
+        performAutocomplete(query);
     });
 
     // Handle search form submission
@@ -131,7 +144,6 @@
         }
     });
 
-    // Hide on Escape key
     input.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             resultsContainer.style.display = 'none';
@@ -139,3 +151,4 @@
         }
     });
 </script>
+
