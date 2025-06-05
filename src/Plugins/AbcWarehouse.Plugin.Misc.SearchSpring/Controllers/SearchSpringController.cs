@@ -47,7 +47,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
 
             // Make sure pagination info is included in your model before passing to the view
-            results.CurrentPage = page;
+            results.PageNumber = page;
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }

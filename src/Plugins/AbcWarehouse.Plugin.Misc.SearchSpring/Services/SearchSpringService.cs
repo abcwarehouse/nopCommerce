@@ -50,7 +50,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             try
             {
                 var productList = new List<SearchSpringProductModel>();
-                int page = 1, pageSize = 24, totalResults = 0;
+                int currentPage = 1, pageSize = 24, totalResults = 0;
 
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
@@ -84,7 +84,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 // Safe parse: pagination
                 if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
                 {
-                    page = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
+                    currentPage = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
                     pageSize = pagination.TryGetProperty("pageSize", out var sizeProp) ? sizeProp.GetInt32() : 24;
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
@@ -96,7 +96,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 return new SearchResultModel
                 {
                     Results = productList,
-                    PageNumber = page,
+                    PageNumber = currentPage    ,
                     PageSize = pageSize,
                     TotalResults = totalResults
                 };
