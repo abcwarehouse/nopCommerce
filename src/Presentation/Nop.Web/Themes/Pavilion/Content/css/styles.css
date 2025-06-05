@@ -194,6 +194,7 @@ div#autocomplete-results .item img {
 }
 
 .search-container {
+	display: flex;
     margin-top: 1.5px;
     margin-left: 25.6%;
     display: flex;
