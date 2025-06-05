@@ -12,12 +12,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         public int TotalResults { get; set; }
 
         public int TotalPages => (int)Math.Ceiling((double)TotalResults / PageSize);
+
+        public string Query { get; set; }
     }
 
-    public class PaginationModel
-    {
-        public int TotalResults { get; set; }
-        public int Page { get; set; }
-        public int PageSize { get; set; }
-    }
 }
