@@ -58,7 +58,7 @@ else
                     <ul>
                         @for (var i = 1; i <= Model.TotalPages; i++)
                         {
-                            var activeClass = i == Model.CurrentPage ? "active" : "";
+                            var activeClass = i == Model.PageNumber ? "active" : "";
                             <li class="@activeClass">
                                 <a href="@Url.RouteUrl("SearchSpringResults", new { q = Model.Query, page = i })">@i</a>
                             </li>
