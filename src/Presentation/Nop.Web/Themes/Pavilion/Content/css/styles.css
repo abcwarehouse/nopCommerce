@@ -252,6 +252,23 @@ div#autocomplete-results .item img {
 p.compare {
     display: none !important;
 }
+nav.pagination li {
+    display: inline;
+	padding-right: 5px;
+}
+nav.pagination li a {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 1024px) {
+	.search-spring-container {
+		display: none;
+	}
+	.search-spring-container-mobile {
+		display: block;
+	}
+}
 
 
 /*********** GLOBAL STYLES **********/
