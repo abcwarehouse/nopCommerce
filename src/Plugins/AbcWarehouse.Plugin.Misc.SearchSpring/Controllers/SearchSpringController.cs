@@ -46,6 +46,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
 
             results.PageNumber = page;
+            results.Query = q;
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
