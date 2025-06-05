@@ -190,8 +190,8 @@ div#autocomplete-results .item img {
     transform: scale(1.1);
 }
 
-.search-container {
-	    margin-top: 1.5px;
+.search-spring-container {
+	margin-top: 1.5px;
     margin-left: 25.6%;
     display: flex;
     flex-grow: 1;
