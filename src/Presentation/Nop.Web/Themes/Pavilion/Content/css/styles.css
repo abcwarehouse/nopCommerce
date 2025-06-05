@@ -138,6 +138,7 @@ div#autocomplete-results .item img {
     margin-top: 5px;
     border-radius: 6px;
     font-family: sans-serif;
+	width: 100%;
 }
 
 .autocomplete-list .item {
@@ -196,9 +197,13 @@ div#autocomplete-results .item img {
 }
 
 .search-container {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
+    margin-top: 1.5px;
+    margin-left: 25.6%;
+    display: flex;
+    flex-grow: 1;
+    max-width: calc(100% - 300px);
+    padding-right: 20px;
+    margin-right: 40px;
 }
 
 #searchForm {
@@ -244,6 +249,7 @@ div#autocomplete-results .item img {
 
 #searchForm button:hover {
     background-color: #0056b3;
+	background: url(/Plugins/Misc.AbcFrontend/Images/search-button.png) center no-repeat !important;
 }
 
 #searchForm i.fas.fa-search {
