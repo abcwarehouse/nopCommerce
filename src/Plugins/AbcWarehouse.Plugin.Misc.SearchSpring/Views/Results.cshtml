@@ -52,6 +52,20 @@ else
                     }
                 </div>
             </div>
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="pagination">
+                    <ul>
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            var activeClass = i == Model.CurrentPage ? "active" : "";
+                            <li class="@activeClass">
+                                <a href="@Url.RouteUrl("SearchSpringResults", new { q = Model.Query, page = i })">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
         </div>
     </div>
 }

@@ -5,6 +5,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
     public interface ISearchSpringService
     {
-        Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w");
+        Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w", int page = 1);
     }
 }

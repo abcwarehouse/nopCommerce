@@ -28,6 +28,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         /// Additional config parameters for JavaScript integration
         /// </summary>
         public Dictionary<string, string> JsConfigParameters { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+        public int ResultsPerPage { get; set; }
+        public int TotalResults { get; set; }
 
         public SearchSpringModel()
         {

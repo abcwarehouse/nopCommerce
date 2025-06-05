@@ -35,7 +35,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             return Json(results);
         }
 
-        public async Task<IActionResult> Results(string q)
+        public async Task<IActionResult> Results(string q, int page = 1)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
@@ -43,9 +43,15 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
             var siteId = "4lt84w";
 
-            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId);
+            // Call the Searchspring API with pagination
+            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
+
+            // Make sure pagination info is included in your model before passing to the view
+            results.CurrentPage = page;
+
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
+
 
         private string GetOrCreateSearchSpringSessionId(HttpContext context)
         {
