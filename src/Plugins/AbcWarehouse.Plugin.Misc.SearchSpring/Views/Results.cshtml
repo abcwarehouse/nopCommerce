@@ -53,19 +53,45 @@ else
                 </div>
             </div>
             @if (Model.TotalPages > 1)
-            {
-                <nav class="pagination">
-                    <ul>
-                        @for (var i = 1; i <= Model.TotalPages; i++)
-                        {
-                            var activeClass = i == Model.PageNumber ? "active" : "";
-                            <li class="@activeClass">
-                                <a href="@Url.RouteUrl("SearchSpringResults", new { q = Model.Query, page = i })">@i</a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            }
+                {
+                    int maxVisiblePages = 5;
+                    int currentPage = Model.PageNumber;
+                    int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+                    int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+
+                    // Adjust startPage if we're near the end
+                    if ((endPage - startPage + 1) < maxVisiblePages)
+                    {
+                        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+                    }
+
+                    <nav class="pagination">
+                        <ul>
+                            @if (currentPage > 1)
+                            {
+                                <li>
+                                    <a href="/searchspring/results?q=@Model.Query&page=@(currentPage - 1)">« Prev</a>
+                                </li>
+                            }
+
+                            @for (var i = startPage; i <= endPage; i++)
+                            {
+                                var activeClass = i == currentPage ? "active" : "";
+                                <li class="@activeClass">
+                                    <a href="/searchspring/results?q=@Model.Query&page=@i">@i</a>
+                                </li>
+                            }
+
+                            @if (currentPage < Model.TotalPages)
+                            {
+                                <li>
+                                    <a href="/searchspring/results?q=@Model.Query&page=@(currentPage + 1)">Next »</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+
         </div>
     </div>
 }

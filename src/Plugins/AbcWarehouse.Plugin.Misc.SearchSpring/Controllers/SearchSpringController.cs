@@ -43,10 +43,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
             var siteId = "4lt84w";
 
-            // Call the Searchspring API with pagination
             var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
 
-            // Make sure pagination info is included in your model before passing to the view
             results.PageNumber = page;
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
