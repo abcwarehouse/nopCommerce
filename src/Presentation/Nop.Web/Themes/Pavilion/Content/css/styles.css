@@ -67,9 +67,6 @@ script {
 }
 
 /************** SearchSpring ***************/
-.search-spring-container {
-    padding-left: 300px;
-}
 input#searchInput {
     width: 560px;
 }
@@ -245,11 +242,11 @@ div#autocomplete-results .item img {
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease;
+	background: url(/Plugins/Misc.AbcFrontend/Images/search-button.png) center no-repeat !important;
 }
 
 #searchForm button:hover {
     background-color: #0056b3;
-	background: url(/Plugins/Misc.AbcFrontend/Images/search-button.png) center no-repeat !important;
 }
 
 #searchForm i.fas.fa-search {
