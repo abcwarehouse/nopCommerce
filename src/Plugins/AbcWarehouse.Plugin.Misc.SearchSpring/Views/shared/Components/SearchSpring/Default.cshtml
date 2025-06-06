@@ -24,7 +24,13 @@
   });
 </script>
 
-
+<div class="search-container" style="position: relative;">
+    <form id="searchForm" autocomplete="off">
+        <input type="text" id="searchInput" placeholder="Type to search..." />
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+    <div id="autocomplete-results" class="autocomplete-list"></div>
+</div>
 
 <style>
     .autocomplete-list {
