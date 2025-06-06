@@ -261,15 +261,6 @@ nav.pagination li a {
     font-weight: bold;
 }
 
-@media screen and (max-width: 1024px) {
-	.search-spring-container {
-		display: none;
-	}
-	.search-spring-container-mobile {
-		display: block;
-	}
-}
-
 
 /*********** GLOBAL STYLES **********/
 body {
