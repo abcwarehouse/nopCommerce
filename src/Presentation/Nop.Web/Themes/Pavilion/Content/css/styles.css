@@ -261,6 +261,20 @@ nav.pagination li a {
     font-weight: bold;
 }
 
+@media screen and (max-width: 1024px) {
+	form#searchForm {
+		width: 92%;
+	}
+	.search-spring-container {
+		margin: 0;
+		padding-left: 10px;
+		position: absolute;
+		top: 60px;
+		padding-left: 47px;
+		width: 92%;
+	}
+}
+
 
 /*********** GLOBAL STYLES **********/
 body {
