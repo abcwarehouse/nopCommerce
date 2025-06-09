@@ -96,6 +96,15 @@ else
     <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
 
     <script>
+        function waitForIntelliSuggest(callback) {
+            const interval = setInterval(() => {
+                if (typeof intellisuggest === 'function') {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 50);
+        }
+
         function onISInstantReady(callback) {
             const interval = setInterval(() => {
                 if (window.ISInstant && typeof window.ISInstant.on === 'function') {
@@ -122,9 +131,7 @@ else
             sortContainer.appendChild(select);
 
             select.addEventListener('change', function () {
-                window.ISInstant.search({
-                    sort: this.value
-                });
+                window.ISInstant.search({ sort: this.value });
             });
         }
 
@@ -160,47 +167,25 @@ else
         }
 
         function updateFilters(field, value, checked) {
+            // Example logic — you can enhance this to accumulate filters in a more complex object
             const filters = {};
-            window.ISInstant.search({
-                filter: filters
-            });
+            filters[field] = checked ? [value] : [];
+
+            window.ISInstant.search({ filter: filters });
         }
 
+        // Initialize ISInstant results listener
         onISInstantReady(() => {
-            console.log('ISInstant is ready');
             window.ISInstant.on('results', function (results) {
                 console.log('Searchspring results:', results);
                 if (results.facets) renderFacets(results.facets);
                 if (results.meta?.sortOptions) renderSortOptions(results.meta.sortOptions);
             });
-
         });
-    </script>
-}
-@section Scripts {
-    <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
 
-    <script>
-        function waitForIntelliSuggest(callback) {
-            const interval = setInterval(() => {
-                if (typeof intellisuggest === 'function') {
-                    clearInterval(interval);
-                    callback();
-                }
-            }, 50);
-        }
-
+        // IntelliSuggest setup for tracking the search query
         waitForIntelliSuggest(() => {
             intellisuggest('setSearchTerm', '@Model.Query');
         });
-
-        const target = document.getElementById('searchspring-filters');
-        if (target) {
-            const observer = new MutationObserver(function (mutationsList, observer) {
-                // your mutation logic here
-            });
-
-            observer.observe(target, { childList: true, subtree: true });
-        }
     </script>
 }
