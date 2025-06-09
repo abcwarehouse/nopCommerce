@@ -173,5 +173,15 @@ window.ISInstant.search({
     filter: selectedFilters
 });
 
+window.ISInstant.on('results', function (results) {
+    console.log(results);
+    renderFacets(results.facets);
+    renderSortOptions(results.meta.sortOptions);
+});
+
+
+console.log(data);
+console.log(data.facets);
+console.log(data.meta.sortOptions);
 
 </script>
