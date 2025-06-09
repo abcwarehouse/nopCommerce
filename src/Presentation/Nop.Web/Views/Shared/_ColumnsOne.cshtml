@@ -9,3 +9,5 @@
     @RenderBody()
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.MainColumnAfter })
 </div>
+
+@await RenderSectionAsync("Scripts", required: false)
