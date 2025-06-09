@@ -177,3 +177,30 @@ else
         });
     </script>
 }
+@section Scripts {
+    <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
+
+    <script>
+        function waitForIntelliSuggest(callback) {
+            const interval = setInterval(() => {
+                if (typeof intellisuggest === 'function') {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 50);
+        }
+
+        waitForIntelliSuggest(() => {
+            intellisuggest('setSearchTerm', '@Model.Query');
+        });
+
+        const target = document.getElementById('searchspring-filters');
+        if (target) {
+            const observer = new MutationObserver(function (mutationsList, observer) {
+                // your mutation logic here
+            });
+
+            observer.observe(target, { childList: true, subtree: true });
+        }
+    </script>
+}
