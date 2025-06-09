@@ -94,81 +94,86 @@ else
 
 @section Scripts {
     <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            function renderSortOptions(sortOptions) {
-                const sortContainer = document.getElementById('searchspring-sort');
-                const select = document.createElement('select');
-                select.id = 'sort-select';
+        function onISInstantReady(callback) {
+            const interval = setInterval(() => {
+                if (window.ISInstant && typeof window.ISInstant.on === 'function') {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 50);
+        }
 
-                sortOptions.forEach(option => {
-                    const opt = document.createElement('option');
-                    opt.value = option.field;
-                    opt.text = option.label;
-                    if (option.selected) opt.selected = true;
-                    select.appendChild(opt);
+        function renderSortOptions(sortOptions) {
+            const sortContainer = document.getElementById('searchspring-sort');
+            const select = document.createElement('select');
+            select.id = 'sort-select';
+
+            sortOptions.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option.field;
+                opt.text = option.label;
+                if (option.selected) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            sortContainer.innerHTML = '';
+            sortContainer.appendChild(select);
+
+            select.addEventListener('change', function () {
+                window.ISInstant.search({
+                    sort: this.value
                 });
+            });
+        }
 
-                sortContainer.innerHTML = '';
-                sortContainer.appendChild(select);
+        function renderFacets(facets) {
+            const filterContainer = document.getElementById('searchspring-filters');
+            filterContainer.innerHTML = '';
 
-                select.addEventListener('change', function () {
-                    window.ISInstant.search({
-                        sort: this.value
+            facets.forEach(facet => {
+                const section = document.createElement('div');
+                section.className = 'facet-group';
+                const title = document.createElement('h4');
+                title.textContent = facet.label;
+                section.appendChild(title);
+
+                facet.values.forEach(val => {
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = val.value;
+                    checkbox.checked = val.selected;
+
+                    checkbox.addEventListener('change', () => {
+                        updateFilters(facet.field, val.value, checkbox.checked);
                     });
+
+                    label.appendChild(checkbox);
+                    label.append(' ' + val.label + ' (' + val.count + ')');
+                    section.appendChild(label);
                 });
-            }
 
-            function renderFacets(facets) {
-                const filterContainer = document.getElementById('searchspring-filters');
-                filterContainer.innerHTML = '';
+                filterContainer.appendChild(section);
+            });
+        }
 
-                facets.forEach(facet => {
-                    const section = document.createElement('div');
-                    section.className = 'facet-group';
-                    const title = document.createElement('h4');
-                    title.textContent = facet.label;
-                    section.appendChild(title);
+        function updateFilters(field, value, checked) {
+            const filters = {};
+            window.ISInstant.search({
+                filter: filters
+            });
+        }
 
-                    facet.values.forEach(val => {
-                        const label = document.createElement('label');
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.value = val.value;
-                        checkbox.checked = val.selected;
+        onISInstantReady(() => {
+            console.log('ISInstant is ready');
+            window.ISInstant.on('results', function (results) {
+                console.log('Searchspring results:', results);
+                if (results.facets) renderFacets(results.facets);
+                if (results.meta?.sortOptions) renderSortOptions(results.meta.sortOptions);
+            });
 
-                        checkbox.addEventListener('change', () => {
-                            window.ISInstant.search({
-                                filter: {
-                                    [facet.field]: [val.value]
-                                }
-                            });
-                        });
-
-                        label.appendChild(checkbox);
-                        label.append(' ' + val.label + ' (' + val.count + ')');
-                        section.appendChild(label);
-                    });
-
-                    filterContainer.appendChild(section);
-                });
-            }
-
-            if (typeof ISInstant !== 'undefined') {
-                ISInstant.on('results', function (results) {
-                    console.log('Searchspring results:', results);
-
-                    if (results.facets) {
-                        renderFacets(results.facets);
-                    }
-
-                    if (results.meta && results.meta.sortOptions) {
-                        renderSortOptions(results.meta.sortOptions);
-                    }
-                });
-            } else {
-                console.error('ISInstant not loaded');
-            }
         });
     </script>
 }
