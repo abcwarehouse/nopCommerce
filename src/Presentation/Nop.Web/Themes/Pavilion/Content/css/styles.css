@@ -260,6 +260,26 @@ nav.pagination li a {
     font-size: 14px;
     font-weight: bold;
 }
+h2#searchspring-no_results {
+    padding: 10px;
+}
+#autocomplete-results h3 {
+    padding: 10px;
+}
+#autocomplete-results ol {
+    padding: 10px;
+}
+#autocomplete-results input {
+    display: none;
+}
+.autocomplete-list .price {
+    color: #000;
+    font-weight: bold;
+	font-size: 16px;
+}
+.autocomplete-list .item {
+	grid-template-columns: 75px 1fr 100px;
+}
 
 @media screen and (max-width: 1024px) {
 	.search-spring-container {
