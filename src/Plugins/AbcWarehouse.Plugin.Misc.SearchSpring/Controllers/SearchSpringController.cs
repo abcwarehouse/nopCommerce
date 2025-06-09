@@ -120,7 +120,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An internal server error occurred while fetching suggestions." });
+                return StatusCode(500, new { error = "An internal server error occurred while fetching suggestions. Message: " + ex.Message });
             }
         }
         
@@ -163,7 +163,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An internal server error occurred while fetching autocomplete results." });
+                return StatusCode(500, new { error = "An internal server error occurred while fetching autocomplete results. Message: " + ex.Message });
             }
         }
 
