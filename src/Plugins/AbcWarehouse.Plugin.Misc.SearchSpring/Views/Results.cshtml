@@ -20,168 +20,155 @@
 }
 else
 {
-    <div class="searchspring-controls">
-        <div id="searchspring-sort" class="sort-dropdown"></div>
-        <div id="searchspring-filters" class="facet-sidebar"></div>
+    <div class="searchspring-controls" style="margin-bottom: 20px;">
+        <div id="searchspring-sort" class="sort-dropdown" style="margin-bottom: 20px;"></div>
+        <div id="searchspring-filters" class="facet-sidebar" style="margin-bottom: 20px;"></div>
     </div>
-    
+
     <div class="products-container">
         <div class="products-wrapper">
             <div class="product-grid">
                 <div class="item-grid">
-                    @{
-
-                        foreach (var item in Model.Results)
+                    @foreach (var item in Model.Results)
+                    {
+                        var product = await productService.GetProductBySkuAsync(item.Sku);
+                        if (product != null)
                         {
-                            var product = await productService.GetProductBySkuAsync(item.Sku);
-                            if (product != null)
+                            var productUrl = await urlRecordService.GetSeNameAsync(product);
+                            var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                new[] { product }, true, true);
+                            var model = productOverviewModels.FirstOrDefault();
+
+                            if (model != null)
                             {
-                                var productUrl = await urlRecordService.GetSeNameAsync(product);
-
-                                var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
-                                    new[] { product },
-                                    true,
-                                    true);
-
-                                var model = productOverviewModels.FirstOrDefault();
-
-                                if (model != null)
-                                {
-                                    <div class="item-box">
-                                        @await Html.PartialAsync("_ProductBox", model)
-                                    </div>
-                                }
+                                <div class="item-box">
+                                    @await Html.PartialAsync("_ProductBox", model)
+                                </div>
                             }
                         }
-
                     }
                 </div>
             </div>
+
             @if (Model.TotalPages > 1)
+            {
+                int maxVisiblePages = 5;
+                int currentPage = Model.PageNumber;
+                int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+                int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+
+                if ((endPage - startPage + 1) < maxVisiblePages)
                 {
-                    int maxVisiblePages = 5;
-                    int currentPage = Model.PageNumber;
-                    int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
-                    int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
-
-                    // Adjust startPage if we're near the end
-                    if ((endPage - startPage + 1) < maxVisiblePages)
-                    {
-                        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
-                    }
-
-                    <nav class="pagination">
-                        <ul>
-                            @if (currentPage > 1)
-                            {
-                                <li>
-                                    <a href="/searchspring/results?q=@Model.Query&page=@(currentPage - 1)">« Prev</a>
-                                </li>
-                            }
-
-                            @for (var i = startPage; i <= endPage; i++)
-                            {
-                                var activeClass = i == currentPage ? "active" : "";
-                                <li class="@activeClass">
-                                    <a href="/searchspring/results?q=@Model.Query&page=@i">@i</a>
-                                </li>
-                            }
-
-                            @if (currentPage < Model.TotalPages)
-                            {
-                                <li>
-                                    <a href="/searchspring/results?q=@Model.Query&page=@(currentPage + 1)">Next »</a>
-                                </li>
-                            }
-                        </ul>
-                    </nav>
+                    startPage = Math.Max(1, endPage - maxVisiblePages + 1);
                 }
 
+                <nav class="pagination">
+                    <ul>
+                        @if (currentPage > 1)
+                        {
+                            <li>
+                                <a href="/searchspring/results?q=@Model.Query&page=@(currentPage - 1)">« Prev</a>
+                            </li>
+                        }
+
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            var activeClass = i == currentPage ? "active" : "";
+                            <li class="@activeClass">
+                                <a href="/searchspring/results?q=@Model.Query&page=@i">@i</a>
+                            </li>
+                        }
+
+                        @if (currentPage < Model.TotalPages)
+                        {
+                            <li>
+                                <a href="/searchspring/results?q=@Model.Query&page=@(currentPage + 1)">Next »</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
         </div>
     </div>
 }
 
-<script>
-    function renderSortOptions(sortOptions) {
-    const sortContainer = document.getElementById('searchspring-sort');
-    const select = document.createElement('select');
-    select.id = 'sort-select';
+@section Scripts {
+    <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function renderSortOptions(sortOptions) {
+                const sortContainer = document.getElementById('searchspring-sort');
+                const select = document.createElement('select');
+                select.id = 'sort-select';
 
-    sortOptions.forEach(option => {
-        const opt = document.createElement('option');
-        opt.value = option.field;
-        opt.text = option.label;
-        if (option.selected) opt.selected = true;
-        select.appendChild(opt);
-    });
+                sortOptions.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.field;
+                    opt.text = option.label;
+                    if (option.selected) opt.selected = true;
+                    select.appendChild(opt);
+                });
 
-    sortContainer.innerHTML = '';
-    sortContainer.appendChild(select);
+                sortContainer.innerHTML = '';
+                sortContainer.appendChild(select);
 
-    select.addEventListener('change', function () {
-        // Trigger new Searchspring search with selected sort
-        window.ISInstant.search({
-            sort: this.value
+                select.addEventListener('change', function () {
+                    window.ISInstant.search({
+                        sort: this.value
+                    });
+                });
+            }
+
+            function renderFacets(facets) {
+                const filterContainer = document.getElementById('searchspring-filters');
+                filterContainer.innerHTML = '';
+
+                facets.forEach(facet => {
+                    const section = document.createElement('div');
+                    section.className = 'facet-group';
+                    const title = document.createElement('h4');
+                    title.textContent = facet.label;
+                    section.appendChild(title);
+
+                    facet.values.forEach(val => {
+                        const label = document.createElement('label');
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = val.value;
+                        checkbox.checked = val.selected;
+
+                        checkbox.addEventListener('change', () => {
+                            window.ISInstant.search({
+                                filter: {
+                                    [facet.field]: [val.value]
+                                }
+                            });
+                        });
+
+                        label.appendChild(checkbox);
+                        label.append(' ' + val.label + ' (' + val.count + ')');
+                        section.appendChild(label);
+                    });
+
+                    filterContainer.appendChild(section);
+                });
+            }
+
+            if (typeof ISInstant !== 'undefined') {
+                ISInstant.on('results', function (results) {
+                    console.log('Searchspring results:', results);
+
+                    if (results.facets) {
+                        renderFacets(results.facets);
+                    }
+
+                    if (results.meta && results.meta.sortOptions) {
+                        renderSortOptions(results.meta.sortOptions);
+                    }
+                });
+            } else {
+                console.error('ISInstant not loaded');
+            }
         });
-    });
+    </script>
 }
-
-function renderFacets(facets) {
-    const filterContainer = document.getElementById('searchspring-filters');
-    filterContainer.innerHTML = '';
-
-    facets.forEach(facet => {
-        const section = document.createElement('div');
-        section.className = 'facet-group';
-        const title = document.createElement('h4');
-        title.textContent = facet.label;
-        section.appendChild(title);
-
-        facet.values.forEach(val => {
-            const label = document.createElement('label');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = val.value;
-            checkbox.checked = val.selected;
-
-            checkbox.addEventListener('change', () => {
-                // Update filters and trigger search
-                updateFilters(facet.field, val.value, checkbox.checked);
-            });
-
-            label.appendChild(checkbox);
-            label.append(' ' + val.label + ' (' + val.count + ')');
-            section.appendChild(label);
-        });
-
-        filterContainer.appendChild(section);
-    });
-}
-
-function updateFilters(field, value, checked) {
-    const filters = {}; // build current filter object
-    // Add/remove field:value depending on checked
-    // Then trigger new search:
-    window.ISInstant.search({
-        filter: filters
-    });
-}
-
-window.ISInstant.search({
-    query: yourQuery,
-    sort: selectedSort,
-    filter: selectedFilters
-});
-
-window.ISInstant.on('results', function (results) {
-    console.log(results);
-    renderFacets(results.facets);
-    renderSortOptions(results.meta.sortOptions);
-});
-
-
-console.log(data);
-console.log(data.facets);
-console.log(data.meta.sortOptions);
-
-</script>
