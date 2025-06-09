@@ -98,7 +98,7 @@ else
     <script>
         function waitForIntelliSuggest(callback) {
             const interval = setInterval(() => {
-                if (typeof intellisuggest === 'function') {
+                if (typeof window.intellisuggest === 'function') {
                     clearInterval(interval);
                     callback();
                 }
@@ -116,6 +116,8 @@ else
 
         function renderSortOptions(sortOptions) {
             const sortContainer = document.getElementById('searchspring-sort');
+            if (!sortContainer) return;
+
             const select = document.createElement('select');
             select.id = 'sort-select';
 
@@ -137,6 +139,8 @@ else
 
         function renderFacets(facets) {
             const filterContainer = document.getElementById('searchspring-filters');
+            if (!filterContainer) return;
+
             filterContainer.innerHTML = '';
 
             facets.forEach(facet => {
@@ -167,15 +171,14 @@ else
         }
 
         function updateFilters(field, value, checked) {
-            // Example logic — you can enhance this to accumulate filters in a more complex object
             const filters = {};
             filters[field] = checked ? [value] : [];
 
             window.ISInstant.search({ filter: filters });
         }
 
-        // Initialize ISInstant results listener
         onISInstantReady(() => {
+            console.log('ISInstant ready');
             window.ISInstant.on('results', function (results) {
                 console.log('Searchspring results:', results);
                 if (results.facets) renderFacets(results.facets);
@@ -183,9 +186,19 @@ else
             });
         });
 
-        // IntelliSuggest setup for tracking the search query
         waitForIntelliSuggest(() => {
+            console.log('IntelliSuggest ready');
             intellisuggest('setSearchTerm', '@Model.Query');
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterTarget = document.getElementById('searchspring-filters');
+            if (filterTarget) {
+                const observer = new MutationObserver(function (mutationsList, observer) {
+                    // Optional: logic on DOM mutation
+                });
+                observer.observe(filterTarget, { childList: true, subtree: true });
+            }
         });
     </script>
 }
