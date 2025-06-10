@@ -50,6 +50,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             try
             {
                 var productList = new List<SearchSpringProductModel>();
+                var facetList = new List<FacetDetail>();
                 int currentPage = 1, pageSize = 24, totalResults = 0;
                 var facets = new Dictionary<string, FacetDetail>();
 
@@ -84,33 +85,18 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
 
-                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Array)
+                if (root.TryGetProperty("facets", out var facetsProp) && resultsElement.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var facet in facetsProp.EnumerateObject())
+                    foreach (var item in facetsProp.EnumerateArray())
                     {
-                        var value = facet.Value;
                         var detail = new FacetDetail
                         {
-                            Multiple = value.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
-                            Field = value.TryGetProperty("type", out var fieldProp) ? fieldProp.GetString() : "",
-                            Label = value.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
-                            Collapse = value.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
+                            Multiple = item.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
+                            Field = item.TryGetProperty("type", out var fieldProp) ? fieldProp.GetString() : "",
+                            Label = item.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
+                            Collapse = item.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
                         };
-
-                        if (value.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
-                        {
-                            foreach (var val in valuesProp.EnumerateArray())
-                            {
-                                detail.Values.Add(new FacetValue
-                                {
-                                    Value = val.TryGetProperty("value", out var v) ? v.GetString() : "",
-                                    Label = val.TryGetProperty("label", out var l) ? l.GetString() : "",
-                                    Count = val.TryGetProperty("count", out var c) ? c.GetInt32() : 0
-                                });
-                            }
-                        }
-
-                        facets[facet.Name] = detail;
+                        facetList.Add(detail);
                     }
                 }
                 else
