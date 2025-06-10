@@ -74,6 +74,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
                         };
                         productList.Add(model);
+                        
                     }
                 }
                 else
@@ -92,13 +93,56 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 {
                     Console.WriteLine("[SearchSpring] 'pagination' object not found or malformed.");
                 }
+                
+                var facets = new Dictionary<string, FacetDetail>();
+
+                if (root.TryGetProperty("facets", out var facetsElement) && facetsElement.ValueKind == JsonValueKind.Object)
+                {
+                    foreach (var facetProp in facetsElement.EnumerateObject())
+                    {
+                        var facetDetail = new FacetDetail();
+
+                        var facetObj = facetProp.Value;
+                        if (facetObj.TryGetProperty("multiple", out var multiple))
+                            facetDetail.Multiple = multiple.GetString();
+                        if (facetObj.TryGetProperty("display", out var display))
+                            facetDetail.Display = display.GetString();
+                        if (facetObj.TryGetProperty("label", out var label))
+                            facetDetail.Label = label.GetString();
+                        if (facetObj.TryGetProperty("collapsed", out var collapsed))
+                            facetDetail.Collapsed = collapsed.GetBoolean();
+
+                        if (facetObj.TryGetProperty("values", out var values) && values.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var valueObj in values.EnumerateArray())
+                            {
+                                var facetValue = new FacetValue
+                                {
+                                    Value = valueObj.TryGetProperty("value", out var val) ? val.GetString() : null,
+                                    Label = valueObj.TryGetProperty("label", out var lbl) ? lbl.GetString() : null,
+                                    Count = valueObj.TryGetProperty("count", out var count) ? count.GetInt32() : 0
+                                };
+
+                                facetDetail.Values.Add(facetValue);
+                            }
+                        }
+
+                        facets[facetProp.Name] = facetDetail;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("[SearchSpring] 'facets' object not found or malformed.");
+                }
+
 
                 return new SearchResultModel
                 {
                     Results = productList,
-                    PageNumber = currentPage    ,
+                    PageNumber = currentPage,
                     PageSize = pageSize,
-                    TotalResults = totalResults
+                    TotalResults = totalResults,
+                    Facets = facets,
                 };
             }
             catch (Exception ex)
