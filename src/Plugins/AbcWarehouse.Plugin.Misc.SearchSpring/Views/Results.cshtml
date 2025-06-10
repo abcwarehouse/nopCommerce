@@ -127,4 +127,6 @@ else
     }));
 
     console.log("SearchSpringModel:", searchSpringModel);
+    console.log("Facets:", @Html.Raw(JsonSerializer.Serialize(Model.Facets)));
+    console.log("Results:", @Html.Raw(JsonSerializer.Serialize(Model.Results)));
 </script>
