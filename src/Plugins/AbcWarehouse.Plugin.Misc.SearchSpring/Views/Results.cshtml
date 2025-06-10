@@ -20,6 +20,27 @@
 }
 else
 {
+    <div class="searchspring-sidebar">
+        @{
+            foreach(var searchFacet in Model.Facets)
+            {
+                <div class="searchspring-facet">
+                    <h3>@searchFacet.Name</h3>
+                    <ul>
+                        @foreach (var facetValue in searchFacet.Values)
+                        {
+                            <li>
+                                <a href="@($"{webHelper.GetStoreLocation()}searchspring/results?q={Model.Query}&facet={searchFacet.Name}:{facetValue.Value}")">
+                                    @facetValue.Label (@facetValue.Count)
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        }
+    </div>
+
     <div class="products-container">
         <div class="products-wrapper">
             <div class="product-grid">

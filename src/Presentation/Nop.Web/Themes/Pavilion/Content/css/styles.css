@@ -286,14 +286,17 @@ h2#searchspring-no_results {
 		margin: 0;
 		padding-left: 10px;
 		position: absolute;
-		top: 60px;
+		top: 101px;
 		padding-left: 47px;
 	}
 	.search-container {
 		max-width: 100%;
+		width: 100%;
 	}
 }
+@media screen and (max-width: 1024px) {
 
+}
 
 /*********** GLOBAL STYLES **********/
 body {
