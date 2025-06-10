@@ -120,13 +120,15 @@ else
 }
 
 <script>
-    // Serialize the model as JSON and safely encode for JS
-    const searchSpringModel = @Html.Raw(JsonSerializer.Serialize(Model, new JsonSerializerOptions {
-        WriteIndented = true,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    }));
+    const searchSpringFacets = @Html.Raw(JsonSerializer.Serialize(
+        Model.Facets,
+        new JsonSerializerOptions {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        }));
 
     console.log("SearchSpringModel:", searchSpringModel);
-    console.log("Facets:", @Html.Raw(JsonSerializer.Serialize(Model.Facets)));
-    console.log("Results:", @Html.Raw(JsonSerializer.Serialize(Model.Results)));
+
+    console.log("Facets:", searchSpringFacets);
 </script>
