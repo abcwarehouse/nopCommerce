@@ -48,7 +48,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         results.PageNumber = page;
         results.Query = q;
 
-        // ✅ Add this to log the entire model including Facets
         var modelJson = System.Text.Json.JsonSerializer.Serialize(results, new System.Text.Json.JsonSerializerOptions
         {
             WriteIndented = true,

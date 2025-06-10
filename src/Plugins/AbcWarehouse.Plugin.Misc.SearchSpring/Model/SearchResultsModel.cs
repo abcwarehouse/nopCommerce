@@ -6,41 +6,74 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 {
     public class SearchResultModel
     {
+        [JsonPropertyName("results")]
         public List<SearchSpringProductModel> Results { get; set; } = new();
+
+        [JsonPropertyName("page")]
         public int PageNumber { get; set; }
+
+        [JsonPropertyName("resultsPerPage")]
         public int PageSize { get; set; }
+
+        [JsonPropertyName("totalResults")]
         public int TotalResults { get; set; }
 
-        public int TotalPages => (int)Math.Ceiling((double)TotalResults / PageSize);
+        public int TotalPages => PageSize > 0
+            ? (int)Math.Ceiling((double)TotalResults / PageSize)
+            : 0;
 
+        [JsonPropertyName("query")]
         public string Query { get; set; }
+
+        [JsonPropertyName("facets")]
         public Dictionary<string, FacetDetail> Facets { get; set; } = new();
+
+        [JsonPropertyName("sortOptions")]
         public List<SortOption> SortOptions { get; set; } = new();
     }
 
     public class FacetDetail
     {
+        [JsonPropertyName("multiple")]
         public string Multiple { get; set; }
+
+        [JsonPropertyName("display")]
         public string Display { get; set; }
+
+        [JsonPropertyName("label")]
         public string Label { get; set; }
+
+        [JsonPropertyName("collapsed")]
         public bool Collapsed { get; set; }
 
+        [JsonPropertyName("values")]
         public List<FacetValue> Values { get; set; } = new();
     }
 
     public class FacetValue
     {
+        [JsonPropertyName("value")]
         public string Value { get; set; }
+
+        [JsonPropertyName("label")]
         public string Label { get; set; }
+
+        [JsonPropertyName("count")]
         public int Count { get; set; }
     }
 
     public class SortOption
     {
+        [JsonPropertyName("type")]
         public string Type { get; set; }
+
+        [JsonPropertyName("field")]
         public string Field { get; set; }
+
+        [JsonPropertyName("direction")]
         public string Direction { get; set; }
+
+        [JsonPropertyName("label")]
         public string Label { get; set; }
     }
-
 }
