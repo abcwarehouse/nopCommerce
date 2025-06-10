@@ -293,7 +293,9 @@ h2#searchspring-no_results {
 		max-width: 100%;
 		width: 100%;
 	}
-}
+	.search-spring-container {
+		max-width: calc(100% - 0px);
+	}
 @media screen and (max-width: 1024px) {
 
 }
