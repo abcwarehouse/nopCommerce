@@ -36,20 +36,30 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         }
 
         public async Task<IActionResult> Results(string q, int page = 1)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return BadRequest("Search term cannot be empty.");
+
+        var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
+        var siteId = "4lt84w";
+
+        var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
+
+        results.PageNumber = page;
+        results.Query = q;
+
+        // ✅ Add this to log the entire model including Facets
+        var modelJson = System.Text.Json.JsonSerializer.Serialize(results, new System.Text.Json.JsonSerializerOptions
         {
-            if (string.IsNullOrWhiteSpace(q))
-                return BadRequest("Search term cannot be empty.");
+            WriteIndented = true,
+            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+        });
 
-            var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
-            var siteId = "4lt84w";
+        _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
 
-            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
+        return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
+    }
 
-            results.PageNumber = page;
-            results.Query = q;
-
-            return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
-        }
 
 
         private string GetOrCreateSearchSpringSessionId(HttpContext context)
