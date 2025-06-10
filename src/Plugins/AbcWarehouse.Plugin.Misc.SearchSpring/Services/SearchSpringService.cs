@@ -26,16 +26,16 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             var client = _httpClientFactory.CreateClient();
 
             var url = $"{_baseUrl}/api/search/search.json?" +
-                    $"q={WebUtility.UrlEncode(query)}" +
-                    $"&resultsFormat=json" +
-                    $"&resultsPerPage=24" +
-                    $"&page={page}" +
-                    $"&redirectResponse=minimal";
+                      $"q={WebUtility.UrlEncode(query)}" +
+                      "&resultsFormat=json" +
+                      "&resultsPerPage=24" +
+                      $"&page={page}" +
+                      "&redirectResponse=minimal";
 
             if (!string.IsNullOrEmpty(sessionId))
-                url += $"&ss-sessionId={WebUtility.UrlEncode(sessionId)}";
+                url += "&ss-sessionId=" + WebUtility.UrlEncode(sessionId);
 
-            url += $"&siteId={WebUtility.UrlEncode(siteId)}";
+            url += "&siteId=" + WebUtility.UrlEncode(siteId);
 
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
@@ -51,11 +51,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             {
                 var productList = new List<SearchSpringProductModel>();
                 int currentPage = 1, pageSize = 24, totalResults = 0;
+                var facets = new Dictionary<string, FacetDetail>();
 
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                // Safe parse: results
                 if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var item in resultsElement.EnumerateArray())
@@ -74,60 +74,43 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
                         };
                         productList.Add(model);
-                        
                     }
                 }
-                else
-                {
-                    Console.WriteLine("[SearchSpring] 'results' array not found or malformed.");
-                }
 
-                // Safe parse: pagination
                 if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
                 {
                     currentPage = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
                     pageSize = pagination.TryGetProperty("pageSize", out var sizeProp) ? sizeProp.GetInt32() : 24;
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
-                else
-                {
-                    Console.WriteLine("[SearchSpring] 'pagination' object not found or malformed.");
-                }
-                
-                var facets = new Dictionary<string, FacetDetail>();
 
-                if (root.TryGetProperty("facets", out var facetsElement) && facetsElement.ValueKind == JsonValueKind.Object)
+                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Object)
                 {
-                    foreach (var facetProp in facetsElement.EnumerateObject())
+                    foreach (var facet in facetsProp.EnumerateObject())
                     {
-                        var facetDetail = new FacetDetail();
-
-                        var facetObj = facetProp.Value;
-                        if (facetObj.TryGetProperty("multiple", out var multiple))
-                            facetDetail.Multiple = multiple.GetString();
-                        if (facetObj.TryGetProperty("display", out var display))
-                            facetDetail.Display = display.GetString();
-                        if (facetObj.TryGetProperty("label", out var label))
-                            facetDetail.Label = label.GetString();
-                        if (facetObj.TryGetProperty("collapsed", out var collapsed))
-                            facetDetail.Collapsed = collapsed.GetBoolean();
-
-                        if (facetObj.TryGetProperty("values", out var values) && values.ValueKind == JsonValueKind.Array)
+                        var value = facet.Value;
+                        var detail = new FacetDetail
                         {
-                            foreach (var valueObj in values.EnumerateArray())
-                            {
-                                var facetValue = new FacetValue
-                                {
-                                    Value = valueObj.TryGetProperty("value", out var val) ? val.GetString() : null,
-                                    Label = valueObj.TryGetProperty("label", out var lbl) ? lbl.GetString() : null,
-                                    Count = valueObj.TryGetProperty("count", out var count) ? count.GetInt32() : 0
-                                };
+                            Multiple = value.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
+                            Display = value.TryGetProperty("type", out var displayProp) ? displayProp.GetString() : "",
+                            Label = value.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
+                            Collapsed = value.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
+                        };
 
-                                facetDetail.Values.Add(facetValue);
+                        if (value.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var val in valuesProp.EnumerateArray())
+                            {
+                                detail.Values.Add(new FacetValue
+                                {
+                                    Value = val.TryGetProperty("value", out var v) ? v.GetString() : "",
+                                    Label = val.TryGetProperty("label", out var l) ? l.GetString() : "",
+                                    Count = val.TryGetProperty("count", out var c) ? c.GetInt32() : 0
+                                });
                             }
                         }
 
-                        facets[facetProp.Name] = facetDetail;
+                        facets[facet.Name] = detail;
                     }
                 }
                 else
@@ -135,23 +118,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     Console.WriteLine("[SearchSpring] 'facets' object not found or malformed.");
                 }
 
-
                 return new SearchResultModel
                 {
                     Results = productList,
                     PageNumber = currentPage,
                     PageSize = pageSize,
                     TotalResults = totalResults,
-                    Facets = facets,
+                    Facets = facets
                 };
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[SearchSpring] JSON Deserialization failed: {ex.Message}");
-                Console.WriteLine($"[SearchSpring] Raw JSON for debugging:\n{json}");
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-
     }
 }

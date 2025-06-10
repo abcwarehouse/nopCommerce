@@ -34,6 +34,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
     public class FacetDetail
     {
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+
         [JsonPropertyName("multiple")]
         public string Multiple { get; set; }
 
@@ -46,12 +49,21 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         [JsonPropertyName("collapsed")]
         public bool Collapsed { get; set; }
 
+        [JsonPropertyName("facet_active")]
+        public bool FacetActive { get; set; }
+
+        [JsonPropertyName("hierarchyDelimiter")]
+        public string HierarchyDelimiter { get; set; }
+
         [JsonPropertyName("values")]
         public List<FacetValue> Values { get; set; } = new();
     }
 
     public class FacetValue
     {
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+
         [JsonPropertyName("value")]
         public string Value { get; set; }
 
@@ -60,6 +72,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("count")]
         public int Count { get; set; }
+
+        [JsonPropertyName("active")]
+        public bool Active { get; set; }
     }
 
     public class SortOption
