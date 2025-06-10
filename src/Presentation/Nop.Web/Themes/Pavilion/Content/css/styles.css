@@ -296,8 +296,6 @@ h2#searchspring-no_results {
 	.search-spring-container {
 		max-width: calc(100% - 0px);
 	}
-@media screen and (max-width: 1024px) {
-
 }
 
 /*********** GLOBAL STYLES **********/
