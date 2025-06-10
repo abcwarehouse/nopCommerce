@@ -48,6 +48,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             results.PageNumber = page;
             results.Query = q;
 
+            Console.WriteLine("This is mikes search now: " + results.Facets + " Count it up " + results.Facets.Count);
+
             var modelJson = System.Text.Json.JsonSerializer.Serialize(results, new System.Text.Json.JsonSerializerOptions
             {
                 WriteIndented = true,

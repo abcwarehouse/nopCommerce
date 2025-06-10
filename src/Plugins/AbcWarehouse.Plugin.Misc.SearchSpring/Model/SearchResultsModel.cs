@@ -47,7 +47,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         public string Label { get; set; }
 
         [JsonPropertyName("collapse")]
-        public bool Collapsed { get; set; }
+        public bool Collapse { get; set; }
 
         [JsonPropertyName("facet_active")]
         public bool FacetActive { get; set; }

@@ -92,9 +92,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         var detail = new FacetDetail
                         {
                             Multiple = value.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
-                            Display = value.TryGetProperty("type", out var displayProp) ? displayProp.GetString() : "",
+                            Field = value.TryGetProperty("type", out var fieldProp) ? fieldProp.GetString() : "",
                             Label = value.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
-                            Collapsed = value.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
+                            Collapse = value.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
                         };
 
                         if (value.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
