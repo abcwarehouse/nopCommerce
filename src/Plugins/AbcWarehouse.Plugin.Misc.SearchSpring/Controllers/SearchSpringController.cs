@@ -48,8 +48,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             results.PageNumber = page;
             results.Query = q;
 
-            Console.WriteLine("This is mikes search now: " + results.Facets + " Count it up " + results.Facets.Count);
-
             var modelJson = System.Text.Json.JsonSerializer.Serialize(results, new System.Text.Json.JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -57,6 +55,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             });
 
             _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
+            _logger.InformationAsync($"This is mikes search now:\n{results.Facets} Count it up {results.Facets.Count}");
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
