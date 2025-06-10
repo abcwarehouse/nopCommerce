@@ -9,6 +9,7 @@
 @using Nop.Core.Domain.Catalog
 @using Nop.Web.Extensions
 @using Nop.Web.Models.Media
+@using System.Text.Json
 
 @{
     Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
@@ -117,3 +118,13 @@ else
         </div>
     </div>
 }
+
+<script>
+    // Serialize the model as JSON and safely encode for JS
+    const searchSpringModel = @Html.Raw(JsonSerializer.Serialize(Model, new JsonSerializerOptions {
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    }));
+
+    console.log("SearchSpringModel:", searchSpringModel);
+</script>
