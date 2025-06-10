@@ -12,18 +12,6 @@
 
 <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
 
-<script>
-  document.getElementById('searchForm').addEventListener('submit', function(e) {
-    const searchTerm = document.getElementById('searchInput').value;
-
-    // Send the GA4 event
-    gtag('event', 'view_search_results', {
-      search_term: searchTerm
-    });
-
-  });
-</script>
-
 <div class="search-container" style="position: relative;">
     <form id="searchForm" autocomplete="off">
         <input type="text" id="searchInput" placeholder="Type to search..." />
