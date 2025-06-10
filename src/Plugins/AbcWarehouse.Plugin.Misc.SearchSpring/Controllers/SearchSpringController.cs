@@ -36,28 +36,28 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         }
 
         public async Task<IActionResult> Results(string q, int page = 1)
-    {
-        if (string.IsNullOrWhiteSpace(q))
-            return BadRequest("Search term cannot be empty.");
-
-        var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
-        var siteId = "4lt84w";
-
-        var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
-
-        results.PageNumber = page;
-        results.Query = q;
-
-        var modelJson = System.Text.Json.JsonSerializer.Serialize(results, new System.Text.Json.JsonSerializerOptions
         {
-            WriteIndented = true,
-            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
-        });
+            if (string.IsNullOrWhiteSpace(q))
+                return BadRequest("Search term cannot be empty.");
 
-        _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
+            var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
+            var siteId = "4lt84w";
 
-        return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
-    }
+            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
+
+            results.PageNumber = page;
+            results.Query = q;
+
+            var modelJson = System.Text.Json.JsonSerializer.Serialize(results, new System.Text.Json.JsonSerializerOptions
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+            });
+
+            _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
+
+            return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
+        }
 
 
 

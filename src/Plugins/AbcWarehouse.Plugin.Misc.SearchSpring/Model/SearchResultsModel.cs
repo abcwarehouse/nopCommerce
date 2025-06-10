@@ -40,13 +40,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         [JsonPropertyName("multiple")]
         public string Multiple { get; set; }
 
-        [JsonPropertyName("display")]
-        public string Display { get; set; }
+        [JsonPropertyName("field")]
+        public string Field { get; set; }
 
         [JsonPropertyName("label")]
         public string Label { get; set; }
 
-        [JsonPropertyName("collapsed")]
+        [JsonPropertyName("collapse")]
         public bool Collapsed { get; set; }
 
         [JsonPropertyName("facet_active")]
