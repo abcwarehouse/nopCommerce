@@ -21,23 +21,24 @@
 else
 {
     <div class="searchspring-sidebar">
-        @{
-            foreach(var searchFacet in Model.Facets)
-            {
-                <div class="searchspring-facet">
-                    <h3>@searchFacet.Name</h3>
-                    <ul>
-                        @foreach (var facetValue in searchFacet.Values)
-                        {
-                            <li>
-                                <a href="@($"{webHelper.GetStoreLocation()}searchspring/results?q={Model.Query}&facet={searchFacet.Name}:{facetValue.Value}")">
-                                    @facetValue.Label (@facetValue.Count)
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            }
+        @foreach (var facetEntry in Model.Facets)
+        {
+            var facetName = facetEntry.Key;
+            var facetDetail = facetEntry.Value;
+
+            <div class="searchspring-facet">
+                <h3>@facetDetail.Label</h3>  @* Use Label property for display name *@
+                <ul>
+                    @foreach (var facetValue in facetDetail.Values)
+                    {
+                        <li>
+                            <a href="@($"{webHelper.GetStoreLocation()}searchspring/results?q={Model.Query}&facet={facetName}:{facetValue.Value}")">
+                                @facetValue.Label (@facetValue.Count)
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
         }
     </div>
 
