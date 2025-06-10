@@ -84,7 +84,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
 
-                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Object)
+                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var facet in facetsProp.EnumerateObject())
                     {
