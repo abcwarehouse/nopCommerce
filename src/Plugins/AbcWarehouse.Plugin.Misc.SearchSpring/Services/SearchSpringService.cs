@@ -84,20 +84,21 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
 
-                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Object)
+                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var facet in facetsProp.EnumerateObject())
+                    foreach (var facet in facetsProp.EnumerateArray())
                     {
-                        var value = facet.Value;
+                        var field = facet.TryGetProperty("field", out var fieldProp) ? fieldProp.GetString() : "";
+
                         var detail = new FacetDetail
                         {
-                            Multiple = value.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
-                            Field = value.TryGetProperty("type", out var fieldProp) ? fieldProp.GetString() : "",
-                            Label = value.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
-                            Collapse = value.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
+                            Field = field,
+                            Label = facet.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
+                            Multiple = facet.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
+                            Collapse = facet.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
                         };
 
-                        if (value.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
+                        if (facet.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
                         {
                             foreach (var val in valuesProp.EnumerateArray())
                             {
@@ -110,12 +111,26 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             }
                         }
 
-                        facets[facet.Name] = detail;
+                        if (!string.IsNullOrEmpty(field))
+                            facets[field] = detail;
                     }
                 }
-                else
+
+
+                var sortOptions = new List<SortOption>();
+
+                if (root.TryGetProperty("sortOptions", out var sortOptionsProp) && sortOptionsProp.ValueKind == JsonValueKind.Array)
                 {
-                    Console.WriteLine("[SearchSpring] 'facets' object not found or malformed.");
+                    foreach (var sortOption in sortOptionsProp.EnumerateArray())
+                    {
+                        sortOptions.Add(new SortOption
+                        {
+                            Type = sortOption.TryGetProperty("type", out var typeProp) ? typeProp.GetString() : "",
+                            Field = sortOption.TryGetProperty("field", out var fieldProp) ? fieldProp.GetString() : "",
+                            Direction = sortOption.TryGetProperty("direction", out var dirProp) ? dirProp.GetString() : "",
+                            Label = sortOption.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : ""
+                        });
+                    }
                 }
 
                 return new SearchResultModel
@@ -124,7 +139,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     PageNumber = currentPage,
                     PageSize = pageSize,
                     TotalResults = totalResults,
-                    Facets = facets
+                    Facets = facets,
+                    SortOptions = sortOptions
                 };
             }
             catch (Exception ex)
@@ -133,5 +149,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+        
     }
 }

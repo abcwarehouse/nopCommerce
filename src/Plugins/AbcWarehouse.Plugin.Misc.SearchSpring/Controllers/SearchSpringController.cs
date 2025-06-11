@@ -35,7 +35,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             return Json(results);
         }
 
-        public async Task<IActionResult> Results(string q, int page = 1)
+        public async Task<IActionResult> Results(string q, int page = 1, string sortBy = null)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
@@ -56,6 +56,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
             _logger.InformationAsync($"This is mikes search now:\n{results.Facets} Count it up {results.Facets.Count}");
+            _logger.InformationAsync($"Received {results.SortOptions.Count} sort options from SearchSpring.");
+
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
