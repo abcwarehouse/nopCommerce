@@ -483,6 +483,25 @@ namespace Nop.Web.Factories
                     model.FeaturedProducts = (await _productModelFactory.PrepareProductOverviewModelsAsync(featuredProducts)).ToList();
             }
 
+            // ABC: Check for Hawthorne, and override meta title & description if applicable
+            var HAWTHORNE_STORE_ID = 8;
+            if ((await _storeContext.GetCurrentStoreAsync()).Id == HAWTHORNE_STORE_ID)
+            {
+                var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
+
+                var hawthorneMetaTitle = await genericAttributeService.GetAttributeAsync<string>(category, "HawthorneMetaTitle");
+                if (!string.IsNullOrWhiteSpace(hawthorneMetaTitle))
+                {
+                    model.MetaTitle = hawthorneMetaTitle;
+                }
+
+                var hawthorneMetaDescription = await genericAttributeService.GetAttributeAsync<string>(category, "HawthorneMetaDescription");
+                if (!string.IsNullOrWhiteSpace(hawthorneMetaDescription))
+                {
+                    model.MetaDescription = hawthorneMetaDescription;
+                }
+            }
+
             return model;
         }
 
