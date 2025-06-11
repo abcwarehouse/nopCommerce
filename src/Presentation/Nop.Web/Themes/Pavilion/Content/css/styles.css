@@ -280,6 +280,13 @@ h2#searchspring-no_results {
 .autocomplete-list .item {
 	grid-template-columns: 75px 1fr 100px;
 }
+.searchspring-sidebar.side-2 {
+    background: #fff;
+    padding: 15px 20px;
+}
+.searchspring-facet ul {
+    margin-bottom: 20px;
+}
 
 @media screen and (max-width: 1024px) {
 	.search-spring-container {

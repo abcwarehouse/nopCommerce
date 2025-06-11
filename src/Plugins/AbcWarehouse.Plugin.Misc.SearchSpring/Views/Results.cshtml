@@ -12,8 +12,13 @@
 @using System.Text.Json
 
 @{
-    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
 }
+<style>
+    .standard-sidebar {
+        display: none;
+    }
+</style>
 
 @if (!Model.Results.Any())
 {
