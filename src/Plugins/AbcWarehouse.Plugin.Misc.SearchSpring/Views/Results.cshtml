@@ -12,7 +12,7 @@
 @using System.Text.Json
 
 @{
-    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
+    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
 }
 
 @if (!Model.Results.Any())
@@ -21,100 +21,102 @@
 }
 else
 {
-    <div class="searchspring-sidebar side-2">
-        @foreach (var facetEntry in Model.Facets)
-        {
-            var facetName = facetEntry.Key;
-            var facetDetail = facetEntry.Value;
+    <div class="master-column-wrapper">
+        <div class="searchspring-sidebar side-2">
+            @foreach (var facetEntry in Model.Facets)
+            {
+                var facetName = facetEntry.Key;
+                var facetDetail = facetEntry.Value;
 
-            <div class="searchspring-facet">
-                <h3>@facetDetail.Label</h3>
-                <ul>
-                    @foreach (var facetValue in facetDetail.Values)
-                    {
-                        <li>
-                            <a href="@($"{webHelper.GetStoreLocation()}searchspring/results?q={Model.Query}&facet={facetName}:{facetValue.Value}")">
-                                @facetValue.Label (@facetValue.Count)
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        }
-    </div>
-
-    <div class="products-container center-2">
-        <div class="products-wrapper">
-            <div class="product-grid">
-                <div class="item-grid">
-                    @{
-
-                        foreach (var item in Model.Results)
+                <div class="searchspring-facet">
+                    <h3>@facetDetail.Label</h3>
+                    <ul>
+                        @foreach (var facetValue in facetDetail.Values)
                         {
-                            var product = await productService.GetProductBySkuAsync(item.Sku);
-                            if (product != null)
+                            <li>
+                                <a href="@($"{webHelper.GetStoreLocation()}searchspring/results?q={Model.Query}&facet={facetName}:{facetValue.Value}")">
+                                    @facetValue.Label (@facetValue.Count)
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+
+        <div class="products-container center-2">
+            <div class="products-wrapper">
+                <div class="product-grid">
+                    <div class="item-grid">
+                        @{
+
+                            foreach (var item in Model.Results)
                             {
-                                var productUrl = await urlRecordService.GetSeNameAsync(product);
-
-                                var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
-                                    new[] { product },
-                                    true,
-                                    true);
-
-                                var model = productOverviewModels.FirstOrDefault();
-
-                                if (model != null)
+                                var product = await productService.GetProductBySkuAsync(item.Sku);
+                                if (product != null)
                                 {
-                                    <div class="item-box">
-                                        @await Html.PartialAsync("_ProductBox", model)
-                                    </div>
+                                    var productUrl = await urlRecordService.GetSeNameAsync(product);
+
+                                    var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                        new[] { product },
+                                        true,
+                                        true);
+
+                                    var model = productOverviewModels.FirstOrDefault();
+
+                                    if (model != null)
+                                    {
+                                        <div class="item-box">
+                                            @await Html.PartialAsync("_ProductBox", model)
+                                        </div>
+                                    }
                                 }
                             }
+
+                        }
+                    </div>
+                </div>
+                @if (Model.TotalPages > 1)
+                    {
+                        int maxVisiblePages = 5;
+                        int currentPage = Model.PageNumber;
+                        int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+                        int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+
+                        // Adjust startPage if we're near the end
+                        if ((endPage - startPage + 1) < maxVisiblePages)
+                        {
+                            startPage = Math.Max(1, endPage - maxVisiblePages + 1);
                         }
 
+                        <nav class="pagination">
+                            <ul>
+                                @if (currentPage > 1)
+                                {
+                                    <li>
+                                        <a href="/searchspring/results?q=@Model.Query&page=@(currentPage - 1)">« Prev</a>
+                                    </li>
+                                }
+
+                                @for (var i = startPage; i <= endPage; i++)
+                                {
+                                    var activeClass = i == currentPage ? "active" : "";
+                                    <li class="@activeClass">
+                                        <a href="/searchspring/results?q=@Model.Query&page=@i">@i</a>
+                                    </li>
+                                }
+
+                                @if (currentPage < Model.TotalPages)
+                                {
+                                    <li>
+                                        <a href="/searchspring/results?q=@Model.Query&page=@(currentPage + 1)">Next »</a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
                     }
-                </div>
+
             </div>
-            @if (Model.TotalPages > 1)
-                {
-                    int maxVisiblePages = 5;
-                    int currentPage = Model.PageNumber;
-                    int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
-                    int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
-
-                    // Adjust startPage if we're near the end
-                    if ((endPage - startPage + 1) < maxVisiblePages)
-                    {
-                        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
-                    }
-
-                    <nav class="pagination">
-                        <ul>
-                            @if (currentPage > 1)
-                            {
-                                <li>
-                                    <a href="/searchspring/results?q=@Model.Query&page=@(currentPage - 1)">« Prev</a>
-                                </li>
-                            }
-
-                            @for (var i = startPage; i <= endPage; i++)
-                            {
-                                var activeClass = i == currentPage ? "active" : "";
-                                <li class="@activeClass">
-                                    <a href="/searchspring/results?q=@Model.Query&page=@i">@i</a>
-                                </li>
-                            }
-
-                            @if (currentPage < Model.TotalPages)
-                            {
-                                <li>
-                                    <a href="/searchspring/results?q=@Model.Query&page=@(currentPage + 1)">Next »</a>
-                                </li>
-                            }
-                        </ul>
-                    </nav>
-                }
-
         </div>
     </div>
 }
@@ -130,8 +132,3 @@ else
 
     console.log("Facets:", searchSpringFacets);
 </script>
-<style>
-    .standard-sidebar {
-        display: none;
-    }
-</style>
