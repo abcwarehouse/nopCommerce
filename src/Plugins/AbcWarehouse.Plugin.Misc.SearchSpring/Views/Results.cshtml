@@ -12,7 +12,7 @@
 @using System.Text.Json
 
 @{
-    Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+    Layout = "~/Views/Shared/_ColumnsTwo.cshtml";
 }
 
 @if (!Model.Results.Any())
@@ -120,7 +120,11 @@ else
         </div>
     </div>
 }
-
+<style>
+    .standard-sidebar {
+        display: none;
+    }
+</style>
 <script>
     const searchSpringFacets = @Html.Raw(JsonSerializer.Serialize(
         Model.Facets,
