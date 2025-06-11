@@ -6,7 +6,9 @@ using System.Net;
 using System;
 using Microsoft.AspNetCore.Http;
 using Nop.Services.Logging;
-using System.Web; 
+using System.Web;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
@@ -42,8 +44,24 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             var sessionId = GetOrCreateSearchSpringSessionId(HttpContext);
             var siteId = "4lt84w";
+            var filters = new Dictionary<string, List<string>>();
 
-            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page);
+            foreach (var key in HttpContext.Request.Query.Keys)
+            {
+                if (key.StartsWith("filter["))
+                {
+                    var field = key.Substring(7, key.Length - 8); // remove 'filter[' and ']'
+                    var values = HttpContext.Request.Query[key].ToList();
+
+                    if (!filters.ContainsKey(field))
+                        filters[field] = new List<string>();
+
+                    filters[field].AddRange(values);
+                }
+            }
+
+            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page, filters: filters);
+
 
             results.PageNumber = page;
             results.Query = q;
@@ -55,9 +73,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             });
 
             _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
-            _logger.InformationAsync($"This is mikes search now:\n{results.Facets} Count it up {results.Facets.Count}");
-            _logger.InformationAsync($"Received {results.SortOptions.Count} sort options from SearchSpring.");
-
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }

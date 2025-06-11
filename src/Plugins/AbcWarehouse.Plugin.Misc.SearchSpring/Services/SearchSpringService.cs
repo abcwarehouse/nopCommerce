@@ -18,7 +18,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w", int page = 1)
+        public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w", int page = 1, Dictionary<string, List<string>> filters = null)
         {
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
@@ -31,6 +31,17 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                       "&resultsPerPage=24" +
                       $"&page={page}" +
                       "&redirectResponse=minimal";
+
+            if (filters != null)
+            {
+                foreach (var filter in filters)
+                {
+                    foreach (var value in filter.Value)
+                    {
+                        url += $"&filter[{WebUtility.UrlEncode(filter.Key)}]={WebUtility.UrlEncode(value)}";
+                    }
+                }
+            }
 
             if (!string.IsNullOrEmpty(sessionId))
                 url += "&ss-sessionId=" + WebUtility.UrlEncode(sessionId);

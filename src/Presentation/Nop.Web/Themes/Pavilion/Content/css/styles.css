@@ -287,7 +287,9 @@ h2#searchspring-no_results {
 .searchspring-facet ul {
     margin-bottom: 20px;
 }
-
+.searchspring-facet li {
+    padding: 0 15px;
+}
 @media screen and (max-width: 1024px) {
 	.search-spring-container {
 		margin: 0;
