@@ -20,6 +20,16 @@
     <div id="autocomplete-results" class="autocomplete-list"></div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.price').forEach(function (el) {
+      if (el.textContent.trim() === '0.00') {
+        el.textContent = 'Call for price';
+      }
+    });
+  });
+</script>
+
 <style>
     .autocomplete-list {
         position: absolute;
