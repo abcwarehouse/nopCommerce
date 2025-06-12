@@ -357,7 +357,7 @@
                     ["brand"] = new Dictionary<string, object>
                     {
                         ["@type"] = "Brand",
-                        ["name"] = Model.ProductManufacturers?.FirstOrDefault()?.Name ?? ""
+                        ["name"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
                     },
                     ["offers"] = new Dictionary<string, object>
                     {
