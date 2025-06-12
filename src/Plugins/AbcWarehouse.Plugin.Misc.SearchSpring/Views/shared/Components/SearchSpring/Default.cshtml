@@ -21,13 +21,20 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.price').forEach(function (el) {
+  function updateZeroPrices() {
+    document.querySelectorAll('.price').forEach(el => {
       if (el.textContent.trim() === '0.00') {
         el.textContent = 'Call for price';
       }
     });
-  });
+  }
+
+  // Initial update
+  updateZeroPrices();
+
+  // Watch for future DOM changes
+  const observer = new MutationObserver(updateZeroPrices);
+  observer.observe(document.body, { childList: true, subtree: true });
 </script>
 
 <style>
