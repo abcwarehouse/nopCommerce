@@ -191,13 +191,16 @@ div#autocomplete-results .item img {
 }
 
 .search-spring-container {
-	margin-top: 1.5px;
+	margin-top: 5px;
     margin-left: 25.6%;
     display: flex;
     flex-grow: 1;
     max-width: calc(100% - 300px);
     padding-right: 20px;
     margin-right: 40px;
+}
+div#autocomplete-results {
+    max-height: 600px;
 }
 
 #searchForm {
