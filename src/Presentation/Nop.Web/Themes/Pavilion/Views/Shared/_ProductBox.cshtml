@@ -352,7 +352,7 @@
                     ["@type"] = "Product",
                     ["name"] = Model.Name,
                     ["image"] = Model.DefaultPictureModel.ImageUrl,
-                    ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
+                    ["description"] = Model.ShortDescription,
                     ["sku"] = Model.Sku,
                     ["brand"] = new Dictionary<string, object>
                     {
