@@ -34,9 +34,11 @@ else
                         @foreach (var facetValue in facetDetail.Values)
                         {
                             <li>
-                                <a href="@($"{webHelper.GetStoreLocation()}searchspring/results?q={Model.Query}&facet={facetName}:{facetValue.Value}")">
+                                <button class="facet-filter" 
+                                        data-field="@facetName" 
+                                        data-value="@facetValue.Value">
                                     @facetValue.Label (@facetValue.Count)
-                                </a>
+                                </button>
                             </li>
                         }
                     </ul>
@@ -135,4 +137,26 @@ else
         }));
 
     console.log("Facets:", searchSpringFacets);
+</script>
+<script>
+    document.querySelectorAll('.facet-filter').forEach(button => {
+        button.addEventListener('click', () => {
+            const field = button.dataset.field;
+            const value = button.dataset.value;
+
+            const url = new URL(window.location.href);
+            const params = url.searchParams;
+
+            const q = params.get('q') || '';
+            params.set('q', q);
+
+            params.append(`filter[${field}]`, value);
+
+            params.set('page', 1);
+
+            const newUrl = `${url.pathname}?${params.toString()}`;
+
+            window.location.href = newUrl;
+        });
+    });
 </script>
