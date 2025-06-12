@@ -192,6 +192,29 @@ document.addEventListener('DOMContentLoaded', function() {
   
 });    
    
+$(document).ready(function() {
+    $('.your-slider').on('init', function(event, slick) {
+        // Force correct image on mobile after initialization
+        if (window.innerWidth <= 768) {
+            var $firstSlide = $(slick.$slides[0]);
+            var $mobileSource = $firstSlide.find('source[media="(max-width: 768px)"]');
+            if ($mobileSource.length) {
+                var mobileSrc = $mobileSource.attr('srcset');
+                $firstSlide.find('img').attr('src', mobileSrc);
+            }
+        }
+    });
+    
+    // Initialize your slider with these options
+    $('.your-slider').slick({
+        lazyLoad: 'ondemand',
+        preloadFirstImage: true, 
+        
+    });
+});
+
+
+
 
     </script>
     <noscript>
