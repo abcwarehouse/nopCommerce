@@ -312,6 +312,17 @@ h2#searchspring-no_results {
 .remove-button {
     margin-bottom: 3px;
 }
+form#sortForm {
+    display: inline-block;
+    float: left;
+}
+.search-query {
+    display: inline-block;
+}
+.search-top-bar {
+    text-align: center;
+	padding-bottom: 10px;
+}
 
 
 @media screen and (max-width: 1024px) {
