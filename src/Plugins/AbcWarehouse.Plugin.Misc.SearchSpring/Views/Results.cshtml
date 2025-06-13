@@ -26,6 +26,8 @@
 
     // Current page param fallback to 1
     var currentPage = Model.PageNumber > 0 ? Model.PageNumber : 1;
+
+    var isSelected = Context.Request.Query["sort"] == sortValue ? "selected=\"selected\"" : "";
 }
 
 @if (!Model.Results.Any())
@@ -117,15 +119,13 @@ else
                         @foreach (var option in Model.SortOptions)
                         {
                             var sortValue = $"{option.Field}_{option.Direction}";
-                            var isSelected = Request.Query["sort"] == sortValue ? "selected=\"selected\"" : "";
+                            var isSelected = Context.Request.Query["sort"] == sortValue ? "selected=\"selected\"" : "";
                             var label = option.Label;
 
                             @Html.Raw($"<option value=\"{sortValue}\" {isSelected}>{label}</option>")
                         }
                     </select>
                 </form>
-
-
 
                 <div class="search-query">Search for "@query" (@Model.Results.Count)</div>
 
