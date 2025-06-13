@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +11,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
     public class SearchSpringService : ISearchSpringService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private const string BaseUrl = "https://4lt84w.a.searchspring.io";
+        private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
 
         public SearchSpringService(IHttpClientFactory httpClientFactory)
         {
@@ -24,18 +24,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
 
             var client = _httpClientFactory.CreateClient();
-            var queryParams = new List<string>
-            {
-                $"q={WebUtility.UrlEncode(query)}",
-                "resultsFormat=json",
-                "resultsPerPage=24",
-                $"page={page}",
-                "redirectResponse=minimal",
-                $"siteId={WebUtility.UrlEncode(siteId)}"
-            };
 
-            if (!string.IsNullOrEmpty(sessionId))
-                queryParams.Add($"ss-sessionId={WebUtility.UrlEncode(sessionId)}");
+            var url = $"{_baseUrl}/api/search/search.json?" +
+                      $"q={WebUtility.UrlEncode(query)}" +
+                      "&resultsFormat=json" +
+                      "&resultsPerPage=24" +
+                      $"&page={page}" +
+                      "&redirectResponse=minimal";
 
             if (filters != null)
             {
@@ -43,12 +38,16 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 {
                     foreach (var value in filter.Value)
                     {
-                        queryParams.Add($"filter[{WebUtility.UrlEncode(filter.Key)}]={WebUtility.UrlEncode(value)}");
+                        url += $"&filter[{WebUtility.UrlEncode(filter.Key)}]={WebUtility.UrlEncode(value)}";
                     }
                 }
             }
 
-            var url = $"{BaseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
+            if (!string.IsNullOrEmpty(sessionId))
+                url += "&ss-sessionId=" + WebUtility.UrlEncode(sessionId);
+
+            url += "&siteId=" + WebUtility.UrlEncode(siteId);
+
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
             var response = await client.GetAsync(url);
@@ -61,20 +60,96 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             try
             {
-                var doc = JsonDocument.Parse(json);
+                var productList = new List<SearchSpringProductModel>();
+                int currentPage = 1, pageSize = 24, totalResults = 0;
+                var facets = new Dictionary<string, FacetDetail>();
+
+                using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                var productList = ParseProducts(root);
-                var pagination = ParsePagination(root);
-                var facets = ParseFacets(root);
-                var sortOptions = ParseSortOptions(root);
+                if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in resultsElement.EnumerateArray())
+                    {
+                        var model = new SearchSpringProductModel
+                        {
+                            Id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
+                            Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
+                            ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
+                            ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
+                            Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
+                            Brand = item.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
+                            Category = item.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
+                            ItemNumber = item.TryGetProperty("item_number", out var itemNumProp) ? itemNumProp.GetString() : "",
+                            RetailPrice = item.TryGetProperty("retail_price", out var retailPriceProp) ? retailPriceProp.GetString() : "",
+                            Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
+                        };
+                        productList.Add(model);
+                    }
+                }
+
+                if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
+                {
+                    currentPage = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
+                    pageSize = pagination.TryGetProperty("pageSize", out var sizeProp) ? sizeProp.GetInt32() : 24;
+                    totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
+                }
+
+                if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var facet in facetsProp.EnumerateArray())
+                    {
+                        var field = facet.TryGetProperty("field", out var fieldProp) ? fieldProp.GetString() : "";
+
+                        var detail = new FacetDetail
+                        {
+                            Field = field,
+                            Label = facet.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : "",
+                            Multiple = facet.TryGetProperty("multiple", out var multipleProp) ? multipleProp.GetString() : "",
+                            Collapse = facet.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
+                        };
+
+                        if (facet.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
+                        {
+                            foreach (var val in valuesProp.EnumerateArray())
+                            {
+                                detail.Values.Add(new FacetValue
+                                {
+                                    Value = val.TryGetProperty("value", out var v) ? v.GetString() : "",
+                                    Label = val.TryGetProperty("label", out var l) ? l.GetString() : "",
+                                    Count = val.TryGetProperty("count", out var c) ? c.GetInt32() : 0
+                                });
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(field))
+                            facets[field] = detail;
+                    }
+                }
+
+
+                var sortOptions = new List<SortOption>();
+
+                if (root.TryGetProperty("sortOptions", out var sortOptionsProp) && sortOptionsProp.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var sortOption in sortOptionsProp.EnumerateArray())
+                    {
+                        sortOptions.Add(new SortOption
+                        {
+                            Type = sortOption.TryGetProperty("type", out var typeProp) ? typeProp.GetString() : "",
+                            Field = sortOption.TryGetProperty("field", out var fieldProp) ? fieldProp.GetString() : "",
+                            Direction = sortOption.TryGetProperty("direction", out var dirProp) ? dirProp.GetString() : "",
+                            Label = sortOption.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : ""
+                        });
+                    }
+                }
 
                 return new SearchResultModel
                 {
                     Results = productList,
-                    PageNumber = pagination.pageNumber,
-                    PageSize = pagination.pageSize,
-                    TotalResults = pagination.totalResults,
+                    PageNumber = currentPage,
+                    PageSize = pageSize,
+                    TotalResults = totalResults,
                     Facets = facets,
                     SortOptions = sortOptions
                 };
@@ -85,116 +160,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-
-        private List<SearchSpringProductModel> ParseProducts(JsonElement root)
-        {
-            var products = new List<SearchSpringProductModel>();
-
-            if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in resultsElement.EnumerateArray())
-                {
-                    var model = new SearchSpringProductModel
-                    {
-                        Id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
-                        Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
-                        ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
-                        ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
-                        Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
-                        Brand = item.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
-                        Category = item.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
-                        ItemNumber = item.TryGetProperty("item_number", out var itemNumProp) ? itemNumProp.GetString() : "",
-                        RetailPrice = item.TryGetProperty("retail_price", out var retailPriceProp) ? retailPriceProp.GetString() : "",
-                        Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
-                    };
-
-                    products.Add(model);
-                }
-            }
-
-            return products;
-        }
-
-
-        private (int CurrentPage, int PageSize, int TotalResults) ParsePagination(JsonElement root)
-        {
-            int currentPage = 1;
-            int pageSize = 24;
-            int totalResults = 0;
-
-            if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
-            {
-                if (pagination.TryGetProperty("currentPage", out var currentPageProp) && currentPageProp.ValueKind == JsonValueKind.Number)
-                    currentPage = currentPageProp.GetInt32();
-
-                if (pagination.TryGetProperty("pageSize", out var pageSizeProp) && pageSizeProp.ValueKind == JsonValueKind.Number)
-                    pageSize = pageSizeProp.GetInt32();
-
-                if (pagination.TryGetProperty("totalResults", out var totalProp) && totalProp.ValueKind == JsonValueKind.Number)
-                    totalResults = totalProp.GetInt32();
-            }
-
-            return (currentPage, pageSize, totalResults);
-        }
-
-
-        private Dictionary<string, FacetDetail> ParseFacets(JsonElement root)
-        {
-            var facets = new Dictionary<string, FacetDetail>();
-
-            if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var facet in facetsProp.EnumerateArray())
-                {
-                    var field = facet.GetProperty("field").GetString();
-                    var detail = new FacetDetail
-                    {
-                        Field = field,
-                        Label = facet.GetProperty("label").GetString(),
-                        Multiple = facet.GetProperty("multiple").GetString(),
-                        Collapse = facet.TryGetProperty("collapse", out var collapseProp) && collapseProp.GetInt32() == 1
-                    };
-
-                    if (facet.TryGetProperty("values", out var valuesProp) && valuesProp.ValueKind == JsonValueKind.Array)
-                    {
-                        foreach (var val in valuesProp.EnumerateArray())
-                        {
-                            detail.Values.Add(new FacetValue
-                            {
-                                Value = val.GetProperty("value").GetString(),
-                                Label = val.GetProperty("label").GetString(),
-                                Count = val.GetProperty("count").GetInt32()
-                            });
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(field))
-                        facets[field] = detail;
-                }
-            }
-
-            return facets;
-        }
-
-        private List<SortOption> ParseSortOptions(JsonElement root)
-        {
-            var sortOptions = new List<SortOption>();
-
-            if (root.TryGetProperty("sortOptions", out var sortOptionsProp) && sortOptionsProp.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var sortOption in sortOptionsProp.EnumerateArray())
-                {
-                    sortOptions.Add(new SortOption
-                    {
-                        Type = sortOption.GetProperty("type").GetString(),
-                        Field = sortOption.GetProperty("field").GetString(),
-                        Direction = sortOption.GetProperty("direction").GetString(),
-                        Label = sortOption.GetProperty("label").GetString()
-                    });
-                }
-            }
-
-            return sortOptions;
-        }
+        
     }
 }
