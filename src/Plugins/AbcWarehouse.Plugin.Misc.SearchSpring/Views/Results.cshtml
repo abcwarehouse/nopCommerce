@@ -22,6 +22,11 @@
 else
 {
     <div class="master-column-wrapper">
+        @{
+    var currentQuery = Model.Query;
+    var queryParams = Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
+}
+
         <div class="searchspring-sidebar side-2">
             @foreach (var facet in Model.Facets)
             {
@@ -30,7 +35,14 @@ else
                     <ul>
                         @foreach (var value in facet.Value.Values)
                         {
-                            var filterUrl = $"/searchspring/results?q={Model.Query}&filter[{facet.Key}]={value.Value}";
+                            var allParams = new Dictionary<string, string>(queryParams);
+
+                            var filterKey = $"filter[{facet.Key}]";
+                            allParams[filterKey] = value.Value;
+
+                            var queryString = string.Join("&", allParams.Select(p => $"{HttpUtility.UrlEncode(p.Key)}={HttpUtility.UrlEncode(p.Value)}"));
+                            var filterUrl = $"/searchspring/results?{queryString}";
+                            
                             <li>
                                 <a href="@filterUrl">@value.Label (@value.Count)</a>
                             </li>

@@ -1,10 +1,11 @@
- using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
+using System.Web;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
@@ -25,12 +26,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var client = _httpClientFactory.CreateClient();
 
-            var url = $"{_baseUrl}/api/search/search.json?" +
-                      $"q={WebUtility.UrlEncode(query)}" +
-                      "&resultsFormat=json" +
-                      "&resultsPerPage=24" +
-                      $"&page={page}" +
-                      "&redirectResponse=minimal";
+            var queryParams = new List<string>
+            {
+                $"q={HttpUtility.UrlEncode(query)}",
+                "resultsFormat=json",
+                "resultsPerPage=24",
+                $"page={page}",
+                "redirectResponse=minimal"
+            };
+
+            if (!string.IsNullOrEmpty(sessionId))
+                queryParams.Add($"ss-sessionId={HttpUtility.UrlEncode(sessionId)}");
+
+            if (!string.IsNullOrEmpty(siteId))
+                queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
 
             if (filters != null)
             {
@@ -38,15 +47,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 {
                     foreach (var value in filter.Value)
                     {
-                        url += $"&filter[{WebUtility.UrlEncode(filter.Key)}]={WebUtility.UrlEncode(value)}";
+                        queryParams.Add($"filter.{HttpUtility.UrlEncode(filter.Key)}={HttpUtility.UrlEncode(value)}");
                     }
                 }
             }
 
-            if (!string.IsNullOrEmpty(sessionId))
-                url += "&ss-sessionId=" + WebUtility.UrlEncode(sessionId);
-
-            url += "&siteId=" + WebUtility.UrlEncode(siteId);
+            var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
 
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
@@ -127,7 +133,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-
                 var sortOptions = new List<SortOption>();
 
                 if (root.TryGetProperty("sortOptions", out var sortOptionsProp) && sortOptionsProp.ValueKind == JsonValueKind.Array)
@@ -160,6 +165,5 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-        
     }
 }

@@ -50,7 +50,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             {
                 if (key.StartsWith("filter["))
                 {
-                    var field = key.Substring(7, key.Length - 8); // remove 'filter[' and ']'
+                    var field = key.Substring(7, key.Length - 8);
                     var values = HttpContext.Request.Query[key].ToList();
 
                     if (!filters.ContainsKey(field))
