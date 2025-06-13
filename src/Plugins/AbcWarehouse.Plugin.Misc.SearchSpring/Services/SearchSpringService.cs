@@ -24,13 +24,18 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
 
-            var client = _httpClientFactory.CreateClient();
+            var handler = new HttpClientHandler
+            {
+                AllowAutoRedirect = false
+            };
+
+            var client = new HttpClient(handler);
 
             var queryParams = new List<string>
             {
                 $"q={HttpUtility.UrlEncode(query)}",
                 "resultsFormat=json",
-                "resultsPerPage=24",
+                "resultsPerPage=25",
                 $"page={page}",
                 "redirectResponse=direct"
             };
@@ -57,8 +62,21 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
             var response = await client.GetAsync(url);
-            var json = await response.Content.ReadAsStringAsync();
 
+            if ((int)response.StatusCode >= 300 && (int)response.StatusCode < 400)
+            {
+                if (response.Headers.Location != null)
+                {
+                    var redirectUrl = response.Headers.Location.ToString();
+                    Console.WriteLine($"[SearchSpring] Redirect detected: {redirectUrl}");
+                    return new SearchResultModel
+                    {
+                        RedirectResponse = redirectUrl
+                    };
+                }
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"[SearchSpring] Response ({(int)response.StatusCode}): {json}");
 
             if (!response.IsSuccessStatusCode)
@@ -73,7 +91,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                // Check for redirect
+                // Legacy redirect parsing fallback (JSON-based)
                 if (root.TryGetProperty("redirect", out var redirectProp) &&
                     redirectProp.TryGetProperty("url", out var redirectUrlProp) &&
                     redirectUrlProp.ValueKind == JsonValueKind.String &&
@@ -86,7 +104,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         RedirectResponse = redirectUrl
                     };
                 }
-
 
                 if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
                 {
@@ -112,7 +129,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
                 {
                     currentPage = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
-                    pageSize = pagination.TryGetProperty("pageSize", out var sizeProp) ? sizeProp.GetInt32() : 24;
+                    pageSize = pagination.TryGetProperty("pageSize", out var sizeProp) ? sizeProp.GetInt32() : 25;
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
 
@@ -180,5 +197,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+
     }
 }

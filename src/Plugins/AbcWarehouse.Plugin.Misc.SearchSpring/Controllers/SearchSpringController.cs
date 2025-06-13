@@ -34,6 +34,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         {
             var sessionId = GetSearchSpringSessionId();
             var results = await _searchSpringService.SearchAsync(term, sessionId: sessionId);
+            
+            if (!string.IsNullOrEmpty(results.RedirectResponse))
+                return Redirect(results.RedirectResponse);
+
             return Json(results);
         }
 
