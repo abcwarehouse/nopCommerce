@@ -60,8 +60,14 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 }
             }
 
-            var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: siteId, page: page, filters: filters);
+            var results = await _searchSpringService.SearchAsync(
+                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters
+            );
 
+            if (!string.IsNullOrEmpty(results.RedirectResponse))
+            {
+                return Redirect(results.RedirectResponse); // performs 302 HTTP redirect
+            }
 
             results.PageNumber = page;
             results.Query = q;
@@ -72,10 +78,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
             });
 
-            _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
+            await _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
+
 
 
 
