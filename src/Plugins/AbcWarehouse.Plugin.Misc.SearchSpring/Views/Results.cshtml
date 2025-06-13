@@ -68,9 +68,9 @@ else
                                     removeUrl += "?" + string.Join("&", remainingQuery);
 
                                 <div class="remove-button" style="display: inline-block; margin-right: 10px;">
-                                    <a href="@removeUrl" style="color: #ec232a; text-decoration: none;">
+                                    <a href="@removeUrl" style="color: text-decoration: none;">
                                         <i class="fa fa-times" aria-hidden="true"></i>
-                                        <b>@value</b>
+                                        <b><span>X</span>@value</b>
                                     </a>
                                 </div>
                             }
@@ -113,9 +113,6 @@ else
                 <div class="product-grid">
                     <div class="item-grid">
                         @{
-                            // Because we are awaiting inside a loop, make this a for loop with Task list or use Razor functions.
-                            // To keep it simple, collect results first (blocking call).
-                            // NOTE: If you want to optimize, consider preparing product models in controller or service instead.
                             var productModels = new List<dynamic>();
 
                             foreach (var item in Model.Results)
