@@ -293,6 +293,30 @@ h2#searchspring-no_results {
 .searchspring-facet li {
     padding: 0 15px;
 }
+
+
+.filter-summary {
+	padding: 10px;
+	border: 1px solid #ccc;
+	background-color: #f9f9f9;
+	border-radius: 6px;
+}
+
+.filter-summary .remove-button a {
+	background-color: #eee;
+	padding: 5px 10px;
+	border-radius: 4px;
+	font-size: 14px;
+	display: inline-block;
+	margin-top: 5px;
+}
+
+.filter-summary .remove-button a:hover {
+	background-color: #ddd;
+}
+
+
+
 @media screen and (max-width: 1024px) {
 	.search-spring-container {
 		margin: 0;
