@@ -116,19 +116,27 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         }
 
 
-        private (int pageNumber, int pageSize, int totalResults) ParsePagination(JsonElement root)
+        private (int CurrentPage, int PageSize, int TotalResults) ParsePagination(JsonElement root)
         {
-            int pageNumber = 1, pageSize = 24, totalResults = 0;
+            int currentPage = 1;
+            int pageSize = 24;
+            int totalResults = 0;
 
             if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
             {
-                pageNumber = pagination.GetProperty("currentPage").GetInt32();
-                pageSize = pagination.GetProperty("pageSize").GetInt32();
-                totalResults = pagination.GetProperty("totalResults").GetInt32();
+                if (pagination.TryGetProperty("currentPage", out var currentPageProp) && currentPageProp.ValueKind == JsonValueKind.Number)
+                    currentPage = currentPageProp.GetInt32();
+
+                if (pagination.TryGetProperty("pageSize", out var pageSizeProp) && pageSizeProp.ValueKind == JsonValueKind.Number)
+                    pageSize = pageSizeProp.GetInt32();
+
+                if (pagination.TryGetProperty("totalResults", out var totalProp) && totalProp.ValueKind == JsonValueKind.Number)
+                    totalResults = totalProp.GetInt32();
             }
 
-            return (pageNumber, pageSize, totalResults);
+            return (currentPage, pageSize, totalResults);
         }
+
 
         private Dictionary<string, FacetDetail> ParseFacets(JsonElement root)
         {
