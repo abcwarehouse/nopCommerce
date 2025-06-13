@@ -110,8 +110,8 @@ else
 
         <div class="products-container center-2">
             <div class="search-top-bar">
-                
-                <form method="get" id="sortForm"></form>
+
+                <form method="get" id="sortForm">
                     <select name="sort" onchange="document.getElementById('sortForm').submit()">
                         @foreach (var option in Model.SortOptions)
                         {
