@@ -112,16 +112,17 @@ else
             <div class="search-top-bar">
 
                 <form method="get" id="sortForm">
-                    <select name="sort" onchange="document.getElementById('sortForm').submit()">
+                    <input type="hidden" name="q" value="@Model.Query" />
+                    <select name="sort" onchange="this.form.submit()">
                         @foreach (var option in Model.SortOptions)
                         {
                             var sortValue = $"{option.Field}_{option.Direction}";
-                            <option value="@sortValue" @(Request.Query["sort"] == sortValue ? "selected=\"selected\"" : "")>
-                                @option.Label
-                            </option>
+                            var isSelected = Request.Query["sort"] == sortValue ? "selected=\"selected\"" : "";
+                            var label = option.Label;
+
+                            @Html.Raw($"<option value=\"{sortValue}\" {isSelected}>{label}</option>")
                         }
                     </select>
-                    <input type="hidden" name="q" value="@Model.Query" />
                 </form>
 
 
