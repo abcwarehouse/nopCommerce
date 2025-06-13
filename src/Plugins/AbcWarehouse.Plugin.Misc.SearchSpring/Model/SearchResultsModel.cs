@@ -30,6 +30,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("sortOptions")]
         public List<SortOption> SortOptions { get; set; } = new();
+        
+        [JsonPropertyName("redirectResponse")]
+        public string RedirectResponse { get; set; }
     }
 
     public class FacetDetail
@@ -57,6 +60,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("values")]
         public List<FacetValue> Values { get; set; } = new();
+
     }
 
     public class FacetValue

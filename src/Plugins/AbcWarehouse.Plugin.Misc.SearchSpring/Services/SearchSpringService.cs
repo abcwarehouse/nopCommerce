@@ -73,6 +73,21 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
+                // Check for redirect
+                if (root.TryGetProperty("redirect", out var redirectProp) &&
+                    redirectProp.TryGetProperty("url", out var redirectUrlProp) &&
+                    redirectUrlProp.ValueKind == JsonValueKind.String &&
+                    !string.IsNullOrEmpty(redirectUrlProp.GetString()))
+                {
+                    var redirectUrl = redirectUrlProp.GetString();
+
+                    return new SearchResultModel
+                    {
+                        RedirectResponse = redirectUrl
+                    };
+                }
+
+
                 if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var item in resultsElement.EnumerateArray())
