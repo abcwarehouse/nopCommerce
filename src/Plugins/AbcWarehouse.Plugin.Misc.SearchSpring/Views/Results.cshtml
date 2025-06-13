@@ -23,22 +23,16 @@ else
 {
     <div class="master-column-wrapper">
         <div class="searchspring-sidebar side-2">
-            @foreach (var facetEntry in Model.Facets)
+            @foreach (var facet in Model.Facets)
             {
-                var facetName = facetEntry.Key;
-                var facetDetail = facetEntry.Value;
-
-                <div class="searchspring-facet">
-                    <h3>@facetDetail.Label</h3>
+                <div class="facet">
+                    <strong>@facet.Value.Label</strong>
                     <ul>
-                        @foreach (var facetValue in facetDetail.Values)
+                        @foreach (var value in facet.Value.Values)
                         {
+                            var filterUrl = $"/searchspring/results?q={Model.Query}&filter[{facet.Key}]={value.Value}";
                             <li>
-                                <button class="facet-filter" 
-                                        data-field="@facetName" 
-                                        data-value="@facetValue.Value">
-                                    @facetValue.Label (@facetValue.Count)
-                                </button>
+                                <a href="@filterUrl">@value.Label (@value.Count)</a>
                             </li>
                         }
                     </ul>
