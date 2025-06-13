@@ -27,7 +27,6 @@
     // Current page param fallback to 1
     var currentPage = Model.PageNumber > 0 ? Model.PageNumber : 1;
 
-    var isSelected = Context.Request.Query["sort"] == sortValue ? "selected=\"selected\"" : "";
 }
 
 @if (!Model.Results.Any())
