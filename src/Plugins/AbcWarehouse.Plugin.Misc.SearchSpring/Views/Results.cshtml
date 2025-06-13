@@ -25,7 +25,7 @@ else
         <div class="searchspring-sidebar side-2">
             @foreach (var facet in Model.Facets)
             {
-                <div class="facet">
+                <div class="searchspring-facet facet">
                     <strong>@facet.Value.Label</strong>
                     <ul>
                         @foreach (var value in facet.Value.Values)
