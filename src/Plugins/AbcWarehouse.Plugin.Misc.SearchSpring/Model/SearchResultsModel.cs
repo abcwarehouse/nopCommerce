@@ -30,7 +30,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("sortOptions")]
         public List<SortOption> SortOptions { get; set; } = new();
-        
+
         [JsonPropertyName("redirectResponse")]
         public string RedirectResponse { get; set; }
     }
@@ -83,9 +83,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
     public class SortOption
     {
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
-
         [JsonPropertyName("field")]
         public string Field { get; set; }
 

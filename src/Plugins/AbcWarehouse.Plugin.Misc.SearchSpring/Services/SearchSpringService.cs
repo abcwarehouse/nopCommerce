@@ -173,19 +173,21 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
                 var sortOptions = new List<SortOption>();
 
-                if (root.TryGetProperty("sortOptions", out var sortOptionsProp) && sortOptionsProp.ValueKind == JsonValueKind.Array)
+                if (root.TryGetProperty("sorting", out var sortingProp) &&
+                    sortingProp.TryGetProperty("options", out var optionsProp) &&
+                    optionsProp.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var sortOption in sortOptionsProp.EnumerateArray())
+                    foreach (var sortOption in optionsProp.EnumerateArray())
                     {
                         sortOptions.Add(new SortOption
                         {
-                            Type = sortOption.TryGetProperty("type", out var typeProp) ? typeProp.GetString() : "",
                             Field = sortOption.TryGetProperty("field", out var fieldProp) ? fieldProp.GetString() : "",
                             Direction = sortOption.TryGetProperty("direction", out var dirProp) ? dirProp.GetString() : "",
                             Label = sortOption.TryGetProperty("label", out var labelProp) ? labelProp.GetString() : ""
                         });
                     }
                 }
+
 
                 return new SearchResultModel
                 {
