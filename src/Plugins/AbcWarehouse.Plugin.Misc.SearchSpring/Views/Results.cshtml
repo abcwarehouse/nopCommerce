@@ -28,7 +28,7 @@ else
         @{
     var currentQuery = Model.Query;
     var queryParams = Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
-    var query = Context.Request.Query["q"];
+    var query = Context.Request.Query.ContainsKey("q") ? Context.Request.Query["q"].ToString() : "";
     var encoded = HttpUtility.UrlEncode(query);
 }
 
