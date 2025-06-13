@@ -32,7 +32,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 "resultsFormat=json",
                 "resultsPerPage=24",
                 $"page={page}",
-                "redirectResponse=minimal"
+                "redirectResponse=direct"
             };
 
             if (!string.IsNullOrEmpty(sessionId))
