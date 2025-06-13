@@ -12,10 +12,20 @@
 @using Nop.Web.Models.Media
 @using System.Text.Json
 @using System.Web
-
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.WebUtilities
 
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
+
+    // Grab current query string parameters as a dictionary (string key -> string value)
+    var queryParams = Context.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+    // Current search query param
+    var query = Context.Request.Query.ContainsKey("q") ? Context.Request.Query["q"].ToString() : "";
+
+    // Current page param fallback to 1
+    var currentPage = Model.PageNumber > 0 ? Model.PageNumber : 1;
 }
 
 @if (!Model.Results.Any())
@@ -25,13 +35,6 @@
 else
 {
     <div class="master-column-wrapper">
-        @{
-    var currentQuery = Model.Query;
-    var queryParams = Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
-    var query = Context.Request.Query.ContainsKey("q") ? Context.Request.Query["q"].ToString() : "";
-    var encoded = HttpUtility.UrlEncode(query);
-}
-
         <div class="searchspring-sidebar side-2">
             @foreach (var facet in Model.Facets)
             {
@@ -40,14 +43,19 @@ else
                     <ul>
                         @foreach (var value in facet.Value.Values)
                         {
+                            // Clone current params to new dict so we can add/replace filter
                             var allParams = new Dictionary<string, string>(queryParams);
 
                             var filterKey = $"filter[{facet.Key}]";
+
+                            // Replace or add this filter key with the facet value selected
                             allParams[filterKey] = value.Value;
 
-                            var queryString = string.Join("&", allParams.Select(p => $"{HttpUtility.UrlEncode(p.Key)}={HttpUtility.UrlEncode(p.Value)}"));
-                            var filterUrl = $"/searchspring/results?{queryString}";
-                            
+                            // Rebuild query string with all params
+                            var queryString = QueryHelpers.AddQueryString("", allParams);
+
+                            var filterUrl = Url.Content($"/searchspring/results{queryString}");
+
                             <li>
                                 <a href="@filterUrl">@value.Label (@value.Count)</a>
                             </li>
@@ -62,82 +70,106 @@ else
                 <div class="product-grid">
                     <div class="item-grid">
                         @{
+                            // Because we are awaiting inside a loop, make this a for loop with Task list or use Razor functions.
+                            // To keep it simple, collect results first (blocking call).
+                            // NOTE: If you want to optimize, consider preparing product models in controller or service instead.
+                            var productModels = new List<dynamic>();
 
                             foreach (var item in Model.Results)
                             {
-                                var product = await productService.GetProductBySkuAsync(item.Sku);
+                                var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
                                 if (product != null)
                                 {
-                                    var productUrl = await urlRecordService.GetSeNameAsync(product);
+                                    var productUrl = urlRecordService.GetSeNameAsync(product).GetAwaiter().GetResult();
 
-                                    var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                    var productOverviewModels = productModelFactory.PrepareProductOverviewModelsAsync(
                                         new[] { product },
                                         true,
-                                        true);
+                                        true).GetAwaiter().GetResult();
 
                                     var model = productOverviewModels.FirstOrDefault();
 
                                     if (model != null)
                                     {
-                                        <div class="item-box">
-                                            @await Html.PartialAsync("_ProductBox", model)
-                                        </div>
+                                        productModels.Add(model);
                                     }
                                 }
                             }
 
+                            foreach (var model in productModels)
+                            {
+                                <div class="item-box">
+                                    @await Html.PartialAsync("_ProductBox", model)
+                                </div>
+                            }
                         }
                     </div>
                 </div>
+
                 @if (Model.TotalPages > 1)
+                {
+                    int maxVisiblePages = 5;
+                    int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
+                    int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+
+                    if ((endPage - startPage + 1) < maxVisiblePages)
                     {
-                        int maxVisiblePages = 5;
-                        int currentPage = Model.PageNumber;
-                        int startPage = Math.Max(1, currentPage - maxVisiblePages / 2);
-                        int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
-
-                        // Adjust startPage if we're near the end
-                        if ((endPage - startPage + 1) < maxVisiblePages)
-                        {
-                            startPage = Math.Max(1, endPage - maxVisiblePages + 1);
-                        }
-
-                        <nav class="pagination">
-                            <ul>
-                                @if (currentPage > 1)
-                                {
-                                    <li>
-                                        <a href="/searchspring/results?q=@Model.Query&page=@(currentPage - 1)">« Prev</a>
-                                    </li>
-                                }
-
-                                @for (var i = startPage; i <= endPage; i++)
-                                {
-                                    var activeClass = i == currentPage ? "active" : "";
-                                    <li class="@activeClass">
-                                        <a href="/searchspring/results?q=@Model.Query&page=@i">@i</a>
-                                    </li>
-                                }
-
-                                @if (currentPage < Model.TotalPages)
-                                {
-                                    <li>
-                                        <a href="/searchspring/results?q=@Model.Query&page=@(currentPage + 1)">Next »</a>
-                                    </li>
-                                }
-                            </ul>
-                        </nav>
+                        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
                     }
 
+                    <nav class="pagination">
+                        <ul>
+                            @if (currentPage > 1)
+                            {
+                                var prevParams = new Dictionary<string, string>(queryParams)
+                                {
+                                    ["page"] = (currentPage - 1).ToString()
+                                };
+                                var prevUrl = Url.Content($"/searchspring/results{QueryHelpers.AddQueryString("", prevParams)}");
+                                <li>
+                                    <a href="@prevUrl">« Prev</a>
+                                </li>
+                            }
+
+                            @for (var i = startPage; i <= endPage; i++)
+                            {
+                                var activeClass = i == currentPage ? "active" : "";
+                                var pageParams = new Dictionary<string, string>(queryParams)
+                                {
+                                    ["page"] = i.ToString()
+                                };
+                                var pageUrl = Url.Content($"/searchspring/results{QueryHelpers.AddQueryString("", pageParams)}");
+
+                                <li class="@activeClass">
+                                    <a href="@pageUrl">@i</a>
+                                </li>
+                            }
+
+                            @if (currentPage < Model.TotalPages)
+                            {
+                                var nextParams = new Dictionary<string, string>(queryParams)
+                                {
+                                    ["page"] = (currentPage + 1).ToString()
+                                };
+                                var nextUrl = Url.Content($"/searchspring/results{QueryHelpers.AddQueryString("", nextParams)}");
+                                <li>
+                                    <a href="@nextUrl">Next »</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
             </div>
         </div>
     </div>
 }
+
 <style>
     .standard-sidebar {
         display: none;
     }
 </style>
+
 <script>
     const searchSpringFacets = @Html.Raw(JsonSerializer.Serialize(
         Model.Facets,
@@ -149,6 +181,7 @@ else
 
     console.log("Facets:", searchSpringFacets);
 </script>
+
 <script>
     document.querySelectorAll('.facet-filter').forEach(button => {
         button.addEventListener('click', () => {
