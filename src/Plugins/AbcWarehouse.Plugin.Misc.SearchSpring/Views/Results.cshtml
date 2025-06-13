@@ -110,7 +110,26 @@ else
 
         <div class="products-container center-2">
             <div class="search-top-bar">
+                
+                <form method="get" id="sortForm"></form>
+                    <select name="sort" onchange="document.getElementById('sortForm').submit()">
+                        @foreach (var option in Model.SortOptions)
+                        {
+                            var sortValue = $"{option.Field}_{option.Direction}";
+                            var isSelected = Request.Query["sort"] == sortValue;
+
+                            <option value="@sortValue" @(isSelected ? "selected" : "")>
+                                @option.Label
+                            </option>
+                        }
+                    </select>
+
+                    <input type="hidden" name="q" value="@Model.Query" />
+                    @* Include any other filters or query params you are supporting *@
+                </form>
+
                 <div class="search-query">Search for "@query" (@Model.Results.Count)</div>
+
             </div>
             <div class="products-wrapper">
                 <div class="product-grid">

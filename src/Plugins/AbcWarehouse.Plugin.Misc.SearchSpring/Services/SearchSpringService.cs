@@ -19,7 +19,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w", int page = 1, Dictionary<string, List<string>> filters = null)
+        public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w", int page = 1, Dictionary<string, List<string>> filters = null, string sort = null)
         {
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
@@ -37,7 +37,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 "resultsFormat=json",
                 "resultsPerPage=25",
                 $"page={page}",
-                "redirectResponse=direct"
+                "redirectResponse=direct",
+                "sort=default"
             };
 
             if (!string.IsNullOrEmpty(sessionId))
@@ -55,6 +56,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         queryParams.Add($"filter.{HttpUtility.UrlEncode(filter.Key)}={HttpUtility.UrlEncode(value)}");
                     }
                 }
+            }
+
+            if (!string.IsNullOrEmpty(sort))
+            {
+                queryParams.Add($"sort={HttpUtility.UrlEncode(sort)}");
             }
 
             var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
