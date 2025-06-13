@@ -116,16 +116,15 @@ else
                         @foreach (var option in Model.SortOptions)
                         {
                             var sortValue = $"{option.Field}_{option.Direction}";
-                            var isSelected = Request.Query["sort"] == sortValue;
+                            var isSelected = Request.Query["sort"] == sortValue ? "selected" : "";
 
-                            <option value="@sortValue" @(isSelected ? "selected" : "")>
+                            <option value="@sortValue" @isSelected>
                                 @option.Label
                             </option>
                         }
                     </select>
 
                     <input type="hidden" name="q" value="@Model.Query" />
-                    @* Include any other filters or query params you are supporting *@
                 </form>
 
                 <div class="search-query">Search for "@query" (@Model.Results.Count)</div>
