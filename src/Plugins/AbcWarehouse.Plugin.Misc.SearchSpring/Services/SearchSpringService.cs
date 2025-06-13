@@ -96,23 +96,25 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 {
                     var model = new SearchSpringProductModel
                     {
-                        Id = item.GetProperty("id").GetString(),
-                        Name = item.GetProperty("name").GetString(),
-                        ProductUrl = item.GetProperty("url").GetString(),
-                        ImageUrl = item.GetProperty("imageUrl").GetString(),
-                        Price = item.GetProperty("price").GetString(),
-                        Brand = item.GetProperty("brand").GetString(),
-                        Category = item.GetProperty("category").GetString(),
-                        ItemNumber = item.GetProperty("item_number").GetString(),
-                        RetailPrice = item.GetProperty("retail_price").GetString(),
-                        Sku = item.GetProperty("sku").GetString()
+                        Id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
+                        Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
+                        ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
+                        ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
+                        Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
+                        Brand = item.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
+                        Category = item.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
+                        ItemNumber = item.TryGetProperty("item_number", out var itemNumProp) ? itemNumProp.GetString() : "",
+                        RetailPrice = item.TryGetProperty("retail_price", out var retailPriceProp) ? retailPriceProp.GetString() : "",
+                        Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
                     };
+
                     products.Add(model);
                 }
             }
 
             return products;
         }
+
 
         private (int pageNumber, int pageSize, int totalResults) ParsePagination(JsonElement root)
         {
