@@ -376,10 +376,6 @@ form#sortForm {
             overflow: visible;
             padding: 0;
         }
-
-        .mobile-filter-btn {
-            display: none;
-        }
 		.searchspring-sidebar.side-2 {
 			margin-top: 0;
 		}
