@@ -152,27 +152,19 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             {
                 var client = _httpClientFactory.CreateClient();
                 var siteId = "4lt84w";
-                var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/query?q={HttpUtility.UrlEncode(q)}";
 
-                if (!string.IsNullOrWhiteSpace(userId))
-                {
-                    suggestUrl += $"&userId={HttpUtility.UrlEncode(userId)}";
-                }
-                if (!string.IsNullOrWhiteSpace(sessionId))
-                {
-                    suggestUrl += $"&sessionId={HttpUtility.UrlEncode(sessionId)}";
-                }
-                if (!string.IsNullOrWhiteSpace(siteId))
-                {
-                    suggestUrl += $"&siteId={HttpUtility.UrlEncode(siteId)}";
-                }
+                var queryParams = new List<string> { $"q={HttpUtility.UrlEncode(q)}" };
+                if (!string.IsNullOrWhiteSpace(userId)) queryParams.Add($"userId={HttpUtility.UrlEncode(userId)}");
+                if (!string.IsNullOrWhiteSpace(sessionId)) queryParams.Add($"sessionId={HttpUtility.UrlEncode(sessionId)}");
+                queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
+
+                var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/query?{string.Join("&", queryParams)}";
 
                 var response = await client.GetAsync(suggestUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    // Log the error for server-side debugging
                     return StatusCode((int)response.StatusCode, new { error = $"Searchspring Suggest API error: {errorContent}" });
                 }
 
@@ -184,6 +176,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 return StatusCode(500, new { error = "An internal server error occurred while fetching suggestions. Message: " + ex.Message });
             }
         }
+
         
         [Route("searchspring/autocomplete")]
         [HttpGet]
