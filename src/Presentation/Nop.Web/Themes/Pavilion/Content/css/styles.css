@@ -361,7 +361,11 @@ form#sortForm {
     color: #000;
 }
 
-
+@media (min-width: 1025px) {
+	.close-sidebar-btn {
+		display: none;
+	}
+}
 @media (max-width: 1024px) {
 		.mobile-filter-wrapper {
         position: fixed;
