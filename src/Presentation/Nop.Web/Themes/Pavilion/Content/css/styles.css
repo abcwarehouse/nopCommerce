@@ -356,6 +356,9 @@ form#sortForm {
     color: #333;
     z-index: 1001;
 }
+div#header {
+    position: relative;
+}
 
 .close-sidebar-btn:hover {
     color: #000;
@@ -418,7 +421,7 @@ form#sortForm {
 		margin: 0;
 		padding-left: 10px;
 		position: absolute;
-		top: 101px;
+		top: -11px;
 		padding-left: 47px;
 	}
 	.search-container {
