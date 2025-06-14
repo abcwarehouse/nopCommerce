@@ -37,9 +37,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 "resultsFormat=json",
                 "resultsPerPage=25",
                 $"page={page}",
-                "redirectResponse=direct",
-                "sort=default"
+                "redirectResponse=direct"
             };
+
+            queryParams.Add($"sort={HttpUtility.UrlEncode(string.IsNullOrEmpty(sort) ? "default" : sort)}");
+
 
             if (!string.IsNullOrEmpty(sessionId))
                 queryParams.Add($"ss-sessionId={HttpUtility.UrlEncode(sessionId)}");
