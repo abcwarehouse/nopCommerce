@@ -151,3 +151,34 @@
         }
     });
 </script>
+
+<script>
+    function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    const fetchSuggestions = debounce(function (e) {
+        const query = e.target.value.trim();
+        if (query.length < 2) return;
+
+        fetch(`/searchspring/query?term=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById("autocomplete-results");
+                resultsDiv.innerHTML = "";
+
+                data?.results?.forEach(item => {
+                    const el = document.createElement("div");
+                    el.textContent = item.name;
+                    resultsDiv.appendChild(el);
+                });
+            });
+    }, 500); // delay in ms
+
+    document.getElementById("searchTerm").addEventListener("input", fetchSuggestions);
+</script>
+
