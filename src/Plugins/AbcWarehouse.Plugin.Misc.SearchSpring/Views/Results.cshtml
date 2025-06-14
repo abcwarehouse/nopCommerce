@@ -67,7 +67,7 @@ else
                                         }
                                     }
 
-                                    var removeUrl = "/searchspring/results";
+                                    var removeUrl = "/search/results";
                                     if (remainingQuery.Any())
                                         removeUrl += "?" + string.Join("&", remainingQuery);
 
@@ -101,7 +101,7 @@ else
                                 // Rebuild query string with all params
                                 var queryString = QueryHelpers.AddQueryString("", allParams);
 
-                                var filterUrl = Url.Content($"/searchspring/results{queryString}");
+                                var filterUrl = Url.Content($"/search/results{queryString}");
 
                                 <li>
                                     <a href="@filterUrl">@value.Label (@value.Count)</a>
@@ -191,7 +191,7 @@ else
                                 {
                                     ["page"] = (currentPage - 1).ToString()
                                 };
-                                var prevUrl = Url.Content($"/searchspring/results{QueryHelpers.AddQueryString("", prevParams)}");
+                                var prevUrl = Url.Content($"/search/results{QueryHelpers.AddQueryString("", prevParams)}");
                                 <li>
                                     <a href="@prevUrl">« Prev</a>
                                 </li>
@@ -204,7 +204,7 @@ else
                                 {
                                     ["page"] = i.ToString()
                                 };
-                                var pageUrl = Url.Content($"/searchspring/results{QueryHelpers.AddQueryString("", pageParams)}");
+                                var pageUrl = Url.Content($"/search/results{QueryHelpers.AddQueryString("", pageParams)}");
 
                                 <li class="@activeClass">
                                     <a href="@pageUrl">@i</a>
@@ -217,7 +217,7 @@ else
                                 {
                                     ["page"] = (currentPage + 1).ToString()
                                 };
-                                var nextUrl = Url.Content($"/searchspring/results{QueryHelpers.AddQueryString("", nextParams)}");
+                                var nextUrl = Url.Content($"/search/results{QueryHelpers.AddQueryString("", nextParams)}");
                                 <li>
                                     <a href="@nextUrl">Next »</a>
                                 </li>
