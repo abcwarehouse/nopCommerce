@@ -298,6 +298,10 @@ h2#searchspring-no_results {
 .mobile-sidebar-title {
 	display: none;
 }
+.mobile-sidebar-title h2 {
+    margin-bottom: 10px;
+    text-align: center;
+}
 
 
 .filter-summary .remove-button a {
@@ -381,6 +385,9 @@ form#sortForm {
     }
 	.mobile-sidebar-title {
 		display: block;
+	}
+	.searchspring-sidebar.side-2 {
+		border: none;
 	}
 }
 
