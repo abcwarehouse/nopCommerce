@@ -118,7 +118,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             return null;
         }
 
-        [Route("searchspring/suggest")]
+        [Route("search/suggest")]
         [HttpGet]
         public async Task<IActionResult> Suggest(string q, string userId, string sessionId)
         {
@@ -162,7 +162,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             }
         }
         
-        [Route("searchspring/autocomplete")]
+        [Route("search/autocomplete")]
         [HttpGet]
         public async Task<IActionResult> Autocomplete(string q, string userId, string sessionId)
         {
