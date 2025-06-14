@@ -40,9 +40,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 "redirectResponse=direct"
             };
 
-            queryParams.Add($"sort={HttpUtility.UrlEncode(string.IsNullOrEmpty(sort) ? "default" : sort)}");
-
-
             if (!string.IsNullOrEmpty(sessionId))
                 queryParams.Add($"ss-sessionId={HttpUtility.UrlEncode(sessionId)}");
 
@@ -73,7 +70,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 }
                 else
                 {
-                    queryParams.Add($"sort.{HttpUtility.UrlEncode(sort)}=desc");
+                    queryParams.Add("sort.relevance=desc");
                 }
             }
             else
@@ -81,10 +78,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 queryParams.Add("sort.relevance=desc"); // default fallback
             }
 
-
             var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
 
-            Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
+            Console.WriteLine($"[SearchSpring] Final Request URL: {url}");
 
             var response = await client.GetAsync(url);
 
@@ -207,8 +203,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
-
                 return new SearchResultModel
                 {
                     Results = productList,
@@ -225,6 +219,5 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-
     }
 }
