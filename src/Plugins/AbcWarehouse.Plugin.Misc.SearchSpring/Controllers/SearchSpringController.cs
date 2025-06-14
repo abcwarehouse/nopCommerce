@@ -41,6 +41,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             return Json(results);
         }
 
+        [HttpGet]
+        [Route("searchspring/results")]
+        [Route("search/results")]
         public async Task<IActionResult> Results(string q, int page = 1, string sortBy = null)
         {
             if (string.IsNullOrWhiteSpace(q))
