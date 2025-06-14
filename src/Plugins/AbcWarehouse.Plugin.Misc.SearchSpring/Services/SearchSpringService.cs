@@ -62,8 +62,25 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             if (!string.IsNullOrEmpty(sort))
             {
-                queryParams.Add($"sort={HttpUtility.UrlEncode(sort)}");
+                var parts = sort.Contains(":") ? sort.Split(':') :
+                            sort.Contains("_") ? sort.Split('_') : null;
+
+                if (parts?.Length == 2)
+                {
+                    var field = parts[0];
+                    var direction = parts[1];
+                    queryParams.Add($"sort.{HttpUtility.UrlEncode(field)}={HttpUtility.UrlEncode(direction)}");
+                }
+                else
+                {
+                    queryParams.Add($"sort.{HttpUtility.UrlEncode(sort)}=desc");
+                }
             }
+            else
+            {
+                queryParams.Add("sort.relevance=desc"); // default fallback
+            }
+
 
             var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
 
