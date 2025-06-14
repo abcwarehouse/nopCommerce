@@ -165,7 +165,7 @@
         const query = e.target.value.trim();
         if (query.length < 2) return;
 
-        fetch(`/searchspring/query?term=${encodeURIComponent(query)}`)
+        fetch(`/search/query?term=${encodeURIComponent(query)}`)
             .then(response => response.json())
             .then(data => {
                 const resultsDiv = document.getElementById("autocomplete-results");
@@ -177,7 +177,7 @@
                     resultsDiv.appendChild(el);
                 });
             });
-    }, 500); // delay in ms
+    }, 4000); // delay in ms
 
     document.getElementById("searchTerm").addEventListener("input", fetchSuggestions);
 </script>
