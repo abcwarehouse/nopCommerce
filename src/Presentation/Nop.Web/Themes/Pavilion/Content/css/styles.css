@@ -295,6 +295,9 @@ h2#searchspring-no_results {
 .searchspring-facet li {
     padding: 0 15px;
 }
+.mobile-sidebar-title {
+	display: none;
+}
 
 
 .filter-summary .remove-button a {
@@ -339,7 +342,7 @@ form#sortForm {
         border-radius: 6px;
     }
 
-    @media (max-width: 1024px) {
+@media (max-width: 1024px) {
 		.mobile-filter-wrapper {
         position: fixed;
         top: 0;
@@ -360,26 +363,26 @@ form#sortForm {
     .mobile-filter-wrapper.active {
         right: 0;
     }
-        .searchspring-sidebar {
-            display: block;
-        }
+	.searchspring-sidebar {
+		display: block;
+	}
 
-        .mobile-filter-btn {
-            display: block;
-        }
-
-        .mobile-filter-wrapper {
-            position: static;
-            width: auto;
-            height: auto;
-            box-shadow: none;
-            overflow: visible;
-            padding: 0;
-        }
-		.searchspring-sidebar.side-2 {
-			margin-top: 0;
-		}
+	.mobile-filter-btn {
+		display: block;
+	}
+	.searchspring-sidebar.side-2 {
+		margin-top: 0;
+	}
+	.mobile-filter-wrapper.active {
+        right: 0;
+        display: block;
+        position: absolute;
+        top: 0;
     }
+	.mobile-sidebar-title {
+		display: block;
+	}
+}
 
 
 
