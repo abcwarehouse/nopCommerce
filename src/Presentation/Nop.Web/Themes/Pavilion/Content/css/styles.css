@@ -353,6 +353,9 @@ form#sortForm {
         overflow-y: auto;
         padding: 20px;
     }
+	.mobile-filter-wrapper {
+		display: none;
+	}
 
     .mobile-filter-wrapper.active {
         right: 0;
