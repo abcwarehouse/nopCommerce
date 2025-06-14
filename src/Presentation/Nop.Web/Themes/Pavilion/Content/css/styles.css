@@ -327,7 +327,6 @@ form#sortForm {
 
     .mobile-filter-btn {
         display: none;
-        position: fixed;
         bottom: 20px;
         left: 20px;
         z-index: 1000;
@@ -356,7 +355,7 @@ form#sortForm {
         right: 0;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
         .searchspring-sidebar {
             display: block;
         }
@@ -364,9 +363,7 @@ form#sortForm {
         .mobile-filter-btn {
             display: block;
         }
-    }
 
-    @media (min-width: 769px) {
         .mobile-filter-wrapper {
             position: static;
             width: auto;
@@ -379,6 +376,9 @@ form#sortForm {
         .mobile-filter-btn {
             display: none;
         }
+		.searchspring-sidebar.side-2 {
+			margin-top: 0;
+		}
     }
 
 
