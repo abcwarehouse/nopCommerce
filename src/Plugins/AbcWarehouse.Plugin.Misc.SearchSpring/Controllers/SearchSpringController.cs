@@ -50,6 +50,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var siteId = "4lt84w";
             var filters = new Dictionary<string, List<string>>();
 
+            // Parse filters from query string
             foreach (var key in HttpContext.Request.Query.Keys)
             {
                 if (key.StartsWith("filter["))
@@ -64,8 +65,29 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 }
             }
 
+            // Parse the sortBy string (e.g. "price:asc") into dictionary for new SearchAsync
+            Dictionary<string, string> sortFields = null;
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                var parts = sortBy.Contains(":") ? sortBy.Split(':') :
+                            sortBy.Contains("_") ? sortBy.Split('_') : null;
+
+                if (parts?.Length == 2)
+                {
+                    sortFields = new Dictionary<string, string>
+                    {
+                        { parts[0], parts[1] }
+                    };
+                }
+            }
+
             var results = await _searchSpringService.SearchAsync(
-                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters, sort: sortBy
+                q,
+                sessionId: sessionId,
+                siteId: siteId,
+                page: page,
+                filters: filters,
+                sortFields: sortFields
             );
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
@@ -86,6 +108,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
+
 
 
 
