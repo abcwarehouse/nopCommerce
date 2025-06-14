@@ -334,17 +334,33 @@ form#sortForm {
 	padding-bottom: 10px;
 }
 
-    .mobile-filter-btn {
-        display: none;
-        bottom: 20px;
-        left: 20px;
-        z-index: 1000;
-        padding: 10px 20px;
-        background-color: #333;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-    }
+.mobile-filter-btn {
+	display: none;
+	bottom: 20px;
+	left: 20px;
+	z-index: 1000;
+	padding: 10px 20px;
+	background-color: #333;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+}
+.close-sidebar-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+    z-index: 1001;
+}
+
+.close-sidebar-btn:hover {
+    color: #000;
+}
+
 
 @media (max-width: 1024px) {
 		.mobile-filter-wrapper {
