@@ -19,7 +19,14 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null, string userId = null, string siteId = "4lt84w", int page = 1, Dictionary<string, List<string>> filters = null, string sort = null)
+        public async Task<SearchResultModel> SearchAsync(
+            string query,
+            string sessionId = null,
+            string userId = null,
+            string siteId = "4lt84w",
+            int page = 1,
+            Dictionary<string, List<string>> filters = null,
+            Dictionary<string, string> sortFields = null) // updated here
         {
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
@@ -57,20 +64,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 }
             }
 
-            if (!string.IsNullOrEmpty(sort))
+            if (sortFields != null && sortFields.Count > 0)
             {
-                var parts = sort.Contains(":") ? sort.Split(':') :
-                            sort.Contains("_") ? sort.Split('_') : null;
-
-                if (parts?.Length == 2)
+                foreach (var sort in sortFields)
                 {
-                    var field = parts[0];
-                    var direction = parts[1];
+                    var field = sort.Key;
+                    var direction = sort.Value;
                     queryParams.Add($"sort.{HttpUtility.UrlEncode(field)}={HttpUtility.UrlEncode(direction)}");
-                }
-                else
-                {
-                    queryParams.Add("sort.relevance=desc");
                 }
             }
             else
@@ -106,7 +106,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             try
             {
                 var productList = new List<SearchSpringProductModel>();
-                int currentPage = 1, pageSize = 24, totalResults = 0;
+                int currentPage = 1, pageSize = 25, totalResults = 0;
                 var facets = new Dictionary<string, FacetDetail>();
 
                 using var doc = JsonDocument.Parse(json);
@@ -219,5 +219,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+
     }
 }
