@@ -34,7 +34,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         {
             var sessionId = GetSearchSpringSessionId();
             var results = await _searchSpringService.SearchAsync(term, sessionId: sessionId);
-            
+
             if (!string.IsNullOrEmpty(results.RedirectResponse))
                 return Redirect(results.RedirectResponse);
 
@@ -65,7 +65,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             }
 
             var results = await _searchSpringService.SearchAsync(
-                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters
+                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters, sort: sortBy
             );
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
