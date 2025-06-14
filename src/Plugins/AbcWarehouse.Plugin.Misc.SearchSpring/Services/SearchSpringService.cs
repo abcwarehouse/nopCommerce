@@ -190,6 +190,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
+                Console.WriteLine($"[SearchSpring] Requesting URL: {url}");
 
                 return new SearchResultModel
                 {
