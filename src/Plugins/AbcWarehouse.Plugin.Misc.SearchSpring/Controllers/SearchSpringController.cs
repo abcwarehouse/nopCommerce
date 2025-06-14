@@ -50,7 +50,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var siteId = "4lt84w";
             var filters = new Dictionary<string, List<string>>();
 
-            // Parse filters from query string
             foreach (var key in HttpContext.Request.Query.Keys)
             {
                 if (key.StartsWith("filter["))
@@ -65,29 +64,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 }
             }
 
-            // Parse the sortBy string (e.g. "price:asc") into dictionary for new SearchAsync
-            Dictionary<string, string> sortFields = null;
-            if (!string.IsNullOrEmpty(sortBy))
-            {
-                var parts = sortBy.Contains(":") ? sortBy.Split(':') :
-                            sortBy.Contains("_") ? sortBy.Split('_') : null;
-
-                if (parts?.Length == 2)
-                {
-                    sortFields = new Dictionary<string, string>
-                    {
-                        { parts[0], parts[1] }
-                    };
-                }
-            }
-
             var results = await _searchSpringService.SearchAsync(
-                q,
-                sessionId: sessionId,
-                siteId: siteId,
-                page: page,
-                filters: filters,
-                sortFields: sortFields
+                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters, sort: sortBy
             );
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
@@ -108,7 +86,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
-
 
 
 
@@ -152,19 +129,27 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             {
                 var client = _httpClientFactory.CreateClient();
                 var siteId = "4lt84w";
+                var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/query?q={HttpUtility.UrlEncode(q)}";
 
-                var queryParams = new List<string> { $"q={HttpUtility.UrlEncode(q)}" };
-                if (!string.IsNullOrWhiteSpace(userId)) queryParams.Add($"userId={HttpUtility.UrlEncode(userId)}");
-                if (!string.IsNullOrWhiteSpace(sessionId)) queryParams.Add($"sessionId={HttpUtility.UrlEncode(sessionId)}");
-                queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
-
-                var suggestUrl = $"https://{siteId}.a.searchspring.io/api/suggest/query?{string.Join("&", queryParams)}";
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    suggestUrl += $"&userId={HttpUtility.UrlEncode(userId)}";
+                }
+                if (!string.IsNullOrWhiteSpace(sessionId))
+                {
+                    suggestUrl += $"&sessionId={HttpUtility.UrlEncode(sessionId)}";
+                }
+                if (!string.IsNullOrWhiteSpace(siteId))
+                {
+                    suggestUrl += $"&siteId={HttpUtility.UrlEncode(siteId)}";
+                }
 
                 var response = await client.GetAsync(suggestUrl);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
+                    // Log the error for server-side debugging
                     return StatusCode((int)response.StatusCode, new { error = $"Searchspring Suggest API error: {errorContent}" });
                 }
 
@@ -176,7 +161,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 return StatusCode(500, new { error = "An internal server error occurred while fetching suggestions. Message: " + ex.Message });
             }
         }
-
         
         [Route("searchspring/autocomplete")]
         [HttpGet]
