@@ -128,7 +128,8 @@
         <link rel="stylesheet" type="text/css" href="//hawthorneonline.resultspage.com/autocomplete/sli-rac.css">
         
     }
-    
+
+
     @Html.NopHeadCustom()
     @*This is used so that themes can inject content into the header*@
     @await Html.PartialAsync("Head")
@@ -144,12 +145,14 @@
     @await Component.InvokeAsync("Favicon")
     @if (displayMiniProfiler)
     {
+    
         <mini-profiler />
     }
     @Html.NopInlineScripts(ResourceLocation.Head)
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
 
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- SearchSpring Scripts -->
     <script src="https://cdn.searchspring.io/script.js"></script>
@@ -178,6 +181,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Check if .storeId8 exists
   if (document.querySelector('.storeId8')) {
 
+<!-- Begin Adtaxi Container Tag - Loading asynchronously -->
+    (function(a,b,c,d){
+        a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+        b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/java"+c;d.async=true;
+        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+    })();
+    <!-- End Adtaxi Container Tag -->
+
+  
     @* This forces the webpage to always scroll to the top on a refresh *@
     window.onload = function() {
   window.scrollTo(0, 0);
@@ -194,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   
 });    
-
+   
 
     </script>
     <noscript>

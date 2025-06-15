@@ -43,7 +43,16 @@
 @await Html.PartialAsync("_OldInternetExplorerWarning")
 
 <div class="master-wrapper-page @stickyLogoClass">
+  
     <div class="responsive-nav-wrapper-parent">
+           @* Hawthrone Menu Icon *@
+               @if (storeId == 8)
+            {
+        <div class="mobile-menu2" onClick="toggleMobileMenu()">
+            @* <span>Menu</span> *@
+            <i class="fa-solid fa-bars" style="color: #cfab63;"></i>
+        </div>
+           }
         <div class="responsive-nav-wrapper">
             @if (storeId == 8)
             {
@@ -54,6 +63,9 @@
                 </div>
             }
 
+   
+
+        
             <div id="mobile-header-logo">
                 @await Component.InvokeAsync("Logo")
             </div>
@@ -72,12 +84,26 @@
         </div>
     </div>
 
+    
+
+
+
+
+     @if (storeId == 3)
+            {
+             
     <div class="mobile-header-content-row">
         <div class="mobile-menu" onClick="toggleMobileMenu()">
             <span>Menu</span>
         </div>
+          @await Component.InvokeAsync("SearchBox")  
     </div>
+            }
 
+                
+
+
+    @* ABC: moved header to below *@
     @await Html.PartialAsync("_Header")
     <script asp-location="Footer">
         var localized_data = {
