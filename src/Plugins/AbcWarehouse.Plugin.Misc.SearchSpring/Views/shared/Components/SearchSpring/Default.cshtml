@@ -21,20 +21,18 @@
 </div>
 
 <script>
-  function updateZeroPrices() {
-    document.querySelectorAll('.price').forEach(el => {
-      if (el.textContent.trim() === '0.00') {
-        el.textContent = 'Call for price';
-      }
-    });
-  }
+    function updateZeroPrices() {
+        document.querySelectorAll('.price').forEach(el => {
+            if (el.textContent.trim() === '0.00') {
+                el.textContent = 'Call for price';
+            }
+        });
+    }
 
-  // Initial update
-  updateZeroPrices();
+    updateZeroPrices();
 
-  // Watch for future DOM changes
-  const observer = new MutationObserver(updateZeroPrices);
-  observer.observe(document.body, { childList: true, subtree: true });
+    const observer = new MutationObserver(updateZeroPrices);
+    observer.observe(document.body, { childList: true, subtree: true });
 </script>
 
 <style>
@@ -82,7 +80,15 @@
         }
     });
 
-    input.addEventListener('input', async function () {
+    function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    input.addEventListener('input', debounce(async function () {
         const query = input.value.trim();
         if (query.length < 2) {
             resultsContainer.innerHTML = '';
@@ -105,7 +111,6 @@
             const suggestData = suggestRes.ok ? await suggestRes.json() : null;
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
-            // Decode HTML-escaped strings
             const decodeHTML = (escapedStr) => {
                 const textarea = document.createElement('textarea');
                 textarea.innerHTML = escapedStr || '';
@@ -120,15 +125,11 @@
             resultsContainer.innerHTML = combinedHtml;
             resultsContainer.style.display = combinedHtml.trim() ? 'block' : 'none';
 
-            console.log("📦 Suggest rawHtml:", suggestData?.results);
-            console.log("📦 Autocomplete rawHtml:", autocompleteData?.results);
-            console.log("📦 Combined decoded HTML:", combinedHtml);
-
         } catch (err) {
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
             resultsContainer.style.display = 'none';
         }
-    });
+    }, 4000)); // 400ms delay
 
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -151,34 +152,3 @@
         }
     });
 </script>
-
-<script>
-    function debounce(func, delay) {
-        let timeout;
-        return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-
-    const fetchSuggestions = debounce(function (e) {
-        const query = e.target.value.trim();
-        if (query.length < 2) return;
-
-        fetch(`/search/query?term=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById("autocomplete-results");
-                resultsDiv.innerHTML = "";
-
-                data?.results?.forEach(item => {
-                    const el = document.createElement("div");
-                    el.textContent = item.name;
-                    resultsDiv.appendChild(el);
-                });
-            });
-    }, 4000); // delay in ms
-
-    document.getElementById("searchTerm").addEventListener("input", fetchSuggestions);
-</script>
-
