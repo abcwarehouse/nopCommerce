@@ -108,39 +108,50 @@
     }
 
     input.addEventListener('input', debounce(async function () {
-    const query = input.value.trim();
-    if (query.length < 2) {
-        resultsContainer.innerHTML = '';
-        resultsContainer.style.display = 'none';
-        return;
-    }
+        const query = input.value.trim();
+        if (query.length < 2) {
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'none';
+            return;
+        }
 
-    let userId = window.searchspringTracking.userId;
-    let sessionId = window.searchspringTracking.sessionId;
+        let userId = window.searchspringTracking.userId;
+        let sessionId = window.searchspringTracking.sessionId;
 
-    const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
+        const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
+        const autocompleteUrl = `/searchspring/autocomplete?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
 
-    try {
-        const suggestRes = await fetch(suggestUrl);
-        if (!suggestRes.ok) throw new Error("Suggest API error");
+        try {
+            const [suggestRes, autoRes] = await Promise.all([
+                fetch(suggestUrl),
+                fetch(autocompleteUrl)
+            ]);
 
-        const suggestData = await suggestRes.json();
+            const suggestData = suggestRes.ok ? await suggestRes.json() : null;
+            const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
-        // Use the `results` field directly (already raw HTML)
-        const suggestHTML = suggestData?.results || '';
+            const decodeHTML = (escapedStr) => {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = escapedStr || '';
+                return textarea.value;
+            };
 
-        resultsContainer.innerHTML = suggestHTML;
-        resultsContainer.style.display = suggestHTML.trim() ? 'block' : 'none';
+            const suggestHTML = decodeHTML(suggestData?.results);
+            const autoHTML = decodeHTML(autocompleteData?.results);
 
-        // Re-run price adjustment
-        updateZeroPrices();
+            const combinedHtml = `
+                ${suggestHTML ? `<div class="suggestion-section"><div class="section-title">Suggestions</div>${suggestHTML}</div>` : ''}
+                ${autoHTML ? `<div class="autocomplete-section"><div class="section-title">Matching Products</div>${autoHTML}</div>` : ''}
+            `;
 
-    } catch (err) {
-        console.error("❌ Failed to fetch suggest results:", err);
-        resultsContainer.style.display = 'none';
-    }
-}, 500));
+            resultsContainer.innerHTML = combinedHtml;
+            resultsContainer.style.display = combinedHtml.trim() ? 'block' : 'none';
 
+        } catch (err) {
+            console.error("❌ Failed to fetch autocomplete/suggest:", err);
+            resultsContainer.style.display = 'none';
+        }
+    }, 500));
 
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
