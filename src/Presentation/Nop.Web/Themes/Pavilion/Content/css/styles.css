@@ -405,6 +405,7 @@ div#header {
         display: block;
         position: absolute;
         top: 0;
+		height: auto;
     }
 	.mobile-sidebar-title {
 		display: block;
