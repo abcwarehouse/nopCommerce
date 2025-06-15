@@ -44,14 +44,32 @@
         border: 1px solid #ccc;
         z-index: 999;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        max-height: 400px;
+        overflow-y: auto;
     }
 
-    .suggestion-item {
+    .section-title {
+        font-weight: bold;
+        padding: 6px 10px;
+        background: #f9f9f9;
+        border-bottom: 1px solid #eee;
+        font-size: 0.9rem;
+    }
+
+    .suggestion-section,
+    .autocomplete-section {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .suggestion-item,
+    .autocomplete-item {
         padding: 8px 10px;
         cursor: pointer;
     }
 
-    .suggestion-item:hover {
+    .suggestion-item:hover,
+    .autocomplete-item:hover {
         background-color: #f0f0f0;
     }
 </style>
@@ -120,7 +138,10 @@
             const suggestHTML = decodeHTML(suggestData?.results);
             const autoHTML = decodeHTML(autocompleteData?.results);
 
-            const combinedHtml = `${suggestHTML}${autoHTML}`;
+            const combinedHtml = `
+                ${suggestHTML ? `<div class="suggestion-section"><div class="section-title">Suggestions</div>${suggestHTML}</div>` : ''}
+                ${autoHTML ? `<div class="autocomplete-section"><div class="section-title">Matching Products</div>${autoHTML}</div>` : ''}
+            `;
 
             resultsContainer.innerHTML = combinedHtml;
             resultsContainer.style.display = combinedHtml.trim() ? 'block' : 'none';
@@ -129,7 +150,7 @@
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
             resultsContainer.style.display = 'none';
         }
-    }, 500)); // 400ms delay
+    }, 500));
 
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
