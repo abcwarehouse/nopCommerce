@@ -129,7 +129,7 @@
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
             resultsContainer.style.display = 'none';
         }
-    }, 4000)); // 400ms delay
+    }, 500)); // 400ms delay
 
     document.getElementById('searchForm').addEventListener('submit', function (event) {
         event.preventDefault();
