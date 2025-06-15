@@ -328,6 +328,7 @@ form#sortForm {
 }
 .search-query {
     display: inline-block;
+	margin-bottom: 10px;
 }
 .search-top-bar {
     text-align: center;
