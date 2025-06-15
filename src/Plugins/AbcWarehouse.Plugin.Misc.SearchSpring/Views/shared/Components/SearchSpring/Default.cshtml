@@ -17,7 +17,8 @@
         <input type="text" id="searchInput" placeholder="What can we help you find?" />
         <button type="submit"><i class="fas fa-search"></i></button>
     </form>
-    <div id="searchspring-suggest-results" style="display:none;"></div> <!-- Container for both suggest + autocomplete -->
+    <div id="searchspring-suggest-results"></div>
+    <div id="autocomplete-results" class="autocomplete-list"></div>
 </div>
 
 <script>
@@ -36,13 +37,15 @@
 </script>
 
 <style>
-    #searchspring-suggest-results {
+    .autocomplete-list {
         position: absolute;
         top: 100%;
         left: 0;
         background: white;
         border: 1px solid #ccc;
+        z-index: 999;
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        width: 100%;
         max-height: 400px;
         overflow-y: auto;
     }
@@ -60,32 +63,21 @@
         border-bottom: 1px solid #ddd;
     }
 
-    .item {
+    .suggestion-item,
+    .autocomplete-item {
         padding: 8px 10px;
         cursor: pointer;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        border-bottom: 1px solid #eee;
     }
 
-    .item:hover {
+    .suggestion-item:hover,
+    .autocomplete-item:hover {
         background-color: #f0f0f0;
-    }
-
-    .item p {
-        margin: 0;
-    }
-
-    .price {
-        color: green;
-        font-weight: bold;
     }
 </style>
 
 <script>
     const input = document.getElementById('searchInput');
-    const resultsContainer = document.getElementById('searchspring-suggest-results');
+    const resultsContainer = document.getElementById('autocomplete-results');
     const baseUrl = '@searchBaseUrl';
 
     window.searchspringTracking = {
@@ -144,23 +136,16 @@
                 return textarea.value;
             };
 
-            const suggestHTML = suggestData?.results ? decodeHTML(suggestData.results) : '';
-            const autoHTML = autocompleteData?.results ? decodeHTML(autocompleteData.results) : '';
+            const suggestHTML = decodeHTML(suggestData?.results);
+            const autoHTML = decodeHTML(autocompleteData?.results);
 
             const combinedHtml = `
                 ${suggestHTML ? `<div class="suggestion-section"><div class="section-title">Suggestions</div>${suggestHTML}</div>` : ''}
                 ${autoHTML ? `<div class="autocomplete-section"><div class="section-title">Matching Products</div>${autoHTML}</div>` : ''}
             `;
 
-            if (combinedHtml.trim()) {
-                resultsContainer.innerHTML = combinedHtml;
-                resultsContainer.style.display = 'block';
-
-                updateZeroPrices();
-            } else {
-                resultsContainer.innerHTML = '';
-                resultsContainer.style.display = 'none';
-            }
+            resultsContainer.innerHTML = combinedHtml;
+            resultsContainer.style.display = combinedHtml.trim() ? 'block' : 'none';
 
         } catch (err) {
             console.error("❌ Failed to fetch autocomplete/suggest:", err);
