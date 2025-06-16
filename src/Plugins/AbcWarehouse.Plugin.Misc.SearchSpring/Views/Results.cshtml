@@ -172,7 +172,7 @@ else
 
                             foreach (var model in productModels)
                             {
-                                <div class="item-box"></div>
+                                <div class="item-box">
                                     @await Html.PartialAsync("_ProductBox", (ProductOverviewModel)model)
                                 </div>
                             }
