@@ -36,6 +36,7 @@ using Nop.Web.Models.Catalog;
 using Nop.Web.Models.Media;
 // ABC
 using Nop.Core.Infrastructure;
+using Nop.Core.Domain.Seo;
 
 namespace Nop.Web.Factories
 {
@@ -79,6 +80,9 @@ namespace Nop.Web.Factories
 
         #region Ctor
 
+        // This cannot be overridden as 7Spikes uses it's own implementation
+        // If another service is needed, use:
+        // EngineContext.Current.Resolve<INTERFACE>()
         public CatalogModelFactory(BlogSettings blogSettings,
             CatalogSettings catalogSettings,
             DisplayDefaultMenuItemSettings displayDefaultMenuItemSettings,
@@ -488,18 +492,17 @@ namespace Nop.Web.Factories
             if ((await _storeContext.GetCurrentStoreAsync()).Id == HAWTHORNE_STORE_ID)
             {
                 var genericAttributeService = EngineContext.Current.Resolve<IGenericAttributeService>();
+                var seoSettings = EngineContext.Current.Resolve<SeoSettings>();
 
                 var hawthorneMetaTitle = await genericAttributeService.GetAttributeAsync<string>(category, "HawthorneMetaTitle");
-                if (!string.IsNullOrWhiteSpace(hawthorneMetaTitle))
-                {
-                    model.MetaTitle = hawthorneMetaTitle;
-                }
+                model.MetaTitle = !string.IsNullOrWhiteSpace(hawthorneMetaTitle) ?
+                    hawthorneMetaTitle :
+                    category.Name;
 
                 var hawthorneMetaDescription = await genericAttributeService.GetAttributeAsync<string>(category, "HawthorneMetaDescription");
-                if (!string.IsNullOrWhiteSpace(hawthorneMetaDescription))
-                {
-                    model.MetaDescription = hawthorneMetaDescription;
-                }
+                model.MetaDescription = !string.IsNullOrWhiteSpace(hawthorneMetaDescription) ?
+                    hawthorneMetaDescription :
+                    seoSettings.DefaultMetaDescription;
             }
 
             return model;
