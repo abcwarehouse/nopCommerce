@@ -146,10 +146,14 @@ else
                                 var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
                                 if (product == null)
                                 {
-                                    product = productService.GetProductByIdAsync(item.Id).GetAwaiter().GetResult();
+                                    int productId;
+                                    if (int.TryParse(item.Id, out productId))
+                                    {
+                                        product = productService.GetProductByIdAsync(productId).GetAwaiter().GetResult();
+                                    }
                                 }
                                 if (product != null)
-                                {}
+                                {
                                     var productUrl = urlRecordService.GetSeNameAsync(product).GetAwaiter().GetResult();
 
                                     var productOverviewModels = productModelFactory.PrepareProductOverviewModelsAsync(
@@ -168,7 +172,7 @@ else
 
                             foreach (var model in productModels)
                             {
-                                <div class="item-box">
+                                <div class="item-box"></div>
                                     @await Html.PartialAsync("_ProductBox", (ProductOverviewModel)model)
                                 </div>
                             }
