@@ -146,11 +146,7 @@ else
                                 var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
                                 if (product == null)
                                 {
-                                    int productId;
-                                    if (int.TryParse(item.Id, out productId))
-                                    {
-                                        product = productService.GetProductByIdAsync(productId).GetAwaiter().GetResult();
-                                    }
+                                    product = productService.GetProductByIdAsync(item.Sku).GetAwaiter().GetResult();
                                 }
                                 if (product != null)
                                 {
