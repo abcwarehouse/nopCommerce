@@ -144,9 +144,9 @@ else
                             foreach (var item in Model.Results)
                             {
                                 var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
-                                if (product == null)
+                                if (product == null && int.TryParse(item.Sku, out var productId))
                                 {
-                                    product = productService.GetProductByIdAsync(item.Sku).GetAwaiter().GetResult();
+                                    product = productService.GetProductByIdAsync(productId).GetAwaiter().GetResult();
                                 }
                                 if (product != null)
                                 {
