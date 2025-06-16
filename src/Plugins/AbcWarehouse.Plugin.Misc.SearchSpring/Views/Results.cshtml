@@ -148,7 +148,8 @@ else
                                 {
                                     product = productService.GetProductByIdAsync(item.Sku).GetAwaiter().GetResult();
                                 }
-                                else {
+                                if (product != null)
+                                {}
                                     var productUrl = urlRecordService.GetSeNameAsync(product).GetAwaiter().GetResult();
 
                                     var productOverviewModels = productModelFactory.PrepareProductOverviewModelsAsync(
