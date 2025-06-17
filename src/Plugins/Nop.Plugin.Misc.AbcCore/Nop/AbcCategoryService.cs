@@ -18,39 +18,38 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcCategoryService : CategoryService, IAbcCategoryService
     {
-        private readonly IRepository<Category> _categoryRepository;
-        private readonly IUrlRecordService _urlRecordService;
+    private readonly IRepository<Category> _categoryRepository;
 
-        public AbcCategoryService(
-            IAclService aclService,
-            ICustomerService customerService,
-            ILocalizationService localizationService,
-            IRepository<Category> categoryRepository,
-            IRepository<DiscountCategoryMapping> discountCategoryMappingRepository,
-            IRepository<Product> productRepository,
-            IRepository<ProductCategory> productCategoryRepository,
-            IStaticCacheManager staticCacheManager,
-            IStoreContext storeContext,
-            IStoreMappingService storeMappingService,
-            IWorkContext workContext,
-            IUrlRecordService urlRecordService
-        ) : base(
-            aclService,
-            customerService,
-            localizationService,
-            categoryRepository,
-            discountCategoryMappingRepository,
-            productRepository,
-            productCategoryRepository,
-            staticCacheManager,
-            storeContext,
-            storeMappingService,
-            workContext
-        )
-        {
-            _categoryRepository = categoryRepository;
-            _urlRecordService = urlRecordService;
-        }
+    public AbcCategoryService(
+        IAclService aclService,
+        ICustomerService customerService,
+        ILocalizationService localizationService,
+        IRepository<Category> categoryRepository,
+        IRepository<DiscountCategoryMapping> discountCategoryMappingRepository,
+        IRepository<Product> productRepository,
+        IRepository<ProductCategory> productCategoryRepository,
+        IStaticCacheManager staticCacheManager,
+        IStoreContext storeContext,
+        IStoreMappingService storeMappingService,
+        IWorkContext workContext,
+        IProductService productService
+    ) : base(
+        aclService,
+        customerService,
+        localizationService,
+        categoryRepository,
+        discountCategoryMappingRepository,
+        productRepository,
+        productCategoryRepository,
+        staticCacheManager,
+        storeContext,
+        storeMappingService,
+        workContext,
+        productService
+    )
+    {
+        _categoryRepository = categoryRepository;
+    }
 
         public async Task<Category> GetCategoryByNameAsync(string name)
         {
