@@ -96,10 +96,6 @@
         "Version": null
       },
       {
-        "SystemName": "AbcWarehouse.SliExport",
-        "Version": null
-      },
-      {
         "SystemName": "Uco.CustomRedirect",
         "Version": null
       },
@@ -149,10 +145,6 @@
       },
       {
         "SystemName": "Misc.EnhancedLogging",
-        "Version": "4.40.0"
-      },
-      {
-        "SystemName": "Misc.AbcSliExport",
         "Version": "4.40.0"
       },
       {
@@ -220,10 +212,6 @@
         "Version": "4.40.0"
       },
       {
-        "SystemName": "Misc.SLI",
-        "Version": "4.40.0"
-      },
-      {
         "SystemName": "Widgets.Listrak",
         "Version": "4.40.0"
       },
@@ -270,6 +258,10 @@
       {
         "SystemName": "SevenSpikes.Nop.Plugins.InstantSearch",
         "Version": "4.4"
+      },
+      {
+        "SystemName": "AbcWarehouse.Plugin.Misc.SearchSpring",
+        "Version": "1.0.0"
       }
     ],
     "PluginNamesToUninstall": [],
