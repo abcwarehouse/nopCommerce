@@ -174,11 +174,28 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
     <!-- End Adtaxi Container Tag -->
 
+
+@* Real-time search filtering *@
   
-    @* This forces the webpage to always scroll to the top on a refresh *@
-    window.onload = function() {
-  window.scrollTo(0, 0);
-};
+    document.addEventListener('DOMContentLoaded', function() {
+        const brandSearch = document.querySelector('input[data-facet="brand"]');
+        
+        if (brandSearch) {
+            brandSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const brandItems = document.querySelectorAll('.brand-list li');
+                
+                brandItems.forEach(function(item) {
+                    const brandText = item.getAttribute('data-brand');
+                    if (brandText.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
 
 
 
