@@ -82,8 +82,8 @@ else
                         </div>
                     </div>
                 }
-
-                @foreach (var facet in Model.Facets)
+                
+@foreach (var facet in Model.Facets)
 {
     <div class="searchspring-facet facet">
         <strong>@facet.Value.Label</strong>
@@ -91,33 +91,30 @@ else
         @if (facet.Key == "brand") 
         {
             <div class="brand-search-container">
-                <input type="text" class="brand-search" placeholder="Search" data-facet="brand">
+                <input type="text" class="brand-search" placeholder="Search" id="brandSearchInput">
             </div>
         }
         
         <ul class="@(facet.Key == "brand" ? "brand-list" : "")">
             @foreach (var value in facet.Value.Values)
             {
-                // Clone current params to new dict so we can add/replace filter
                 var allParams = new Dictionary<string, string>(queryParams);
-
                 var filterKey = $"filter[{facet.Key}]";
-
-                // Replace or add this filter key with the facet value selected
                 allParams[filterKey] = value.Value;
-
-                // Rebuild query string with all params
                 var queryString = QueryHelpers.AddQueryString("", allParams);
-
                 var filterUrl = Url.Content($"/search/results{queryString}");
 
-                <li data-brand="@value.Label.ToLower()">
+                <li data-brand-name="@value.Label.ToLower()">
                     <a href="@filterUrl">@value.Label (@value.Count)</a>
                 </li>
             }
         </ul>
     </div>
 }
+
+
+
+
             </div>
         </div>
 

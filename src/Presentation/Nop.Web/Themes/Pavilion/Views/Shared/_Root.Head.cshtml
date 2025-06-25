@@ -175,28 +175,27 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- End Adtaxi Container Tag -->
 
 
-@* Real-time search filtering *@
-  
-    document.addEventListener('DOMContentLoaded', function() {
-        const brandSearch = document.querySelector('input[data-facet="brand"]');
-        
-        if (brandSearch) {
-            brandSearch.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                const brandItems = document.querySelectorAll('.brand-list li');
-                
-                brandItems.forEach(function(item) {
-                    const brandText = item.getAttribute('data-brand');
-                    if (brandText.includes(searchTerm)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
+@* Brand Filter Search *@
+document.addEventListener('DOMContentLoaded', function() {
+    const brandSearchInput = document.getElementById('brandSearchInput');
+    
+    if (brandSearchInput) {
+        // Trigger search on input
+        brandSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.trim().toLowerCase();
+            const brandItems = document.querySelectorAll('.brand-list li');
+            
+            brandItems.forEach(item => {
+                const brandName = item.getAttribute('data-brand-name');
+                if (brandName.includes(searchTerm)) {
+                    item.style.display = 'block'; // Show matching items
+                } else {
+                    item.style.display = 'none';  // Hide non-matching items
+                }
             });
-        }
-    });
-
+        });
+    }
+});
 
 
     // Update Instagram link only if .storeId8 is present
