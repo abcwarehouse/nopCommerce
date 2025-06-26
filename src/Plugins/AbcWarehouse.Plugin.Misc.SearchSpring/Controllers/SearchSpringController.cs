@@ -13,6 +13,9 @@ using System.Linq;
 using Nop.Services.Configuration;
 using Nop.Services.Messages;
 using Nop.Services.Localization;
+using Nop.Web.Framework;
+using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
@@ -107,7 +110,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
             });
 
-            await _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
+            if (_settings.IsDebugMode)
+            {
+                await _logger.InformationAsync($"SearchSpring Results JSON:\n{modelJson}");
+            }
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
@@ -227,6 +233,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             }
         }
         
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        [AutoValidateAntiforgeryToken]
         public ActionResult Configure()
         {
             return View(
@@ -235,6 +244,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         }
 
         [HttpPost]
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        [AutoValidateAntiforgeryToken]
         public async Task<ActionResult> Configure(ConfigurationModel model)
         {
             if (!ModelState.IsValid)
