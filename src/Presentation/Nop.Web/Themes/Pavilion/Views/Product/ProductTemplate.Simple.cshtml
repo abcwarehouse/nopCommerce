@@ -37,7 +37,7 @@
     Html.AddMetaDescriptionParts(Model.MetaDescription);
     Html.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
-    Html.AppendPageCssClassParts("html-product-details-page");
+    Html.AppendPageCssClassParts("html-product-details-page modern-promo-layout");
 
     var showShareButton = catalogSettings.ShowShareButton;
 
@@ -74,7 +74,7 @@
 
 <!--product breadcrumb-->
 @section Breadcrumb
-            {
+{
     @Html.Partial("_ProductBreadcrumb", Model.Breadcrumb)
 }
 
@@ -120,45 +120,263 @@
     }
 }
 
-@if (isClearance)
-{
-	<style>
-		.product-price.product-price.product-price span[itemprop="price"] {
-            color: #f00;
-            text-decoration: line-through;
-            font-weight: normal;
-        }
+<style>
+    .modern-promo-layout {
+        font-family: Arial, sans-serif;
+        color: #333;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
-        span.clearance-or-less {
-            display: inline-block;
-            margin-left: 8px;
-            font-weight: bold;
-            color: #949494;
-            text-transform: uppercase;
-            font-style: italic;
-        }
+    .promo-banner {
+        background-color: #f8f8f8;
+        border-left: 5px solid #0066cc;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
 
-        .clearance-msg {
-            font-size: 1.0rem;
-            color: #12659B;
-            font-weight: bold;
-            margin-right: 7px;
-        }
+    .promo-banner h2 {
+        color: #0066cc;
+        margin: 0;
+        font-size: 1.5rem;
+    }
 
-        .clearance-msg-additional {
-            font-size: 0.8rem;
-            color: #4f4f4f;
-        }
+    .promo-banner p {
+        margin: 5px 0 10px;
+        font-size: 1.1rem;
+    }
 
-        .clearance-msg-block.clearance-msg-block.clearance-msg-block {
-            display: block;
-        }
-	</style>
-}
+    .promo-button {
+        background-color: #0066cc;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .product-header {
+        margin-bottom: 15px;
+    }
+
+    .product-header h3 {
+        color: #0066cc;
+        margin: 0 0 10px 0;
+        font-size: 1.3rem;
+    }
+
+    .manufacturer-stock {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        font-size: 0.9rem;
+    }
+
+    .manufacturer {
+        font-weight: bold;
+    }
+
+    .stock-status, .delivery {
+        color: #009933;
+        font-weight: bold;
+    }
+
+    .product-ratings {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 15px 0;
+    }
+
+    .rating {
+        font-weight: bold;
+        color: #ff9900;
+    }
+
+    .write-review {
+        color: #0066cc;
+        text-decoration: none;
+    }
+
+    .product-name h1 {
+        font-size: 1.8rem;
+        margin: 0 0 15px 0;
+        color: #222;
+    }
+
+    .short-description {
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .pricing-section {
+        margin: 20px 0;
+    }
+
+    .price-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 5px;
+    }
+
+    .sale-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #cc0000;
+    }
+
+    .compare-price {
+        text-decoration: line-through;
+        color: #777;
+    }
+
+    .savings-row {
+        margin-bottom: 15px;
+    }
+
+    .save-amount {
+        color: #009933;
+        font-weight: bold;
+    }
+
+    .limited-time-offer, .open-box-option {
+        font-weight: bold;
+        margin: 10px 0;
+        color: #cc0000;
+    }
+
+    .financing-options {
+        margin: 20px 0;
+    }
+
+    .financing-options p {
+        margin: 5px 0;
+    }
+
+    .special-offers {
+        margin: 20px 0;
+    }
+
+    .offer-item {
+        display: flex;
+        align-items: center;
+        margin: 10px 0;
+    }
+
+    .offer-item input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .learn-more {
+        background: none;
+        border: none;
+        color: #0066cc;
+        text-decoration: underline;
+        cursor: pointer;
+        padding: 0;
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    .promotions {
+        margin: 25px 0;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+    }
+
+    .promotions h4 {
+        margin: 0 0 15px 0;
+        color: #333;
+    }
+
+    .promo-item {
+        margin-bottom: 15px;
+    }
+
+    .promo-item p {
+        margin: 5px 0;
+    }
+
+    .add-to-cart-section {
+        margin: 30px 0;
+    }
+
+    .add-to-cart-btn {
+        background-color: #0066cc;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /* Clearance specific styles */
+    .modern-promo-layout .product-price.product-price.product-price span[itemprop="price"] {
+        color: #f00;
+        text-decoration: line-through;
+        font-weight: normal;
+    }
+
+    .modern-promo-layout span.clearance-or-less {
+        display: inline-block;
+        margin-left: 8px;
+        font-weight: bold;
+        color: #949494;
+        text-transform: uppercase;
+        font-style: italic;
+    }
+
+    .modern-promo-layout .clearance-msg {
+        font-size: 1.0rem;
+        color: #12659B;
+        font-weight: bold;
+        margin-right: 7px;
+    }
+
+    .modern-promo-layout .clearance-msg-additional {
+        font-size: 0.8rem;
+        color: #4f4f4f;
+    }
+
+    .modern-promo-layout .clearance-msg-block.clearance-msg-block.clearance-msg-block {
+        display: block;
+    }
+
+    /* Corner picture for clearance */
+    .modern-promo-layout .corner-picture img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .modern-promo-layout span.corner-picture {
+        display: none;
+        z-index: 5;
+    }
+
+    .modern-promo-layout .abc-clearance span.corner-picture {
+        display: inline;
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: inline-block;
+    }
+</style>
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
 <div class="page product-details-page">
     <div class="page-body">
+        <!-- Promo Banner -->
+        <div class="promo-banner">
+            <h2>Get Approved!</h2>
+            <p>Great Credit To No Credit!</p>
+            <button class="promo-button">Apply Now</button>
+        </div>
+
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
             @if (seoSettings.MicrodataEnabled)
@@ -166,172 +384,161 @@
                 @await Html.PartialAsync("_Microdata", Model)
             }
             <div data-productid="@Model.Id">
-                <div class="product-essential">
+                <div class="product-essential @(isClearance ? "abc-clearance" : "")">
                     <!-- ABC: for clearance -->
-                    <span class="corner-picture"><img src="~/Plugins/Misc.AbcFrontend/Images/clearance_banner.png" alt="Clearance Banner"/></span>
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
-                    @{
-                        var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom", additionalData = Model });
-                    }
-                    @if (!String.IsNullOrEmpty(await cloudZoom.RenderHtmlContentAsync()))
-                    {
-                        @cloudZoom
-                    }
-                    else
-                    {
-                    	@await Html.PartialAsync("_ProductDetailsPictures", Model)
-                    }
-                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
-                <div class="overview">
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
-                    @await Html.PartialAsync("_Discontinued", Model)
-                    <!--manufacturers-->
-                    @await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)
-                    <div class="product-name">
-                        <h1>
-                            @Model.Name
-                        </h1>
-                        @if (!string.IsNullOrEmpty(displayIdStr))
-                        {
-                            <span class="product-name__isam-id">@displayIdStr</span>
-                        }
-                    </div>
-
-                    <!-- Rating summary goes above the fold near product name or image -->
-                    <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
-
-                    <div id="questions_tab" style="display: none;">
-                        <!-- Instruct BV loader to show the Q&A feature for productID123 here -->
-                        <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
-                    </div>
-
-                    <script>
-                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
-                        window.bvCallback = function (BV) {
-
-                    // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
-                        BV.reviews.on('show', function () {
-                            // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                            $('#review_tab').show();
-                        });
-
-                    // Register a function to be called when a BV feature needs to 
-                    // display the Q&A element, such as when selecting the number of questions link
-                        BV.questions.on('show', function () {
-                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
-                            $('#questions_tab').show();
-                        });
-                        };
-                    </script>
-
-                    <!--rental info-->
-                    @{
-                        var dataDictRental = new ViewDataDictionary(ViewData);
-                        dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
-                        @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
-                    }
-                    @if (!string.IsNullOrEmpty(Model.ShortDescription))
-                    {
-                        <div class="short-description">
-                            @Html.Raw(Model.ShortDescription)
-                        </div>
-                    }
-                    <!--SKU, MAN, GTIN, vendor-->
-                    @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)
-                    <!--sample download-->
-                    @await Html.PartialAsync("_DownloadSample", Model)
-                    <!--attributes-->
-                    @{
-                        var dataDictAttributes = new ViewDataDictionary(ViewData);
-                        dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
-                        @await Html.PartialAsync("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
-                    }
-                    <!--gift card-->
-                    @{
-                        var dataDictGiftCard = new ViewDataDictionary(ViewData);
-                        dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{Model.Id}";
-                        @await Html.PartialAsync("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
-                    }
-                    <!--estimate shipping-->
-                    @await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)
-                    <!--availability-->
-                    @await Html.PartialAsync("_Availability", Model)
-
-                    <!--price & add to cart-->
-                    @{
-                        var dataDictPrice = new ViewDataDictionary(ViewData);
-                        dataDictPrice.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
-                        <div class="product-price-block">
-                            @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
-                        </div>
-                    }
-
-                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsBeforeAddToCart, additionalData = Model })
-
-                    <!--add to cart-->
-                    @if (!isFedExMode || fedExProductAttribute != null)
-                    {
-                        var dataDictAddToCart = new ViewDataDictionary(ViewData);
-                        dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
-                        @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
-                    }
-                    <!--wishlist, compare, email a friend-->
                     @if (isClearance)
                     {
-                        <button style="color: #446588; border: 2px solid #446588; padding: .4rem 1rem; font-weight: 700; text-transform: uppercase; background-color: #fff;"
-                                type="button"
-                                onclick="location.href='#clearance_stock_widget'">View Availability</button>
+                        <span class="corner-picture"><img src="~/Plugins/Misc.AbcFrontend/Images/clearance_banner.png" alt="Clearance Banner"/></span>
                     }
                     
-                    <!--wishlist, compare, email a friend-->
-                    <div class="overview-buttons">
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
-                        @{
-                            var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
-                            dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
-                            @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
-                        }
-                        @await Html.PartialAsync("_CompareProductsButton", Model)
-                        @await Html.PartialAsync("_ProductEmailAFriendButton", Model)
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })
-                    </div>
-
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
-                </div>
-                    <div class="overview-bottom">
-                        <!--sharing-->
-                        @if (showShareButton)
-                        {
-                            @Html.Partial("_ShareButton", Model)
-                        }
-                        <!--delivery-->
-                        @Html.Partial("_DeliveryInfo", Model)
-                    </div>
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialBottom, additionalData = Model })
-                </div>
-
-                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsBeforeTabs, additionalData = Model })
-
-                @{
-                    var nopQuickTabsHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_before_collateral", additionalData = Model.Id });
-                }
-
-                @if (!String.IsNullOrEmpty(await nopQuickTabsHtml.RenderHtmlContentAsync()))
-                {
-                    var productsCarouselHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productpage_after_collateral", additionalData = Model.Id });
-                    var carouselQuickTabsWrapperClass = "one-column-wrapper";
-                    if (!String.IsNullOrEmpty(await productsCarouselHtml.RenderHtmlContentAsync()))
-                    {
-                        carouselQuickTabsWrapperClass = "two-column-wrapper";
-                    }
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
                     
-                    <div class="@carouselQuickTabsWrapperClass">
-                        @nopQuickTabsHtml @*nop quick tabs*@
+                    <div class="product-grid">
+                        <!-- Product Images Column -->
+                        <div class="product-images-column">
+                            @{
+                                var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom", additionalData = Model });
+                            }
+                            @if (!String.IsNullOrEmpty(await cloudZoom.RenderHtmlContentAsync()))
+                            {
+                                @cloudZoom
+                            }
+                            else
+                            {
+                                @await Html.PartialAsync("_ProductDetailsPictures", Model)
+                            }
+                            @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
+                        </div>
+                        
+                        <!-- Product Info Column -->
+                        <div class="product-info-column">
+                            <!-- Header with manufacturer and stock status -->
+                            <div class="product-header">
+                                <h3>We Beat All Deals!</h3>
+                                <div class="manufacturer-stock">
+                                    @if (Model.ProductManufacturers.Any())
+                                    {
+                                        <span class="manufacturer">Manufacturer: @Model.ProductManufacturers.First().Name</span>
+                                    }
+                                    @if (!string.IsNullOrEmpty(displayIdStr))
+                                    {
+                                        <span class="product-id">@displayIdStr</span>
+                                    }
+                                    <span class="stock-status">In-Stock! Get It Today!</span>
+                                    <span class="delivery">FREE Delivery!</span>
+                                </div>
+                            </div>
 
-                        @productsCarouselHtml @*products carousel for related or also purchased with 1 visible item*@
+                            <!-- Ratings -->
+                            <div class="product-ratings">
+                                <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
+                                <a href="#" class="write-review">Write a Review</a>
+                            </div>
+
+                            <!-- Product Name -->
+                            <div class="product-name">
+                                <h1>@Model.Name</h1>
+                            </div>
+
+                            <!-- Short Description -->
+                            @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                            {
+                                <div class="short-description">
+                                    @Html.Raw(Model.ShortDescription)
+                                </div>
+                            }
+
+                            <!-- Price Block -->
+                            <div class="pricing-section">
+                                @{
+                                    var dataDictPrice = new ViewDataDictionary(ViewData);
+                                    dataDictPrice.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
+                                    @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
+                                }
+                            </div>
+
+                            <!-- Limited Time Offer -->
+                            <div class="limited-time-offer">
+                                Bonus Markdown Price ENDS on @DateTime.Now.AddDays(7).ToString("M/d/yyyy")
+                            </div>
+
+                            <!-- Open Box Option -->
+                            <div class="open-box-option">
+                                Open box from $848. Available at select locations.
+                            </div>
+
+                            <!-- Financing Options -->
+                            <div class="financing-options">
+                                <p>$297/mo suggested payments with 6-month special financing. <a href="#">Learn how</a></p>
+                                <p>Synchrony Pay Later from $58/mo for 12 months. <a href="#">Learn how</a></p>
+                            </div>
+
+                            <!-- Special Offers -->
+                            <div class="special-offers">
+                                <div class="offer-item">
+                                    <input type="checkbox" id="trade-in" checked>
+                                    <label for="trade-in">TV TRADE-IN</label>
+                                </div>
+                                <div class="offer-item">
+                                    <input type="checkbox" id="credit" checked>
+                                    <label for="credit">$500 CREDIT</label>
+                                </div>
+                                <button class="learn-more">LEARN MORE</button>
+                            </div>
+
+                            <!-- Promotions -->
+                            <div class="promotions">
+                                <h4>Promotions</h4>
+                                <div class="promo-item">
+                                    <p>ABC WAREHOUSE Bonus Bundle! Ends @DateTime.Now.AddDays(7).ToString("M/d/yyyy")</p>
+                                    <p>$300 TV + SOUNDBAR BUNDLE SAVINGS!</p>
+                                    <p>Call 800-885-3850 or see store to claim this offer!</p>
+                                </div>
+                                <div class="promo-item">
+                                    <p>Get Free HOME Delivery!*</p>
+                                    <p>Free TV Streaming Select Apps*</p>
+                                </div>
+                            </div>
+
+                            <!-- Product Attributes -->
+                            @{
+                                var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+                                @await Html.PartialAsync("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
+                            }
+
+                            <!-- Add to Cart -->
+                            <div class="add-to-cart-section">
+                                @if (!isFedExMode || fedExProductAttribute != null)
+                                {
+                                    var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                    dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
+                                }
+                                
+                                @if (isClearance)
+                                {
+                                    <button class="view-availability" type="button" onclick="location.href='#clearance_stock_widget'">View Availability</button>
+                                }
+                            </div>
+
+                            <!-- Additional buttons -->
+                            <div class="overview-buttons">
+                                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
+                                @{
+                                    var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                                    dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                    @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                                }
+                                @await Html.PartialAsync("_CompareProductsButton", Model)
+                                @await Html.PartialAsync("_ProductEmailAFriendButton", Model)
+                                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })
+                            </div>
+                        </div>
                     </div>
-                }
-                
+                </div>
+
+                <!-- Product Tabs and Additional Info -->
                 <div class="product-collateral">
                     @if (!string.IsNullOrEmpty(Model.FullDescription))
                     {
@@ -339,13 +546,17 @@
                             @Html.Raw(Model.FullDescription)
                         </div>
                     }
+                    
                     @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
                     @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
-                    @*
-                    ABC: Since we use product tags for InstantSearch, don't display them
-                    @await Html.PartialAsync("_ProductTags", Model.ProductTags)
-                    *@
+                    
+                    <!-- Bazaarvoice Q&A Tab -->
+                    <div id="questions_tab" style="display: none;">
+                        <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
+                    </div>
                 </div>
+
+                <!-- Related Products -->
                 @await Component.InvokeAsync("ProductsAlsoPurchased", new { productId = Model.Id })
                 @await Component.InvokeAsync("RelatedProducts", new { productId = Model.Id })
             </div>
@@ -354,11 +565,24 @@
     </div>
 </div>
 
+<!-- Bazaarvoice Script -->
+<script>
+    window.bvCallback = function (BV) {
+        BV.reviews.on('show', function () {
+            $('#review_tab').show();
+        });
+
+        BV.questions.on('show', function () {
+            $('#questions_tab').show();
+        });
+    };
+</script>
+
+<!-- Schema.org JSON-LD -->
 @{
     var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
-}
-@{
+    
     var schema = new Dictionary<string, object>
     {
         ["@context"] = "https://schema.org",
@@ -373,6 +597,10 @@
 
     var jsonLd = JsonConvert.SerializeObject(schema, Formatting.Indented);
 }
+
+
+
+
 <script type="application/ld+json">
 @Html.Raw(jsonLd)
 </script>
