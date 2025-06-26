@@ -249,3 +249,199 @@ h4.description-category {
         vertical-align: top;
     }
 }
+
+
+
+.modern-promo-layout {
+    font-family: Arial, sans-serif;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.promo-banner {
+    background-color: #f8f8f8;
+    border-left: 5px solid #0066cc;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.promo-banner h2 {
+    color: #0066cc;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.promo-banner p {
+    margin: 5px 0 10px;
+    font-size: 1.1rem;
+}
+
+.promo-button {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.product-header {
+    margin-bottom: 15px;
+}
+
+.product-header h3 {
+    color: #0066cc;
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+}
+
+.manufacturer-stock {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.9rem;
+}
+
+.manufacturer {
+    font-weight: bold;
+}
+
+.stock-status, .delivery {
+    color: #009933;
+    font-weight: bold;
+}
+
+.product-ratings {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.rating {
+    font-weight: bold;
+    color: #ff9900;
+}
+
+.write-review {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.product-name h1 {
+    font-size: 1.8rem;
+    margin: 0 0 15px 0;
+    color: #222;
+}
+
+.short-description {
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.pricing-section {
+    margin: 20px 0;
+}
+
+.price-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+.sale-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #cc0000;
+}
+
+.compare-price {
+    text-decoration: line-through;
+    color: #777;
+}
+
+.savings-row {
+    margin-bottom: 15px;
+}
+
+.save-amount {
+    color: #009933;
+    font-weight: bold;
+}
+
+.limited-time-offer, .open-box-option {
+    font-weight: bold;
+    margin: 10px 0;
+    color: #cc0000;
+}
+
+.financing-options {
+    margin: 20px 0;
+}
+
+.financing-options p {
+    margin: 5px 0;
+}
+
+.special-offers {
+    margin: 20px 0;
+}
+
+.offer-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.offer-item input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.learn-more {
+    background: none;
+    border: none;
+    color: #0066cc;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.promotions {
+    margin: 25px 0;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.promotions h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.promo-item {
+    margin-bottom: 15px;
+}
+
+.promo-item p {
+    margin: 5px 0;
+}
+
+.add-to-cart-section {
+    margin: 30px 0;
+}
+
+.add-to-cart-btn {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+}
