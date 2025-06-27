@@ -195,12 +195,12 @@
                 <h1><span class="manuStyle">@Model.ProductManufacturers.First().Name           </span> </h1>
                     }
                     
-                       <span>SKU: <h1 style="skuStyle">@Model.Sku</span></h1><br>
+                       <span>SKU: <h1 class="skuStyle">@Model.Sku</span></h1><br>
                         
-                        @if (!string.IsNullOrEmpty(displayIdStr))
-                        {
-                           <h1><span class="product-name__isam-id">@displayIdStr</span></h1>
-                        }
+                       @if (!string.IsNullOrEmpty(displayIdStr))
+                    {
+                         <h1><span class="product-name__isam-id">@displayIdStr.Trim('-')</span></h1>
+                    }
                     </div>
 
                     <!-- Rating summary goes above the fold near product name or image -->

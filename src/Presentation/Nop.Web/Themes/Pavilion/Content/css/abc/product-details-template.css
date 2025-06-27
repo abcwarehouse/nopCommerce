@@ -242,6 +242,19 @@ h4.description-category {
 
 
 
+/*Redesign Changes */
+
+span.manuStyle {
+    text-decoration: underline;
+}
+
+h1.skuStyle{
+    text-decoration: underline;
+}
+
+
+
+
 @media all and (min-width: 768px) {
     .description-col {
         width: 49%;
