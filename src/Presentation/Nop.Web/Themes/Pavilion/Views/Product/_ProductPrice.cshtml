@@ -25,7 +25,6 @@
     
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
 
-    // Get ABC product information if available
     if (frontEndService.ProductIsAbc(Model.ProductId))
     {
         var pad = frontEndService.GetProductAbcDescriptionByProductId(Model.ProductId);
@@ -37,18 +36,18 @@
         }
     }
 
-    // Calculate savings amount if old price exists
+
     string savedStr = "";
+    // calculate price difference
     if (!String.IsNullOrWhiteSpace(Model.OldPrice))
     {
         decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
         if (savedAmt > 50)
         {
-            savedStr = "$" + savedAmt;
+            savedStr = "$" + savedAmt + " Off";
         }
     }
 
-    // Get product and category information
     var product = await productService.GetProductByIdAsync(Model.ProductId);
     var productCategories = await abcCategoryService.GetProductCategoriesByProductIdAsync(Model.ProductId);
     bool isClearance = false;
@@ -61,10 +60,9 @@
         }
     }
 
-    // Check if product uses cart pricing
     bool usesCartPricing = await product.IsAddToCartAsync() || await product.IsAddToCartWithUserInfoAsync();
 
-    // Get product flag information
+    // get price bucket code
     ProductFlag productFlag = frontEndService.GetProductFlag(Model.ProductId);
 
     string newModelMessage = "";
@@ -73,14 +71,19 @@
 
     if (productFlag != null)
     {
+        // find different product flags
         newModelMessage = productFlag.NewModelMessage;
         priceBucketCodeImageUrl = productFlag.PriceBucketImageUrl;
         stockMessage = productFlag.StockMessage;
     }
 
-    // Get mattress price for schema
-    var mattressListingPrice = await abcMattressListingPriceService.GetListingPriceForMattressProductAsync(Model.ProductId);
-    var price = mattressListingPrice != null ? mattressListingPrice.ToString() : Model.Price;
+    // get mattress price for schema
+	var mattressListingPrice =
+		await abcMattressListingPriceService.GetListingPriceForMattressProductAsync(Model.ProductId);
+
+	var price = mattressListingPrice != null ?
+		mattressListingPrice.ToString() :
+		Model.Price;
 }
 
 @if (!Model.CustomerEntersPrice)
@@ -92,107 +95,114 @@
             <span style="display: none" itemprop="url">
                 this.Request.Url.AbsoluteUri
             </span>
-            
-            @* Call for price section *@
             @if (Model.CallForPrice)
             {
+                @*call for price*@
                 <div class="product-price call-for-price">
                     <span>@T("Products.CallForPrice")</span>
                 </div>
             }
             else
             {
-                <div class="price-container">
-                    @* Compare at price (old price) *@
-                    @if (!String.IsNullOrWhiteSpace(Model.OldPrice))
-                    {
-                        <div class="old-price-container">
-                            <span class="compare-at">Compare at @Model.OldPrice.Replace(".00", "")</span>
-                        </div>
-                    }
-                    
-                    @* Current price and sale information *@
-                    <div class="current-price-container">
-                        @if (!String.IsNullOrWhiteSpace(savedStr))
-                        {
-                            <div class="sale-tag">
-                                <span class="sale-label">Sale:</span>
-                                <span class="price-value">@Html.Raw(Model.Price.Replace(".00", ""))</span>
-                            </div>
-                            <div class="savings-tag">
-                                <span class="save-label">Save</span>
-                                <span class="save-amount">@savedStr</span>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="price-value">@Html.Raw(Model.Price.Replace(".00", ""))</div>
-                        }
-                    </div>
-
-                    @* Bonus markdown message *@
-                    @if (!String.IsNullOrEmpty(newModelMessage))
-                    {
-                        <div class="promo-message">@newModelMessage</div>
-                    }
-                </div>
-
-                @* Open box pricing *@
-                @if (productFlag != null && productFlag.IsOpenBox() && !(isClearance))
+                if (!String.IsNullOrWhiteSpace(Model.OldPrice))
                 {
-                    decimal openBoxPrice = 0.0M;
-                    openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.PriceValue);
-                    <div class="open-box-container">
-                        <span class="open-box-text">
-                            Open box from <span class="open-box-price">@openBoxPrice.ToString("C").Replace(".00", "")</span>. Available at select locations. 😊
+                    @*old price*@
+                    <div class="old-product-price">
+                        <label>Compare at</label>
+                        <span>@Model.OldPrice.Replace(".00", "")</span>
+                    </div>
+                }
+                // Should always exist for mattress manipulation
+                if (!String.IsNullOrWhiteSpace(savedStr))
+                {
+                    <div class="you-save-amt">@savedStr.Replace(".00", "")</div>
+                }
+                else
+                {
+                    <div class="you-save-amt" style="display: none"></div>
+                }
+                @* ABC: disallow non-discounted-proce*@
+                <div class="product-price">
+                    @if (!String.IsNullOrWhiteSpace(savedStr))
+                    {
+                        <label class="price-sale-label">Sale: </label>
+                    }
+
+                    @*render price*@
+                    @* ABC: provides an ID for Synchrony UniFi *@
+                    <span @if (String.IsNullOrWhiteSpace(Model.PriceWithDiscount)) { <text> itemprop="price" content="@price" id="product-content" class="price-value-@(Model.ProductId)" </text> }>
+                        @Html.Raw(Model.Price.Replace(".00", ""))
+                        <span class="clearance-or-less">Or Less!</span>
+                    </span>
+                </div>
+                @* ABC: removed discount price showing on PDP
+                if (!String.IsNullOrWhiteSpace(Model.PriceWithDiscount))
+                {
+                    <div class="product-price discounted-price">
+                        <label>@T("Products.Price.WithDiscount"):</label>
+                        <span itemprop="price" content="@Model.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" class="price-value-@(Model.ProductId)">
+                            @Html.Raw(Model.PriceWithDiscount)
                         </span>
                     </div>
                 }
-
-                @* Financing options *@
-                <div class="financing-options">
-                    <div class="financing-option">
-                        <span>$167/mo suggested payments with 6-month special financing.</span>
-                        <a href="#" class="learn-how">Learn how</a>
-                    </div>
-                    <div class="financing-option">
-                        <span><strong>Pay Later</strong> from $88/mo for 12 months.</span>
-                        <a href="#" class="learn-how">Learn how</a>
-                    </div>
-                </div>
-
-                @* Clearance message *@
-                @if (isClearance)
+                *@
+                if (isClearance)
                 {
-                    <div class="clearance-message">
-                        <span>Available In Store Only</span>
-                        <span>Additional discounts based on product condition</span>
+                    <div class="clearance-msg-block">
+                        <span class="clearance-msg">Available In Store Only</span><span class="clearance-msg-additional">Additional discounts based on product condition</span>
                     </div>
                 }
 
-                @* Pair pricing disclaimer *@
+                @*Don't worry about base price*@
+                if (!String.IsNullOrEmpty(Model.BasePricePAngV))
+                {
+                    <div class="base-price-pangv">
+                        @Model.BasePricePAngV
+                    </div>
+                }
+                if (Model.DisplayTaxShippingInfo)
+                {
+                    var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                    //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                    //of course, you can modify appropriate locales to include VAT info there
+                    <div class="tax-shipping-info">
+                        @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                    </div>
+                }
+                if (Model.IsRental)
+                {
+                    <div class="rental-price">
+                        <label>@T("Products.Price.RentalPrice"):</label>
+                        <span>@Model.RentalPrice</span>
+                    </div>
+                }
+                if (!String.IsNullOrEmpty(Model.CurrencyCode))
+                {
+                    <meta itemprop="priceCurrency" content="@Model.CurrencyCode" />
+                }
+                @* ABC: Pair pricing *@
                 @if (usesPairPricing)
                 {
-                    <div class="pair-pricing-disclaimer">*pair</div>
+                    <span class="pair-price-disclaimer">*pair</span>
                 }
             }
         </div>
     }
-
-    @* MAP pricing or price bucket image *@
-    @if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox())
+    if (!string.IsNullOrEmpty(priceBucketCodeImageUrl) && productFlag != null && !productFlag.IsOpenBox())
     {
-        <div class="price-bucket-image">
+        <div class="product-price">
+            @* MAP Discount Question Mark Tooltip *@
             @if (priceBucketCodeImageUrl.Contains("Map") && !product.DisableBuyButton)
             {
-                <span class="map-price-text">Add to cart to see price</span>
-                <div class="tooltip-container">
-                    <i class="question-icon fas fa-question-circle"></i>
-                    <div class="tooltip-content">
+                <span style="color: #b70000">Add to cart to see price</span>
+                <div class="btn btn-primary tooltip"><i class="fas fa-question-circle" style="vertical-align: super;font-size: 0.75rem; color: #4f4f4f"
+                                                        onclick="document.getElementsByClassName('top')[0].style = 'display:block'"></i>
+                    <div class="top" onclick="document.getElementsByClassName('top')[0].style = 'display:none'">
                         <h3>Why isn't the price shown here?</h3>
-                        <p>Some manufacturers have restrictions on the way prices are displayed on our website.</p>
+                        <p>Some manufacturers have restrictions on the way prices are displayed on our website.</p><br />
                         <h3>How do I see the price?</h3>
                         <p>Add the item to your cart. You can always remove it later on.</p>
+                        <i></i>
                     </div>
                 </div>
             }
@@ -200,6 +210,25 @@
             {
                 <img src="@priceBucketCodeImageUrl" alt="Deal Image" />
             }
+        </div>
+    }
+    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsAfterPrice, additionalData = Model.ProductId })
+    if (productFlag != null && productFlag.IsOpenBox() && !(isClearance))
+    {
+        decimal openBoxPrice = 0.0M;
+        openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.PriceValue);
+        <div class="open-box open-box-price-page">
+            <span class="open-box-price-page-text">
+                Open box from <span class="open-box-price">@openBoxPrice.ToString("C").Replace(".00", "") </span><br />Available at select locations.
+                <div class="tooltip">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="tooltiptext">
+                        @T("AbcWarehouse.OpenBoxTooltip")
+                        <em style="color: blue; text-decoration: underline; cursor: pointer;" onclick="window.location.href='/store-locator'">Store Locator</em>
+                    </span>
+                </div> 
+            </span>
+
         </div>
     }
 
