@@ -250,6 +250,157 @@ span.manuStyle {
 
 
 
+ /* Price container styles */
+    .price-container {
+        margin-bottom: 15px;
+    }
+
+    /* Old price styles */
+    .old-price-container {
+        margin-bottom: 5px;
+    }
+    .compare-at {
+        color: #666;
+        font-size: 16px;
+        text-decoration: line-through;
+    }
+
+    /* Current price styles */
+    .current-price-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 10px;
+    }
+    .sale-tag {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .sale-label {
+        font-weight: bold;
+        color: #b70000;
+        font-size: 18px;
+    }
+    .price-value {
+        font-weight: bold;
+        color: #b70000;
+        font-size: 24px;
+    }
+
+    /* Savings tag styles */
+    .savings-tag {
+        background-color: #f5f5f5;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .save-label {
+        color: #666;
+    }
+    .save-amount {
+        font-weight: bold;
+        color: #b70000;
+    }
+
+    /* Promo message styles */
+    .promo-message {
+        color: #b70000;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* Open box styles */
+    .open-box-container {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+    .open-box-text {
+        font-size: 14px;
+    }
+    .open-box-price {
+        font-weight: bold;
+    }
+
+    /* Financing options styles */
+    .financing-options {
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+        margin-bottom: 15px;
+    }
+    .financing-option {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    .learn-how {
+        color: #0066cc;
+        text-decoration: underline;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    /* Clearance message styles */
+    .clearance-message {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    /* Pair pricing disclaimer */
+    .pair-pricing-disclaimer {
+        font-size: 12px;
+        color: #666;
+    }
+
+    /* Price bucket image styles */
+    .price-bucket-image {
+        margin: 15px 0;
+    }
+    .map-price-text {
+        color: #b70000;
+        margin-right: 5px;
+    }
+
+    /* Tooltip styles */
+    .tooltip-container {
+        display: inline-block;
+        position: relative;
+    }
+    .question-icon {
+        color: #4f4f4f;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .tooltip-content {
+        display: none;
+        position: absolute;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 15px;
+        width: 250px;
+        z-index: 100;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        left: 0;
+        transform: translateX(-25%);
+    }
+    .tooltip-container:hover .tooltip-content {
+        display: block;
+    }
+
+    /* Stock message styles */
+    .stock-message {
+        font-size: 14px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+
+
+
+
 
 
 
