@@ -199,7 +199,7 @@
                         
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
-                            <span class="product-name__isam-id"><br>@displayIdStr</span>
+                           <h1><br><span class="product-name__isam-id">@displayIdStr</span></h1>
                         }
                     </div>
 
@@ -242,9 +242,21 @@
                             @Html.Raw(Model.ShortDescription)
                         </div>
                     }
+
+                    @if (!string.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }
+
+
                     <!--SKU, MAN, GTIN, vendor-->
-                    @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)
+                    @* @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model) *@
                     <!--sample download-->
+
+
+
                     @await Html.PartialAsync("_DownloadSample", Model)
                     <!--attributes-->
                     @{
