@@ -188,15 +188,15 @@
                     <!--manufacturers-->
                     @await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)
                     <div class="product-name">
-                        <h1>
-                            @Model.Name
-                        </h1>
-                        <h1>
+
+                        <span>Manufacturer: </span>>
                             @if (Model.ProductManufacturers.Any())
 {
-                <span>Manufacturer: @Model.ProductManufacturers.First().Name </span>
+                <span>@Model.ProductManufacturers.First().Name</span>
 }
                         </h1>
+                       <span>    SKU: @Model.Sku</span>
+                        
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
                             <span class="product-name__isam-id">@displayIdStr</span>
