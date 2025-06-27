@@ -191,6 +191,12 @@
                         <h1>
                             @Model.Name
                         </h1>
+                        <h1>
+                            @if (Model.ProductManufacturers.Any())
+{
+                <span>Manufacturer: @Model.ProductManufacturers.First().Name </span>
+}
+                        </h1>
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
                             <span class="product-name__isam-id">@displayIdStr</span>
