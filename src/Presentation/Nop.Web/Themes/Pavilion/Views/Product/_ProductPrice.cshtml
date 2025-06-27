@@ -39,14 +39,14 @@
 
     string savedStr = "";
     // calculate price difference
-    if (!String.IsNullOrWhiteSpace(Model.OldPrice))
+    @if (!String.IsNullOrWhiteSpace(Model.OldPrice))
+{
+    decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
+    if (savedAmt > 50)
     {
-        decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
-        if (savedAmt > 50)
-        {
-            savedStr = "<span class='savings-badge'>Save $" + savedAmt + "</span>";
-        }
+        <span class="savings-badge">Save $@savedAmt</span>
     }
+}
 
     var product = await productService.GetProductByIdAsync(Model.ProductId);
     var productCategories = await abcCategoryService.GetProductCategoriesByProductIdAsync(Model.ProductId);
