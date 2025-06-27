@@ -251,19 +251,26 @@ span.manuStyle {
 
 
 .savings-badge {
-    background-color: #b80000; /* Green background */
-    color: white; /* White text */
-    padding: 4px 8px; /* Some padding */
-    border-radius: 4px; /* Rounded corners */
-    font-weight: bold; /* Bold text */
-    font-size: 0.9em; /* Slightly smaller than normal text */
-    margin-left: 10px; /* Space from other elements */
+    background-color: #b80000; 
+    color: white; 
+    padding: 4px 8px; 
+    border-radius: 4px; 
+    font-weight: bold; 
+  
+}
+
+.product-price-block
+ {
+    margin: 60px 0px;
+    border: 4px solid #f7f7f7;
+    padding: 15px;
 }
 
 
-
-
-
+#syf-promo, #syf-plcc, #syf-setpay {
+  
+    margin: 50px 0;
+}
 
 
 
