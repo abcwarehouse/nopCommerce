@@ -16,72 +16,62 @@
         {
             if (Model.IsRental)
             {
-                @*rental price*@
                 <div class="rental-price">
                     <span>@T("Products.Price.RentalPrice"):</span>
                     <span>@Model.RentalPrice</span>
                 </div>
             }
-            <div class="price-container">
-                @if (!string.IsNullOrWhiteSpace(Model.OldPrice))
+            if (!string.IsNullOrWhiteSpace(Model.OldPrice))
+            {
+                @*old price*@
+                <div class="old-product-price">
+                    <span>@T("Products.Price.OldPrice"):</span>
+                    <span>@Model.OldPrice</span>
+                </div>
+            }
+            <div class="@if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
+                        {
+                            <text>product-price</text>
+                        }
+                        else
+                        {
+                            <text>non-discounted-price</text>
+                        }">
+                @if (!string.IsNullOrWhiteSpace(Model.OldPrice) || !string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
                 {
-                    @*old price*@
-                    <div class="compare-price">
-                        <span>Compare at @Model.OldPrice</span>
-                    </div>
+                    @*display "Price:" label if we have old price or discounted one*@
+                    <label for="price-value-@(Model.ProductId)">@T("Products.Price"):</label>
                 }
-                <div class="@if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
-                            {
-                                <text>product-price</text>
-                            }
-                            else
-                            {
-                                <text>non-discounted-price</text>
-                            }">
-                    @if (!string.IsNullOrWhiteSpace(Model.OldPrice) || !string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
-                    {
-                        @*display "Price:" label if we have old price or discounted one*@
-                        <label for="price-value-@(Model.ProductId)">@T("Products.Price"):</label>
-                    }
-                    @*render price*@
-                    <span @if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount)) { <text> id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" </text> }>
-                        @Html.Raw(Model.Price)
+                @*render price*@
+                <span @if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount)) { <text> id="price-value-@(Model.ProductId)" class="price-value-@(Model.ProductId)" </text> }>
+                    @Html.Raw(Model.Price)
+                </span>
+            </div>
+            if (!string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
+            {
+                @*discounted price*@
+                <div class="product-price discounted-price">
+                    <span>@T("Products.Price.WithDiscount"):</span>
+                    <span class="price-value-@(Model.ProductId)">
+                        @Html.Raw(Model.PriceWithDiscount)
                     </span>
                 </div>
-                @if (!string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
-                {
-                    @*discounted price*@
-                    <div class="product-price discounted-price">
-                        <span class="you-save-amt">Save @(Model.OldPrice - Model.Price)</span>
-                        <span class="price-value-@(Model.ProductId)">
-                            @Html.Raw(Model.PriceWithDiscount)
-                        </span>
-                    </div>
-                }
-                @*bonus markdown info*@
-                <div class="price-bonus">
-                    <span>Bonus Markdown Price ENDS on @DateTime.Now.AddDays(30).ToString("M/d/yyyy")</span>
+            }
+            if (!string.IsNullOrEmpty(Model.BasePricePAngV))
+            {
+                <div class="base-price-pangv" id="base-price-pangv-@Model.ProductId">
+                    @Model.BasePricePAngV
                 </div>
-                @*open box price info*@
-                <div class="open-box-price">
-                    <span>Open box from $848. Available at select locations. 😊</span>
+            }
+            if (Model.DisplayTaxShippingInfo)
+            {
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                //of course, you can modify appropriate locales to include VAT info there
+                <div class="tax-shipping-info">
+                    @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
                 </div>
-                @if (!string.IsNullOrEmpty(Model.BasePricePAngV))
-                {
-                    @*base price info*@
-                    <div class="base-price-pangv" id="base-price-pangv-@Model.ProductId">
-                        @Model.BasePricePAngV
-                    </div>
-                }
-                @if (Model.DisplayTaxShippingInfo)
-                {
-                    @*tax and shipping info*@
-                    var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
-                    <div class="tax-shipping-info">
-                        @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
-                    </div>
-                }
-            </div>
+            }
         }
     </div>
 }
