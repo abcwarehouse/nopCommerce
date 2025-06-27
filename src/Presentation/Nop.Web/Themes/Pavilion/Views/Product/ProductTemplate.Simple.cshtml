@@ -192,12 +192,15 @@
                         <span>Manufacturer: </span>
                             @if (Model.ProductManufacturers.Any())
                     {
-                <h1><span class="manuStyle">@Model.ProductManufacturers.First().Name</span> </h1>
+                <h1><span class="manuStyle">@Model.ProductManufacturers.First().Name           </span> </h1>
                     }
                     
-                       <span>    SKU: <h1 style="skuStyle">@Model.Sku</span></h1><br>
+                       <span>SKU: <h1 style="skuStyle">@Model.Sku</span></h1><br>
                         
-                           @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)
+                        @if (!string.IsNullOrEmpty(displayIdStr))
+                        {
+                           <h1><span class="product-name__isam-id">@displayIdStr</span></h1>
+                        }
                     </div>
 
                     <!-- Rating summary goes above the fold near product name or image -->
