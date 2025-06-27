@@ -250,7 +250,15 @@ span.manuStyle {
 
 
 
-
+.savings-badge {
+    background-color: red; /* Green background */
+    color: white; /* White text */
+    padding: 4px 8px; /* Some padding */
+    border-radius: 4px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    font-size: 0.9em; /* Slightly smaller than normal text */
+    margin-left: 10px; /* Space from other elements */
+}
 
 
 

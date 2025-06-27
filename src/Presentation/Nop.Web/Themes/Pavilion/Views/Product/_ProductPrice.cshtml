@@ -44,7 +44,7 @@
         decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
         if (savedAmt > 50)
         {
-            savedStr = "$" + savedAmt + " Off";
+            savedStr = "<span class='savings-badge'>Save $" + savedAmt + "</span>";
         }
     }
 
