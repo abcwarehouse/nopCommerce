@@ -39,12 +39,15 @@
 
     string savedStr = "";
     // calculate price difference
-    @if (!String.IsNullOrWhiteSpace(Model.OldPrice))
+ @if (!String.IsNullOrWhiteSpace(Model.OldPrice))
 {
     decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
-    if (savedAmt > 50)
+    
+    @if (savedAmt > 50)
     {
-        <span class="savings-badge">Save $@savedAmt</span>
+        savedStr = "$" + savedAmt + " Off";
+        <span class="savings-badge">@savedStr</span>
+        <label class="price-sale-label">Sale: </label> <!-- Only show if > $50 -->
     }
 }
 
