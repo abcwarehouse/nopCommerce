@@ -36,19 +36,26 @@
         }
     }
 
-
+@{
     string savedStr = "";
+}   
     // calculate price difference
  @if (!String.IsNullOrWhiteSpace(Model.OldPrice))
 {
-    decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
+     decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
     
+    @* Always set savedStr if discount exists *@
+    savedStr = "$" + savedAmt + " Off";
+    
+    @* Show badge only if discount > $50 *@
     @if (savedAmt > 50)
     {
-        savedStr = "$" + savedAmt + " Off";
         <span class="savings-badge">@savedStr</span>
-        <label class="price-sale-label">Sale: </label> <!-- Only show if > $50 -->
     }
+    
+    @* Show "Sale:" label for ANY discount (not just >$50) *@
+    <label class="price-sale-label">Sale: </label>
+}
 }
 
     var product = await productService.GetProductByIdAsync(Model.ProductId);
