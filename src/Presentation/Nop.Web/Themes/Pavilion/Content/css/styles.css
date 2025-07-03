@@ -2477,10 +2477,10 @@ input#sli_search_1 {
 }
 .overview .product-price,
 .variant-overview .product-price {
-	font-size: 24px;
+	font-size: 20px;
 	font-weight: bold;
 	color: #00a1b1;
-	margin-bottom: 10px;
+	
 }
 .overview .rental-price,
 .variant-overview .rental-price {
