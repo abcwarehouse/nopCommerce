@@ -45,7 +45,7 @@
      decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
     
     @* Always set savedStr if discount exists *@
-    savedStr = "$" + savedAmt + " Off";
+    savedStr = "Save $" + savedAmt;
     
     @* Show badge only if discount > $50 *@
     @if (savedAmt > 50)
