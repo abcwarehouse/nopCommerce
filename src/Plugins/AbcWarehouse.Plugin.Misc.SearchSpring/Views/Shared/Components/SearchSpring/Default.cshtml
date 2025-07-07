@@ -129,7 +129,16 @@
                 fetch(autocompleteUrl)
             ]);
 
-            const suggestData = suggestRes.ok ? await suggestRes.json() : null;
+            let suggestDataRaw = suggestRes.ok ? await suggestRes.json() : null;
+            let suggestData = null;
+
+            try {
+                const decoded = decodeHTML(suggestDataRaw?.results);
+                suggestData = JSON.parse(decoded);
+            } catch (err) {
+                console.error("❌ Failed to parse suggestData:", err);
+            }
+
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
             let suggestHTML = '';
