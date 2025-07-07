@@ -117,8 +117,8 @@
             return;
         }
 
-        let userId = window.searchspringTracking.userId;
-        let sessionId = window.searchspringTracking.sessionId;
+        const userId = window.searchspringTracking.userId;
+        const sessionId = window.searchspringTracking.sessionId;
 
         const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
         const autocompleteUrl = `/searchspring/autocomplete?q=${encodeURIComponent(query)}${userId && sessionId ? `&userId=${userId}&sessionId=${sessionId}` : ''}`;
@@ -132,13 +132,39 @@
             const suggestData = suggestRes.ok ? await suggestRes.json() : null;
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
+            let suggestHTML = '';
+            if (suggestData) {
+                const suggestions = [];
+
+                // Add main suggestions
+                if (Array.isArray(suggestData.suggested?.completed)) {
+                    suggestions.push(...suggestData.suggested.completed.map(item => item.token));
+                }
+
+                // Add alternative suggestions
+                if (Array.isArray(suggestData.alternatives)) {
+                    suggestData.alternatives.forEach(alt => {
+                        if (Array.isArray(alt.completed)) {
+                            suggestions.push(...alt.completed.map(item => item.token));
+                        }
+                    });
+                }
+
+                if (suggestions.length > 0) {
+                    suggestHTML += '<ul style="list-style:none; padding:0; margin:0;">';
+                    suggestions.forEach(term => {
+                        suggestHTML += `<li class="suggestion-item"><a href="${baseUrl}${encodeURIComponent(term)}">${term}</a></li>`;
+                    });
+                    suggestHTML += '</ul>';
+                }
+            }
+
             const decodeHTML = (escapedStr) => {
                 const textarea = document.createElement('textarea');
                 textarea.innerHTML = escapedStr || '';
                 return textarea.value;
             };
 
-            const suggestHTML = decodeHTML(suggestData?.results);
             const autoHTML = decodeHTML(autocompleteData?.results);
 
             const combinedHtml = `
@@ -169,7 +195,7 @@
         }
     });
 
-    input.addEventListener('keydown', function(event) {
+    input.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             resultsContainer.style.display = 'none';
             input.blur();
