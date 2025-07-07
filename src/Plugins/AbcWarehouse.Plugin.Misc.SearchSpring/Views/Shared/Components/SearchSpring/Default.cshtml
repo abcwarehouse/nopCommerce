@@ -109,6 +109,12 @@
         };
     }
 
+    const decodeHTML = (escapedStr) => {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = escapedStr || '';
+        return textarea.value;
+    };
+
     input.addEventListener('input', debounce(async function () {
         const query = input.value.trim();
         if (query.length < 2) {
@@ -129,37 +135,29 @@
                 fetch(autocompleteUrl)
             ]);
 
-            let suggestDataRaw = suggestRes.ok ? await suggestRes.json() : null;
+            // Parse Suggest Data
+            const suggestDataRaw = suggestRes.ok ? await suggestRes.json() : null;
             let suggestData = null;
+            try {
+                const decoded = decodeHTML(suggestDataRaw?.results);
+                suggestData = JSON.parse(decoded);
+            } catch (err) {
+                console.error("❌ Failed to parse suggestData:", err);
+            }
 
-            const decodeHTML = (escapedStr) => {
-            const textarea = document.createElement('textarea');
-            textarea.innerHTML = escapedStr || '';
-            return textarea.value;
-        };
-
-        const suggestDataRaw = suggestRes.ok ? await suggestRes.json() : null;
-        let suggestData = null;
-
-        try {
-            const decoded = decodeHTML(suggestDataRaw?.results);
-            suggestData = JSON.parse(decoded);
-        } catch (err) {
-            console.error("❌ Failed to parse suggestData:", err);
-        }
-
+            // Parse Autocomplete
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
+            const autoHTML = decodeHTML(autocompleteData?.results);
 
+            // Build Suggest HTML
             let suggestHTML = '';
             if (suggestData) {
                 const suggestions = [];
 
-                // Add main suggestions
                 if (Array.isArray(suggestData.suggested?.completed)) {
                     suggestions.push(...suggestData.suggested.completed.map(item => item.token));
                 }
 
-                // Add alternative suggestions
                 if (Array.isArray(suggestData.alternatives)) {
                     suggestData.alternatives.forEach(alt => {
                         if (Array.isArray(alt.completed)) {
@@ -176,14 +174,6 @@
                     suggestHTML += '</ul>';
                 }
             }
-
-            const decodeHTML = (escapedStr) => {
-                const textarea = document.createElement('textarea');
-                textarea.innerHTML = escapedStr || '';
-                return textarea.value;
-            };
-
-            const autoHTML = decodeHTML(autocompleteData?.results);
 
             const combinedHtml = `
                 ${suggestHTML ? `<div class="suggestion-section"><div class="section-title">Suggestions</div>${suggestHTML}</div>` : ''}
