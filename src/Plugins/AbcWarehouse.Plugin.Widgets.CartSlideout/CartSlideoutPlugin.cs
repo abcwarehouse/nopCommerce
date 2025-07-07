@@ -62,7 +62,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
             await AddProductAttributesAsync();
 
             await _localizationService.AddOrUpdateLocaleResourceAsync(
-                "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailableAppliance",
+                "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable",
                 "Home delivery for the zip code entered is not available through ABC Warehouse " +
                 "because it is outside of our local service area in Michigan, Ohio and Indiana.  " +
                 "Please see our sister company, us-appliance.com for nation-wide delivery options for " +
