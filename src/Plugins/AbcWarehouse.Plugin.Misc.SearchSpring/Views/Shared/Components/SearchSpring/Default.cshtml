@@ -132,12 +132,21 @@
             let suggestDataRaw = suggestRes.ok ? await suggestRes.json() : null;
             let suggestData = null;
 
-            try {
-                const decoded = decodeHTML(suggestDataRaw?.results);
-                suggestData = JSON.parse(decoded);
-            } catch (err) {
-                console.error("❌ Failed to parse suggestData:", err);
-            }
+            const decodeHTML = (escapedStr) => {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = escapedStr || '';
+            return textarea.value;
+        };
+
+        const suggestDataRaw = suggestRes.ok ? await suggestRes.json() : null;
+        let suggestData = null;
+
+        try {
+            const decoded = decodeHTML(suggestDataRaw?.results);
+            suggestData = JSON.parse(decoded);
+        } catch (err) {
+            console.error("❌ Failed to parse suggestData:", err);
+        }
 
             const autocompleteData = autoRes.ok ? await autoRes.json() : null;
 
