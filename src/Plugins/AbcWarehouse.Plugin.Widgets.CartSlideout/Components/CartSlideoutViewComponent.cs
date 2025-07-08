@@ -6,6 +6,7 @@ using Nop.Web.Framework.Components;
 using Nop.Plugin.Misc.AbcCore.Nop;
 using System.Threading.Tasks;
 using Nop.Core.Domain.Catalog;
+using Nop.Services.Catalog;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
@@ -16,15 +17,19 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
         private readonly IProductService _productService;
         private readonly IWorkContext _workContext;
 
+        private readonly IProductCategoryService _productCategoryService;
+
         public CartSlideoutViewComponent(
             IShoppingCartService shoppingCartService,
             IAbcCategoryService abcCategoryService,
             IProductService productService,
+             IProductCategoryService productCategoryService,
             IWorkContext workContext)
         {
             _shoppingCartService = shoppingCartService;
             _abcCategoryService = abcCategoryService;
             _productService = productService;
+            _productCategoryService = productCategoryService;
             _workContext = workContext;
         }
 
@@ -37,7 +42,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
             foreach (var item in cart)
             {
                 var product = await _productService.GetProductByIdAsync(item.ProductId);
-                var productCategories = await _productService.GetProductCategoriesByProductIdAsync(product.Id);
+                var productCategories = await _productCategoryService.GetProductCategoriesByProductIdAsync(product.Id);
                 
                 foreach (var pc in productCategories)
                 {
