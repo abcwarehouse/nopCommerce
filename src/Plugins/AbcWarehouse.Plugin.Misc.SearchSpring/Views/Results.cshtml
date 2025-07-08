@@ -136,6 +136,14 @@ else
                 </form>
                 <button id="filterToggle" class="mobile-filter-btn">Filters</button>
             </div>
+
+            @if (!string.IsNullOrEmpty(ViewBag.SearchspringBanners as string))
+            {
+                <div class="searchspring-banner-container">
+                    @Html.Raw(ViewBag.SearchspringBanners)
+                </div>
+            }
+
             <div class="products-wrapper">
                 <div class="product-grid">
                     <div class="item-grid">
@@ -238,6 +246,16 @@ else
 <style>
     .standard-sidebar {
         display: none;
+    }
+    .searchspring-banner-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .searchspring-banner-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
     }
 </style>
 

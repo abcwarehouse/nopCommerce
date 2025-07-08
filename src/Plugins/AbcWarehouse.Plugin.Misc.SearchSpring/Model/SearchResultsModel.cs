@@ -33,6 +33,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("redirectResponse")]
         public string RedirectResponse { get; set; }
+        [JsonPropertyName("BannersHtml")]
+        public string BannersHtml { get; set; }
     }
 
     public class FacetDetail

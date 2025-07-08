@@ -206,6 +206,28 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
+                string bannersHtml = "";
+                if (root.TryGetProperty("meta", out var metaProp))
+                {
+                    if (metaProp.TryGetProperty("bannerHtml", out var bannerHtmlProp) &&
+                        bannerHtmlProp.ValueKind == JsonValueKind.String)
+                    {
+                        bannersHtml = bannerHtmlProp.GetString();
+                    }
+                    else if (metaProp.TryGetProperty("banners", out var bannersProp) &&
+                            bannersProp.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var banner in bannersProp.EnumerateArray())
+                        {
+                            if (banner.TryGetProperty("html", out var htmlProp) &&
+                                htmlProp.ValueKind == JsonValueKind.String)
+                            {
+                                bannersHtml += htmlProp.GetString();
+                            }
+                        }
+                    }
+                }
+
                 return new SearchResultModel
                 {
                     Results = productList,
@@ -213,7 +235,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     PageSize = pageSize,
                     TotalResults = totalResults,
                     Facets = facets,
-                    SortOptions = sortOptions
+                    SortOptions = sortOptions,
+                    BannersHtml = bannersHtml
                 };
             }
             catch (Exception ex)
