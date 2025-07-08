@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Nop.Web.Framework.Components;
+using Nop.Core;
 using Nop.Services.Catalog;
-using Nop.Core.Domain.Catalog;
-using System.Threading.Tasks;
+using Nop.Services.Orders;
+using Nop.Web.Framework.Components;
 using Nop.Plugin.Misc.AbcCore.Nop;
-using Nop.Services.ShoppingCart;
+using System.Threading.Tasks;
+using Nop.Core.Domain.Catalog;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
