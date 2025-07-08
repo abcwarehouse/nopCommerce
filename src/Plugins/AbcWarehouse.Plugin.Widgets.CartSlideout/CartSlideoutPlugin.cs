@@ -69,15 +69,6 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
                 "your new appliance(s). " +
                 "<a href='https://www.us-appliance.com/' target='_blank' rel='noopener noreferrer'>Shop Us Appliance</a> for more details."
             );
-
-
-            await _localizationService.AddOrUpdateLocaleResourceAsync(
-       "AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable.General",
-       "Delivery for the zip code entered is not available through ABC Warehouse " +
-       "because it is outside of our local service area. Please contact customer service " +
-       "for alternative shipping options."
-   );
-
             await _localizationService.AddOrUpdateLocaleResourceAsync(
                 "AbcWarehouse.Plugin.Widgets.CartSlideout.MattressMessaging",
                 "FREE Delivery, Set-Up and Removal on any mattress purchase set $697 or more."

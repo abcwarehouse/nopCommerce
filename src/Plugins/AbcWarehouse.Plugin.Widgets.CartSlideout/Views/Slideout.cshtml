@@ -8,8 +8,6 @@
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Widgets.CartSlideout/scripts/cart-slideout.js");
 }
 
-@model bool
-
 <div class="cart-slideout-overlay"></div>
 <div class="cart-slideout">
   <div class="cart-slideout__header">
@@ -35,28 +33,9 @@
                 Check Delivery/Shipping Availability
         </button>
     </div>
-
-
-
-
-     @if (Model == true) // If has appliances
-      {
-          <div class="cart-slideout__delivery-not-available">
-              @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable")
-          </div>
-      }
-      else
-      {
-          <div class="cart-slideout__delivery-not-available">
-              @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable.General")
-          </div>
-      }
-
-
-
-
-
-
+    <div class="cart-slideout__delivery-not-available">
+        @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable")
+    </div>
     <!-- use the form to collect attributes -->
     <form id="delivery-options">
         <div class="cart-slideout__delivery-options"></div>
