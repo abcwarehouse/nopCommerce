@@ -33,9 +33,14 @@
                 Check Delivery/Shipping Availability
         </button>
     </div>
-    <div class="cart-slideout__delivery-not-available">
+
+    @if (Model)
+    {
+    <div class="delivery-notice">
         @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable")
     </div>
+    }
+
     <!-- use the form to collect attributes -->
     <form id="delivery-options">
         <div class="cart-slideout__delivery-options"></div>
