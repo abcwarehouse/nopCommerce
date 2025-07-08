@@ -137,13 +137,16 @@ else
                 <button id="filterToggle" class="mobile-filter-btn">Filters</button>
             </div>
 
-            @if (!string.IsNullOrEmpty(ViewBag.SearchspringBanners as string))
+            @if (Model.BannersByPosition.TryGetValue("banner", out var mainBanners))
             {
-                <div class="searchspring-banner-container">
-                    @Html.Raw(ViewBag.SearchspringBanners)
+                <div class="searchspring-banner main-banner">
+                    @foreach (var html in mainBanners)
+                    {
+                        @Html.Raw(html)
+                    }
                 </div>
             }
-
+            
             <div class="products-wrapper">
                 <div class="product-grid">
                     <div class="item-grid">
@@ -247,16 +250,23 @@ else
     .standard-sidebar {
         display: none;
     }
-    .searchspring-banner-container {
+    .searchspring-banner.header-banner {
         margin-bottom: 20px;
-        text-align: center;
     }
 
-    .searchspring-banner-container img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
+    .searchspring-banner.main-banner {
+        margin: 20px 0;
     }
+
+    .searchspring-banner.left-banner {
+        float: left;
+        margin-right: 20px;
+    }
+
+    .searchspring-banner.footer-banner {
+        margin-top: 30px;
+    }
+
 </style>
 
 <script>

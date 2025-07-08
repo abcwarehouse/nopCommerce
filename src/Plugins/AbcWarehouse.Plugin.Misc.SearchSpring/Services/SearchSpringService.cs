@@ -206,27 +206,29 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                string bannersHtml = "";
-                if (root.TryGetProperty("meta", out var metaProp))
+                var bannersByPosition = new Dictionary<string, List<string>>();
+
+                if (root.TryGetProperty("merchandising", out var merchProp) &&
+                    merchProp.TryGetProperty("content", out var contentProp) &&
+                    contentProp.ValueKind == JsonValueKind.Object)
                 {
-                    if (metaProp.TryGetProperty("bannerHtml", out var bannerHtmlProp) &&
-                        bannerHtmlProp.ValueKind == JsonValueKind.String)
+                    foreach (var position in new[] { "header", "banner", "footer", "left" })
                     {
-                        bannersHtml = bannerHtmlProp.GetString();
-                    }
-                    else if (metaProp.TryGetProperty("banners", out var bannersProp) &&
-                            bannersProp.ValueKind == JsonValueKind.Array)
-                    {
-                        foreach (var banner in bannersProp.EnumerateArray())
+                        if (contentProp.TryGetProperty(position, out var bannerArray) &&
+                            bannerArray.ValueKind == JsonValueKind.Array)
                         {
-                            if (banner.TryGetProperty("html", out var htmlProp) &&
-                                htmlProp.ValueKind == JsonValueKind.String)
-                            {
-                                bannersHtml += htmlProp.GetString();
-                            }
+                            var banners = bannerArray.EnumerateArray()
+                                                    .Where(b => b.ValueKind == JsonValueKind.String)
+                                                    .Select(b => b.GetString())
+                                                    .Where(html => !string.IsNullOrEmpty(html))
+                                                    .ToList();
+
+                            if (banners.Any())
+                                bannersByPosition[position] = banners;
                         }
                     }
                 }
+
 
                 return new SearchResultModel
                 {
@@ -236,7 +238,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     TotalResults = totalResults,
                     Facets = facets,
                     SortOptions = sortOptions,
-                    BannersHtml = bannersHtml
+                    BannersByPosition = bannersByPosition
                 };
             }
             catch (Exception ex)
