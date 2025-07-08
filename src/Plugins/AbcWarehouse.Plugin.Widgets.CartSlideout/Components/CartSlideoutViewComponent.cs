@@ -6,7 +6,7 @@ using Nop.Web.Framework.Components;
 using Nop.Plugin.Misc.AbcCore.Nop;
 using System.Threading.Tasks;
 using Nop.Core.Domain.Catalog;
-using Nop.Services.Catalog;
+using Nop.Core.Domain.Orders;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
@@ -15,21 +15,20 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IAbcCategoryService _abcCategoryService;
         private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
         private readonly IWorkContext _workContext;
-
-        private readonly IProductCategoryService _productCategoryService;
 
         public CartSlideoutViewComponent(
             IShoppingCartService shoppingCartService,
             IAbcCategoryService abcCategoryService,
             IProductService productService,
-             IProductCategoryService productCategoryService,
+            ICategoryService categoryService,
             IWorkContext workContext)
         {
             _shoppingCartService = shoppingCartService;
             _abcCategoryService = abcCategoryService;
             _productService = productService;
-            _productCategoryService = productCategoryService;
+            _categoryService = categoryService;
             _workContext = workContext;
         }
 
@@ -42,7 +41,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
             foreach (var item in cart)
             {
                 var product = await _productService.GetProductByIdAsync(item.ProductId);
-                var productCategories = await _productCategoryService.GetProductCategoriesByProductIdAsync(product.Id);
+                var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(product.Id);
                 
                 foreach (var pc in productCategories)
                 {
