@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
 using System.Web;
+using System.Linq;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
