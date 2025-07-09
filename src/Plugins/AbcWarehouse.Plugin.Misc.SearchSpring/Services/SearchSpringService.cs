@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
 using System.Web;
 using System.Linq;
+using Nop.Services.Logging;
+using Nop.Core.Domain.Logging;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
@@ -14,10 +16,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
+        private readonly ILogger _logger;
 
-        public SearchSpringService(IHttpClientFactory httpClientFactory)
+        public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null,
@@ -213,9 +217,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     merchProp.TryGetProperty("content", out var contentProp) &&
                     contentProp.ValueKind == JsonValueKind.Object)
                 {
-                    // 🔍 Log full merchandising content
-                    Console.WriteLine("[SearchSpring] Raw merchandising content:");
-                    Console.WriteLine(contentProp.ToString());
+                    await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring] Raw merchandising content", contentProp.ToString());
 
                     foreach (var position in new[] { "header", "banner", "footer", "left" })
                     {
@@ -232,28 +234,28 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             {
                                 bannersByPosition[position] = banners;
 
-                                // 🧾 Log each banner found per position
-                                Console.WriteLine($"[SearchSpring] Found {banners.Count} banners in '{position}':");
-                                foreach (var html in banners)
-                                {
-                                    Console.WriteLine($"- {html}");
-                                }
+                                await _logger.InsertLogAsync(
+                                    LogLevel.Information,
+                                    $"[SearchSpring] Found {banners.Count} banners in '{position}'",
+                                    string.Join(Environment.NewLine, banners)
+                                );
                             }
                             else
                             {
-                                Console.WriteLine($"[SearchSpring] No valid string banners found for '{position}'.");
+                                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] No valid string banners found for '{position}'.");
                             }
                         }
                         else
                         {
-                            Console.WriteLine($"[SearchSpring] No banner array found for position '{position}'.");
+                            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] No banner array found for position '{position}'.");
                         }
                     }
                 }
                 else
                 {
-                    Console.WriteLine("[SearchSpring] No merchandising or content block found.");
+                    _logger.InsertLog(LogLevel.Information, "[SearchSpring] No merchandising or content block found.");
                 }
+
 
 
 
