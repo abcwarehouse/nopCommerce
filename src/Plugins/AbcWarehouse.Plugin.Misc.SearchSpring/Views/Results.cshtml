@@ -137,19 +137,7 @@ else
                 <button id="filterToggle" class="mobile-filter-btn">Filters</button>
             </div>
 
-            @if (Model.BannersByPosition.TryGetValue("banner", out var bannerHtmls))
-            {
-                @foreach (var kv in Model.BannersByPosition)
-                {
-                    <p>Banner key: @kv.Key — Count: @kv.Value.Count</p>
-                }
-                foreach (var html in bannerHtmls)
-                {
-                    <div class="searchspring-banner main-banner">
-                        @Html.Raw(html)
-                    </div>
-                }
-            }
+            <p>Header banner count: @(headerBanners?.Count ?? 0)</p>
             
             <div class="products-wrapper">
                 <div class="product-grid">
