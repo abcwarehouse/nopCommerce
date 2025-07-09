@@ -213,6 +213,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     merchProp.TryGetProperty("content", out var contentProp) &&
                     contentProp.ValueKind == JsonValueKind.Object)
                 {
+                    // 🔍 Log full merchandising content
+                    Console.WriteLine("[SearchSpring] Raw merchandising content:");
+                    Console.WriteLine(contentProp.ToString());
+
                     foreach (var position in new[] { "header", "banner", "footer", "left" })
                     {
                         if (contentProp.TryGetProperty(position, out var bannerArray) &&
@@ -225,10 +229,32 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                                     .ToList();
 
                             if (banners.Any())
+                            {
                                 bannersByPosition[position] = banners;
+
+                                // 🧾 Log each banner found per position
+                                Console.WriteLine($"[SearchSpring] Found {banners.Count} banners in '{position}':");
+                                foreach (var html in banners)
+                                {
+                                    Console.WriteLine($"- {html}");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine($"[SearchSpring] No valid string banners found for '{position}'.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[SearchSpring] No banner array found for position '{position}'.");
                         }
                     }
                 }
+                else
+                {
+                    Console.WriteLine("[SearchSpring] No merchandising or content block found.");
+                }
+
 
 
                 return new SearchResultModel
