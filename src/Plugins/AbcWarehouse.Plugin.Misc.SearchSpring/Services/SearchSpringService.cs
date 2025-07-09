@@ -225,10 +225,17 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             bannerArray.ValueKind == JsonValueKind.Array)
                         {
                             var banners = bannerArray.EnumerateArray()
-                                                    .Where(b => b.ValueKind == JsonValueKind.String)
-                                                    .Select(b => b.GetString())
-                                                    .Where(html => !string.IsNullOrEmpty(html))
-                                                    .ToList();
+                                .Where(b => b.ValueKind == JsonValueKind.String)
+                                .Select(b => b.GetString())
+                                .Where(html => !string.IsNullOrEmpty(html))
+                                .Select(html =>
+                                {
+                                    var split = html.Split(new[] { "</script>" }, StringSplitOptions.RemoveEmptyEntries);
+                                    return split.Length > 1 ? split[1].Trim() : html.Trim();
+                                })
+                                .Where(cleaned => !string.IsNullOrWhiteSpace(cleaned))
+                                .ToList();
+
 
                             if (banners.Any())
                             {
