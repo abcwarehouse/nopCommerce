@@ -253,7 +253,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 }
                 else
                 {
-                    _logger.InsertLog(LogLevel.Information, "[SearchSpring] No merchandising or content block found.");
+                    await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring] No merchandising or content block found.");
                 }
 
 
