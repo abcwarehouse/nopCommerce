@@ -3,13 +3,12 @@ using Nop.Core.Domain.Catalog;
 using Nop.Services.Catalog;
 using Nop.Services.Orders;
 using Nop.Services.Customers;
-using Nop.Services.Seo;
 using Nop.Services.Stores;
 using Nop.Core;
 using Nop.Web.Framework.Components;
 using System.Linq;
 using System.Threading.Tasks;
-using AbcWarehouse.Plugin.Misc.AbcCore.Nop; // Adjust to match actual namespace
+using Nop.Plugin.Misc.AbcCore.Nop;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
