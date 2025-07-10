@@ -1,62 +1,65 @@
 using Microsoft.AspNetCore.Mvc;
-using Nop.Core.Domain.Catalog;
-using Nop.Services.Catalog;
-using Nop.Services.Orders;
-using Nop.Services.Customers;
-using Nop.Services.Stores;
-using Nop.Core;
 using Nop.Web.Framework.Components;
-using System.Linq;
+using Nop.Services.Catalog;
+using Nop.Core.Domain.Catalog;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore.Nop;
+using Nop.Services.ShoppingCart;
+using Nop.Web.Models.ShoppingCart;
+using Nop.Core.Domain.Orders;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 {
     public class CartSlideoutViewComponent : NopViewComponent
     {
+        private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
         private readonly IAbcCategoryService _abcCategoryService;
-        private readonly IShoppingCartService _shoppingCartService;
         private readonly IProductService _productService;
-        private readonly IWorkContext _workContext;
 
         public CartSlideoutViewComponent(
+            IShoppingCartModelFactory shoppingCartModelFactory,
             IAbcCategoryService abcCategoryService,
-            IShoppingCartService shoppingCartService,
-            IProductService productService,
-            IWorkContext workContext)
+            IProductService productService)
         {
+            _shoppingCartModelFactory = shoppingCartModelFactory;
             _abcCategoryService = abcCategoryService;
-            _shoppingCartService = shoppingCartService;
             _productService = productService;
-            _workContext = workContext;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData = null)
+        public async Task<IViewComponentResult> Invoke(string widgetZone, object additionalData = null)
         {
-            var customer = await _workContext.GetCurrentCustomerAsync();
-            var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart);
-
-            bool hasAppliance = false;
-
-            foreach (var item in cart)
+            var model = new CartSlideoutModel
             {
-                var productCategories = _productService.GetProductCategoriesByProductId(item.ProductId);
+                HasAppliances = await CheckForAppliancesInCart()
+            };
+            
+            return View("~/Plugins/Widgets.CartSlideout/Views/Slideout.cshtml", model);
+        }
 
-
-                foreach (var productCategory in productCategories)
+        private async Task<bool> CheckForAppliancesInCart()
+        {
+            var cart = await _shoppingCartModelFactory.PrepareShoppingCartModelAsync();
+            
+            foreach (var item in cart.Items)
+            {
+                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                var productCategories = await _productService.GetProductCategoriesByProductIdAsync(product.Id);
+                
+                foreach (var pc in productCategories)
                 {
-                    if (await _abcCategoryService.HasApplianceTopLevelCategoryAsync(productCategory.CategoryId))
+                    if (await _abcCategoryService.HasApplianceTopLevelCategoryAsync(pc.CategoryId))
                     {
-                        hasAppliance = true;
-                        break;
+                        return true;
                     }
                 }
-
-                if (hasAppliance)
-                    break;
             }
-
-            return View("~/Plugins/Widgets.CartSlideout/Views/Slideout.cshtml", hasAppliance);
+            
+            return false;
         }
+    }
+
+    public class CartSlideoutModel
+    {
+        public bool HasAppliances { get; set; }
     }
 }
