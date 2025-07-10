@@ -217,8 +217,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     merchProp.TryGetProperty("content", out var contentProp) &&
                     contentProp.ValueKind == JsonValueKind.Object)
                 {
-                    await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring] Raw merchandising content", contentProp.ToString());
-
                     foreach (var position in new[] { "header", "banner", "footer", "left" })
                     {
                         if (contentProp.TryGetProperty(position, out var bannerArray) &&
@@ -240,21 +238,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             if (banners.Any())
                             {
                                 bannersByPosition[position] = banners;
-
-                                await _logger.InsertLogAsync(
-                                    LogLevel.Information,
-                                    $"[SearchSpring] Found {banners.Count} banners in '{position}'",
-                                    string.Join(Environment.NewLine, banners)
-                                );
                             }
-                            else
-                            {
-                                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] No valid string banners found for '{position}'.");
-                            }
-                        }
-                        else
-                        {
-                            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] No banner array found for position '{position}'.");
                         }
                     }
                 }
@@ -262,9 +246,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 {
                     await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring] No merchandising or content block found.");
                 }
-
-
-
 
                 return new SearchResultModel
                 {
