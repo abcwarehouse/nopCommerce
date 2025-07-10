@@ -15,8 +15,6 @@ using Nop.Web.Framework.Mvc;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 
-
-
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
 {
     public class CartSlideoutController : BaseController
