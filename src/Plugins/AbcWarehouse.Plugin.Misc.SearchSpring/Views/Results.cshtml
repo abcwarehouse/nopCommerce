@@ -137,14 +137,18 @@ else
                 <button id="filterToggle" class="mobile-filter-btn">Filters</button>
             </div>
 
-            @if (Model.BannersByPosition.TryGetValue("banner", out var bannerHtmls))
+            @{
+                List<string> headerBanners = null;
+            }
+
+            @if (Model.BannersByPosition != null && Model.BannersByPosition.TryGetValue("header", out headerBanners))
             {
-                foreach (var html in bannerHtmls)
-                {
-                    <div class="searchspring-banner main-banner">
+                <div class="searchspring-banner header-banner">
+                    @foreach (var html in headerBanners)
+                    {
                         @Html.Raw(html)
-                    </div>
-                }
+                    }
+                </div>
             }
             
             <div class="products-wrapper">
