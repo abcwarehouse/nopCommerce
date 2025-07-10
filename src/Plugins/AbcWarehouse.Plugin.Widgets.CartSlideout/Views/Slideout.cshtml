@@ -8,8 +8,6 @@
     Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Widgets.CartSlideout/scripts/cart-slideout.js");
 }
 
-@model bool
-
 <div class="cart-slideout-overlay"></div>
 <div class="cart-slideout">
   <div class="cart-slideout__header">
@@ -36,11 +34,9 @@
         </button>
     </div>
 
-
     <div class="cart-slideout__delivery-not-available">
-        @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable.General")
+        @T("AbcWarehouse.Plugin.Widgets.CartSlideout.DeliveryNotAvailable.Appliance")
     </div>
-
 
     <!-- use the form to collect attributes -->
     <form id="delivery-options">
