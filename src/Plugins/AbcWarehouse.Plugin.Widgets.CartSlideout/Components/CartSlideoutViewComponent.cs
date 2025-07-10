@@ -40,7 +40,8 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
 
             foreach (var item in cart)
             {
-                var productCategories = await _productService.GetProductCategoriesByProductIdAsync(item.ProductId);
+                var productCategories = _productService.GetProductCategoriesByProductId(item.ProductId);
+
 
                 foreach (var productCategory in productCategories)
                 {

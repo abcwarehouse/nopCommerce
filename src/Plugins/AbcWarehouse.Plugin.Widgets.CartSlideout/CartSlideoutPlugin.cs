@@ -12,6 +12,9 @@ using Nop.Services.Plugins;
 using Nop.Services.Tasks;
 using Nop.Web.Framework.Infrastructure;
 using Nop.Services.Localization;
+using Nop.Core.Domain.Orders;
+
+
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 {
