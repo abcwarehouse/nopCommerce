@@ -3,14 +3,14 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Theme.Pavilion/Styles/admin.css");
-
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Scripts/custom.presets.min.js");
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Theme.Pavilion/Areas/Admin/Content/Scripts/admin.min.js");
-
-    Html.SetActiveMenuItemSystemName("SevenSpikes.Themes.Admin.SettingsSubmenu.Pavilion");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.Themes.Admin.SettingsSubmenu.Pavilion");
 }
 
+<link rel="stylesheet" href="~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Styles/adminstyles.css" />
+<link rel="stylesheet" href="~/Plugins/SevenSpikes.Theme.Pavilion/Styles/admin.css" />
+
+<script src="~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Scripts/custom.presets.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Theme.Pavilion/Areas/Admin/Content/Scripts/admin.min.js" asp-location="Footer"></script>
 
 <script type="text/javascript">
         $(document).ready(function () {
@@ -42,7 +42,7 @@
             @T("SevenSpikes.Themes.Pavilion.Admin.Settings.ThemeSettings")
         </h1>
         <div class="float-right">
-            @await Html.PartialAsync(AdminViewLocations.AdminResetDefaultSettingsViewPath, Constants.PluginFolderName)
+            @{ await Html.RenderPartialAsync(AdminViewLocations.AdminResetDefaultSettingsViewPath, Constants.PluginFolderName); }
             <button type="submit" name="save" class="btn bg-blue">
                 <i class="far fa-save"></i>
                 @T("Admin.Common.Save")

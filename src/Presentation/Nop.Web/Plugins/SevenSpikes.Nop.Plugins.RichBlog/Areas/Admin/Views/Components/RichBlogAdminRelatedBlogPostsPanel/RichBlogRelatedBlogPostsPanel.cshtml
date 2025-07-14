@@ -32,43 +32,46 @@
 			<section class="content">
 				<div class="form-horizontal">
 					<div class="card-body">
-						@await Html.PartialAsync("Table", new DataTablesModel
-						{
-							Name = "related-blog-posts-grid",
-							UrlRead = new DataUrl("List", "RelatedBlogPostAdmin", new RouteValueDictionary { [nameof(RelatedBlogPostAdminModel.BlogPostId)] = Model }),
-							UrlDelete = new DataUrl("Delete", "RelatedBlogPostAdmin", null),
-							UrlUpdate = new DataUrl("Edit", "RelatedBlogPostAdmin", null),
-							Length = defaultGridPageSize,
-							LengthMenu = gridPageSizes,
-							ColumnCollection = new List<ColumnProperty>
+						@{
+							await Html.RenderPartialAsync("Table", new DataTablesModel
 							{
-								new ColumnProperty(nameof(RelatedBlogPostAdminModel.RelatedBlogPostTitle))
+								Name = "related-blog-posts-grid",
+								UrlRead = new DataUrl("List", "RelatedBlogPostAdmin", new RouteValueDictionary { [nameof(RelatedBlogPostAdminModel.BlogPostId)] = Model }),
+								UrlDelete = new DataUrl("Delete", "RelatedBlogPostAdmin", null),
+								UrlUpdate = new DataUrl("Edit", "RelatedBlogPostAdmin", null),
+								Length = defaultGridPageSize,
+								LengthMenu = gridPageSizes,
+								ColumnCollection = new List<ColumnProperty>
 								{
-									Title = T("SevenSpikes.RichBlog.Admin.RelatedBlogPost.Title").Text,
-									Width = "200",
-									Render = new RenderCustom("renderRelatedBlogPostTile")
-								},
-								new ColumnProperty(nameof(RelatedBlogPostAdminModel.DisplayOrder))
-								{
-									Title = T("SevenSpikes.RichBlog.Admin.RelatedBlogPost.DisplayOrder").Text,
-									Editable = true,
-									EditType = EditType.Number,
-									Width = "200"
-								},
-								new ColumnProperty(nameof(RelatedBlogPostAdminModel.Id))
-								{
-									Width = "100",
-									ClassName =  NopColumnClassDefaults.Button,
-									//Render = new RenderButtonEdit(new DataUrl("Edit", "RelatedBlogPostAdmin"))
-									Render = new RenderButtonsInlineEdit()
-								},
-								new ColumnProperty(nameof(RelatedBlogPostAdminModel.Id))
-								{
-									Width = "100",
-									Render = new RenderButtonRemove(T("Admin.Common.Delete").Text)
+									new ColumnProperty(nameof(RelatedBlogPostAdminModel.RelatedBlogPostTitle))
+									{
+										Title = T("SevenSpikes.RichBlog.Admin.RelatedBlogPost.Title").Text,
+										Width = "200",
+										Render = new RenderCustom("renderRelatedBlogPostTile")
+									},
+									new ColumnProperty(nameof(RelatedBlogPostAdminModel.DisplayOrder))
+									{
+										Title = T("SevenSpikes.RichBlog.Admin.RelatedBlogPost.DisplayOrder").Text,
+										Editable = true,
+										EditType = EditType.Number,
+										Width = "200"
+									},
+									new ColumnProperty(nameof(RelatedBlogPostAdminModel.Id))
+									{
+										Width = "100",
+										ClassName =  NopColumnClassDefaults.Button,
+										//Render = new RenderButtonEdit(new DataUrl("Edit", "RelatedBlogPostAdmin"))
+										Render = new RenderButtonsInlineEdit()
+									},
+									new ColumnProperty(nameof(RelatedBlogPostAdminModel.Id))
+									{
+										Width = "100",
+										Render = new RenderButtonRemove(T("Admin.Common.Delete").Text)
+									}
 								}
-							}
-						})
+							});
+						}
+
 
 						<script>
 							function renderRelatedBlogPostTile(data, type, row, meta) {

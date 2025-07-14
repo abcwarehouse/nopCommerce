@@ -1,7 +1,7 @@
 @model RichBlogCategoryAdminModel
 
 @{
-    Html.SetActiveMenuItemSystemName("SevenSpikes.RichBlog.Admin.Submenus.ManageCategories");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.RichBlog.Admin.Submenus.ManageCategories");
 }
 
 <div asp-validation-summary="All"></div>
@@ -13,16 +13,16 @@
         @await Component.InvokeAsync("SettingMode")
         <nop-tabs id="richblog-category-edit">
             <nop-tab asp-name="tab-info" asp-default="true" asp-title="@T("SevenSpikes.RichBlog.Admin.Category")">
-                @await Html.PartialAsync(Views.CategoryGeneralSettingsTab, Model)
-                @await Html.PartialAsync(Views.CategoryLimitedToStoresTab, Model)
+                @{ await Html.RenderPartialAsync(Views.CategoryGeneralSettingsTab, Model); }
+                @{ await Html.RenderPartialAsync(Views.CategoryLimitedToStoresTab, Model); }
             </nop-tab>
             <nop-tab asp-name="tab-seo" class="advanced-setting" asp-title="@T("SevenSpikes.RichBlog.Admin.Category.SEO")">
-                @await Html.PartialAsync(Views.CategorySEOTab, Model)
+                @{ await Html.RenderPartialAsync(Views.CategorySEOTab, Model); }
             </nop-tab>
             @if (Model.Id > 0)
             {
                 <nop-tab asp-name="tab-blog-posts" asp-title="@T("SevenSpikes.RichBlog.Admin.Category.BlogPosts")">
-                    @await Html.PartialAsync(Views.CategoryBlogPostsTab, Model)
+                    @{ await Html.RenderPartialAsync(Views.CategoryBlogPostsTab, Model); }
                 </nop-tab>
             }
         </nop-tabs>

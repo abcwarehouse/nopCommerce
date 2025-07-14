@@ -3,7 +3,7 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
     
-    Html.SetActiveMenuItemSystemName(Model.ActiveMenuItemSystemName);
+    NopHtml.SetActiveMenuItemSystemName(Model.ActiveMenuItemSystemName);
 }
 
 <nop-antiforgery-token />
@@ -50,7 +50,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" asp-location="Footer">
                         $(document).ready(function () {
                             function getlanguageAndAntiforgeryToken() {
                                 var data = {

@@ -3,7 +3,7 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.ProductRibbons.Admin.Submenus.Settings");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.ProductRibbons.Admin.Submenus.Settings");
 }
 
 <form method="post">
@@ -29,7 +29,7 @@
 
             @await Component.InvokeAsync("SettingMode")
             
-            @await Html.PartialAsync("_Settings.General", Model)         
+            @{ await Html.RenderPartialAsync("_Settings.General", Model); }         
         </div>
     </section>
 </form>

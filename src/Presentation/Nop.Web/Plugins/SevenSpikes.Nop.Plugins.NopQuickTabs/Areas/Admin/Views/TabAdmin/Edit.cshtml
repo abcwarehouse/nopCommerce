@@ -8,7 +8,7 @@
 
     Layout = layout;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.NopQuickTabs.Admin.Submenus.ManageTabs");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.NopQuickTabs.Admin.Submenus.ManageTabs");
 }
 
 @using SevenSpikes.Nop.Framework.MVCExtensions
@@ -46,7 +46,7 @@
             </span>
         </div>
     </div>    
-    @await Html.PartialAsync(AdminViews.ViewAdminTabsCreateOrUpdatePartial, Model)
+    @{ await Html.RenderPartialAsync(AdminViews.ViewAdminTabsCreateOrUpdatePartial, Model); } 
 </form>
 
 <nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="product-delete" />

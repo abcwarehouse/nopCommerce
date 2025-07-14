@@ -25,5 +25,5 @@
             </button>
         </div>
     </div>
-    @await Html.PartialAsync(Views.CategoryCreateOrUpdate, Model)
+    @{ await Html.RenderPartialAsync(Views.CategoryCreateOrUpdate, Model); } 
 </form>

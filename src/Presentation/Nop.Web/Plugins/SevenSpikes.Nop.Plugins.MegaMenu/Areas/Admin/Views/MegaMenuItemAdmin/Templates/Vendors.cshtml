@@ -116,7 +116,7 @@
             </p>
         }
         
-        @await Html.PartialAsync(AdminViews.CustomerRolesMultiSelect, Model)
+        @{ await Html.RenderPartialAsync(AdminViews.CustomerRolesMultiSelect, Model); }
 
         <input type="hidden" class="edit-menu-item-entityId" value="@Model.EntityId" />
 

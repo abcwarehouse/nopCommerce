@@ -24,8 +24,8 @@
         
         <nop-tabs id="product-ribbons-create-or-update">
             <nop-tab asp-name="tab-general-settings" asp-default="true" asp-title="@T("SevenSpikes.ProductRibbons.Admin.Settings.ProductRibbon.ProductRibbonGeneralInformation")">
-                @await Html.PartialAsync("_CreateOrUpdate.GeneralInformation", Model.RibbonGeneralInformation, generalInformationViewDataDictionary)
-                @await Html.PartialAsync("_CreateOrUpdate.StoreSettings", Model)
+                @{ await Html.RenderPartialAsync("_CreateOrUpdate.GeneralInformation", Model.RibbonGeneralInformation, generalInformationViewDataDictionary); }
+                @{ await Html.RenderPartialAsync("_CreateOrUpdate.StoreSettings", Model); }
             </nop-tab>
             <nop-tab asp-name="tab-category-ribbons" asp-title="@T("SevenSpikes.ProductRibbons.Admin.Settings.ProductRibbon.CategoryPageRibbon")">@await Html.PartialAsync("_CreateOrUpdate.CategoryPageRibbon", Model.CategoryPageRibbon, categoryPViewDataDictionary)</nop-tab>
             <nop-tab asp-name="tab-product-ribbons" asp-title="@T("SevenSpikes.ProductRibbons.Admin.Settings.ProductRibbon.ProductPageRibbon")">@await Html.PartialAsync("_CreateOrUpdate.ProductPageRibbon", Model.ProductPageRibbon, productPageViewDataDictionary)</nop-tab>

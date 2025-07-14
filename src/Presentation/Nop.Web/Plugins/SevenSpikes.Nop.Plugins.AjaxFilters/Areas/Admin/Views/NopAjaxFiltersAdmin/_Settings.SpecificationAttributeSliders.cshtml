@@ -13,7 +13,7 @@
             <p>@T("SevenSpikes.NopAjaxFilters.Admin.SpecificationAttributeSliders.Info")</p>
             <div id="specifications-grid"></div>
 
-            <script type="text/javascript">
+            <script type="text/javascript" asp-location="Footer">
                 $(document).ready(function() {
                     $("#specifications-grid").kendoGrid({
                         dataSource: {
@@ -84,7 +84,7 @@
                         columns: [
                             {
                                 field: "Name",
-                                title: "@T("Admin.Catalog.Attributes.SpecificationAttributes.Fields.Name")",
+                                title: "@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Fields.Name")",
                                 editor: specificationEditor
                             }, {
                                 command: [

@@ -136,6 +136,7 @@
 	margin-left: -4px;
 	outline: 2px solid #fff;
 	background: #f74258 url('images/handle.png') bottom no-repeat;
+	cursor: pointer;
 }
 .priceRangeCurrentPricesPanel,
 .specification-current-value-panel {
@@ -419,6 +420,7 @@
     opacity: 0.5;
 }
 .ajaxFilters.k-window {
+	flex-flow: column;
 	position: absolute;
 	z-index: 1090;
 	width: 350px !important;
@@ -439,19 +441,16 @@
 	font-weight: bold;
 	color: #f74258;
 }
-.ajaxFilters .k-window-titlebar span {
+.ajaxFilters .k-window-titlebar > span {
 	float: left;
 	text-transform: uppercase;
 }
-.ajaxFilters .k-window-actions {
+.ajaxFilters .k-window-titlebar-actions {
 	position: absolute;
 	top: 0;
 	right: 0;
 }
-.ajaxFilters .k-window-actions a {
-	display: block;
-}
-.ajaxFilters .k-window-actions .k-icon {
+.ajaxFilters .k-window-titlebar .k-button {
 	display: block;
 	height: 24px;
 	width: 24px;
@@ -462,8 +461,11 @@
 	font-size: 0;
 	opacity: 0.8;
 }
-.ajaxFilters .k-window-actions .k-icon:hover {
+.ajaxFilters .k-window-titlebar .k-button:hover {
 	opacity: 1;
+}
+.ajaxFilters .k-window-titlebar .k-icon {
+	display: none;
 }
 .ajaxFilters .k-window-content {
 	min-height: inherit !important;
@@ -472,123 +474,119 @@
 }
 
 
-
 @media all and (max-width: 1024px) {
 
-.filters-button {
-	display: inline-block !important;
-}
-.nopAjaxFilters7Spikes {
-	position: fixed;
-	top: 0; left: 0;
-	z-index: 1070;
-	width: 320px;
-	height: 100%;
-	overflow: hidden;
-	background-color: #f6f6f6;
-	transition: all 0.5s ease;
-	-webkit-transform: translate(-320px);
-	-ms-transform: translate(-320px);
-	transform: translate(-320px);
-}
-.nopAjaxFilters7Spikes.open {
-	box-shadow: 1px 0 5px rgba(0,0,0,0.5);
-	-webkit-transform: translate(0);
-	-ms-transform: translate(0);
-	transform: translate(0);
-}
-.nopAjaxFilters7Spikes .close-filters {
-	background-color: #f6f6f6;
-	cursor: pointer;
-}
-.nopAjaxFilters7Spikes .close-filters span {
-	display: block;
-	height: 50px;
-	background: url('images/clear.png') right center no-repeat;
-	font-size: 0;
-}
-
+	.filters-button {
+		display: inline-block !important;
+	}
+	.nopAjaxFilters7Spikes {
+		position: fixed;
+		top: 0; left: 0;
+		z-index: 1070;
+		width: 320px;
+		height: 100%;
+		overflow: hidden;
+		background-color: #f6f6f6;
+		transition: all 0.5s ease;
+		-webkit-transform: translate(-320px);
+		-ms-transform: translate(-320px);
+		transform: translate(-320px);
+	}
+	.nopAjaxFilters7Spikes.open {
+		box-shadow: 1px 0 5px rgba(0,0,0,0.5);
+		-webkit-transform: translate(0);
+		-ms-transform: translate(0);
+		transform: translate(0);
+	}
+	.nopAjaxFilters7Spikes .close-filters {
+		background-color: #f6f6f6;
+		cursor: pointer;
+	}
+	.nopAjaxFilters7Spikes .close-filters span {
+		display: block;
+		height: 50px;
+		background: url('images/clear.png') right center no-repeat;
+		font-size: 0;
+	}
 }
 
 
 @media all and (min-width: 1025px) {
 
-.filters-button,
-.close-filters {
-	display: none;
-}
-.nopAjaxFilters7Spikes {
-	margin: -16px 0 0;
-}
-.block-category-navigation ~ .nopAjaxFilters7Spikes {
-	margin: -1px 0 0;
-}
-.filtersPanel {
-	border: 1px solid #e9e9e9;
-}
-.filter-block .title {
-	background-image: url('images/toggle-arrow.png');
-}
-.filter-block a.toggleControl {
-	padding: 20px 25px;
-}
-.filter-block .filtersGroupPanel {
-	margin: -5px 0 0;
-}
-.colorOptions.filtersGroupPanel li .color {
-	height: 22px;
-    cursor: pointer;
-}
-.colorOptions.filtersGroupPanel li .filter-item-name {
-	bottom: 27px;
-	white-space: nowrap;
-}
-.nopAjaxFilters7Spikes ~ .block-category-navigation,
-.nopAjaxFilters7Spikes ~ .block-manufacturer-navigation,
-.nopAjaxFilters7Spikes ~ .block-vendor-navigation {
-	margin: -1px 0 0 !important;
-	padding-top: 0;
-}
-.nopAjaxFilters7Spikes ~ .block-category-navigation .subcategories-title,
-.nopAjaxFilters7Spikes ~ .block-manufacturer-navigation .title,
-.nopAjaxFilters7Spikes ~ .block-vendor-navigation .title {
-    display: block !important;
-}
-
+	.filters-button,
+	.close-filters {
+		display: none;
+	}
+	.nopAjaxFilters7Spikes {
+		margin: -16px 0 0;
+	}
+	.block-category-navigation ~ .nopAjaxFilters7Spikes {
+		margin: -1px 0 0;
+	}
+	.filtersPanel {
+		border: 1px solid #e9e9e9;
+	}
+	.filter-block .title {
+		background-image: url('images/toggle-arrow.png');
+	}
+	.filter-block a.toggleControl {
+		padding: 20px 25px;
+	}
+	.filter-block .filtersGroupPanel {
+		margin: -5px 0 0;
+	}
+	.colorOptions.filtersGroupPanel li .color {
+		height: 22px;
+		cursor: pointer;
+	}
+	.colorOptions.filtersGroupPanel li .filter-item-name {
+		bottom: 27px;
+		white-space: nowrap;
+	}
+	.nopAjaxFilters7Spikes ~ .block-category-navigation,
+	.nopAjaxFilters7Spikes ~ .block-manufacturer-navigation,
+	.nopAjaxFilters7Spikes ~ .block-vendor-navigation {
+		margin: -1px 0 0 !important;
+		padding-top: 0;
+	}
+	.nopAjaxFilters7Spikes ~ .block-category-navigation .subcategories-title,
+	.nopAjaxFilters7Spikes ~ .block-manufacturer-navigation .title,
+	.nopAjaxFilters7Spikes ~ .block-vendor-navigation .title {
+		display: block !important;
+	}
 }
 
 
 @media all and (min-width: 1281px) {
 
-.filter-block a.toggleControl {
-    padding: 25px 35px;
-}
-.filter-block .filtersGroupPanel {
-    margin: -10px 0 0;
-}
-.selected-options-list {
-    padding: 5px 35px 15px !important;
-}
-.priceRangeFilterPanel7Spikes
-.filtersGroupPanel,
-.specificationFilterPanel7Spikes
-.has-specification-slider {
-    padding: 15px 35px;
-}
-.filtersGroupPanel li .filter-item-name {
-    padding: 8px 35px 8px 60px;
-}
-.filtersGroupPanel li .filter-item-name:before {
-	left: 35px;
-}
-.colorOptions.filtersGroupPanel ul {
-    padding: 15px 35px;
-}
-.colorOptions.filtersGroupPanel li .filter-item-name:after {
-    left: 16px;
-}
-.filtersDropDownPanel {
-    padding: 15px 35px 30px;
-}
-
+	.filter-block a.toggleControl {
+		padding: 25px 35px;
+	}
+	.filter-block .filtersGroupPanel {
+		margin: -10px 0 0;
+	}
+	.selected-options-list {
+		padding: 5px 35px 15px !important;
+	}
+	.priceRangeFilterPanel7Spikes
+	.filtersGroupPanel,
+	.specificationFilterPanel7Spikes
+	.has-specification-slider {
+		padding: 15px 35px;
+	}
+	.filtersGroupPanel li .filter-item-name {
+		padding: 8px 35px 8px 60px;
+	}
+	.filtersGroupPanel li .filter-item-name:before {
+		left: 35px;
+	}
+	.colorOptions.filtersGroupPanel ul {
+		padding: 15px 35px;
+	}
+	.colorOptions.filtersGroupPanel li .filter-item-name:after {
+		left: 16px;
+	}
+	.filtersDropDownPanel {
+		padding: 15px 35px 30px;
+	}
 }

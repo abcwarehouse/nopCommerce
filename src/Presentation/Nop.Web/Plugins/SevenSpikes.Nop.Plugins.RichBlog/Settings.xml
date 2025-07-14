@@ -57,7 +57,10 @@
   <Setting Name="RichBlogSettings.ShowLinkedInShare">
     <Value>true</Value>
   </Setting>
-
+  
+  <Setting Name="RichBlogSettings.DisableLuceneSearch">
+    <Value>false</Value>
+  </Setting>
   <Setting Name="RichBlogSettings.BlogSearchWidgetZone">
     <Value>left_side_column_blog_before</Value>
   </Setting>

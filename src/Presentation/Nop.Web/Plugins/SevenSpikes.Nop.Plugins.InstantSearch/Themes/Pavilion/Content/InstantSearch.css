@@ -3,13 +3,7 @@
 * http://www.nop-templates.com/t/licensinginfo
 */
 
-/*input.instant-search-busy {
-	background-image: url('ajax-loader-small.gif') !important;
-	background-position: right center !important;
-	background-repeat: no-repeat;
-}*/
-
-/* WITH CATEGORY */
+/* SEARCH BOX */
 
 .store-search-box span.search-box-text {
 	display: inline-block;
@@ -42,6 +36,37 @@
 	color: #777;
 }
 
+/* LOADER & RESET */
+
+/*input.instant-search-busy {
+	background-image: url('ajax-loader-small.gif') !important;
+	background-position: right center !important;
+	background-repeat: no-repeat;
+}*/
+.search-box-text .k-clear-value {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    right: 13px;
+    z-index: 1;
+	background: #fff;
+	padding: 5px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+.search-box-text.narrow .k-clear-value {
+	right: 8px;
+}
+.search-box-text .k-clear-value.k-hidden {
+    display: none;
+}
+.search-box-text .k-clear-value .k-icon {
+    width: 16px;
+    height: 16px;
+}
+
 /* AUTOCOMPLETE */
 
 .instantSearch {
@@ -49,7 +74,9 @@
 	height: auto !important;
 	margin-top: 0 !important;
 }
-.instantSearch.resize {
+.k-child-animation-container {
+    width: 100% !important;
+    height: auto !important;
 }
 .instantSearch .k-list-container {
 	position: static !important;
@@ -61,16 +88,13 @@
     height: 100% !important;
     overflow-y: auto;
 }
-.instantSearch .k-item {
+.instantSearch li +.k-list-item {
 	border-top: 1px solid #f6f6f6;
-	cursor: pointer;
-}
-.instantSearch .k-item:first-child {
-	border-top: none;
 }
 .instant-search-item {
 	overflow: hidden;
 	padding: 10px;
+	cursor: pointer;
 }
 .instant-search-item .img-block {
 	position: relative;
@@ -98,12 +122,15 @@
 	margin: 5px 0;
 	font-size: 14px;
 }
+.instant-search-item .detail .sku {
+	font-size: 13px;
+}
 .instant-search-item .detail .price {
 	font-size: 14px;
 	color: #f74258;
 }
-.k-item.k-state-hover .instant-search-item,
-.k-item.k-state-focused .instant-search-item  {
+.k-hover .instant-search-item,
+.k-focus .instant-search-item  {
 	background-color: #f9f9f9;
 }
 

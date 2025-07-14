@@ -89,10 +89,10 @@
 	margin: 35px -25px 0 0;
 }
 
-.ajaxFilters .k-window-titlebar span {
+.ajaxFilters .k-window-titlebar > span {
 	float: right;
 }
-.ajaxFilters .k-window-actions {
+.ajaxFilters .k-window-titlebar-actions {
 	left: 0;
 	right: auto;
 }
@@ -100,31 +100,28 @@
 
 @media all and (max-width: 1024px) {
 	
-.nopAjaxFilters7Spikes {
-	right: 0; left: auto;
-	-webkit-transform: translate(320px);
-	-ms-transform: translate(320px);
-	transform: translate(320px);
-}
-.nopAjaxFilters7Spikes .close-filters span {
-	background-position: left center;
-}
-
+	.nopAjaxFilters7Spikes {
+		right: 0; left: auto;
+		-webkit-transform: translate(320px);
+		-ms-transform: translate(320px);
+		transform: translate(320px);
+	}
+	.nopAjaxFilters7Spikes .close-filters span {
+		background-position: left center;
+	}
 }
 
 @media all and (min-width: 1281px) {
 
-.filtersGroupPanel li .filter-item-name {
-	padding: 8px 60px 8px 35px;
+	.filtersGroupPanel li .filter-item-name {
+		padding: 8px 60px 8px 35px;
+	}
+	.filtersGroupPanel li .filter-item-name:before {
+		right: 35px;
+		left: auto;
+	}
+	.colorOptions.filtersGroupPanel li .filter-item-name:after {
+		right: 16px;
+		left: auto;
+	}
 }
-.filtersGroupPanel li .filter-item-name:before {
-	right: 35px;
-	left: auto;
-}
-.colorOptions.filtersGroupPanel li .filter-item-name:after {
-	right: 16px;
-	left: auto;
-}
-
-}
-

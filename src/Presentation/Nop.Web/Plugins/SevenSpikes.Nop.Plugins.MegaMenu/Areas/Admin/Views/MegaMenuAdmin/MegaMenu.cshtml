@@ -6,11 +6,11 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.AppendCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Areas/Admin/Content/Styles/adminStyles.css");
-
     // Active menu item (system name)
-    Html.SetActiveMenuItemSystemName("SevenSpikes.MegaMenu.Admin.Submenus.Menus");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.MegaMenu.Admin.Submenus.Menus");
 }
+
+<link rel="stylesheet" href="~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Areas/Admin/Content/Styles/adminStyles.css" />
 
 <form method="post">
 
@@ -46,12 +46,12 @@
             <div class="form-horizontal">
                 <nop-tabs id="mega-menu-edit-tabs">
                     <nop-tab asp-name="tab-general-settings" asp-default="true" asp-title="@T("SevenSpikes.MegaMenu.Admin.Settings.Common.GeneralSettings")">
-                        @await Html.PartialAsync(AdminViews.MenuSettings, Model)
+                        @{ await Html.RenderPartialAsync(AdminViews.MenuSettings, Model); }
                     </nop-tab>
                     @if (Model.Id > 0)
                     {
                         <nop-tab asp-name="tab-menu-items" asp-title="@T("SevenSpikes.MegaMenu.Admin.Settings.Common.MenuItemsSettings")">
-                            @await Html.PartialAsync(AdminViews.MenuMenuItems, Model)
+                            @{ await Html.RenderPartialAsync(AdminViews.MenuMenuItems, Model); }
                         </nop-tab>
                     }
                 </nop-tabs>

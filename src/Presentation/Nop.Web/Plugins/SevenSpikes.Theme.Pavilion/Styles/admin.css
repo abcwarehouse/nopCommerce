@@ -1,9 +1,6 @@
 ﻿.theme-color input.multi-store-override-option {
     display: inline-block;
 }
-.theme-color .adminData {
-    position: relative;
-}
 .theme-color .upload-image-overlay {
     position: absolute !important;
 }
@@ -52,10 +49,11 @@
     background: url('../Images/color-picker.png') no-repeat;
     z-index: 3;
 }
-.theme-color .adminData div:last-child .k-widget {
-    visibility: hidden; /*kendo fix*/
+.theme-color .adminData div:last-child .k-colorpicker {
+    visibility: hidden;
+    position: absolute;
+    top: 0; bottom: 0;
 }
-
 .theme-color .adminData div span.before {
     content: " ";
     position: absolute;
@@ -77,21 +75,9 @@
     left: -4px;
     border-color: #999;
 }
-.theme-color .adminData div .k-widget {
-    width: 0!important;
-    height: 0;
-}
-.theme-color .adminData div .k-picker-wrap.k-state-default {
-    height: auto;
-}
-.k-selected-color-display .k-color-value {
-    font-size:  13px;
-}
-
-.theme-color input {
+.theme-color .adminData input {
     display: none;
 }
-
 .theme-color .radionButton:last-of-type label {
     position: absolute;
     border: none;

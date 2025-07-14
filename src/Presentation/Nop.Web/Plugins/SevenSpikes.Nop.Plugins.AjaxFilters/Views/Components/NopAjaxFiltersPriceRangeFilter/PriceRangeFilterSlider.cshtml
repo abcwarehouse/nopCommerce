@@ -7,8 +7,8 @@
 @inject NopAjaxFiltersSettings nopAjaxFiltersSettings
     
 @{
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/PriceRangeFilterSlider.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/jquery.ui.touch-punch.min.js");
+    <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/PriceRangeFilterSlider.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/jquery.ui.touch-punch.min.js" asp-location="Footer"></script>
 
     string toggleStateClass = "toggleControl";
     string toggleStateStyles = string.Empty;
