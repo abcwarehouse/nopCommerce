@@ -8227,3 +8227,20 @@ a.us-ap-button {
         color: #0066cc;
     }
 	
+
+	.desktop-version-search {
+        display: block;
+    }
+    .mobile-version-search {
+        display: none;
+    }
+
+    
+    @media (max-width: 767px) {
+        .desktop-version-search {
+            display: none;
+        }
+        .mobile-version-search {
+            display: block;
+        }
+    }
