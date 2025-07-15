@@ -2,9 +2,8 @@
 @inject IWorkContext workContext
 @inject ICustomerService customerService
 @inject ICountryService countryService
+
 @{
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Areas/Admin/Content/Scripts/StoreLocatorAdmin.min.js");
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Areas/Admin/Content/Styles/adminStyle.css");
 
     var customerCity = string.Empty;
     var customerCountry = string.Empty;
@@ -26,6 +25,9 @@
         }
     }
 }
+
+<link rel="stylesheet" href="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Areas/Admin/Content/Styles/adminStyle.css" />
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Areas/Admin/Content/Scripts/StoreLocatorAdmin.min.js" asp-location="Footer"></script>
 
 <div class="card-body">
     <div>@T("SevenSpikes.StoreLocator.Admin.Shop.Seo.PutStoreOnMap")</div>

@@ -1,15 +1,20 @@
-﻿@model StoreLocatorSettingsModel
+﻿@model ShopAdminSearchModel
 @inject AdminAreaSettings adminAreaSettings
 @inject IWebHelper webHelper
+@inject IGenericAttributeService genericAttributeService
+@inject IWorkContext workContext
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.StoreLocator.Admin.Submenus.ManageShops");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.StoreLocator.Admin.Submenus.ManageShops");
 
     var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
     var gridPageSizes = adminAreaSettings.GridPageSizes;
 
     var storeLocation = webHelper.GetStoreLocation().TrimEnd('/');
+    
+    const string hideSearchBlockAttributeName = "StoresListPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
 }
 
 <div class="content-header clearfix">
@@ -32,63 +37,101 @@
     <div class="form-horizontal">
         @await Html.TrialMessageAsync(Model.IsTrialVersion, Plugin.Name, Plugin.UrlInStore)
         <div class="cards-group">
+            <div class="card card-default card-search">
+                <div class="card-body">
+                    <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                        <div class="search-text">@T("Admin.Common.Search")</div>
+                        <div class="icon-search"><i class="fa fa-search" aria-hidden="true"></i></div>
+                        <div class="icon-collapse"><i class="fa" aria-hidden="true"></i></div>
+                    </div>
+                    <div class="search-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <nop-label asp-for="SearchShopName" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <nop-editor asp-for="SearchShopName" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 offset-md-4">
+                                <button type="button" id="shopsSearchButton" class="btn btn-primary btn-search">
+                                    <i class="fa fa-search"></i>
+                                    @T("Admin.Common.Search")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card card-default">
                 <div class="card-body">
-                    @await Html.PartialAsync("Table", new DataTablesModel
-                    {
-                        Name = "stores-grid",
-                        UrlRead = new DataUrl("List", "StoreLocatorAdmin", null),
-                        UrlDelete = new DataUrl("DeleteShop", "StoreLocatorAdmin", null),
-                        Length = defaultGridPageSize,
-                        LengthMenu = gridPageSizes,
-                        ColumnCollection = new List<ColumnProperty>
+                    @{ 
+                        await Html.RenderPartialAsync("Table", new DataTablesModel
                         {
-                            new ColumnProperty(nameof(ShopAdminModel.Name))
+                            Name = "stores-grid",
+                            UrlRead = new DataUrl("List", "StoreLocatorAdmin", null),
+                            UrlDelete = new DataUrl("DeleteShop", "StoreLocatorAdmin", null),
+                            Length = defaultGridPageSize,
+                            LengthMenu = gridPageSizes,
+                            SearchButtonId = "shopsSearchButton",
+                            Filters = new List<FilterParameter>
                             {
-                                Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopName").Text
+                                new FilterParameter(nameof(Model.SearchShopName))
                             },
-                            new ColumnProperty(nameof(ShopAdminModel.Id))
+                            ColumnCollection = new List<ColumnProperty>
                             {
-                                Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopCoordinates").Text,
-                                Render = new RenderCustom("renderStoreCoordinates")
-                            },
-                            new ColumnProperty(nameof(ShopAdminModel.IsVisible))
-                            {
-                                Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopIsVisible").Text,
-                                Width = "100",
-                                Render = new RenderCustom("renderIsVisible")
-                            },
-                            new ColumnProperty(nameof(ShopAdminModel.ShopPickupPoint.UseAsPickupPoint))
-                            {
-                                Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopIsPickupPoint").Text,
-                                Width = "100",
-                                Render = new RenderCustom("renderIsPickupPoint")
-                            },
-                            new ColumnProperty(nameof(ShopAdminModel.DisplayOrder))
-                            {
-                                Title = T("SevenSpikes.StoreLocator.Admin.Shop.DisplayOrder").Text,
-                                Width = "100"
-                            },
-                            new ColumnProperty(nameof(ShopAdminModel.Id))
-                            {
-                                Title = T("Admin.Common.Edit").Text,
-                                Width = "100",
-                                Render = new RenderCustom("renderEditButton")
-                            },
-                            new ColumnProperty(nameof(ShopAdminModel.Id))
-                            {
-                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
-                                Width = "100"
+                                new ColumnProperty(nameof(ShopAdminModel.Name))
+                                {
+                                    Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopName").Text
+                                },
+                                new ColumnProperty(nameof(ShopAdminModel.Id))
+                                {
+                                    Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopCoordinates").Text,
+                                    Render = new RenderCustom("renderStoreCoordinates")
+                                },
+                                new ColumnProperty(nameof(ShopAdminModel.IsVisible))
+                                {
+                                    Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopIsVisible").Text,
+                                    Width = "100",
+                                    Render = new RenderCustom("renderIsVisible")
+                                },
+                                new ColumnProperty(nameof(ShopAdminModel.ShopPickupPoint.UseAsPickupPoint))
+                                {
+                                    Title = T("SevenSpikes.StoreLocator.Admin.Stores.ShopIsPickupPoint").Text,
+                                    Width = "100",
+                                    Render = new RenderCustom("renderIsPickupPoint")
+                                },
+                                new ColumnProperty(nameof(ShopAdminModel.DisplayOrder))
+                                {
+                                    Title = T("SevenSpikes.StoreLocator.Admin.Shop.DisplayOrder").Text,
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(ShopAdminModel.Id))
+                                {
+                                    Title = T("Admin.Common.Edit").Text,
+                                    Width = "100",
+                                    Render = new RenderCustom("renderEditButton")
+                                },
+                                new ColumnProperty(nameof(ShopAdminModel.Id))
+                                {
+                                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                    Width = "100"
+                                }
                             }
-                        }
-                    })
+                        });
+                    }
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<script>
+<script asp-location="Footer">
     
     function renderStoreCoordinates(data, type, row, meta) {
 
@@ -110,7 +153,7 @@
         }
         else {
 
-            return '<i class="fa fa-close false-icon"></i>';
+            return '<i class="fa fa-times false-icon"></i>';
         }
     }
     
@@ -122,7 +165,7 @@
         }
         else {
 
-            return '<i class="fa fa-close false-icon"></i>';
+            return '<i class="fa fa-times false-icon"></i>';
         }
     }
 

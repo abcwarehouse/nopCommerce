@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<script>
+<script type="text/javascript" asp-location="Footer">
     $(document).ready(function () {
         $("#shop-images-grid").kendoGrid({
             dataSource: {
@@ -123,7 +123,7 @@
 </script>
 
 <input type="submit" id="btnRefreshImgs" name="btnRefreshImgs" style="display: none" />
-<script type="text/javascript">
+<script asp-location="Footer" type="text/javascript">
     $(document).ready(function () {
         $('#btnRefreshImgs').on("click", function (e) {
             //refresh grid

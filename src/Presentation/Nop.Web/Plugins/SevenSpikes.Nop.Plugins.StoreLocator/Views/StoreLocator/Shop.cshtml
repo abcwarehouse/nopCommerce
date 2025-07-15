@@ -9,24 +9,14 @@
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
 
     //title, meta
-    Html.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
-    Html.AddMetaDescriptionParts(Model.MetaDescription);
-    Html.AddMetaKeywordParts(Model.MetaKeywords);
-
-    Html.AddCssFileParts("~/lib_npm/magnific-popup/magnific-popup.css");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/lib_npm/magnific-popup/jquery.magnific-popup.min.js");
+    NopHtml.AddTitleParts(!String.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    NopHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    NopHtml.AddMetaKeywordParts(Model.MetaKeywords);
 
     var themeName = await ThemeHelper.GetPluginThemeAsync(Plugin.FolderName);
-    var supportRtl = await this.ShouldUseRtlThemeAsync();
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
 
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.css");
-    if (supportRtl)
-    {
-        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.rtl.css");
-    }
-
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorCore.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorShop.min.js");
+    var storeLocatorCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.css";
 
     bool doesShopHasCoordinates = !string.IsNullOrWhiteSpace(Model.Latitude) && !string.IsNullOrWhiteSpace(@Model.Longitude);
     bool doesShopHasImage = Model.ShopImages.Count > 0;
@@ -35,6 +25,20 @@
     var storeLocatorSlugEntity = new StoreLocatorSlug();
     var allShopsSeName = await recordService.GetSeNameAsync(storeLocatorSlugEntity, (await workContext.GetWorkingLanguageAsync()).Id);
 }
+
+<link rel="stylesheet" href="~/lib_npm/magnific-popup/magnific-popup.css" />
+<link rel="stylesheet" href="@storeLocatorCssFilePath" />
+
+@if (supportRtl)
+{
+    var storeLocatorRtlCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.rtl.css";
+
+    <link rel="stylesheet" href="@storeLocatorRtlCssFilePath" />
+}
+
+<script src="~/lib_npm/magnific-popup/jquery.magnific-popup.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorCore.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorShop.min.js" asp-location="Footer"></script>
 
 <div class="page shop-page">
     <div class="page-title">
