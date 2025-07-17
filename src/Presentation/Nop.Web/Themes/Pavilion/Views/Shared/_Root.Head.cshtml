@@ -185,7 +185,7 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#search-box'); // Update this selector if needed
+            const searchBox = document.querySelector('#search-box');
 
             if (!searchBox) {
                 console.warn('Search box not found!');
@@ -229,7 +229,6 @@
                     const response = await fetch(suggestUrl);
                     const data = await response.json();
                     console.log('Suggest response data:', data);
-                    // Optional: Render suggestions using `data.results`
                 } catch (e) {
                     console.error('Suggest fetch error:', e);
                 }
