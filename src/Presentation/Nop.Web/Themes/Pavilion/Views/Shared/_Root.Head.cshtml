@@ -185,9 +185,14 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#search-box'); // Adjust ID if needed
+            const searchBox = document.querySelector('#search-box'); // Update this selector if needed
 
-            if (!searchBox) return;
+            if (!searchBox) {
+                console.warn('Search box not found!');
+                return;
+            }
+
+            console.log('Search box found. Setting up event listener.');
 
             function debounce(func, wait) {
                 let timeout;
@@ -199,10 +204,18 @@
 
             searchBox.addEventListener('input', debounce(async function () {
                 const query = this.value.trim();
-                if (query.length < 2) return;
+                if (query.length < 2) {
+                    console.log('Query too short, skipping suggest call.');
+                    return;
+                }
 
                 const userId = getCookie('ssShopperId');
-                const sessionId = getCookie('ssSessionIdNamespace'); // Match your earlier script
+                const sessionId = getCookie('ssSessionIdNamespace');
+
+                console.log('Suggest Input Triggered');
+                console.log('Query:', query);
+                console.log('userId:', userId);
+                console.log('sessionId:', sessionId);
 
                 const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
                     userId ? `&userId=${encodeURIComponent(userId)}` : ''
@@ -210,23 +223,25 @@
                     sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
                 }`;
 
+                console.log('Suggest URL:', suggestUrl);
+
                 try {
                     const response = await fetch(suggestUrl);
                     const data = await response.json();
-                    console.log('Suggest results:', data);
-                    // You could now render the suggest UI with `data.results`
+                    console.log('Suggest response data:', data);
+                    // Optional: Render suggestions using `data.results`
                 } catch (e) {
-                    console.error('Suggest API error', e);
+                    console.error('Suggest fetch error:', e);
                 }
             }, 300));
 
-            // Helper to read cookie
             function getCookie(name) {
                 const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
                 return match ? match[2] : null;
             }
         });
-        </script>
+    </script>
+
 
     <!-- End SearchSpring Scripts -->
 
