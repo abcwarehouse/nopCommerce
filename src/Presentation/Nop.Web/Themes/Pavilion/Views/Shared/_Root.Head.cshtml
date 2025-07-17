@@ -185,14 +185,16 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#search-box');
+            const searchBox = document.querySelector('#small-searchterms')
+                || document.querySelector('input[type="search"]')
+                || document.querySelector('input[name="q"]');
 
             if (!searchBox) {
-                console.warn('Search box not found!');
+                console.warn('❌ Search box not found!');
                 return;
             }
 
-            console.log('Search box found. Setting up event listener.');
+            console.log('✅ Search box found. Setting up event listener.');
 
             function debounce(func, wait) {
                 let timeout;
@@ -205,14 +207,14 @@
             searchBox.addEventListener('input', debounce(async function () {
                 const query = this.value.trim();
                 if (query.length < 2) {
-                    console.log('Query too short, skipping suggest call.');
+                    console.log('ℹ️ Query too short.');
                     return;
                 }
 
                 const userId = getCookie('ssShopperId');
                 const sessionId = getCookie('ssSessionIdNamespace');
 
-                console.log('Suggest Input Triggered');
+                console.log('🔍 Suggest Input Triggered');
                 console.log('Query:', query);
                 console.log('userId:', userId);
                 console.log('sessionId:', sessionId);
@@ -223,14 +225,14 @@
                     sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
                 }`;
 
-                console.log('Suggest URL:', suggestUrl);
+                console.log('📡 Suggest URL:', suggestUrl);
 
                 try {
                     const response = await fetch(suggestUrl);
                     const data = await response.json();
-                    console.log('Suggest response data:', data);
+                    console.log('📦 Suggest API response:', data);
                 } catch (e) {
-                    console.error('Suggest fetch error:', e);
+                    console.error('❗ Suggest fetch error:', e);
                 }
             }, 300));
 
@@ -240,7 +242,6 @@
             }
         });
     </script>
-
 
     <!-- End SearchSpring Scripts -->
 
