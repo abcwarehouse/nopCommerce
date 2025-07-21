@@ -9,9 +9,9 @@
     Layout = isCalledAsPopup ? "" : "_ColumnsOne";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Login").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Login").Text);
     //page class
-    Html.AppendPageCssClassParts("html-login-page");
+    NopHtml.AppendPageCssClassParts("html-login-page");
 
     //register URL with return URL (if specified)
     var registerUrl = Url.RouteUrl("Register", new { returnUrl = this.Context.Request.Query["returnUrl"] }, webHelper.GetCurrentRequestProtocol());
@@ -23,15 +23,22 @@
     </div>
     @await Html.PartialAsync("_ExternalAuthentication.Errors")
     <div class="page-body">
+        @if (!isCalledAsPopup)
+        {
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LoginTop, additionalData = Model })
+
+        }
         <div class="customer-blocks">
             @if (Model.RegistrationType == UserRegistrationType.Disabled)
             {
                 <div class="new-wrapper">
                     <div class="title">
-                        @T("Account.Register")
+                        <strong>@T("Account.Register")</strong>
                     </div>
-                    <div class="text">
-                        @T("Account.Register.Result.Disabled")
+                    <div class="inner-wrapper">
+                        <div class="text">
+                            @T("Account.Register.Result.Disabled")
+                        </div>
                     </div>
                 </div>
             }
@@ -43,7 +50,7 @@
                     </div>
                     <div class="inner-wrapper">
                         <div class="text">
-                        	@await Component.InvokeAsync("TopicBlock", new { systemName = "CheckoutAsGuestOrRegister" })
+                        	@await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "CheckoutAsGuestOrRegister" })
                         </div>
                         <div class="buttons">
                         	<button type="button" class="button-1 checkout-as-guest-button" onclick="location.href='@Url.RouteUrl("Checkout")'">@T("Account.Login.CheckoutAsGuest")</button>
@@ -118,7 +125,7 @@
         </div>
 
         @{
-            var externalMethods = await Component.InvokeAsync("ExternalMethods", "ExternalAuthentication");
+            var externalMethods = await Component.InvokeAsync(typeof(ExternalMethodsViewComponent), "ExternalAuthentication");
             
             if (!String.IsNullOrEmpty(await externalMethods.RenderHtmlContentAsync()))
             {
@@ -130,15 +137,16 @@
 
         @if (!isCalledAsPopup)
         {
-        	@await Component.InvokeAsync("TopicBlock", new { systemName = "LoginRegistrationInfo" })
+        	@await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "LoginRegistrationInfo" })
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LoginBottom, additionalData = Model })
+
         }
         else
         {
             <div id="login-modal-window-static-resources">
-                @Html.NopCssFiles(ResourceLocation.Head)
-                @Html.NopCssFiles(ResourceLocation.Footer)
-                @Html.NopScripts(ResourceLocation.Head)
-                @Html.NopScripts(ResourceLocation.Footer)
+                @NopHtml.GenerateCssFiles()
+                @NopHtml.GenerateScripts(ResourceLocation.Head)
+                @NopHtml.GenerateScripts(ResourceLocation.Footer)
             </div>
         }
     </div>

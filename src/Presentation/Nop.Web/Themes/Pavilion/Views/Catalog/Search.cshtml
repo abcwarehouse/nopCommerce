@@ -1,5 +1,6 @@
 ﻿@model Nop.Web.Models.Catalog.SearchModel
 
+@* custom *@
 @using Nop.Plugin.Misc.AbcCore.Nop;
 @inject IAbcCategoryService categoryService;
 @using Nop.Services.Seo;
@@ -14,9 +15,9 @@
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Search").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Search").Text);
     //page class
-    Html.AppendPageCssClassParts("html-search-page");
+    NopHtml.AppendPageCssClassParts("html-search-page");
 
     var searchPageTitle = Model.q;
 
@@ -24,7 +25,8 @@
     {
         searchPageTitle = T("Search").ToString();
     }
-    
+
+    @* custom *@
     <h1 class="search-page-title">Shop By Category</h1>
 
 
@@ -65,7 +67,7 @@
 </div>
 
 <script asp-location="Footer">
-    $(document).ready(function () {
+    $(function() {
         $("#@Html.IdFor(model => model.advs)").on('click', toggleAdvancedSearch);
         toggleAdvancedSearch();
     });
@@ -91,15 +93,15 @@
     <div class="page-body">
         <!-- ABC: search input not required -->
         @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductSearchPageBeforeResults })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductSearchPageBeforeResults, additionalData = Model })
         <div class="search-results">
             @{
                 var catalogProductsViewData = new ViewDataDictionary(ViewData);
-                catalogProductsViewData["fetchUrl"] = Html.Raw(Url.Action("SearchProducts", "Catalog"));
+                catalogProductsViewData["fetchUrl"] = Html.Raw(Url.RouteUrl("SearchProducts"));
             }
             @await Html.PartialAsync("_CatalogProducts", Model.CatalogProductsModel, catalogProductsViewData)
             <script asp-location="Footer">
-                $(document).ready(function () {
+                $(function() {
                     $(CatalogProducts).on('before', function (e) {
                         var isAdvanced = $('#@Html.IdFor(model => model.advs)').is(':checked');
 
@@ -119,7 +121,7 @@
                 });
             </script>
         </div>
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductSearchPageAfterResults })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductSearchPageAfterResults, additionalData = Model })
     </div>
 </div>
 

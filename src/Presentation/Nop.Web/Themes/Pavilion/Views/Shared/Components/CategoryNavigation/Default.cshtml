@@ -1,6 +1,8 @@
 ﻿@model CategoryNavigationModel
 
-@functions{
+@using Nop.Core.Domain.Catalog
+
+@functions {
 
     public bool DoesCurrentCategoryHasSubcategories(IList<CategorySimpleModel> categories)
     {
@@ -10,14 +12,11 @@
             {
                 return true;
             }
-
             if (DoesCurrentCategoryHasSubcategories(category.SubCategories))
             {
                 return true;
             }
-
         }
-
         return false;
     }
 }

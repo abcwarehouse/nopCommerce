@@ -1,13 +1,12 @@
-@* ABC: needs customizations still *@
-
-@model ShoppingCartModel
+﻿@model ShoppingCartModel
 
 @using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Media
 @using Nop.Core.Domain.Orders
 @using Nop.Core.Domain.Tax
 @* ABC: custom *@
 @using Microsoft.AspNetCore.Mvc.ViewComponents
-@using Nop.Core.Domain.Catalog
 @using Nop.Data
 @using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Domain
@@ -25,6 +24,7 @@
 
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
+@inject MediaSettings mediaSettings
 @inject OrderSettings orderSettings
 @inject IViewComponentSelector viewComponentSelector
 @* ABC: custom *@
@@ -42,8 +42,6 @@
 @inject IPriceFormatter priceFormatter
 @* ABC: checking cart eligibility *@
 @inject IAbcShoppingCartService abcShoppingCartService
-
-
 @* ABC: custom *@
 @{
     bool isAbc = frontEndService.StoreIsAbc(await storeContext.GetCurrentStoreAsync());
@@ -223,8 +221,7 @@
         <div class="rect4"></div>
         <div class="rect5"></div>
     </div>
-    
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore, additionalData = Model })
     @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
     @if (Model.Items.Count > 0)
     {
@@ -273,7 +270,7 @@
 			                </th>
                             @if (Model.IsEditable)
                             {
-                                <th class="remove-from-cart" data-hide="w410, w480, w580">
+                                <th class="remove-from-cart">
                                     @T("ShoppingCart.Remove")
                                 </th>
                             }
@@ -285,11 +282,11 @@
                             }
                             @if (Model.ShowProductImages)
                             {
-                                <th class="product-picture">
+                                <th class="product-picture" data-hide="w410, w480, w580">
                                     @T("ShoppingCart.Image")
                                 </th>
                             }
-                            <th class="product" data-hide="w410, w480">
+                            <th class="product">
                                 @T("ShoppingCart.Product(s)")
                             </th>
                             @if (Model.ShowVendorName)
@@ -304,7 +301,8 @@
                             <th class="quantity" data-hide="w410, w480, w580, w768">
                                 @T("ShoppingCart.Quantity")
                             </th>
-                            <th class="subtotal">
+                            <!-- ABC: change terminology -->
+                            <th class="subtotal" data-hide="w410">
                                 @if (isAbc || isHawthorne)
                                 {
                                     <span>Item Sub-total<br />(Including Shipping)</span>
@@ -393,7 +391,7 @@
                                         else
                                         {
                                             <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
-											<button name="updatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true);"></button>
+											<button type="button" name="updatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true); $('#updatecart').trigger('click');"></button>
                                         }
                                     </td>
                                 }
@@ -406,7 +404,7 @@
                                 @if (Model.ShowProductImages)
                                 {
                                     <td class="product-picture">
-                                        <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})">
+                                        <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))">
                                             @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                                             {
                                                 @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
@@ -418,15 +416,14 @@
                                             }
                                             else
                                             {
-                                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
+                                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" width="@mediaSettings.DefaultImageQuality" />
                                             }
                                         </a>
                                     </td>
                                 }
                                 <td class="product">
-                                    <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
+                                    <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))" class="product-name">@item.ProductName</a>
                                     <div class="product-mini-description">@Html.Raw(miniDesc)</div>
-                                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.OrderSummaryAfterProductMiniDescription, additionalData = item.ProductId })
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
@@ -458,13 +455,14 @@
                                             @Html.Raw(item.RentalInfo)
                                         </div>
                                     }
-                                    @if (Model.IsEditable)
+                                    @if (Model.IsEditable && item.AllowItemEditing)
                                     {
-                                        var editCartItemUrl = Url.RouteUrl("Product", new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
+                                        var editCartItemUrl = Url.RouteUrl<Product>(new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
                                         editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
                                         @* <div class="edit-item">
                                             <a href="@editCartItemUrl">@T("Common.Edit")</a>
                                         </div> *@
+                                        @* ABC: for legacy delivery options *@
                                         if (!(await product.HasDeliveryOptionsAsync()))
                                         {
                                             if ((isFedExMode && await product.HasFedExAttributeAsync()) &&
@@ -503,6 +501,7 @@
                                     </td>
                                 }
                                 <td class="unit-price">
+                                    @* ABC adjusted *@
                                     <span class="product-unit-price">@adjustedUnitPriceString</span>
                                 </td>
                                 <td class="quantity">
@@ -510,7 +509,7 @@
                                     {
                                         if (item.AllowedQuantities.Count > 0)
                                         {
-                                            <select name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" class="qty-dropdown">
+                                            <select name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" class="qty-dropdown" onchange="$('#updatecart').trigger('click');">
                                                 @foreach (var qty in item.AllowedQuantities)
                                                 {
                                                     <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
@@ -519,7 +518,7 @@
                                         }
                                         else
                                         {
-                                            <input name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" class="qty-input" aria-label="@T("ShoppingCart.Quantity")" />
+                                            <input name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" class="qty-input" aria-label="@T("ShoppingCart.Quantity")" onchange="$('#updatecart').trigger('click');" />
                                         }
                                     }
                                     else
@@ -570,13 +569,13 @@
                 @if (Model.IsEditable)
                 {
                     <div class="common-buttons">
-                        <button type="submit" name="updatecart" class="button-2 update-cart-button">@T("ShoppingCart.UpdateCart")</button>
+                        <button type="submit" name="updatecart" id="updatecart" class="button-2 update-cart-button">@T("ShoppingCart.UpdateCart")</button>
                         <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
                     </div>
                 }
                 @if (Model.CheckoutAttributes.Count > 0)
                 {
-                    @await Component.InvokeAsync("SelectedCheckoutAttributes")
+                    @await Component.InvokeAsync(typeof(SelectedCheckoutAttributesViewComponent))
                 }
             </div>
         
@@ -586,12 +585,12 @@
                 //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
                 //of course, you can modify appropriate locales to include VAT info there
                 <div class="tax-shipping-info">
-                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteTopicUrl("shippinginfo"))
                 </div>
             }
         
             <div class="cart-footer">
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter, additionalData = Model })
                 @if (Model.IsEditable)
                 {
                     <div class="cart-collaterals">                        
@@ -606,7 +605,7 @@
                                     <strong>@T("SevenSpikes.Themes.Pavilion.EstimateShipping")</strong>
                                 </div>
                                 <div class="accordion-tab-content">
-                        			@await Component.InvokeAsync("ShoppingCartEstimateShipping")
+                        			@await Component.InvokeAsync(typeof(ShoppingCartEstimateShippingViewComponent))
                                 </div>
                             </div>
                         }
@@ -633,12 +632,12 @@
                             </div>
                         }
 						@await Html.PartialAsync("_CheckoutAttributes", Model)
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentDeals })
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryContentDeals, additionalData = Model })
                     </div>
                 } 
                 <div class="totals">
-                	@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryTotals })
-                    @await Component.InvokeAsync("OrderTotals", new { isEditable = Model.IsEditable })
+                	@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryTotals, additionalData = Model })
+                	@await Component.InvokeAsync(typeof(OrderTotalsViewComponent), new { isEditable = Model.IsEditable })
                     @if (Model.IsEditable)
                     {
                         if (!string.IsNullOrEmpty(Model.MinOrderSubtotalWarning))
@@ -663,7 +662,7 @@
 	                                {
 	                                    <a class="read" id="read-terms">@T("Checkout.TermsOfService.Read")</a>
                                         <script asp-location="Footer">
-	                                        $(document).ready(function() {
+	                                        $(function() {
 	                                            $('#read-terms').on('click',
 	                                                function(e) {
 	                                                    e.preventDefault();
@@ -676,7 +675,7 @@
 	                                }
 	                                else
 	                                {
-	                                    <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new {SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+	                                    <a class="read" id="read-terms" href="@Url.RouteTopicUrl("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
 	                                }
                                 </div>
                             </div>
@@ -685,7 +684,7 @@
                             @if (string.IsNullOrEmpty(Model.MinOrderSubtotalWarning) && !Model.HideCheckoutButton)
                             {
                                 <script asp-location="Footer">
-                                    $(document).ready(function () {
+                                    $(function() {
                                         $('#checkout').on('click', function () {
                                             //terms of service
                                             var termOfServiceOk = true;
@@ -708,13 +707,6 @@
                                         @T("Checkout.Disabled")
                                     </div>
                                 }
-                                @* ABC: Need to disable if ineligible *@
-                                else if (!isCartEligibleForCheckout)
-                                {
-                                    <div class="checkout-disabled">
-                                        Please remove ineligible items from cart to checkout.
-                                    </div>
-                                }
                                 else
                                 {
 	                                <button type="submit" id="checkout" name="checkout" value="checkout" class="button-1 checkout-button">
@@ -723,24 +715,22 @@
                                 }
                             }
                         </div>
-                        
-                        if (Model.ButtonPaymentMethodViewComponentNames.Count > 0)
+                        if (Model.ButtonPaymentMethodViewComponents.Count > 0)
                         {
                             <div class="addon-buttons">
 	                            @*Payment method buttons (e.g. GoogleCheckoutButton, Paypal Express)*@
-	                            @foreach (var pm in Model.ButtonPaymentMethodViewComponentNames)
+	                            @foreach (var pm in Model.ButtonPaymentMethodViewComponents)
 	                            {
 	                                @await Component.InvokeAsync(pm)
 	                            }
 	                        </div>
                         }
-                        
                     }
                 </div>
             </div>
             @if (Model.IsEditable)
             {
-                @await Component.InvokeAsync("CrossSellProducts")
+                @await Component.InvokeAsync(typeof(CrossSellProductsViewComponent))
             }
         </form>
     }
@@ -750,7 +740,7 @@
             @T("ShoppingCart.CartIsEmpty")
         </div>
     }
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter, additionalData = Model })
 </div>
 
 @* ABC: expands products on mobile... can we move this and remove the need for

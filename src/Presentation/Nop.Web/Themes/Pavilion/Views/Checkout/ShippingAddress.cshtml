@@ -1,23 +1,26 @@
-﻿@model CheckoutShippingAddressModel
+﻿@inject IWebHelper webHelper
+@using Nop.Core
+@model CheckoutShippingAddressModel
 @{
     Layout = "_ColumnsOne";
 
+    var storeLocation = webHelper.GetStoreLocation();
+
     //title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
     //page class
-    Html.AppendPageCssClassParts("html-checkout-page");
-    Html.AppendPageCssClassParts("html-shipping-address-page");
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-shipping-address-page");
 }
-@await Component.InvokeAsync("Widget", new { widgetZone = "cart_popup" })
 <div class="page checkout-page shipping-address-page">
-    @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Address })
+    @await Component.InvokeAsync(typeof(CheckoutProgressViewComponent), new { step = CheckoutProgressStep.Address })
     <div class="page-title">
         <h1>@T("Checkout.ShippingAddress")</h1>
     </div>
     <div class="page-body checkout-data">
         <form asp-route="CheckoutShippingAddress" method="post">
             <div class="shipping-addresses">
-            	@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutShippingAddressTop })
+            	@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutShippingAddressTop, additionalData = Model })
                 @if (Model.ExistingAddresses.Count > 0)
                 {
                     <div class="section select-shipping-address">
@@ -139,7 +142,7 @@
 	            {
 	                @await Html.PartialAsync("_PickupPoints", Model.PickupPointsModel)
 	                <script asp-location="Footer">
-	                    $(document).ready(function () {
+	                    $(function() {
 	                        $(document).on('checkout_toggle_pickup_in_store', function (e) {
 	                            if (e.checked)
 	                                $('#shipping-addresses-form').hide();
@@ -149,7 +152,7 @@
 	                    });
 	                </script>
 	            }
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutShippingAddressMiddle })
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutShippingAddressMiddle, additionalData = Model })
                 <div class="section new-shipping-address">
                     <div id="shipping-addresses-form">
                         <div class="title">
@@ -175,14 +178,14 @@
                         <button type="submit" name="nextstep" class="button-1 new-address-next-step-button">@T("Checkout.NextButton")</button>
                     </div>
                 </div>
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutShippingAddressBottom })
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutShippingAddressBottom, additionalData = Model })
             </div>
         </form>
         <div class="section order-summary">
             <div class="title">
                 <strong>@T("Checkout.OrderSummary")</strong>
             </div>
-            @await Component.InvokeAsync("OrderSummary")
+            @await Component.InvokeAsync(typeof(OrderSummaryViewComponent))
         </div>
     </div>
 </div>

@@ -221,7 +221,7 @@
 	clear: none; /*revert the second item*/
 	margin-left: 2%; /*revert the second item*/
 }
-.item-box:nth-child(4n+1) {
+.item-box:nth-child(3n+1) {
 	clear: both;
 	margin-left: 0;
 }
@@ -330,7 +330,7 @@
 }
 .gallery .thumb-item {
 	width: 18%;
-	margin: 0 1% 10px;
+	margin: 5px 1%;
 }
 .overview {
 	float: right;
@@ -343,6 +343,9 @@
 }
 .product-review-box {
 	margin: 3px 12px 0 0;
+}
+.product-review-links {
+	margin-top: 0;
 }
 
 .overview .prices > div,
@@ -510,9 +513,6 @@ div.rental-price {
 
 /* REVIEW PAGE */
 
-.product-reviews-page .page-body {
-	text-align: left;
-}
 .ui-tabs .product-review-item {
 	padding: 30px;
 }
@@ -545,11 +545,6 @@ div.rental-price {
 }
 
 /* WISHLIST & COMPARE LIST */
-
-.compare-products-table-mobile img {
-    max-width: 150px;
-}
-
 /* TOPICS */
 
 .topic-password {
@@ -612,6 +607,10 @@ div.rental-price {
 }
 .account-page .add-button {
 	clear: both;
+}
+.account-page .instruction:not(ul),
+.configure-provider .inputs {
+	padding: 30px 60px;
 }
 
 /* SHOPPING CART & CHECKOUT */
@@ -898,6 +897,7 @@ div.rental-price {
 
 }
 
+/* ABC custom */
 .hover-image img {
 	position: absolute;
 	top: 0;
@@ -979,6 +979,13 @@ body a {
 body ul {
 	padding-left: 0px;
 }
+
+.item-box:nth-child(4n+1) {
+	clear: both;
+	margin-left: 0;
+}
+
+/* May need to cancel out .item-box:nth-child(3n+1) */
 
 @media screen and (max-width: 1024px) {
 	div#mobile-header-logo {

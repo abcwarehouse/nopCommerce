@@ -20,30 +20,16 @@
 	background-color: #fff;
 	line-height: 110px;
 }
-.storeId8 .responsive-nav-wrapper-parent {
+.responsive-nav-wrapper-parent {
 	position: fixed;
 	top: 0;
 	z-index: 1020;
 	width: 100%;
 	height: 53px !important; /*override inline height*/
-	border-top: 3px solid #02463b;
-	background-color: #02463b;
+	border-top: 3px solid #00a1b1;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+	background-color: #fff;
 }
-
-
-.storeId3 .responsive-nav-wrapper-parent {
-        position: relative;
-		/* position: fixed; */
-        /* top: 42px !important; */
-        z-index: 1020;
-        width: 100%;
-        height: 53px !important;
-        border-top: 3px solid white;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, .1);
-        background-color: #fff;
-    }
-
-
 .admin-header-links ~ .header .header-logo {
 	top: 95px;
 }
@@ -82,9 +68,6 @@
 	margin-top: 0 !important; /*important because of demo-strip*/
 }
 
-
-
-
 /* RESPONSIVE NAV WRAPPER */
 
 .responsive-nav-wrapper {
@@ -97,41 +80,25 @@
 	display: block;
 	clear: both;
 }
-.storeId8 .responsive-nav-wrapper > div {
-	
-	
-	background-color: #02463b !important;
-	background-image: url('https://www.abcwarehouse.com/images/gold_cart.png');  
+.responsive-nav-wrapper > div {
+	display: inline-block;
+	border-right: 1px solid #eee;
+	background-color: #f74258;
+	background-image: url('../img/mobile-sprite.png');
 	background-repeat: no-repeat;
-	background-size: 43%;
-	background-position: center;
+	vertical-align: middle;
 }
-
-.storeId3 .responsive-nav-wrapper > div {
-	
-	
-	background-color: white !important;
-	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');  
-	background-position: 215px;
-	
-	
-	
-}
-
-
 .responsive-nav-wrapper > div:first-child {
 	border-left: 1px solid #eee;
 }
 .responsive-nav-wrapper div.menu-title {
 	background-position: 0 center;
 }
-.storeId3 .responsive-nav-wrapper div.shopping-cart-link {
-	
+.responsive-nav-wrapper div.shopping-cart-link {
 	background-position: -55px center;
-	
 }
 .responsive-nav-wrapper div.personal-button {
-	
+	background-position: -108px center;
 }
 .responsive-nav-wrapper div.preferences-button {
 	background-position: -162px center;
@@ -149,11 +116,6 @@
 	width: 52px;
 	height: 50px;
 	font-size: 0;
-}
-
-.storeId8 div#header-links-opener {
-    background-image: url('https://www.abcwarehouse.com/images/gold_account.png');
-	background-position: center;
 }
 
 /* RESPONSIVE MENU */
@@ -179,11 +141,10 @@
 .overlayOffCanvas.show {
 	background: rgba(0,0,0,0.6);
 }
-.storeId3 .header-menu {
+.header-menu {
     position: fixed;
-    top: 0;
-	left: 0;
-    width: 313px;
+    top: 0; left: 0;
+    width: 320px;
     height: 100%;
     text-align: left;
     background-color: #f6f6f6;
@@ -194,49 +155,16 @@
     -ms-transform: translate(-320px);
     transform: translate(-320px);
 }
-
-.storeId8 .header-menu {
-    position: fixed;
-    top: 0;
-	right: 0;
-    width: 313px;
-    height: 100%;
-    text-align: left;
-    background-color: #f6f6f6;
-    overflow: hidden;
-	z-index: 1070;
-    /* transition: all 0.5s ease; */
-    -webkit-transform: translate(-320px);
-    -ms-transform: translate(-320px);
-    transform: translate(-320px);
-}
-
-.storeId8 .header-menu.categories-in-side-panel {  
-	  left: 0px;
-}
-.storeId8 .header-menu.categories-in-side-panel.open {  
-	  left: auto;
-}
-
-.storeId8 .sublist-wrap.active {
-	    border-top: solid 42px #02463b;
-}
 .header-menu.open {
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
     -webkit-transform: translate(0);
     -ms-transform: translate(0);
     transform: translate(0);
 }
-.storeId8 .header-menu .close-menu,
+.header-menu .close-menu,
 .header-menu .back-button {
-	background-color: #02463b;
+	background-color: #f6f6f6;
 	cursor: pointer;
-}
-
-.storeId8 .header-menu .close-menu,
-.header-menu .back-button {
-	background-color: #02463b;
-	
 }
 .header-menu .close-menu span,
 .header-menu .back-button span {
@@ -338,6 +266,17 @@
 }
 .mini-shopping-cart .attributes {
 	display: none;
+}
+.shopping-cart-link > span {
+	position: relative;
+}
+.shopping-cart-link .cart-qty-mobile {
+    position: absolute;
+    top: 5px;
+	right: 10px;
+	font-size: 11px;
+    font-weight: bold;
+	color: #f74258;
 }
 
 /* LINKS & SELECTORS */
@@ -467,18 +406,157 @@
 
 }
 
+@media all and (max-width: 768px) {
+
+	.cart .subtotal .discount {
+		display: none;
+	}
+}
 @media all and (min-width: 769px) and (max-width: 1024px) {
 	
-.mini-shopping-cart .items {
-	overflow: hidden;
+	.mini-shopping-cart .items {
+		overflow: hidden;
+	}
+	.mini-shopping-cart .item {
+		float: left;
+		width: 50%;
+	}
 }
-.mini-shopping-cart .item {
-	float: left;
-	width: 50%;
+
+/* ABC custom */
+
+.storeId8 .responsive-nav-wrapper-parent {
+	position: fixed;
+	top: 0;
+	z-index: 1020;
+	width: 100%;
+	height: 53px !important; /*override inline height*/
+	border-top: 3px solid #02463b;
+	background-color: #02463b;
 }
+
+
+.storeId3 .responsive-nav-wrapper-parent {
+        position: relative;
+		/* position: fixed; */
+        /* top: 42px !important; */
+        z-index: 1020;
+        width: 100%;
+        height: 53px !important;
+        border-top: 3px solid white;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, .1);
+        background-color: #fff;
+    }
+
+.storeId8 .responsive-nav-wrapper > div {
+	
+	
+	background-color: #02463b !important;
+	background-image: url('https://www.abcwarehouse.com/images/gold_cart.png');  
+	background-repeat: no-repeat;
+	background-size: 43%;
+	background-position: center;
+}
+
+.storeId3 .responsive-nav-wrapper > div {
+	
+	
+	background-color: white !important;
+	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');  
+	background-position: 215px;
+	
+	
 	
 }
 
+.storeId3 .responsive-nav-wrapper div.shopping-cart-link {
+	
+	background-position: -55px center;
+	
+}
+
+.storeId8 div#header-links-opener {
+    background-image: url('https://www.abcwarehouse.com/images/gold_account.png');
+	background-position: center;
+}
+
+.storeId8 .responsive-nav-wrapper-parent {
+	position: fixed;
+	top: 0;
+	z-index: 1020;
+	width: 100%;
+	height: 53px !important; /*override inline height*/
+	border-top: 3px solid #02463b;
+	background-color: #02463b;
+}
+
+
+.storeId3 .responsive-nav-wrapper-parent {
+        position: relative;
+		/* position: fixed; */
+        /* top: 42px !important; */
+        z-index: 1020;
+        width: 100%;
+        height: 53px !important;
+        border-top: 3px solid white;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, .1);
+        background-color: #fff;
+    }
+
+.storeId3 .header-menu {
+    position: fixed;
+    top: 0;
+	left: 0;
+    width: 313px;
+    height: 100%;
+    text-align: left;
+    background-color: #f6f6f6;
+    overflow: hidden;
+	z-index: 1070;
+    transition: all 0.5s ease;
+    -webkit-transform: translate(-320px);
+    -ms-transform: translate(-320px);
+    transform: translate(-320px);
+}
+
+.storeId8 .header-menu {
+    position: fixed;
+    top: 0;
+	right: 0;
+    width: 313px;
+    height: 100%;
+    text-align: left;
+    background-color: #f6f6f6;
+    overflow: hidden;
+	z-index: 1070;
+    /* transition: all 0.5s ease; */
+    -webkit-transform: translate(-320px);
+    -ms-transform: translate(-320px);
+    transform: translate(-320px);
+}
+
+.storeId8 .header-menu.categories-in-side-panel {  
+	  left: 0px;
+}
+.storeId8 .header-menu.categories-in-side-panel.open {  
+	  left: auto;
+}
+
+.storeId8 .sublist-wrap.active {
+	    border-top: solid 42px #02463b;
+}
+
+.storeId8 .header-menu .close-menu,
+.header-menu .back-button {
+	background-color: #02463b;
+	cursor: pointer;
+}
+
+.storeId8 .header-menu .close-menu,
+.header-menu .back-button {
+	background-color: #02463b;
+	
+}
 
 @media (max-width: 1025px) {
 .storeId3 .ABC-Merch {

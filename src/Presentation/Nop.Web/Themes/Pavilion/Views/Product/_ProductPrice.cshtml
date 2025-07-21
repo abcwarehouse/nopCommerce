@@ -1,6 +1,8 @@
 ﻿@model ProductDetailsModel.ProductPriceModel
+
 @using Nop.Core
 @using Nop.Core.Domain.Tax
+@* ABC custom *@
 @using Nop.Web.Models.Catalog
 @using Nop.Services.Catalog
 @using Nop.Plugin.Misc.AbcCore.Services
@@ -12,6 +14,7 @@
 @using Nop.Plugin.Misc.AbcCore.Nop;
 
 @inject IWorkContext workContext
+@* ABC custom *@
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
 @inject IProductService productService

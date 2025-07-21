@@ -86,6 +86,9 @@
 /* GLOBAL FORMS */
 /* GLOBAL TABLES */
 
+.cart .product-picture img {
+	max-width: none;
+}
 .cart .subtotal {
     white-space: nowrap;
 }
@@ -116,7 +119,6 @@
 .header .center {
 	width: 980px;
 	margin: auto;
-	display: flex;
 }
 
 .header-upper {
@@ -135,18 +137,9 @@
 	position: relative;
 	float: right;
 	height: 42px;
-	margin: 4px 0 0 10px;
+	margin: 0 0 0 20px;
 	transition: all 0.2s ease;
 }
-
-.storeId8 .header-links-wrapper,
-.header-selectors-wrapper {
-	
-	float: none;
-	transition: opacity 0.3s, visibility 0.3s, all 0.2s ease;
-	
-}
-
 .header-links-wrapper label,
 .header-selectors-wrapper label {
 	display: block;
@@ -155,20 +148,18 @@
 	background-repeat: no-repeat;
 	line-height: 42px;
 }
-.storeId3 .header-links-wrapper label {
+.header-links-wrapper label {
 	background-position: left 0;
-	color: black;
 }
 .header-selectors-wrapper label {
 	background-position: left -40px;
-	color: white;
 }
 .header-links,
 .header-selectors {
 	display: none;
 	position: absolute;
 	left: -15px;
-	z-index: 1021;
+	z-index: 1020;
 	min-width: 150px;
 	background-color: #fff;
 	border-top: 3px solid #f74258;
@@ -262,7 +253,7 @@
 .header-menu > ul > li > a,
 .header-menu > ul > li > span {
 	display: block;
-	padding: 36px 0px;
+	padding: 5px 20px;
 	font-size: 14px; /*reset zeroing*/
 	font-weight: bold;
 	color: #333;
@@ -270,66 +261,25 @@
 	cursor: pointer;
 }
 
-
-
-
-
-
-
-
-@media (min-width: 1281px) {
-    .header-menu > ul > li > a, .header-menu > ul > li > span {      
-        padding: 5px 0px;
-    }
-}
-
-/* Hawthorne My Account Header Changes */
-
-.storeId8 a.ico-wishlist {
-    margin-right: 33px;
-}
-
-.storeId8 a.ico-logout {
-    margin-right: 51px;
-}
-
-.storeId8 .ico-account {
-    /* margin-right: 39px; */
-	width: 120px;
-	text-align: left;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.storeId8 .ico-login {
-    margin-right: 60px;
-}
-
-.storeId8 .ico-register {
-    margin-right: 49px;
-}
-
-
 .flyout-cart-wrapper {
 	position: relative;
 	display: table-cell;
 	width: 190px; /*prevents the cell from expanding when header menu is empty*/
-	/* padding: 0 0 0 32px;
+	padding: 0 0 0 32px;
 	vertical-align: middle;
-	text-align: right; */
+	text-align: right;
 }
 .cart-trigger {
 	display: inline-block;
 	position: relative;
 	height: 52px;
-	border: 1px solid black;
+	border: 1px solid #f0f0f0;
 	padding: 0 19px 0 18px;
 	line-height: 52px;
 	font-size: 13px;
 	color: #777;
 	white-space: nowrap;
 	transition: all 0.2s ease;
-	background-color: white;
 }
 .cart-trigger:before {
 	content: "";
@@ -436,6 +386,10 @@
 }
 .home-page-body .category-navigation-title {
 	cursor: auto;
+}
+.home-page-body:has(.slider-fullwidth)
+.category-navigation-title {
+	cursor: pointer;
 }
 .category-navigation-list-wrapper {
 	position: absolute;
@@ -566,12 +520,6 @@
 .store-search-box {
 	float: right;
 	clear: right;
-	margin: 0;
-}
-
-.storeId3 .store-search-box {
-	float: left;
-	clear: left;
 	margin: 0;
 }
 .store-search-box .search-box-button {
@@ -743,27 +691,6 @@
 
 /* FOOTER */
 
-
-.storeId8 #newsletter-subscribe-block {
-    background-color: white;
-    margin-left: 9px;
-}
-
-.storeId8 li.pinterest {
-    display: none;
-} 
-
-.storeId8 li.linkedin {
-    display: none;
-}
-
-.storeId8 li.tiktok {
-    display: none;
-}
-
-.storeId8 .footer-upper, .ui-datepicker-header, .ui-datepicker-calendar .ui-state-active {
-    background-color: #02463b !important;
-}
 .footer {
 	text-align: left;
 }
@@ -1035,7 +962,7 @@
 /* PRODUCT PAGE */
 
 .product-essential {
-	padding: 30px;
+	padding: 35px;
 }
 .gallery {
 	width: 44%;
@@ -1043,7 +970,6 @@
 .gallery .thumb-item {
 	width: 23%;
 	height: 80px;
-	margin: 0 1% 10px;
 }
 .overview {
 	width: 54%;
@@ -1371,6 +1297,9 @@
 	width: 40%;
 	margin-left: auto;
 }
+#opc-confirm_order .captcha-box {
+	justify-content: flex-end;
+}
 #opc-confirm_order div.buttons {
 	text-align: right;
 }
@@ -1410,6 +1339,10 @@
 .new-comment textarea {
 	display: block;
 	margin: auto;
+}
+.new-comment textarea ~.required {
+	position: absolute;
+	top: 0; right: 0;
 }
 
 /* FORUM & PROFILE */
@@ -1489,4 +1422,82 @@
 	white-space: nowrap;
 }
  
+}
+
+/* ABC custom */
+.header .center {
+	display: flex;
+}
+
+.storeId8 .header-links-wrapper,
+.header-selectors-wrapper {
+	float: none;
+	transition: opacity 0.3s, visibility 0.3s, all 0.2s ease;	
+}
+
+.storeId3 .header-links-wrapper label {
+	background-position: left 0;
+	color: black;
+}
+.header-selectors-wrapper label {
+	color: white;
+}
+
+@media (min-width: 1281px) {
+    .header-menu > ul > li > a, .header-menu > ul > li > span {      
+        padding: 5px 0px;
+    }
+}
+
+/* Hawthorne My Account Header Changes */
+
+.storeId8 a.ico-wishlist {
+    margin-right: 33px;
+}
+
+.storeId8 a.ico-logout {
+    margin-right: 51px;
+}
+
+.storeId8 .ico-account {
+    /* margin-right: 39px; */
+	width: 120px;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.storeId8 .ico-login {
+    margin-right: 60px;
+}
+
+.storeId8 .ico-register {
+    margin-right: 49px;
+}
+
+.storeId3 .store-search-box {
+	float: left;
+	clear: left;
+	margin: 0;
+}
+
+.storeId8 #newsletter-subscribe-block {
+    background-color: white;
+    margin-left: 9px;
+}
+
+.storeId8 li.pinterest {
+    display: none;
+} 
+
+.storeId8 li.linkedin {
+    display: none;
+}
+
+.storeId8 li.tiktok {
+    display: none;
+}
+
+.storeId8 .footer-upper, .ui-datepicker-header, .ui-datepicker-calendar .ui-state-active {
+    background-color: #02463b !important;
 }

@@ -1,39 +1,39 @@
 ﻿@using Nop.Core
 @using Nop.Core.Configuration
-@using Nop.Core.Events
-@using StackExchange.Profiling
+@using Nop.Core.Domain.Catalog
 @using Nop.Core.Domain.Common
 @using Nop.Core.Domain.Seo
-@using Nop.Services.Events
 @using Nop.Services.Security
-@using Nop.Web.Framework.Events
+@using Nop.Core.Events
 @* custom *@
 @using Nop.Plugin.Misc.AbcFrontend.Services
 @using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Services
 @using Nop.Web.Framework.Infrastructure
 
+@inject CatalogSettings catalogSettings
 @inject CommonSettings commonSettings
 @inject IEventPublisher eventPublisher
 @inject IPermissionService permissionService
 @inject IWorkContext workContext
 @inject SeoSettings seoSettings
 @inject AppSettings appSettings
-@inject Nop.Services.Localization.ILanguageService languageService
 @* Custom injects *@
 @inject FrontEndService frontEndService
 @inject IStoreContext storeContext
-@{
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
-    // ABC: Using custom AjaxCart implementation
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/abc/public.ajaxcart.js");
 
+@{
+    if (catalogSettings.DisplayAllPicturesOnCatalogPages)
+    {
+        NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/swiper/swiper-bundle.min.js");
+    }
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
+    // ABC: Using custom AjaxCart implementation
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/abc/public.ajaxcart.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
     //when jQuery migrate script logging is active you will see the log in the browser console
 
-    var iosFixFilePath = "~/Plugins/SevenSpikes.Core/Scripts/iOS-12-array-reverse-fix.min.js";
-    var iosFixContentFilePath = CommonHelper.DefaultFileProvider.MapPath(iosFixFilePath);
-
+    // ABC custom
     string fullTitle = Html.NopTitle().ToString();
     string shortTitle = "";
     if(fullTitle.Length >= 60) 
@@ -47,47 +47,37 @@
 
     var currentStore = await storeContext.GetCurrentStoreAsync();
     string storeId = "storeId" + currentStore.Id.ToString();
-
-    if (System.IO.File.Exists(iosFixContentFilePath))
-    {
-        Html.AppendScriptParts(ResourceLocation.Footer, iosFixFilePath);
-    }
-
     if (commonSettings.JqueryMigrateScriptLoggingActive)
     {
-        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.js");
+        NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.js");
     }
     else
     {
-        Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
+        NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
     }
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
-    // ABC: changed to head to work with SLI
-    Html.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
+    // ABC: Might need to move this to head
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery/jquery.min.js");
 
     //custom tag(s);
     if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))
     {
-        Html.AppendHeadCustomParts(seoSettings.CustomHeadTags);
+        NopHtml.AppendHeadCustomParts(seoSettings.CustomHeadTags);
     }
 
-    var displayMiniProfiler = appSettings.CommonConfig.MiniProfilerEnabled && await permissionService.AuthorizeAsync(StandardPermissionProvider.AccessProfiling);
+    //event
+    await eventPublisher.PublishAsync(new PageRenderingEvent(NopHtml));
 
-    var isAndroid23Class = "notAndroid23";
-    var userAgent = Url.ActionContext.HttpContext.Request.Headers["User-Agent"];
-    if (!string.IsNullOrWhiteSpace(userAgent) && userAgent.ToString().IndexOf("Android 2.", StringComparison.InvariantCultureIgnoreCase) > 0)
-    {
-        isAndroid23Class = "android23";
-    }
+    //variables
+
+    var title = await NopHtml.GenerateTitleAsync();
+    var description = await @NopHtml.GenerateMetaDescriptionAsync();
+    var keywords = await NopHtml.GenerateMetaKeywordsAsync();
 
     var currentPageClass = (await (await Html.PartialAsync("_CurrentPageClass")).RenderHtmlContentAsync()).Trim();
-
-    var supportRtl = await this.ShouldUseRtlThemeAsync();
-    
-    //event    
-    await eventPublisher.PublishAsync(new PageRenderingEvent(this.Html));
+    var supportRtl = await Html.ShouldUseRtlThemeAsync();
 
     // ABC: custom stuff
     bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
@@ -96,10 +86,11 @@
         "gray" :
         await HtmlHelpers.GetPavilionPrimaryColorAsync();
 }
+
 <!DOCTYPE html>
-<html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(await this.ShouldUseRtlThemeAsync() ? Html.Raw(" dir=\"rtl\"") : null) @Html.NopPageCssClasses()>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
-    <!-- Google Tag Manager -->
+    <!-- ABC: Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -107,35 +98,31 @@
     })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
     <!-- End Google Tag Manager -->
 
+    <!-- ABC: use custom title -->
     <title>@shortTitle</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <meta name="description" content="@(Html.NopMetaDescription())" />
-    <meta name="keywords" content="@(Html.NopMetaKeywords())" />
+    <meta name="description" content="@description" />
+    <meta name="keywords" content="@keywords" />
     <meta name="generator" content="nopCommerce" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css'>
-
-    @Html.NopHeadCustom()
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0" />
+    <!link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css' />
+    @NopHtml.GenerateHeadCustom()
     @*This is used so that themes can inject content into the header*@
     @await Html.PartialAsync("Head")
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeadHtmlTag })
     @await Component.InvokeAsync("Widget", new { widgetZone = "head_html_tag_after_css_files_pavilion" })
-
-    @Html.NopCssFiles(ResourceLocation.Head)
-    @Html.NopScripts(ResourceLocation.Head)
-    @Html.NopCanonicalUrls()
-    @await Component.InvokeAsync("NewsRssHeaderLink")
-    @await Component.InvokeAsync("BlogRssHeaderLink")
+    @NopHtml.GenerateCssFiles()
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeadHtmlTag })
+    @NopHtml.GenerateCanonicalUrls()
+    @await Component.InvokeAsync(typeof(NewsRssHeaderLinkViewComponent))
+    @await Component.InvokeAsync(typeof(BlogRssHeaderLinkViewComponent))
     @*Insert favicon and app icons head code*@
-    @await Component.InvokeAsync("Favicon")
-    @if (displayMiniProfiler)
-    {
-    
-        <mini-profiler />
-    }
-    @Html.NopInlineScripts(ResourceLocation.Head)
+    @await Component.InvokeAsync(typeof(FaviconViewComponent))
+    @NopHtml.GenerateScripts(ResourceLocation.Head)
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Head)
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
+    @Html.Raw(commonSettings.HeaderCustomHtml)
 
+    <!-- ABC custom -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -150,7 +137,7 @@
     <!-- End SearchSpring Scripts -->
 
     <!-- Meta Pixel Code -->
-    <script>
+<script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -162,7 +149,7 @@
     fbq('init', '279056429645080'); 
     fbq('track', 'PageView');
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
   // Check if .storeId8 exists
   if (document.querySelector('.storeId8')) {
 
@@ -189,9 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });    
    
 
-    </script>
+</script>
 
-    <script>
+<script>
 
         @* Brand Filter Search *@
 document.addEventListener('DOMContentLoaded', function() {
@@ -215,8 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
     </script>
-
-
 
     <noscript>
     <img height="1" width="1" 
@@ -254,20 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener("load", initializeSessionIdNamespace);
     </script>
 </head>
-
-@functions {
-    public string GetBodyClass()
-    {
-        var routeData = ViewContext.RouteData;
-        var controller = routeData.Values["controller"]?.ToString() ?? "home";
-        var action = routeData.Values["action"]?.ToString() ?? "index";
-        
-        // Combine controller and action to create a unique class
-        return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
-    }
-}
-
-<body class="@GetBodyClass() @storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
+<body class="@currentPageClass @if (supportRtl){<text>rtl</text>}">
+    <nop-antiforgery-token />
 
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -377,11 +350,10 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-top: 0.5em;
         }
     </style>
-
     @RenderBody()
-    @Html.NopCssFiles(ResourceLocation.Footer)
-    @Html.NopScripts(ResourceLocation.Footer)
     <div id="goToTop"></div>
-    @Html.NopInlineScripts(ResourceLocation.Footer)
+    @NopHtml.GenerateScripts(ResourceLocation.Footer)
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)   
+    @Html.Raw(commonSettings.FooterCustomHtml)
 </body>
 </html>
