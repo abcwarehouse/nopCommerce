@@ -1,15 +1,15 @@
-namespace Nop.Core.Domain.Customers;
+﻿namespace Nop.Core.Domain.Customers;
 
 /// <summary>
-/// Customer logged-in event
+/// Customer change working language event
 /// </summary>
-public partial class CustomerLoggedinEvent
+public partial class CustomerChangeWorkingLanguageEvent
 {
     /// <summary>
     /// Ctor
     /// </summary>
     /// <param name="customer">Customer</param>
-    public CustomerLoggedinEvent(Customer customer)
+    public CustomerChangeWorkingLanguageEvent(Customer customer)
     {
         Customer = customer;
     }
