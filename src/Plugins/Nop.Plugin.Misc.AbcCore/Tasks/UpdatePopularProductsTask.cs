@@ -8,11 +8,18 @@ namespace Nop.Plugin.Misc.AbcCore.Tasks
 {
     class UpdatePopularProductsTask : IScheduleTask
     {
+        private readonly ICategoryService _categoryService;
         private readonly INopDataProvider _nopDataProvider;
+        private readonly IProductService _productService;
 
-        public UpdatePopularProductsTask(INopDataProvider nopDataProvider)
+        public UpdatePopularProductsTask(
+            ICategoryService categoryService,
+            INopDataProvider nopDataProvider,
+            IProductService productService)
         {
+            _categoryService = categoryService;
             _nopDataProvider = nopDataProvider;
+            _productService = productService;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
@@ -40,6 +47,24 @@ namespace Nop.Plugin.Misc.AbcCore.Tasks
 
                 IF OBJECT_ID('tempdb..#productSalesCount') IS NOT NULL
                 DROP TABLE #productSalesCount;
+            ");
+
+            await _nopDataProvider.ExecuteNonQueryAsync(@"
+                -- promotes Hawthorne-specific items
+                UPDATE
+                    pcm
+                SET
+                    -- using 1000 as an arbitrary offset
+                    pcm.DisplayOrder = pcm.DisplayOrder - 1000
+                FROM
+                    Product_Category_Mapping AS pcm
+                    JOIN Product AS p ON p.Id = pcm.ProductId
+                    JOIN Product_Manufacturer_Mapping AS pmm ON pmm.ProductId = p.Id
+                WHERE ManufacturerId IN (
+                    SELECT Id FROM Manufacturer
+                    -- Hawthorne-specific brands
+                    WHERE Name IN ('WOLF', 'SUBZERO', 'COVE')
+                )
             ");
         }
     }
