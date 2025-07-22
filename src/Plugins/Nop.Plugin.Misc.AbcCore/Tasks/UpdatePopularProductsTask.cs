@@ -8,18 +8,11 @@ namespace Nop.Plugin.Misc.AbcCore.Tasks
 {
     class UpdatePopularProductsTask : IScheduleTask
     {
-        private readonly ICategoryService _categoryService;
         private readonly INopDataProvider _nopDataProvider;
-        private readonly IProductService _productService;
 
-        public UpdatePopularProductsTask(
-            ICategoryService categoryService,
-            INopDataProvider nopDataProvider,
-            IProductService productService)
+        public UpdatePopularProductsTask(INopDataProvider nopDataProvider)
         {
-            _categoryService = categoryService;
             _nopDataProvider = nopDataProvider;
-            _productService = productService;
         }
 
         public async System.Threading.Tasks.Task ExecuteAsync()
