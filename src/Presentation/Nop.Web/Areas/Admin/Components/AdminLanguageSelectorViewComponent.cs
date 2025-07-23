@@ -5,21 +5,21 @@ using Nop.Web.Framework.Components;
 namespace Nop.Web.Areas.Admin.Components;
 
 /// <summary>
-/// Represents a view component that displays the nopCommerce news
+/// Represents a view component that displays the admin language selector
 /// </summary>
-public partial class NopCommerceNewsViewComponent : NopViewComponent
+public partial class AdminLanguageSelectorViewComponent : NopViewComponent
 {
     #region Fields
 
-    protected readonly IHomeModelFactory _homeModelFactory;
+    protected readonly ICommonModelFactory _commonModelFactory;
 
     #endregion
 
     #region Ctor
 
-    public NopCommerceNewsViewComponent(IHomeModelFactory homeModelFactory)
+    public AdminLanguageSelectorViewComponent(ICommonModelFactory commonModelFactory)
     {
-        _homeModelFactory = homeModelFactory;
+        _commonModelFactory = commonModelFactory;
     }
 
     #endregion
@@ -35,17 +35,10 @@ public partial class NopCommerceNewsViewComponent : NopViewComponent
     /// </returns>
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        try
-        {
-            //prepare model
-            var model = await _homeModelFactory.PrepareNopCommerceNewsModelAsync();
+        //prepare model
+        var model = await _commonModelFactory.PrepareLanguageSelectorModelAsync();
 
-            return View(model);
-        }
-        catch
-        {
-            return Content(string.Empty);
-        }
+        return View(model);
     }
 
     #endregion

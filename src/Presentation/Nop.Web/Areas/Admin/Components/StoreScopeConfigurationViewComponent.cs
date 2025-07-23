@@ -5,21 +5,21 @@ using Nop.Web.Framework.Components;
 namespace Nop.Web.Areas.Admin.Components;
 
 /// <summary>
-/// Represents a view component that displays the nopCommerce news
+/// Represents a view component that displays the store scope configuration
 /// </summary>
-public partial class NopCommerceNewsViewComponent : NopViewComponent
+public partial class StoreScopeConfigurationViewComponent : NopViewComponent
 {
     #region Fields
 
-    protected readonly IHomeModelFactory _homeModelFactory;
+    protected readonly ISettingModelFactory _settingModelFactory;
 
     #endregion
 
     #region Ctor
 
-    public NopCommerceNewsViewComponent(IHomeModelFactory homeModelFactory)
+    public StoreScopeConfigurationViewComponent(ISettingModelFactory settingModelFactory)
     {
-        _homeModelFactory = homeModelFactory;
+        _settingModelFactory = settingModelFactory;
     }
 
     #endregion
@@ -35,17 +35,13 @@ public partial class NopCommerceNewsViewComponent : NopViewComponent
     /// </returns>
     public async Task<IViewComponentResult> InvokeAsync()
     {
-        try
-        {
-            //prepare model
-            var model = await _homeModelFactory.PrepareNopCommerceNewsModelAsync();
+        //prepare model
+        var model = await _settingModelFactory.PrepareStoreScopeConfigurationModelAsync();
 
-            return View(model);
-        }
-        catch
-        {
+        if (model.Stores.Count < 2)
             return Content(string.Empty);
-        }
+
+        return View(model);
     }
 
     #endregion
