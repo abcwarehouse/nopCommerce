@@ -1,3 +1,0 @@
-# to disallow category/manufacturer AJAX calls from being crawled
-Disallow: /category/products
-Disallow: /manufacturer/products
