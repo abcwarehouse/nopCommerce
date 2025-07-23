@@ -346,7 +346,12 @@
             <div class="product-box-review" data-bv-show="inline_rating" data-bv-product-id="@Model.Id"></div>
 
     @{
-        var offerPrice = Model?.ProductPrice?.PriceValue?.ToString();
+        string offerPrice = null;
+
+        if (Model?.ProductPrice != null)
+        {
+            offerPrice = Model.ProductPrice.PriceValue.ToString();
+        }
 
         var schema = new Dictionary<string, object>
         {

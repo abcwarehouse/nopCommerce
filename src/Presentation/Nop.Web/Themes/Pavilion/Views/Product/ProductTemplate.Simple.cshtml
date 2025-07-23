@@ -359,7 +359,12 @@
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 }
 @{
-    var offerPrice = Model?.ProductPrice?.PriceValue?.ToString();
+    string offerPrice = null;
+
+    if (Model?.ProductPrice != null)
+    {
+        offerPrice = Model.ProductPrice.PriceValue.ToString();
+    }
 
     var schema = new Dictionary<string, object>
     {
