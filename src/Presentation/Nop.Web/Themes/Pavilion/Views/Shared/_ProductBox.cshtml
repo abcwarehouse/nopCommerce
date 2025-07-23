@@ -357,7 +357,8 @@
                     ["offers"] = new Dictionary<string, object>
                         {
                             ["@type"] = "Offer",
-                            ["priceCurrency"] = "USD"
+                            ["priceCurrency"] = "USD",
+                            ["price"] = Products.Price.TaxShipping.ExclTax.ToString();
                         }
                 };
 
