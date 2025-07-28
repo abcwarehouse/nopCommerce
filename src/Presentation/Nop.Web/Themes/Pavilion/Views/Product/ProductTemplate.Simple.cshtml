@@ -199,8 +199,9 @@
                         
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
-                            @* removed the added "-" *@
-                            <span class="product-name__isam-id">@displayIdStr.Replace("-", "")</span>
+                            @* removed  all variations of "-" *@
+                            <span>@displayIdStr.Replace("-", "").Replace("–", "").Replace("—", "").Replace("−", "")</span>
+
                         }
                     </div>
 
