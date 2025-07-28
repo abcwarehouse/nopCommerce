@@ -188,12 +188,18 @@
                     <!--manufacturers-->
                     @await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)
                     <div class="product-name">
-                        <h1>
-                            @Model.Name
-                        </h1>
+
+                        <span>Manufacturer: </span>
+                            @if (Model.ProductManufacturers.Any())
+                    {
+                <h1><span>@Model.ProductManufacturers.First().Name</span> </h1>
+                    }
+                    
+                       <span>    SKU: <h1>@Model.Sku</span></h1>
+                        
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
-                            <span class="product-name__isam-id">@displayIdStr</span>
+                            <span class="product-name__isam-id"><br>@displayIdStr</span>
                         }
                     </div>
 
@@ -359,13 +365,6 @@
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 }
 @{
-    string offerPrice = null;
-
-    if (Model?.ProductPrice != null)
-    {
-        offerPrice = Model.ProductPrice.PriceValue.ToString();
-    }
-
     var schema = new Dictionary<string, object>
     {
         ["@context"] = "https://schema.org",
@@ -375,27 +374,19 @@
         ["image"] = productImageUrl,
         ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
-        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)),
-        ["offers"] = offerPrice != null
-            ? new Dictionary<string, object>
-                {
-                    ["@type"] = "Offer",
-                    ["priceCurrency"] = "USD",
-                    ["price"] = offerPrice
-                }
-            : null
+        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
     };
 
-    // Remove null-valued keys (like "offers" if offerPrice is null)
-    var schemaFiltered = schema
-        .Where(kvp => kvp.Value != null)
-        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-    var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
+    var jsonLd = JsonConvert.SerializeObject(schema, Formatting.Indented);
 }
-    <script type="application/ld+json">
-        @Html.Raw(jsonLd)
-    </script>
+
+
+
+
+
+<script type="application/ld+json">
+@Html.Raw(jsonLd)
+</script>
     <!--BV injected code-->
     <script>
         // Make sure that BV.configure is defined before running this script
