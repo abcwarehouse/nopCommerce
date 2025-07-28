@@ -200,7 +200,7 @@
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
                             @* removed  all variations of "-" *@
-                            <span>@displayIdStr.Replace("-", "").Replace("–", "").Replace("—", "").Replace("−", "")</span>
+                            <span>#@displayIdStr.Replace("-", "").Replace("–", "").Replace("—", "").Replace("−", "")</span>
 
                         }
                     </div>
