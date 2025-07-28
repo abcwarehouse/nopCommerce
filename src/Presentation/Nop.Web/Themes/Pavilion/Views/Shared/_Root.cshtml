@@ -122,6 +122,11 @@
         </div>
 
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentAfter })
+        <div id="ss-personalized-recs" class="personalized-products">
+            <h3>Recommended For You</h3>
+            <div class="products-grid" id="ss-personalized-products"></div>
+        </div>
+
     </div>
 
     @if (isHomePage && storeId != 8)
@@ -267,6 +272,49 @@
         });
     });
 </script>
+<script>
+    (function () {
+        const shopperId = localStorage.getItem("ssShopperId") || "";
+        if (!shopperId) return;
+
+        fetch('/searchspring/getpersonalizedrecommendations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                shopperId: shopperId,
+                pageType: 'home'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.results || data.results.length === 0) return;
+
+            const container = document.getElementById('ss-personalized-products');
+            data.results.forEach(product => {
+                const productHtml = `
+                    <div class="item-box">
+                        <div class="product-item">
+                            <div class="picture">
+                                <a href="${product.url}">
+                                    <img src="${product.imageUrl}" alt="${product.name}" />
+                                </a>
+                            </div>
+                            <div class="details">
+                                <h2 class="product-title">
+                                    <a href="${product.url}">${product.name}</a>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>`;
+                container.insertAdjacentHTML('beforeend', productHtml);
+            });
+        })
+        .catch(error => {
+            console.error('Searchspring personalization error:', error);
+        });
+    })();
+</script>
+
 
 @await Component.InvokeAsync("EuCookieLaw")
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })

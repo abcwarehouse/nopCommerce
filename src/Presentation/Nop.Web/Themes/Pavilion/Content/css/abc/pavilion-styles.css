@@ -151,7 +151,6 @@ body {
 
 .accepted-payments li {
     /* uses the uploaded payment-sprite file in root folder */
-    background: url('../../../payment-sprite.png');
     background-repeat: no-repeat;
 }
 

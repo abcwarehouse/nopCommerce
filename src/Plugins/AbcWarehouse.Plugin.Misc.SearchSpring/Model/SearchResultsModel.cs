@@ -94,4 +94,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         [JsonPropertyName("label")]
         public string Label { get; set; }
     }
+
+    public class PersonalizationRequestModel
+    {
+        public string ShopperId { get; set; }
+        public string PageType { get; set; } 
+    }
 }
