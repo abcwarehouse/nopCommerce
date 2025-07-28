@@ -195,11 +195,11 @@
                 <h1><span>@Model.ProductManufacturers.First().Name</span> </h1>
                     }
                     
-                       <span>    SKU: <h1>@Model.Sku</span></h1>
+                       <span>SKU: <h1>@Model.Sku</span></h1><br>
                         
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
-                            <span class="product-name__isam-id"><br>@displayIdStr</span>
+                            <span class="product-name__isam-id">@displayIdStr</span>
                         }
                     </div>
 
