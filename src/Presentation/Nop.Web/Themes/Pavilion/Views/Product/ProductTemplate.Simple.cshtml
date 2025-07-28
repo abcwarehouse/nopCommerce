@@ -199,7 +199,8 @@
                         
                         @if (!string.IsNullOrEmpty(displayIdStr))
                         {
-                            <span class="product-name__isam-id">@displayIdStr</span>
+                            @* removed the added "-" *@
+                            <span class="product-name__isam-id">@displayIdStr.Replace("-", "")</span>
                         }
                     </div>
 
