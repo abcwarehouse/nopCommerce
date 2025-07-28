@@ -31,7 +31,51 @@
 
 @if (!Model.Results.Any())
 {
-    <p>No products found.</p>
+    var personalizedResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId);
+    model.PersonalizedResults = personalizedResults;
+    
+    <p>No products found for "@query".</p>
+
+    @if (Model.PersonalizedResults?.Any() == true)
+    {
+        <div class="personalized-section">
+            <h3>You might like these instead:</h3>
+            <div class="item-grid">
+                @{
+                    var personalizedProductModels = new List<dynamic>();
+
+                    foreach (var item in Model.PersonalizedResults)
+                    {
+                        var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
+                        if (product == null)
+                        {
+                            product = productService.GetProductBySkuAsync("+" + item.Sku).GetAwaiter().GetResult();
+                        }
+                        if (product != null)
+                        {
+                            var productOverviewModels = productModelFactory.PrepareProductOverviewModelsAsync(
+                                new[] { product },
+                                true,
+                                true).GetAwaiter().GetResult();
+
+                            var productModel = productOverviewModels.FirstOrDefault();
+                            if (productModel != null)
+                            {
+                                personalizedProductModels.Add(productModel);
+                            }
+                        }
+                    }
+
+                    foreach (var productModel in personalizedProductModels)
+                    {
+                        <div class="item-box">
+                            @await Html.PartialAsync("_ProductBox", (ProductOverviewModel)productModel)
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
 }
 else
 {
