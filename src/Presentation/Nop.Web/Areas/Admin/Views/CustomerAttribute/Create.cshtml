@@ -4,7 +4,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Customers.CustomerAttributes.AddNew").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Customer and user settings");
+    NopHtml.SetActiveMenuItemSystemName("Customer and user settings");
 }
 
 <form asp-controller="CustomerAttribute" asp-action="Create" method="post" id="customerattribute-form">
@@ -18,14 +18,14 @@
         </h1>
         <div class="float-right">
             <button type="submit" name="save" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.Save")
             </button>
             <button type="submit" name="save-continue" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.CustomerAttributeDetailsButtons })
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.CustomerAttributeDetailsButtons, additionalData = Model })
         </div>
     </div>
     @await Html.PartialAsync("_CreateOrUpdate", Model)

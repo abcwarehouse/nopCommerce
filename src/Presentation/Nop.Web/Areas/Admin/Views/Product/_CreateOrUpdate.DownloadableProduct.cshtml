@@ -2,7 +2,7 @@
 @using Nop.Core.Domain.Catalog;
 @using Nop.Services
 <script>
-    $(document).ready(function() {
+    $(function() {
         $("#@Html.IdFor(model => model.IsDownload)").click(toggleDownloadableProduct);
         $("#@Html.IdFor(model => model.UnlimitedDownloads)").click(toggleDownloadableProduct);
         $("#@Html.IdFor(model => model.HasSampleDownload)").click(toggleDownloadableProduct);
@@ -61,7 +61,7 @@
             <span asp-validation-for="IsDownload"></span>
         </div>
     </div>
-    <nop-nested-setting asp-for="IsDownload">
+    <nop-nested-setting asp-for="IsDownload"  disable-auto-generation="true">
         <div class="form-group row" id="pnlDownloadFile">
             <div class="col-md-3">
                 <nop-label asp-for="DownloadId" />
@@ -103,7 +103,7 @@
                 <nop-label asp-for="DownloadActivationTypeId" />
             </div>
             <div class="col-md-9">
-                <nop-select asp-for="DownloadActivationTypeId" asp-items="@await (((DownloadActivationType)Model.DownloadActivationTypeId).ToSelectListAsync())" />
+                <nop-select asp-for="DownloadActivationTypeId" asp-items="@(await ((DownloadActivationType)Model.DownloadActivationTypeId).ToSelectListAsync())" />
                 <span asp-validation-for="DownloadActivationTypeId"></span>
             </div>
         </div>
@@ -134,7 +134,7 @@
                 <span asp-validation-for="HasSampleDownload"></span>
             </div>
         </div>
-        <nop-nested-setting asp-for="HasSampleDownload">
+        <nop-nested-setting asp-for="HasSampleDownload" disable-auto-generation="true">
             <div class="form-group row" id="pnlSampleDownloadFile">
                 <div class="col-md-3">
                     <nop-label asp-for="SampleDownloadId" />
