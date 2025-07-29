@@ -4,7 +4,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.EditAttributeDetails").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Specification attributes");
+    NopHtml.SetActiveMenuItemSystemName("Specification attributes");
 }
 
 <form asp-controller="SpecificationAttribute" asp-action="EditSpecificationAttribute" method="post" id="specificationattribute-form">
@@ -18,18 +18,18 @@
         </h1>
         <div class="float-right">
             <button type="submit" name="save" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.Save")
             </button>
             <button type="submit" name="save-continue" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
             <span id="specificationattribute-delete" class="btn btn-danger">
-                <i class="far fa-trash-alt"></i>
+                <i class="far fa-trash-can"></i>
                 @T("Admin.Common.Delete")
             </span>
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.SpecificationAttributeDetailsButtons, additionalData = Model })
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.SpecificationAttributeDetailsButtons, additionalData = Model })
         </div>
     </div>
     @await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute", Model)
