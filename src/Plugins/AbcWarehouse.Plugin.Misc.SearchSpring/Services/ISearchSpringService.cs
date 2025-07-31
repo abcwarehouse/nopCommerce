@@ -13,5 +13,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         Task<Product> FindProductBySkuOrAltSkuAsync(string sku);
         Task<IList<ProductOverviewModel>> PrepareProductOverviewModelsAsync(IEnumerable<Product> products);
         string GetSearchSpringShopperId();
+        public string GetSearchSpringSessionId();
     }
 }
