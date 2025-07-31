@@ -361,5 +361,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             return (await _productModelFactory.PrepareProductOverviewModelsAsync(products)).ToList();
         }
 
+        public string GetSearchSpringSessionId()
+        {
+            var context = _httpContextAccessor?.HttpContext;
+            var cookie = context?.Request?.Cookies["ssSessionId"];
+            return cookie ?? Guid.NewGuid().ToString();
+        }
+
     }
 }
