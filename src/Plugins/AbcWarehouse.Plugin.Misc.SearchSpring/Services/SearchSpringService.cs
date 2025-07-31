@@ -280,17 +280,19 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         public async Task<List<SearchSpringProductModel>> GetPersonalizedResultsAsync(string userId, string sessionId, string siteId = "4lt84w")
         {
             var client = _httpClientFactory.CreateClient();
-            var queryParams = new List<string>
+
+            var requestPayload = new
             {
-                $"userId={HttpUtility.UrlEncode(userId)}",
-                $"sessionId={HttpUtility.UrlEncode(sessionId)}",
-                $"siteId={HttpUtility.UrlEncode(siteId)}",
-                "resultsFormat=json"
+                userId,
+                sessionId,
+                siteId
             };
 
-            var url = $"{_baseUrl}/api/personalized.json?{string.Join("&", queryParams)}";
+            var content = new StringContent(JsonSerializer.Serialize(requestPayload));
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-            var response = await client.GetAsync(url);
+            var url = "https://api.searchspring.io/api/personalized/v1/recommendations";
+            var response = await client.PostAsync(url, content);
             var json = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -334,6 +336,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             return results;
         }
 
+
         public string GetSearchSpringShopperId()
         {
             var cookieName = "ssShopperId";
@@ -342,7 +345,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 return shopperId;
 
 
-            // Generate a fallback or return null
             return Guid.NewGuid().ToString();
         }
 
