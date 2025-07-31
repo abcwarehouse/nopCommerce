@@ -6,6 +6,8 @@
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Nop.Core.IWebHelper webHelper
+@inject AbcWarehouse.Plugin.Misc.SearchSpring.Services.ISearchSpringService _searchspringService
+
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Catalog
 @using Nop.Web.Extensions
@@ -18,58 +20,49 @@
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
 
-    // Grab current query string parameters as a dictionary (string key -> string value)
     var queryParams = Context.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
-
-    // Current search query param
     var query = Context.Request.Query.ContainsKey("q") ? Context.Request.Query["q"].ToString() : "";
-
-    // Current page param fallback to 1
     var currentPage = Model.PageNumber > 0 ? Model.PageNumber : 1;
 
+    var ssShopperId = _searchspringService.GetSearchSpringShopperId();
 }
+
 
 @if (!Model.Results.Any())
 {
     var personalizedResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId);
-    model.PersonalizedResults = personalizedResults;
+    Model.PersonalizedResults = personalizedResults;
 
     <p>No products found for "@query".</p>
 
-    @if (Model.PersonalizedResults?.Any() == true)
+    if (Model.PersonalizedResults?.Any() == true)
     {
         <div class="personalized-section">
             <h3>You might like these instead:</h3>
             <div class="item-grid">
                 @{
-                    var personalizedProductModels = new List<dynamic>();
+                    var personalizedProductModels = new List<ProductOverviewModel>();
 
                     foreach (var item in Model.PersonalizedResults)
                     {
-                        var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
+                        var product = await productService.GetProductBySkuAsync(item.Sku);
                         if (product == null)
-                        {
-                            product = productService.GetProductBySkuAsync("+" + item.Sku).GetAwaiter().GetResult();
-                        }
+                            product = await productService.GetProductBySkuAsync("+" + item.Sku);
+
                         if (product != null)
                         {
-                            var productOverviewModels = productModelFactory.PrepareProductOverviewModelsAsync(
-                                new[] { product },
-                                true,
-                                true).GetAwaiter().GetResult();
+                            var overviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(new[] { product }, true, true);
+                            var model = overviewModels.FirstOrDefault();
 
-                            var productModel = productOverviewModels.FirstOrDefault();
-                            if (productModel != null)
-                            {
-                                personalizedProductModels.Add(productModel);
-                            }
+                            if (model != null)
+                                personalizedProductModels.Add(model);
                         }
                     }
 
                     foreach (var productModel in personalizedProductModels)
                     {
                         <div class="item-box">
-                            @await Html.PartialAsync("_ProductBox", (ProductOverviewModel)productModel)
+                            @await Html.PartialAsync("_ProductBox", productModel)
                         </div>
                     }
                 }
@@ -77,6 +70,7 @@
         </div>
     }
 }
+
 else
 {
     <div class="master-column-wrapper">
