@@ -30,7 +30,9 @@
 
 @if (!Model.Results.Any())
 {
-    var personalizedResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId);
+    var sessionId = _searchspringService.GetSearchSpringSessionId();
+    var personalizedResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId, "search", sessionId);
+
     Model.PersonalizedResults = personalizedResults;
 
     <p>No products found for "@query".</p>
