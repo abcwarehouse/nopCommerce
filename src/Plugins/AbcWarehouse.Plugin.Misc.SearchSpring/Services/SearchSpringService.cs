@@ -281,18 +281,15 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         {
             var client = _httpClientFactory.CreateClient();
 
-            var requestPayload = new
+            var queryParams = new List<string>
             {
-                userId,
-                sessionId,
-                siteId
+                $"siteId={HttpUtility.UrlEncode(siteId)}",
+                $"userId={HttpUtility.UrlEncode(userId)}",
+                $"sessionId={HttpUtility.UrlEncode(sessionId)}"
             };
 
-            var content = new StringContent(JsonSerializer.Serialize(requestPayload));
-            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-
-            var url = "https://api.searchspring.io/api/personalized/v1/recommendations";
-            var response = await client.PostAsync(url, content);
+            var url = $"{_baseUrl}/api/personalized.json?{string.Join("&", queryParams)}";
+            var response = await client.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -308,22 +305,22 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
+                if (root.TryGetProperty("results", out var resultsElement))
                 {
                     foreach (var item in resultsElement.EnumerateArray())
                     {
                         results.Add(new SearchSpringProductModel
                         {
-                            Id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
-                            Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
-                            ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
-                            ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
-                            Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
-                            Brand = item.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
-                            Category = item.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
-                            ItemNumber = item.TryGetProperty("item_number", out var itemNumProp) ? itemNumProp.GetString() : "",
-                            RetailPrice = item.TryGetProperty("retail_price", out var retailPriceProp) ? retailPriceProp.GetString() : "",
-                            Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
+                            Id = item.GetProperty("id").GetString(),
+                            Name = item.GetProperty("name").GetString(),
+                            ProductUrl = item.GetProperty("url").GetString(),
+                            ImageUrl = item.GetProperty("imageUrl").GetString(),
+                            Price = item.GetProperty("price").GetString(),
+                            Brand = item.GetProperty("brand").GetString(),
+                            Category = item.GetProperty("category").GetString(),
+                            ItemNumber = item.GetProperty("item_number").GetString(),
+                            RetailPrice = item.GetProperty("retail_price").GetString(),
+                            Sku = item.GetProperty("sku").GetString()
                         });
                     }
                 }
