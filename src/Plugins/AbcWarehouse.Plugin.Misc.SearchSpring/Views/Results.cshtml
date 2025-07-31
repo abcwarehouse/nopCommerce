@@ -16,6 +16,7 @@
 @using System.Web
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.WebUtilities
+@using AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
@@ -31,7 +32,16 @@
 @if (!Model.Results.Any())
 {
     var sessionId = _searchspringService.GetSearchSpringSessionId();
-    var personalizedResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId, "search", sessionId);
+    var rawResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId, "search", sessionId);
+
+    // Manually map to PersonalizedProductResult
+    var personalizedResults = rawResults.Select(p => new PersonalizedProductResult
+    {
+        Sku = p.Sku,
+        Name = p.Name,
+        Url = p.ProductUrl,
+        ImageUrl = p.ImageUrl
+    }).ToList();
 
     Model.PersonalizedResults = personalizedResults;
 
