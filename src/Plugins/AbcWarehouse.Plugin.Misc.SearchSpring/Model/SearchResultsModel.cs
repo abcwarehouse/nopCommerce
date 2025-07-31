@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using Nop.Web.Models.Catalog;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 {
@@ -18,6 +19,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         [JsonPropertyName("totalResults")]
         public int TotalResults { get; set; }
 
+        public List<PersonalizedProductResult> PersonalizedResults { get; set; } = new();
+
         public int TotalPages => PageSize > 0
             ? (int)Math.Ceiling((double)TotalResults / PageSize)
             : 0;
@@ -33,8 +36,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("redirectResponse")]
         public string RedirectResponse { get; set; }
-        public Dictionary<string, List<string>> BannersByPosition { get; set; } = new();
 
+        public Dictionary<string, List<string>> BannersByPosition { get; set; } = new();
+        [JsonIgnore]
+        public List<ProductOverviewModel> PersonalizedProducts { get; set; } = new();
     }
 
     public class FacetDetail
@@ -62,7 +67,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
 
         [JsonPropertyName("values")]
         public List<FacetValue> Values { get; set; } = new();
-
     }
 
     public class FacetValue
@@ -98,6 +102,14 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
     public class PersonalizationRequestModel
     {
         public string ShopperId { get; set; }
-        public string PageType { get; set; } 
+        public string PageType { get; set; }
     }
+    public class PersonalizedProductResult
+    {
+        public string Sku { get; set; }
+        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public string Url { get; set; }
+    }
+
 }

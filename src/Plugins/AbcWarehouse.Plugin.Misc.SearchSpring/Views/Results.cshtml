@@ -33,7 +33,7 @@
 {
     var personalizedResults = await _searchspringService.GetPersonalizedResultsAsync(ssShopperId);
     model.PersonalizedResults = personalizedResults;
-    
+
     <p>No products found for "@query".</p>
 
     @if (Model.PersonalizedResults?.Any() == true)
@@ -155,12 +155,6 @@ else
         </ul>
     </div>
 }
-
-
-
-
-
-
 
             </div>
         </div>

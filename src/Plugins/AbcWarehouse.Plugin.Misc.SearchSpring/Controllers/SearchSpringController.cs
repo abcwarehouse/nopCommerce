@@ -18,6 +18,7 @@ using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Services;
 using AbcWarehouse.Plugin.Misc.SearchSpring.Models;
+using Nop.Core.Domain.Catalog;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
@@ -76,6 +77,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var filters = ParseFilters(HttpContext.Request.Query);
 
             var results = await _searchSpringService.SearchAsync(q, sessionId: sessionId, siteId: SiteId, page: page, filters: filters, sort: sort);
+            results.PageNumber = page;
+            results.Query = q;
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
                 return Redirect(results.RedirectResponse);
@@ -83,8 +86,30 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             if (results.Results.Count() == 1 && q.All(char.IsDigit))
                 return Redirect(results.Results.First().ProductUrl);
 
-            results.PageNumber = page;
-            results.Query = q;
+            // If no results, fetch personalized recommendations
+            if (!results.Results.Any())
+            {
+                var personalized = await _searchSpringService.GetPersonalizedResultsAsync(
+                    GetSearchSpringShopperId(),
+                    sessionId,
+                    SiteId
+                );
+
+                var personalizedModels = new List<Nop.Web.Models.Catalog.ProductOverviewModel>();
+
+                foreach (var item in personalized)
+                {
+                    var product = await _searchSpringService.FindProductBySkuOrAltSkuAsync(item.Sku);
+                    if (product == null)
+                        continue;
+
+                    var overviewModels = await _searchSpringService.PrepareProductOverviewModelsAsync(new List<Product> { product });
+                    if (overviewModels.Any())
+                        personalizedModels.Add(overviewModels.First());
+                }
+
+                results.PersonalizedProducts = personalizedModels;
+            }
 
             if (_settings.IsDebugMode)
             {
@@ -99,6 +124,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/Results.cshtml", results);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> GetPersonalizedRecommendations([FromBody] PersonalizationRequestModel model)
@@ -263,5 +289,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         }
 
         #endregion
+
+        public string GetSearchSpringShopperId()
+        {
+            Request.Cookies.TryGetValue("_ss_tk", out var shopperId);
+            return shopperId;
+        }
     }
 }

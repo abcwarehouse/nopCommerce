@@ -9,6 +9,12 @@ using System.Web;
 using System.Linq;
 using Nop.Services.Logging;
 using Nop.Core.Domain.Logging;
+using Nop.Core.Domain.Catalog;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Nop.Web.Models.Catalog;
+using Nop.Services.Catalog;
+using Nop.Web.Factories;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 {
@@ -17,11 +23,17 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
         private readonly ILogger _logger;
+        private readonly IProductService _productService;
+        private readonly IProductModelFactory _productModelFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger)
+        public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger, IProductService productService, IProductModelFactory productModelFactory, IHttpContextAccessor httpContextAccessor)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _productService = productService;
+            _productModelFactory = productModelFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null,
@@ -264,5 +276,90 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+
+        public async Task<List<SearchSpringProductModel>> GetPersonalizedResultsAsync(string userId, string sessionId, string siteId = "4lt84w")
+        {
+            var client = _httpClientFactory.CreateClient();
+            var queryParams = new List<string>
+            {
+                $"userId={HttpUtility.UrlEncode(userId)}",
+                $"sessionId={HttpUtility.UrlEncode(sessionId)}",
+                $"siteId={HttpUtility.UrlEncode(siteId)}",
+                "resultsFormat=json"
+            };
+
+            var url = $"{_baseUrl}/api/personalized.json?{string.Join("&", queryParams)}";
+
+            var response = await client.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await _logger.WarningAsync($"[SearchSpring] Personalization error: {response.StatusCode} - {json}");
+                return new List<SearchSpringProductModel>();
+            }
+
+            var results = new List<SearchSpringProductModel>();
+
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in resultsElement.EnumerateArray())
+                    {
+                        results.Add(new SearchSpringProductModel
+                        {
+                            Id = item.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
+                            Name = item.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
+                            ProductUrl = item.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
+                            ImageUrl = item.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
+                            Price = item.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
+                            Brand = item.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
+                            Category = item.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
+                            ItemNumber = item.TryGetProperty("item_number", out var itemNumProp) ? itemNumProp.GetString() : "",
+                            RetailPrice = item.TryGetProperty("retail_price", out var retailPriceProp) ? retailPriceProp.GetString() : "",
+                            Sku = item.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : ""
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await _logger.ErrorAsync($"[SearchSpring] Failed to parse personalization response: {ex.Message}", ex);
+            }
+
+            return results;
+        }
+
+        public string GetSearchSpringShopperId()
+        {
+            var cookieName = "ssShopperId";
+            var request = _httpContextAccessor.HttpContext?.Request;
+            if (request != null && request.Cookies.TryGetValue(cookieName, out var shopperId) && !string.IsNullOrWhiteSpace(shopperId))
+                return shopperId;
+
+
+            // Generate a fallback or return null
+            return Guid.NewGuid().ToString();
+        }
+
+        public async Task<Product> FindProductBySkuOrAltSkuAsync(string sku)
+        {
+            var products = await _productService.SearchProductsAsync(
+                keywords: sku,
+                searchDescriptions: true
+            );
+
+            return products.FirstOrDefault();
+        }
+
+        public async Task<IList<ProductOverviewModel>> PrepareProductOverviewModelsAsync(IEnumerable<Product> products)
+        {
+            return (await _productModelFactory.PrepareProductOverviewModelsAsync(products)).ToList();
+        }
+
     }
 }
