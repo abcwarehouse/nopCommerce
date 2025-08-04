@@ -1,48 +1,47 @@
 ﻿@model CheckoutConfirmModel
+
 @{
     Layout = "_ColumnsOne";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
     //page class
-    Html.AppendPageCssClassParts("html-checkout-page");
-    Html.AppendPageCssClassParts("html-order-confirm-page");
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-order-confirm-page");
 }
 <div class="page checkout-page order-confirm-page">
-    @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Confirm })
+    @await Component.InvokeAsync(typeof(CheckoutProgressViewComponent), new { step = CheckoutProgressStep.Confirm })
     <div class="page-title">
         <h1>@T("Checkout.ConfirmYourOrder")</h1>
     </div>
     <div class="page-body checkout-data">
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutConfirmTop })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutConfirmTop, additionalData = Model })
         <div class="section confirm-order">
             <form asp-route="CheckoutConfirm" method="post" id="confirm-order-form">
                 <script asp-location="Footer">
-                    $(document).ready(function () {
+                    $(function() {
                         $('.confirm-order-next-step-button').on('click', function () {
+                            //terms of service
                             var termOfServiceOk = true;
-                            var measurementConfirmed = true;
-
-                            // Validate Terms of Service
                             if ($('#termsofservice').length > 0) {
+                                //terms of service element exists
                                 if (!$('#termsofservice').is(':checked')) {
                                     $("#terms-of-service-warning-box").dialog();
                                     termOfServiceOk = false;
+                                } else {
+                                    termOfServiceOk = true;
                                 }
                             }
-
-                            // Validate Measurement Confirmation
-                            if (!$('#measurement-confirmation').is(':checked')) {
-                                alert("You must confirm that you have measured your items and they will fit upon delivery.");
-                                measurementConfirmed = false;
+                            if (termOfServiceOk) {
+                                //$('#confirm-order-form').submit();
+                                //$('.confirm-order-next-step-button').prop('disabled', true);
+                                return true;
+                            } else {
+                                return false;
                             }
-
-                            // Prevent form submission if validation fails
-                            return termOfServiceOk && measurementConfirmed;
                         });
                     });
                 </script>
-
                 @if (!string.IsNullOrEmpty(Model.MinOrderTotalWarning))
                 {
                     <span class="min-order-warning">@Model.MinOrderTotalWarning</span>
@@ -61,7 +60,7 @@
                             {
                                 <a class="read" id="read-terms">@T("Checkout.TermsOfService.Read")</a>
                                 <script asp-location="Footer">
-                                    $(document).ready(function() {
+                                    $(function() {
                                         $('#read-terms').on('click',
                                             function(e) {
                                                 e.preventDefault();
@@ -72,21 +71,13 @@
                             }
                             else
                             {
-                                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+                                <a class="read" id="read-terms" href="@Url.RouteTopicUrl("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
                             }
                         </div>
                     }
-
-                    <!-- New Measurement Confirmation Checkbox -->
-                    <div class="measurement-confirmation">
-                        <input id="measurement-confirmation" type="checkbox" name="measurement-confirmation" />
-                        <label for="measurement-confirmation">If applicable, I have confirmed the dimensions of the product(s) I am ordering and ensure they will fit in my home.</label>
-                    </div>
-
                     <div class="buttons">
                         <button type="submit" name="nextstep" class="button-1 confirm-order-next-step-button">@T("Checkout.ConfirmButton")</button>
                     </div>
-
                     <script asp-location="Footer">
                         $('#confirm-order-form').on('submit',
                             function () {
@@ -97,6 +88,10 @@
                                 0);
                             });
                     </script>
+                    if (Model.DisplayCaptcha)
+                    {
+                        <nop-captcha />
+                    }
                 }
                 @if (Model.Warnings.Count > 0)
                 {
@@ -111,9 +106,9 @@
                 }
             </form>
         </div>
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutConfirmBottom })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutConfirmBottom, additionalData = Model })
         <div class="section order-summary">
-            @await Component.InvokeAsync("OrderSummary", new { prepareAndDisplayOrderReviewData = true })
+            @await Component.InvokeAsync(typeof(OrderSummaryViewComponent), new { prepareAndDisplayOrderReviewData = true })
         </div>
     </div>
 </div>
