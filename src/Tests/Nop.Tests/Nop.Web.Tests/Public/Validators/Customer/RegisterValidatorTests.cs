@@ -1,202 +1,202 @@
 ﻿using FluentValidation.TestHelper;
 using Nop.Core.Domain.Customers;
+using Nop.Core.Domain.Tax;
 using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Web.Models.Customer;
 using Nop.Web.Validators.Customer;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
+namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer;
+
+[TestFixture]
+public class RegisterValidatorTests : BaseNopTest
 {
-    [TestFixture]
-    public class RegisterValidatorTests : BaseNopTest
+    private RegisterValidator _validator;
+
+    [OneTimeSetUp]
+    public void SetUp()
     {
-        private RegisterValidator _validator;
+        _validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), GetService<CustomerSettings>(), GetService<TaxSettings>());
+    }
 
-        [OneTimeSetUp]
-        public void SetUp()
+    [Test]
+    public void ShouldHaveErrorWhenEmailIsNullOrEmpty()
+    {
+        var model = new RegisterModel
         {
-            _validator = GetService<RegisterValidator>();
-        }
+            Email = null
+        };
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.Email);
+        model.Email = string.Empty;
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.Email);
+    }
 
-        [Test]
-        public void ShouldHaveErrorWhenEmailIsNullOrEmpty()
+    [Test]
+    public void ShouldHaveErrorWhenEmailIsWrongFormat()
+    {
+        var model = new RegisterModel
         {
-            var model = new RegisterModel
-            {
-                Email = null
-            };
-            _validator.ShouldHaveValidationErrorFor(x => x.Email, model);
-            model.Email = string.Empty;
-            _validator.ShouldHaveValidationErrorFor(x => x.Email, model);
-        }
+            Email = "adminexample.com"
+        };
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.Email);
+    }
 
-        [Test]
-        public void ShouldHaveErrorWhenEmailIsWrongFormat()
+    [Test]
+    public void ShouldNotHaveErrorWhenEmailIsCorrectFormat()
+    {
+        var model = new RegisterModel
         {
-            var model = new RegisterModel
-            {
-                Email = "adminexample.com"
-            };
-            _validator.ShouldHaveValidationErrorFor(x => x.Email, model);
-        }
+            Email = "admin@example.com"
+        };
+        _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.Email);
+    }
 
-        [Test]
-        public void ShouldNotHaveErrorWhenEmailIsCorrectFormat()
+    [Test]
+    public void ShouldHaveErrorWhenFirstnameIsNullOrEmpty()
+    {
+        var customerSettings = new CustomerSettings
         {
-            var model = new RegisterModel
-            {
-                Email = "admin@example.com"
-            };
-            _validator.ShouldNotHaveValidationErrorFor(x => x.Email, model);
-        }
+            FirstNameEnabled = true,
+            FirstNameRequired = true
+        };
 
-        [Test]
-        public void ShouldHaveErrorWhenFirstnameIsNullOrEmpty()
+        var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings, GetService<TaxSettings>());
+        var model = new RegisterModel
         {
-            var customerSettings = new CustomerSettings
-            {
-                FirstNameEnabled = true,
-                FirstNameRequired = true
-            };
+            FirstName = null
+        };
+        validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.FirstName);
+        model.FirstName = string.Empty;
+        validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.FirstName);
+    }
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
-            var model = new RegisterModel
-            {
-                FirstName = null
-            };
-            validator.ShouldHaveValidationErrorFor(x => x.FirstName, model);
-            model.FirstName = string.Empty;
-            validator.ShouldHaveValidationErrorFor(x => x.FirstName, model);
-        }
-
-        [Test]
-        public void ShouldNotHaveErrorWhenFirstnameIsSpecified()
+    [Test]
+    public void ShouldNotHaveErrorWhenFirstnameIsSpecified()
+    {
+        var customerSettings = new CustomerSettings
         {
-            var customerSettings = new CustomerSettings
-            {
-                FirstNameEnabled = true
-            };
+            FirstNameEnabled = true
+        };
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
+        var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings, GetService<TaxSettings>());
 
-            var model = new RegisterModel
-            {
-                FirstName = "John"
-            };
-            validator.ShouldNotHaveValidationErrorFor(x => x.FirstName, model);
-        }
-
-        [Test]
-        public void ShouldHaveErrorWhenLastNameIsNullOrEmpty()
+        var model = new RegisterModel
         {
-            var customerSettings = new CustomerSettings
-            {
-                LastNameEnabled = true,
-                LastNameRequired = true
-            };
+            FirstName = "John"
+        };
+        validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.FirstName);
+    }
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
-
-            var model = new RegisterModel
-            {
-                LastName = null
-            };
-
-            validator.ShouldHaveValidationErrorFor(x => x.LastName, model);
-            model.LastName = string.Empty;
-            validator.ShouldHaveValidationErrorFor(x => x.LastName, model);
-        }
-
-        [Test]
-        public void ShouldNotHaveErrorWhenLastNameIsSpecified()
+    [Test]
+    public void ShouldHaveErrorWhenLastNameIsNullOrEmpty()
+    {
+        var customerSettings = new CustomerSettings
         {
-            var customerSettings = new CustomerSettings
-            {
-                LastNameEnabled = true
-            };
+            LastNameEnabled = true,
+            LastNameRequired = true
+        };
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
+        var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings, GetService<TaxSettings>());
 
-            var model = new RegisterModel
-            {
-                LastName = "Smith"
-            };
-            validator.ShouldNotHaveValidationErrorFor(x => x.LastName, model);
-        }
-
-        [Test]
-        public void ShouldHaveErrorWhenPasswordIsNullOrEmpty()
+        var model = new RegisterModel
         {
-            var model = new RegisterModel
-            {
-                Password = null
-            };
-            //we know that password should equal confirmation password
-            model.ConfirmPassword = model.Password;
-            _validator.ShouldHaveValidationErrorFor(x => x.Password, model);
-            model.Password = string.Empty;
-            //we know that password should equal confirmation password
-            model.ConfirmPassword = model.Password;
-            _validator.ShouldHaveValidationErrorFor(x => x.Password, model);
-        }
+            LastName = null
+        };
 
-        [Test]
-        public void ShouldNotHaveErrorWhenPasswordIsSpecified()
-        {
-            var model = new RegisterModel
-            {
-                Password = "password"
-            };
-            //we know that password should equal confirmation password
-            model.ConfirmPassword = model.Password;
-            _validator.ShouldNotHaveValidationErrorFor(x => x.Password, model);
-        }
+        validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.LastName);
+        model.LastName = string.Empty;
+        validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.LastName);
+    }
 
-        [Test]
-        public void ShouldHaveErrorWhenConfirmPasswordIsNullOrEmpty()
+    [Test]
+    public void ShouldNotHaveErrorWhenLastNameIsSpecified()
+    {
+        var customerSettings = new CustomerSettings
         {
-            var model = new RegisterModel
-            {
-                ConfirmPassword = null
-            };
-            _validator.ShouldHaveValidationErrorFor(x => x.ConfirmPassword, model);
-            model.ConfirmPassword = string.Empty;
-            _validator.ShouldHaveValidationErrorFor(x => x.ConfirmPassword, model);
-        }
+            LastNameEnabled = true
+        };
 
-        [Test]
-        public void ShouldNotHaveErrorWhenConfirmPasswordIsSpecified()
-        {
-            var model = new RegisterModel
-            {
-                ConfirmPassword = "some password"
-            };
-            //we know that new password should equal confirmation password
-            model.Password = model.ConfirmPassword;
-            _validator.ShouldNotHaveValidationErrorFor(x => x.ConfirmPassword, model);
-        }
+        var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings, GetService<TaxSettings>());
 
-        [Test]
-        public void ShouldHaveErrorWhenPasswordDoesNotEqualConfirmationPassword()
+        var model = new RegisterModel
         {
-            var model = new RegisterModel
-            {
-                Password = "some password",
-                ConfirmPassword = "another password"
-            };
-            _validator.ShouldHaveValidationErrorFor(x => x.ConfirmPassword, model);
-        }
+            LastName = "Smith"
+        };
+        validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.LastName);
+    }
 
-        [Test]
-        public void ShouldNotHaveErrorWhenPasswordEqualsConfirmationPassword()
+    [Test]
+    public void ShouldHaveErrorWhenPasswordIsNullOrEmpty()
+    {
+        var model = new RegisterModel
         {
-            var model = new RegisterModel
-            {
-                Password = "some password",
-                ConfirmPassword = "some password"
-            };
-            _validator.ShouldNotHaveValidationErrorFor(x => x.Password, model);
-        }        
+            Password = null
+        };
+        //we know that password should equal confirmation password
+        model.ConfirmPassword = model.Password;
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.Password);
+        model.Password = string.Empty;
+        //we know that password should equal confirmation password
+        model.ConfirmPassword = model.Password;
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.Password);
+    }
+
+    [Test]
+    public void ShouldNotHaveErrorWhenPasswordIsSpecified()
+    {
+        var model = new RegisterModel
+        {
+            Password = "password"
+        };
+        //we know that password should equal confirmation password
+        model.ConfirmPassword = model.Password;
+        _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.Password);
+    }
+
+    [Test]
+    public void ShouldHaveErrorWhenConfirmPasswordIsNullOrEmpty()
+    {
+        var model = new RegisterModel
+        {
+            ConfirmPassword = null
+        };
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.ConfirmPassword);
+        model.ConfirmPassword = string.Empty;
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.ConfirmPassword);
+    }
+
+    [Test]
+    public void ShouldNotHaveErrorWhenConfirmPasswordIsSpecified()
+    {
+        var model = new RegisterModel
+        {
+            ConfirmPassword = "some password"
+        };
+        //we know that new password should equal confirmation password
+        model.Password = model.ConfirmPassword;
+        _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.ConfirmPassword);
+    }
+
+    [Test]
+    public void ShouldHaveErrorWhenPasswordDoesNotEqualConfirmationPassword()
+    {
+        var model = new RegisterModel
+        {
+            Password = "some password",
+            ConfirmPassword = "another password"
+        };
+        _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.ConfirmPassword);
+    }
+
+    [Test]
+    public void ShouldNotHaveErrorWhenPasswordEqualsConfirmationPassword()
+    {
+        var model = new RegisterModel
+        {
+            Password = "some password",
+            ConfirmPassword = "some password"
+        };
+        _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.Password);
     }
 }
