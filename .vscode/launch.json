@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Presentation/Nop.Web/bin/Debug/net5.0/Nop.Web.dll",
+            "program": "${workspaceFolder}/src/Presentation/Nop.Web/bin/Debug/net9.0/Nop.Web.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/Presentation/Nop.Web",
             "stopAtEntry": false,
@@ -18,10 +18,6 @@
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://127.0.0.1/"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
