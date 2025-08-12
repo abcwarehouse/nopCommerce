@@ -232,6 +232,44 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 return StatusCode(500, new { error = "An internal server error occurred while fetching autocomplete results. Message: " + ex.Message });
             }
         }
+
+        [Route("searchspring/personalized")]
+        [HttpGet]
+        public async Task<IActionResult> Personalized(string userId, int resultsPerPage = 8)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return BadRequest("User ID is required for personalized results");
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var siteId = "4lt84w"; // Your Searchspring site ID
+                var personalizedUrl = $"https://{siteId}.a.searchspring.io/api/personalized" +
+                                    $"?siteId={HttpUtility.UrlEncode(siteId)}" +
+                                    $"&userId={HttpUtility.UrlEncode(userId)}" +
+                                    $"&resultsFormat=native" +
+                                    $"&resultsPerPage={resultsPerPage}";
+
+                var response = await client.GetAsync(personalizedUrl);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, 
+                        new { error = $"Searchspring Personalized API error: {errorContent}" });
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new 
+                { 
+                    error = "An internal server error occurred while fetching personalized products. Message: " + ex.Message 
+                });
+            }
+        }
         
         [AuthorizeAdmin]
         [Area(AreaNames.Admin)]

@@ -264,5 +264,30 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+
+        public async Task<string> GetPersonalizedAsync(string userId, int resultsPerPage = 8)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("User ID is required", nameof(userId));
+
+            var siteId = "4lt84w"; // assuming you store it in settings
+            var url = $"https://{siteId}.a.searchspring.io/api/personalized" +
+                    $"?siteId={HttpUtility.UrlEncode(siteId)}" +
+                    $"&userId={HttpUtility.UrlEncode(userId)}" +
+                    $"&resultsFormat=native" +
+                    $"&resultsPerPage={resultsPerPage}";
+
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Searchspring Personalized API error: {errorContent}");
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
     }
 }
