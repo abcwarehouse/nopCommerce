@@ -129,8 +129,62 @@
         @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })
     }
 
+    <section id="personalized-section" class="home-block"></section>
+        <h2>Recommended for You</h2>
+        <div id="personalized-products" class="product-grid"></div>
+    </section>
+
     @await Component.InvokeAsync("Footer")
 </div>
+
+
+<script>
+    async function loadPersonalizedProducts() {
+        const userId = window.ssShopperId || ''; // already set by IntelliSuggest tracking
+        if (!userId) return;
+
+        try {
+            const res = await fetch(`/searchspring/personalized?userId=${encodeURIComponent(userId)}&resultsPerPage=8`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+
+            if (!data.results || !data.results.length) return;
+
+            const container = document.querySelector('#personalized-products');
+            container.innerHTML = '';
+
+            data.results.forEach(prod => {
+                const item = document.createElement('div');
+                item.className = 'item-box'; // nopCommerce product card
+                item.innerHTML = `
+                    <div class="product-item">
+                        <div class="picture">
+                            <a href="${prod.url}" title="${prod.name}">
+                                <img src="${prod.imageUrl}" alt="${prod.name}">
+                            </a>
+                        </div>
+                        <div class="details">
+                            <h3 class="product-title">
+                                <a href="${prod.url}">${prod.name}</a>
+                            </h3>
+                            <div class="add-info">
+                                <div class="prices">
+                                    <span class="price">${prod.price || ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        } catch (err) {
+            console.error('Error loading personalized products:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPersonalizedProducts);
+
+</script>
 
 <script>
     $(document).ready(function () {
