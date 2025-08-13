@@ -139,32 +139,45 @@
 
 
 <script>
-    function waitForShopperId(callback) {
-        if (window.ssShopperId) {
-            callback(window.ssShopperId);
-        } else {
-            setTimeout(() => waitForShopperId(callback), 200);
+    async function loadPersonalizedProducts() {
+        console.log('[Personalized] Script loaded');
+
+        const userId = window.ssShopperId || '';
+        console.log('[Personalized] ssShopperId:', userId);
+
+        if (!userId) {
+            console.warn('[Personalized] No ssShopperId found, skipping personalized products.');
+            return;
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        waitForShopperId(userId => {
-            loadPersonalizedProducts(userId);
-        });
-    });
+        const endpoint = `/searchspring/personalized?userId=${encodeURIComponent(userId)}&resultsPerPage=8`;
+        console.log('[Personalized] Fetching from:', endpoint);
 
-    async function loadPersonalizedProducts(userId) {
         try {
-            const res = await fetch(`/searchspring/personalized?userId=${encodeURIComponent(userId)}&resultsPerPage=8`);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
+            const res = await fetch(endpoint);
+            console.log('[Personalized] Fetch status:', res.status);
 
-            if (!data.results || !data.results.length) return;
+            if (!res.ok) {
+                console.error('[Personalized] HTTP error:', res.status, res.statusText);
+                return;
+            }
+
+            const data = await res.json();
+            console.log('[Personalized] API response:', data);
+
+            if (!data.results || !data.results.length) {
+                console.warn('[Personalized] No results returned.');
+                return;
+            }
 
             const container = document.querySelector('#personalized-products');
+            console.log('[Personalized] Container found:', !!container);
+
             container.innerHTML = '';
 
             data.results.forEach(prod => {
+                console.log('[Personalized] Adding product:', prod.name);
+
                 const item = document.createElement('div');
                 item.className = 'item-box';
                 item.innerHTML = `
@@ -189,12 +202,12 @@
                 container.appendChild(item);
             });
         } catch (err) {
-            console.error('Error loading personalized products:', err);
+            console.error('[Personalized] Fetch error:', err);
         }
     }
 
-
-    </script>
+    document.addEventListener('DOMContentLoaded', loadPersonalizedProducts);
+</script>
 
 <script>
     $(document).ready(function () {
