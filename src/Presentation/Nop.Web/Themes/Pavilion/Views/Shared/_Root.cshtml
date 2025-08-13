@@ -139,6 +139,10 @@
 
 
 <script>
+    window.ssShopperId = localStorage.getItem('ssShopperId') || crypto.randomUUID();
+    localStorage.setItem('ssShopperId', window.ssShopperId);
+
+
     async function loadPersonalizedProducts() {
         console.log('[Personalized] Script loaded');
 
