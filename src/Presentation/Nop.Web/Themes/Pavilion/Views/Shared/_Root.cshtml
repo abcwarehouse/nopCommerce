@@ -139,10 +139,21 @@
 
 
 <script>
-    async function loadPersonalizedProducts() {
-        const userId = window.ssShopperId || ''; // already set by IntelliSuggest tracking
-        if (!userId) return;
+    function waitForShopperId(callback) {
+        if (window.ssShopperId) {
+            callback(window.ssShopperId);
+        } else {
+            setTimeout(() => waitForShopperId(callback), 200);
+        }
+    }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        waitForShopperId(userId => {
+            loadPersonalizedProducts(userId);
+        });
+    });
+
+    async function loadPersonalizedProducts(userId) {
         try {
             const res = await fetch(`/searchspring/personalized?userId=${encodeURIComponent(userId)}&resultsPerPage=8`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -155,7 +166,7 @@
 
             data.results.forEach(prod => {
                 const item = document.createElement('div');
-                item.className = 'item-box'; // nopCommerce product card
+                item.className = 'item-box';
                 item.innerHTML = `
                     <div class="product-item">
                         <div class="picture">
@@ -182,9 +193,8 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', loadPersonalizedProducts);
 
-</script>
+    </script>
 
 <script>
     $(document).ready(function () {
