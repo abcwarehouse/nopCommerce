@@ -103,7 +103,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 }
             }
 
-            var discountedPrice = await _priceCalculationService.RoundPriceAsync(product.Price - (product.Price * 0.05M));
+            var discountedPrice = await _priceCalculationService.RoundPriceAsync(product.Price - (product.Price * 0.10M));
             var formattedDiscountPrice = await _priceFormatter.FormatPriceAsync(discountedPrice);
 
             return showMessage ?
