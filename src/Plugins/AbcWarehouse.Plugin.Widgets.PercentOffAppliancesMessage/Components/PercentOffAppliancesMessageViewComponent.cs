@@ -74,7 +74,6 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
 
             // exclude specific brands
             var exceptionBrands = new string[] {
-                "LG",
                 "LG SIGNATURE",
                 "LG STUDIO",
                 "LG XBOOM",
