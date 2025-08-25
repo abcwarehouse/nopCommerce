@@ -1,0 +1,83 @@
+@model MissingImageProductSearchModel
+
+@using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
+@using Nop.Services.Common
+@using Nop.Core
+
+@inject IGenericAttributeService genericAttributeService
+@inject IWorkContext workContext
+
+<!-- imports T -->
+@inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>
+
+@{
+    //page title
+    ViewBag.PageTitle = "Missing Image Products";
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("ABCWarehouse.MissingImageProduct");
+
+    Layout = "_AdminLayout";
+}
+
+@{
+    const string hideSearchBlockAttributeName = "MissingImageProductListPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
+}
+
+<form asp-controller="MissingImageProduct" asp-action="List" method="post">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            Missing Image Products
+        </h1>
+    </div>
+
+      <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                      <div class="card card-default">
+                          <div class="card-body">
+
+                              @await Html.PartialAsync("Table", new DataTablesModel
+                         {
+                             Name = "missingimageproducts-grid",
+                             UrlRead = new DataUrl("List", "MissingImageProduct", null),
+                             SearchButtonId = "search-products",
+                             Length = Model.PageSize,
+                             LengthMenu = Model.AvailablePageSizes,
+                             Filters = new List<FilterParameter>
+                                  {
+                                      new FilterParameter(nameof(Model.SearchProductName))
+                                  },
+                             ColumnCollection = new List<ColumnProperty>
+                                  {
+                                      new ColumnProperty(nameof(MissingImageProductModel.ItemNumber))
+                                      {
+                                          Title = "Item Number",
+                                          Width = "100"
+                                      },
+                                      new ColumnProperty(nameof(MissingImageProductModel.Name))
+                                      {
+                                          Title = T("Admin.Catalog.Products.Fields.Name").Text
+                                      },
+                                      new ColumnProperty(nameof(MissingImageProductModel.Sku))
+                                      {
+                                          Title = T("Admin.Catalog.Products.Fields.Sku").Text,
+                                          Width = "100"
+                                      },
+                                      new ColumnProperty(nameof(MissingImageProductModel.Id))
+                                      {
+                                          Title = T("Admin.Common.Edit").Text,
+                                          Width = "80",
+                                          ClassName =  NopColumnClassDefaults.Button,
+                                          Render = new RenderButtonEdit(new DataUrl("~/Admin/Product/Edit/"))
+                                      }
+                                  }
+                         })
+                          </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+      </section>
+</form>
