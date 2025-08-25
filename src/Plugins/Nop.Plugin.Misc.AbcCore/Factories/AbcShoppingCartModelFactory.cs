@@ -41,6 +41,7 @@ using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
 using Nop.Services.Logging;
+using Nop.Web.Areas.Admin.Factories;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {

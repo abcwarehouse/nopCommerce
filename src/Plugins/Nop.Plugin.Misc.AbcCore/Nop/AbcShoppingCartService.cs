@@ -36,6 +36,7 @@ using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Nop.Plugin.Misc.AbcCore.Models;
 using Nop.Plugin.Misc.AbcCore.Nop;
 using Nop.Web.Models.ShoppingCart;
+using Nop.Services.Attributes;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -61,13 +62,15 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             CatalogSettings catalogSettings,
             IAclService aclService,
             IActionContextAccessor actionContextAccessor,
-            ICheckoutAttributeParser checkoutAttributeParser,
-            ICheckoutAttributeService checkoutAttributeService,
+            IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser,
+            IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
             ICurrencyService currencyService,
             ICustomerService customerService,
             IDateRangeService dateRangeService,
             IDateTimeHelper dateTimeHelper,
+            IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
+            IGiftCardService giftCardService,
             ILocalizationService localizationService,
             IPermissionService permissionService,
             IPriceCalculationService priceCalculationService,
@@ -77,8 +80,10 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IProductService productService,
             IRepository<ShoppingCartItem> sciRepository,
             IShippingService shippingService,
+            IShortTermCacheManager shortTermCacheManager,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
+            IStoreService storeService,
             IStoreMappingService storeMappingService,
             IUrlHelperFactory urlHelperFactory,
             IUrlRecordService urlRecordService,
@@ -93,15 +98,39 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IShopService shopService,
             IAbcCategoryService abcCategoryService
         )
-            : base(catalogSettings, aclService, actionContextAccessor,
-                checkoutAttributeParser, checkoutAttributeService, currencyService,
-                customerService, dateRangeService, dateTimeHelper,
-                genericAttributeService, localizationService, permissionService,
-                priceCalculationService, priceFormatter, productAttributeParser,
-                productAttributeService, productService, sciRepository,
-                shippingService, staticCacheManager, storeContext, storeMappingService,
-                urlHelperFactory, urlRecordService, workContext, orderSettings,
-                shoppingCartSettings)
+            : base(
+                catalogSettings,
+                aclService,
+                actionContextAccessor,
+                checkoutAttributeParser,
+                checkoutAttributeService,
+                currencyService,
+                customerService,
+                dateRangeService,
+                dateTimeHelper,
+                eventPublisher,
+                genericAttributeService,
+                giftCardService,
+                localizationService,
+                permissionService,
+                priceCalculationService,
+                priceFormatter,
+                productAttributeParser,
+                productAttributeService,
+                productService,
+                sciRepository,
+                shippingService,
+                shortTermCacheManager,
+                staticCacheManager,
+                storeContext,
+                storeService,
+                storeMappingService,
+                urlHelperFactory,
+                urlRecordService,
+                workContext,
+                orderSettings,
+                shoppingCartSettings
+            )
         {
             _hiddenAttributeValueRepository =
                     EngineContext.Current.Resolve<IRepository<HiddenAttributeValue>>();
@@ -433,49 +462,5 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 
             return warnings;
         }
-        // TODO: Tabling this for now
-        // private async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> ProcessCustomDiscountAsync(
-        //     decimal unitPrice,
-        //     decimal discountAmount,
-        //     List<Discount> appliedDiscounts
-        // )
-        // {
-        //     if (discountAmount == 0 || !appliedDiscounts.Any()) return (unitPrice, discountAmount, appliedDiscounts);
-
-        //     var buyOneGetDiscountGrouped = appliedDiscounts.FirstOrDefault(d => d.Name == "BuyOneGetDiscountGrouped");
-        //     if (buyOneGetDiscountGrouped == null) return (unitPrice, discountAmount, appliedDiscounts);
-            
-        //     var groupedProductIds = (await _productService.GetProductsWithAppliedDiscountAsync(buyOneGetDiscountGrouped.Id)).Select(p => p.Id);
-        //     var customer = await _workContext.GetCurrentCustomerAsync();
-        //     var cart = await GetShoppingCartAsync(customer);
-        //     var cartProductIds = cart.Select(sci => sci.ProductId);
-        //     var commonProductIds = groupedProductIds.Intersect(cartProductIds);
-
-        //     // If this is not the second item (via quantity or multi product), remove discount
-        //     if (commonProductIds.Count() == 1)
-        //     {
-        //         var sci = cart.FirstOrDefault(sci => sci.ProductId == commonProductIds.First());
-        //         if (sci.Quantity == 1)
-        //         {
-        //             unitPrice += discountAmount;
-        //             discountAmount = 0;
-        //             appliedDiscounts.Remove(buyOneGetDiscountGrouped);
-        //         }
-        //     }
-
-        //     // TODO: With 2 or more cart items, need to determine lowest price item
-        //     if (commonProductIds.Count() > 1)
-        //     {
-        //         var eligibleScis = cart.Where(sci => commonProductIds.Contains(sci.ProductId));
-        //         foreach (var sci in eligibleScis)
-        //         {
-        //             var a = 1;
-        //         }
-            
-        //     // TODO: If matching prices, mark sci as discounted
-        //     }
-
-        //     return (unitPrice, discountAmount, appliedDiscounts);
-        // }
     }
 }

@@ -5,7 +5,7 @@ using Nop.Services.Catalog;
 
 namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 {
-    public interface ICustomManufacturerService : IManufacturerService
+    public interface IAbcManufacturerService : IManufacturerService
     {
         Task<IList<Manufacturer>> GetManufacturersByNameAsync(string name);
     }

@@ -23,11 +23,9 @@ using Nop.Services.Stores;
 
 namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 {
-    public class CustomManufacturerService : ManufacturerService, ICustomManufacturerService
+    public class AbcManufacturerService : ManufacturerService, ICustomManufacturerService
     {
-        private readonly IRepository<Manufacturer> _manufacturerRepository;
-
-        public CustomManufacturerService(CatalogSettings catalogSettings,
+        public AbcManufacturerService(CatalogSettings catalogSettings,
             IAclService aclService,
             ICategoryService categoryService,
             ICustomerService customerService,
@@ -47,9 +45,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services.Custom
                 productManufacturerRepository, productCategoryRepository,
                 staticCacheManager, storeContext,
                 storeMappingService, workContext)
-        {
-            _manufacturerRepository = manufacturerRepository;
-        }
+        {}
 
         public async Task<IList<Manufacturer>> GetManufacturersByNameAsync(string name)
         {
