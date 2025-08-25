@@ -680,7 +680,7 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
                     TextPrompt = attributeName,
                     ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
                 };
-                if (product.Id == 79952)
+                if (product.Sku == "MACTVBRZ")
                 {
                     pam.IsRequired = true;
                 }
