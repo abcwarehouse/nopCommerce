@@ -680,6 +680,10 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
                     TextPrompt = attributeName,
                     ConditionAttributeXml = $"<Attributes><ProductAttribute ID=\"{sizePam.Id}\"><ProductAttributeValue><Value>{sizePav.Id}</Value></ProductAttributeValue></ProductAttribute></Attributes>"
                 };
+                if (product.Id == 79952)
+                {
+                    pam.IsRequired = true;
+                }
                 await _productAttributeService.InsertProductAttributeMappingAsync(pam);
             }
             else if (pam != null && !bases.Any())
