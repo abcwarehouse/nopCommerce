@@ -23,7 +23,7 @@ using Nop.Services.Stores;
 
 namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 {
-    public class AbcManufacturerService : ManufacturerService, ICustomManufacturerService
+    public class AbcManufacturerService : ManufacturerService, IAbcManufacturerService
     {
         public AbcManufacturerService(CatalogSettings catalogSettings,
             IAclService aclService,

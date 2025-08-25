@@ -51,14 +51,16 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 
         public AbcExportManager(AddressSettings addressSettings,
             CatalogSettings catalogSettings,
+            SecuritySettings securitySettings,
             CustomerSettings customerSettings,
             DateTimeSettings dateTimeSettings,
             ForumSettings forumSettings,
             IAddressService addressService,
+            IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter,
             ICategoryService categoryService,
             ICountryService countryService,
             ICurrencyService currencyService,
-            ICustomerAttributeFormatter customerAttributeFormatter,
+            ICustomerActivityService customerActivityService,
             ICustomerService customerService,
             IDateRangeService dateRangeService,
             IDateTimeHelper dateTimeHelper,
@@ -66,7 +68,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IForumService forumService,
             IGdprService gdprService,
             IGenericAttributeService genericAttributeService,
+            ILanguageService languageService,
             ILocalizationService localizationService,
+            ILocalizedEntityService localizedEntityService,
             IManufacturerService manufacturerService,
             IMeasureService measureService,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
@@ -87,52 +91,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IVendorService vendorService,
             IWorkContext workContext,
             OrderSettings orderSettings,
-            ProductEditorSettings productEditorSettings) :
-            base(addressSettings,
-            catalogSettings,
-            customerSettings,
-            dateTimeSettings,
-            forumSettings,
-            addressService,
-            categoryService,
-            countryService,
-            currencyService,
-            customerAttributeFormatter,
-            customerService,
-            dateRangeService,
-            dateTimeHelper,
-            discountService,
-            forumService,
-            gdprService,
-            genericAttributeService,
-            localizationService,
-            manufacturerService,
-            measureService,
-            newsLetterSubscriptionService,
-            orderService,
-            pictureService,
-            priceFormatter,
-            productAttributeService,
-            productService,
-            productTagService,
-            productTemplateService,
-            shipmentService,
-            specificationAttributeService,
-            stateProvinceService,
-            storeMappingService,
-            storeService,
-            taxCategoryService,
-            urlRecordService,
-            vendorService,
-            workContext,
-            orderSettings,
-            productEditorSettings
+            ProductEditorSettings productEditorSettings
             )
-        {
-            _catalogSettings = catalogSettings;
-            _customerService = customerService;
-            _dateTimeHelper = dateTimeHelper;
-        }
+        {}
 
         public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<Log> logs)
         {

@@ -21,15 +21,11 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcLogger : DefaultLogger, IAbcLogger
     {
-        private readonly IRepository<Log> _logRepository;
-
         public AbcLogger(CommonSettings commonSettings,
             IRepository<Log> logRepository,
             IWebHelper webHelper) :
             base(commonSettings, logRepository, webHelper)
-        {
-            _logRepository = logRepository;
-        }
+        {}
 
         public IList<Log> GetPageNotFoundLogs()
         {

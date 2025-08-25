@@ -37,26 +37,14 @@ using Nop.Plugin.Misc.AbcCore.Models;
 using Nop.Plugin.Misc.AbcCore.Nop;
 using Nop.Web.Models.ShoppingCart;
 using Nop.Services.Attributes;
+using Nop.Core.Events;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     //a custom price calculation service to modify cart price as needed
     class AbcShoppingCartService : ShoppingCartService, IAbcShoppingCartService
     {
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IAttributeUtilities _attributeUtilities;
         private readonly IRepository<HiddenAttributeValue> _hiddenAttributeValueRepository;
-        private readonly ShoppingCartSettings _shoppingCartSettings;
-        private readonly IPriceCalculationService _priceCalculationService;
-
-        private readonly ICustomerShopService _customerShopService;
-        private readonly IBackendStockService _backendStockService;
-        private readonly IShopService _shopService;
-        private readonly IProductService _productService;
-        private readonly IWorkContext _workContext;
-
-        private readonly IAbcCategoryService _abcCategoryService;
-        private readonly ILocalizationService _localizationService;
 
         public AbcShoppingCartService(
             CatalogSettings catalogSettings,
@@ -134,22 +122,6 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         {
             _hiddenAttributeValueRepository =
                     EngineContext.Current.Resolve<IRepository<HiddenAttributeValue>>();
-
-            _productAttributeParser = productAttributeParser;
-            _attributeUtilities = attributeUtilities;
-            _shoppingCartSettings = shoppingCartSettings;
-            _priceCalculationService = priceCalculationService;
-
-            _customerShopService = customerShopService;
-            _attributeUtilities = attributeUtilities;
-            _backendStockService = backendStockService;
-            _shopService = shopService;
-            _productAttributeParser = productAttributeParser;
-            _productService = productService;
-            _workContext = workContext;
-
-            _abcCategoryService = abcCategoryService;
-            _localizationService = localizationService;
         }
 
         public async Task<bool> IsCartEligibleForCheckoutAsync(object model)
