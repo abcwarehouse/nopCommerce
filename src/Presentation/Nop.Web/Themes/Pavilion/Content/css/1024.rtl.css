@@ -958,7 +958,7 @@
 	padding: 30px;
 }
 .gallery {
-	width: 44%;
+	width: 50%;
 }
 .gallery .thumb-item {
 	width: 23%;
@@ -966,7 +966,7 @@
 	margin: 0 1% 10px;
 }
 .overview {
-	width: 54%;
+	width: 49%;
 }
 .overview .stock {
 	display: inline-block;
