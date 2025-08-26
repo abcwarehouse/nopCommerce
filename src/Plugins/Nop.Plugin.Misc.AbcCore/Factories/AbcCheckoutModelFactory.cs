@@ -74,13 +74,13 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             {}
 
         public override async Task<CheckoutBillingAddressModel> PrepareBillingAddressModelAsync(
-            IList<ShoppingCartItem> cart,
-            int? selectedCountryId = null,
-            bool prePopulateNewAddressWithCustomerFields = false,
-            string overrideAttributesXml = "")
+            CheckoutBillingAddressModel model, IList<ShoppingCartItem> cart,
+            int? selectedCountryId = null, bool prePopulateNewAddressWithCustomerFields = false, string overrideAttributesXml = "")
         {
             
-            var model = await base.PrepareBillingAddressModelAsync(cart,
+            var model = await base.PrepareBillingAddressModelAsync(
+                model,
+                cart,
                 US_COUNTRY_ID,
                 prePopulateNewAddressWithCustomerFields,
                 overrideAttributesXml);
@@ -88,12 +88,12 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
         }
 
         public override async Task<CheckoutShippingAddressModel> PrepareShippingAddressModelAsync(
-            IList<ShoppingCartItem> cart,
-            int? selectedCountryId = null,
-            bool prePopulateNewAddressWithCustomerFields = false,
-            string overrideAttributesXml = "")
+            CheckoutShippingAddressModel model, IList<ShoppingCartItem> cart,
+            int? selectedCountryId = null, bool prePopulateNewAddressWithCustomerFields = false, string overrideAttributesXml = "")
         {
-            var model = await base.PrepareShippingAddressModelAsync(cart,
+            var model = await base.PrepareShippingAddressModelAsync(
+                model,
+                cart,
                 US_COUNTRY_ID,
                 prePopulateNewAddressWithCustomerFields,
                 overrideAttributesXml);

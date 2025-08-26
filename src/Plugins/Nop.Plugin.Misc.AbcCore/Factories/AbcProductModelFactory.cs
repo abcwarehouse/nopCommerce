@@ -34,11 +34,8 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
 {
     public partial class AbcProductModelFactory : ProductModelFactory, IAbcProductModelFactory
     {
-        private readonly IWebHelper _webHelper;
         private readonly IAbcMattressListingPriceService _abcMattressListingPriceService;
-        private readonly IPriceFormatter _priceFormatter;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
-        private readonly IProductAttributeParser _productAttributeParser;
 
         public AbcProductModelFactory(
             CaptchaSettings captchaSettings,
@@ -90,29 +87,14 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 shippingSettings, vendorSettings
             )
         {
-            _webHelper = webHelper;
             _abcMattressListingPriceService = abcMattressListingPriceService;
-            _priceFormatter = priceFormatter;
             _productAbcDescriptionService = productAbcDescriptionService;
-            _productAttributeParser = productAttributeParser;
         }
 
-        protected override async Task<ProductOverviewModel.ProductPriceModel>
-            PrepareProductOverviewPriceModelAsync(
-                Product product,
-                bool forceRedirectionAfterAddingToCart = false
-        )
+        protected override async Task<ProductPriceModel>
+            PrepareProductPriceModelAsync(Product product, bool addPriceRangeFrom = false, bool forceRedirectionAfterAddingToCart = false)
         {
-            var model = await base.PrepareProductOverviewPriceModelAsync(product, forceRedirectionAfterAddingToCart);
-            model.Price = await AdjustMattressPriceAsync(product.Id) ?? model.Price;
-
-            return model;
-        }
-
-        protected override async Task<ProductDetailsModel.ProductPriceModel>
-            PrepareProductPriceModelAsync(Product product)
-        {
-            var model = await base.PrepareProductPriceModelAsync(product);
+            var model = await base.PrepareProductPriceModelAsync(product, addPriceRangeFrom, forceRedirectionAfterAddingToCart);
             model.Price = await AdjustMattressPriceAsync(product.Id) ?? model.Price;
 
             return model;

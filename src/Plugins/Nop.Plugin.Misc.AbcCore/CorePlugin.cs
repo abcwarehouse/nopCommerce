@@ -22,10 +22,11 @@ using Nop.Services.Logging;
 using SevenSpikes.Nop.Plugins.HtmlWidgets.Domain;
 using Nop.Core.Caching;
 using Nop.Plugin.Misc.AbcCore.Tasks;
+using Nop.Services.ScheduleTasks;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
-    public class CorePlugin : BasePlugin, IMiscPlugin, IAdminMenuPlugin, IWidgetPlugin,
+    public class CorePlugin : BasePlugin, IMiscPlugin, IWidgetPlugin,
         IConsumer<EntityDeletedEvent<ProductPicture>>,
         IConsumer<EntityUpdatedEvent<HtmlWidget>>
     {
@@ -104,9 +105,11 @@ namespace Nop.Plugin.Misc.AbcCore
             );
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return "AbcCore";
+            ArgumentNullException.ThrowIfNull(widgetZone);
+
+            return typeof(AbcCoreViewComponent);
         }
 
         public bool HideInWidgetList => false;
@@ -130,7 +133,7 @@ namespace Nop.Plugin.Misc.AbcCore
             await _nopDataProvider.ExecuteNonQueryAsync(updateAbcPromosStoredProcScript);
         }
 
-        public System.Threading.Tasks.Task ManageSiteMapAsync(SiteMapNode rootNode)
+        public System.Threading.Tasks.Task ManageSiteMapAsync(AdminMenuItem rootNode)
         {
             return System.Threading.Tasks.Task.Run(() => 
             {

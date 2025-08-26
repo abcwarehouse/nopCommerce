@@ -16,8 +16,6 @@ using Nop.Data.DataProviders;
 using LinqToDB.Mapping;
 using LinqToDB.Tools;
 using System.Data;
-using StackExchange.Profiling;
-using StackExchange.Profiling.Data;
 using Nop.Data.Mapping;
 
 namespace Nop.Plugin.Misc.AbcCore.Data

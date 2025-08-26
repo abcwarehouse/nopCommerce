@@ -42,13 +42,13 @@ using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
 using Nop.Services.Logging;
 using Nop.Web.Areas.Admin.Factories;
+using IShoppingCartModelFactory = Nop.Web.Factories.IShoppingCartModelFactory;
+using ShoppingCartModelFactory = Nop.Web.Factories.ShoppingCartModelFactory;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
-    public class AbcShoppingCartModelFactory : ShoppingCartModelFactory, Nop.Web.Factories.IShoppingCartModelFactory
+    public class AbcShoppingCartModelFactory : ShoppingCartModelFactory, IShoppingCartModelFactory
     {
-        private readonly IPriceFormatter _priceFormatter;
-        
         public AbcShoppingCartModelFactory(
             CatalogSettings catalogSettings,
             IBaseAdminModelFactory baseAdminModelFactory,
@@ -76,9 +76,7 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 storeService,
                 taxService
             )
-        {
-            _priceFormatter = priceFormatter;
-        }
+        { }
         
         protected override async Task<ShoppingCartModel.ShoppingCartItemModel> PrepareShoppingCartItemModelAsync(
             IList<ShoppingCartItem> cart, ShoppingCartItem sci)
