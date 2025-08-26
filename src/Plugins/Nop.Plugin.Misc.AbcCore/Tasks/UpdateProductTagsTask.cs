@@ -1,10 +1,10 @@
-// This task adds ABc Item Number to product tags for Mickey Shorr and the InstantSearch
+// Adds ABC Item Number to product tags for Mickey Shorr and the InstantSearch
 // plugin.
 
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using Nop.Services.Catalog;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 
 
 namespace Nop.Plugin.Misc.AbcCore

@@ -45,7 +45,7 @@ using Nop.Web.Areas.Admin.Factories;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
-    public class AbcShoppingCartModelFactory : ShoppingCartModelFactory, IShoppingCartModelFactory
+    public class AbcShoppingCartModelFactory : ShoppingCartModelFactory, Nop.Web.Factories.IShoppingCartModelFactory
     {
         private readonly IPriceFormatter _priceFormatter;
         

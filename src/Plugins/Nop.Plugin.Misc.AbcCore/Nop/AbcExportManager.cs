@@ -40,15 +40,13 @@ using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
+using Nop.Services.Attributes;
+using Nop.Core.Domain.Security;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcExportManager : ExportManager, IAbcExportManager
     {
-        private readonly CatalogSettings _catalogSettings;
-        private readonly ICustomerService _customerService;
-        private readonly IDateTimeHelper _dateTimeHelper;
-
         public AbcExportManager(AddressSettings addressSettings,
             CatalogSettings catalogSettings,
             SecuritySettings securitySettings,

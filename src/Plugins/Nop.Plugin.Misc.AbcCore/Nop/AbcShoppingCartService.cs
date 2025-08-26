@@ -38,6 +38,7 @@ using Nop.Plugin.Misc.AbcCore.Nop;
 using Nop.Web.Models.ShoppingCart;
 using Nop.Services.Attributes;
 using Nop.Core.Events;
+using Nop.Core.Domain.Stores;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -266,6 +267,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         public async override Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(
             Product product,
             Customer customer,
+            Store store,
             ShoppingCartType shoppingCartType,
             int quantity,
             string attributesXml,
