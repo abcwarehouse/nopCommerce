@@ -240,7 +240,15 @@ h4.description-category {
   font-size: 15.2px;
 }
 
-
+@media screen and (min-width: 1025px) {
+.product-price-block {
+    background: #fff;
+    padding: 16px;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px #e6e6e6, 0 6px 16px rgba(0, 0, 0, .06);
+    margin-bottom: 40px;
+}
+}
 
 @media all and (min-width: 768px) {
     .description-col {
