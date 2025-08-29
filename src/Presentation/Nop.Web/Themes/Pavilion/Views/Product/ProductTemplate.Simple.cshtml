@@ -40,7 +40,7 @@
     Html.AppendPageCssClassParts("html-product-details-page");
 
     var showShareButton = catalogSettings.ShowShareButton;
-    var productId = Model.ProductAttributes.First().ProductId;
+    var productId = Model.ProductAttributes.Any() ? Model.ProductAttributes.First().ProductId : Model.Id; // ✅ FIX
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
