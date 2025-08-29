@@ -17,10 +17,6 @@
     if (seoSettings.CanonicalUrlsEnabled)
     {
         var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-
-        var firstAttr = Model.ProductAttributes.FirstOrDefault();
-        var productId = firstAttr?.ProductId ?? Model.Id;
-
         Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 

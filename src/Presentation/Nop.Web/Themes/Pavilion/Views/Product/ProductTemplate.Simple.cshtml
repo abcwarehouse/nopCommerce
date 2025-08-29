@@ -40,8 +40,6 @@
     Html.AppendPageCssClassParts("html-product-details-page");
 
     var showShareButton = catalogSettings.ShowShareButton;
-    var firstAttr = Model.ProductAttributes.FirstOrDefault();
-    var productId = firstAttr != null ? firstAttr.ProductId : Model.Id;
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
@@ -246,7 +244,7 @@
                     @{
                         var dataDictAttributes = new ViewDataDictionary(ViewData);
                         dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
-                        @await Html.PartialAsync("_ProductAttributes", Model, dataDictAttributes)
+                        @await Html.PartialAsync("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
                     }
                     <!--gift card-->
                     @{
