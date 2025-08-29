@@ -26,7 +26,7 @@
             </div>
         </div>
     }
-    @if ((!Model.DisableBuyButton || Model.CustomerEntersPrice) && !Model.IsCallForPrice)
+    @if (!Model.DisableBuyButton || Model.CustomerEntersPrice)
     {
         <div class="add-to-cart">
             @if (!string.IsNullOrEmpty(Model.MinimumQuantityNotification))
