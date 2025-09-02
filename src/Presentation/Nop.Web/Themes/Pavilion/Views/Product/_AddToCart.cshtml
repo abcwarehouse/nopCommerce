@@ -9,17 +9,17 @@
 
 @if (Model.AddToCart.UpdatedShoppingCartItemId > 0)
 {
-    <input asp-for="UpdatedShoppingCartItemId" type="hidden" />
+    <input asp-for="Model.AddToCart.UpdatedShoppingCartItemId" type="hidden" />
 }
-@if (!Model.AddToCart.DisableBuyButton || ModelAddToCart.AddToCart.CustomerEntersPrice)
+@if (!Model.AddToCart.DisableBuyButton || Model.AddToCart.CustomerEntersPrice)
 {
 	if (Model.AddToCart.CustomerEntersPrice)
     {
         <div class="customer-entered-price">
             <div class="price-input">
-                <label asp-for="CustomerEnteredPrice" asp-postfix=":" class="enter-price-label"></label>
+                <label asp-for="Model.AddToCart.CustomerEnteredPrice" asp-postfix=":" class="enter-price-label"></label>
                 @*round price*@
-                <input asp-for="CustomerEnteredPrice" value="@Convert.ToInt32(Math.Ceiling(Model.CustomerEnteredPrice))" class="enter-price-input"/>
+                <input asp-for="Model.AddToCart.CustomerEnteredPrice" value="@Convert.ToInt32(Math.Ceiling(Model.AddToCart.CustomerEnteredPrice))" class="enter-price-input"/>
             </div>
             <div class="price-range">
                 @Model.AddToCart.CustomerEnteredPriceRange
@@ -89,12 +89,12 @@
                     else if (Model.AddToCart.UpdatedShoppingCartItemId > 0 && Model.AddToCart.UpdateShoppingCartItemType.HasValue && Model.AddToCart.UpdateShoppingCartItemType.Value == ShoppingCartType.ShoppingCart)
                     {
                         addToCartText = T("ShoppingCart.AddToCart.Update").Text;
-                        <input type="button" id="add-to-cart-button-@Model.AddToCart.ProductId" class="button-1 add-to-cart-button" value="@addToCartText" data-productid="@Model.AddToCart.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;" />
+                        <input type="button" id="add-to-cart-button-@Model.AddToCart.ProductId" class="button-1 add-to-cart-button" value="@Model.AddToCart.addToCartText" data-productid="@Model.AddToCart.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;" />
                     }
                     else
                     {
                         addToCartText = T("ShoppingCart.AddToCart").Text;
-                        if (Model.IsRental)
+                        if (Model.AddToCart.IsRental)
                         {
                             addToCartText = T("ShoppingCart.Rent").Text;
                         }
@@ -102,7 +102,7 @@
                         {
                             addToCartText = T("ShoppingCart.PreOrder").Text;
                         }
-                        <input type="button" id="add-to-cart-button-@Model.AddToCart.ProductId" class="button-1 add-to-cart-button" value="@addToCartText" data-productid="@Model.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;" />
+                        <input type="button" id="add-to-cart-button-@Model.AddToCart.ProductId" class="button-1 add-to-cart-button" value="@Model.AddToCart.addToCartText" data-productid="@Model.AddToCart.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;" />
                     }
                 }
             </div>
@@ -114,6 +114,6 @@
                 </div>
                 }
             }
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model.AddToCart })
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model.AddToCart.AddToCart })
     </div>
 }
