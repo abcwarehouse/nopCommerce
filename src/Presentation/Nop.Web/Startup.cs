@@ -3,12 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
-using Nop.Services.Logging;
-using System;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http;
+
 
 namespace Nop.Web
 {
@@ -64,23 +59,20 @@ namespace Nop.Web
             var serviceProvider = application.ApplicationServices;
             var logger = serviceProvider.GetService<ILogger>();
 
-            // 410 error with nopCommerce DB logging
+            // 410 error for removed pages
             application.Use(async (context, next) =>
-            {
-                var goneUrls = new[] { "/water-heaters-delivered-installed-within-24hours" };
+{
+    var goneUrls = new[] { "/water-heaters-delivered-installed-within-24hours" };
 
-                if (goneUrls.Contains(context.Request.Path.Value, StringComparer.OrdinalIgnoreCase))
-                {
-                    // Log to nopCommerce DB
-                    logger?.Information($"410 Gone - URL: {context.Request.Path.Value} | IP: {context.Connection.RemoteIpAddress}");
+    if (goneUrls.Contains(context.Request.Path.Value, StringComparer.OrdinalIgnoreCase))
+    {
+        context.Response.StatusCode = StatusCodes.Status410Gone;
+        await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
+        return;
+    }
 
-                    context.Response.StatusCode = StatusCodes.Status410Gone;
-                    await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
-                    return;
-                }
-
-                await next();
-            });
+    await next();
+});
         }
 
     }
