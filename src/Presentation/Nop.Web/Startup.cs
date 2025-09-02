@@ -55,10 +55,6 @@ namespace Nop.Web
             application.ConfigureRequestPipeline();
             application.StartEngine();
 
-            // Create a scoped service provider to get nopCommerce services
-            var serviceProvider = application.ApplicationServices;
-            var logger = serviceProvider.GetService<ILogger>();
-
             // 410 error for removed pages
             application.Use(async (context, next) =>
 {
