@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
-
+using System; 
+using System.Linq; 
+using Microsoft.AspNetCore.Http;
 
 namespace Nop.Web
 {
