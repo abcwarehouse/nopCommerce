@@ -6,7 +6,6 @@ using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
-using Nop.Plugin.Misc.AbcCore.Data;
 using Nop.Plugin.Misc.AbcCore.Factories;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Nop;
@@ -60,8 +59,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<ICardCheckService, CardCheckService>();
             services.AddScoped<IProductAbcFinanceService, ProductAbcFinanceService>();
             services.AddScoped<IImportUtilities, ImportUtilities>();
-            services.AddScoped<ICustomManufacturerService, CustomManufacturerService>();
-            services.AddScoped<ICustomNopDataProvider, CustomMsSqlDataProvider>();
+            services.AddScoped<IAbcManufacturerService, AbcManufacturerService>();
             services.AddScoped<ArchiveService>();
             services.AddScoped<IAbcDeliveryService, AbcDeliveryService>();
             services.AddScoped<IAbcProductAttributeService, AbcProductAttributeService>();

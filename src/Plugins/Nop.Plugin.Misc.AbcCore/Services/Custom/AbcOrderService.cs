@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using System.Threading.Tasks;
+using Nop.Services.Html;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -22,7 +23,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductAttributeService _productAttributeService;
 
-        public AbcOrderService(
+        public AbcOrderService(IHtmlFormatter htmlFormatter,
             IProductService productService,
             IRepository<Address> addressRepository,
             IRepository<Customer> customerRepository,
@@ -34,15 +35,25 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
             IShipmentService shipmentService,
+            // ABC: custom
             IProductAttributeParser productAttributeParser,
             IProductAttributeService productAttributeService
-        ) : base(productService, addressRepository, customerRepository,
-                 orderRepository, orderItemRepository, orderNoteRepository,
-                 productRepository, productWarehouseInventoryRepository,
-                 recurringPaymentRepository, recurringPaymentHistoryRepository,
-                 shipmentService)
+        ) : base
+        (
+            htmlFormatter,
+            productService,
+            addressRepository,
+            customerRepository,
+            orderRepository,
+            orderItemRepository,
+            orderNoteRepository,
+            productRepository,
+            productWarehouseInventoryRepository,
+            recurringPaymentRepository,
+            recurringPaymentHistoryRepository,
+            shipmentService
+        )
         {
-            _orderRepository = orderRepository;
             _productAttributeParser = productAttributeParser;
             _productAttributeService = productAttributeService;
         }

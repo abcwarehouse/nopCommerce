@@ -17,11 +17,13 @@
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
                 "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+                "pattern": "\\bNow listening on:\\s+https?://\\S+",
+                // Modified to a custom URL: https://code.visualstudio.com/docs/csharp/debugger-settings#_specifying-the-browsers-url
+                "uriFormat": "http://localhost:8080"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
-            }
+            },
         }
     ]
 }

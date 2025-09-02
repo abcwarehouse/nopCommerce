@@ -89,7 +89,6 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             workContext
         )
         {
-            _categoryService = categoryService;
             _genericAttributeService = genericAttributeService;
         }
 

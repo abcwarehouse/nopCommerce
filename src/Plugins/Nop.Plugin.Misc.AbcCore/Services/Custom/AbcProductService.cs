@@ -20,6 +20,7 @@ using Nop.Services.Media;
 using Nop.Services.Security;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Stores;
+using Nop.Services.Vendors;
 
 namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 {
@@ -38,9 +39,11 @@ namespace Nop.Plugin.Misc.AbcCore.Services.Custom
             ILocalizationService localizationService,
             IProductAttributeParser productAttributeParser,
             IProductAttributeService productAttributeService,
+            IRepository<Category> categoryRepository,
             IRepository<CrossSellProduct> crossSellProductRepository,
             IRepository<DiscountProductMapping> discountProductMappingRepository,
             IRepository<LocalizedProperty> localizedPropertyRepository,
+            IRepository<Manufacturer> manufacturerRepository,
             IRepository<Product> productRepository,
             IRepository<ProductAttributeCombination> productAttributeCombinationRepository,
             IRepository<ProductAttributeMapping> productAttributeMappingRepository,
@@ -52,34 +55,62 @@ namespace Nop.Plugin.Misc.AbcCore.Services.Custom
             IRepository<ProductReviewHelpfulness> productReviewHelpfulnessRepository,
             IRepository<ProductSpecificationAttribute> productSpecificationAttributeRepository,
             IRepository<ProductTag> productTagRepository,
+            IRepository<ProductVideo> productVideoRepository,
             IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository,
             IRepository<RelatedProduct> relatedProductRepository,
             IRepository<Shipment> shipmentRepository,
             IRepository<StockQuantityHistory> stockQuantityHistoryRepository,
             IRepository<TierPrice> tierPriceRepository,
-            IRepository<Warehouse> warehouseRepository,
+            ISearchPluginManager searchPluginManager,
             IStaticCacheManager staticCacheManager,
             IStoreService storeService,
+            IVendorService vendorService,
             IStoreMappingService storeMappingService,
             IWorkContext workContext,
             LocalizationSettings localizationSettings,
+            // custom
             IPictureService pictureService,
             INopDataProvider nopDataProvider
-        ) : base(catalogSettings, commonSettings, aclService,
-                customerService, dateRangeService,
-                languageService, localizationService, productAttributeParser,
-                productAttributeService, crossSellProductRepository,
-                discountProductMappingRepository, localizedPropertyRepository,
-                productRepository, productAttributeCombinationRepository,
-                productAttributeMappingRepository, productCategoryRepository,
-                productManufacturerRepository, productPictureRepository,
-                productTagMappingRepository, productReviewRepository,
-                productReviewHelpfulnessRepository,
-                productSpecificationAttributeRepository, productTagRepository,
-                productWarehouseInventoryRepository, relatedProductRepository,
-                shipmentRepository, stockQuantityHistoryRepository,
-                tierPriceRepository, warehouseRepository, staticCacheManager,
-                storeService, storeMappingService, workContext, localizationSettings)
+        ) : base(
+            catalogSettings,
+            commonSettings,
+            aclService,
+            customerService,
+            dateRangeService,
+            languageService,
+            localizationService,
+            productAttributeParser,
+            productAttributeService,
+            categoryRepository,
+            crossSellProductRepository,
+            discountProductMappingRepository,
+            localizedPropertyRepository,
+            manufacturerRepository,
+            productRepository,
+            productAttributeCombinationRepository,
+            productAttributeMappingRepository,
+            productCategoryRepository,
+            productManufacturerRepository,
+            productPictureRepository,
+            productTagMappingRepository,
+            productReviewRepository,
+            productReviewHelpfulnessRepository,
+            productSpecificationAttributeRepository,
+            productTagRepository,
+            productVideoRepository,
+            productWarehouseInventoryRepository,
+            relatedProductRepository,
+            shipmentRepository,
+            stockQuantityHistoryRepository,
+            tierPriceRepository,
+            searchPluginManager,
+            staticCacheManager,
+            storeService,
+            vendorService,
+            storeMappingService,
+            workContext,
+            localizationSettings
+        )
         {
             _pictureService = pictureService;
             _nopDataProvider = nopDataProvider;

@@ -46,6 +46,12 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
     class AbcShoppingCartService : ShoppingCartService, IAbcShoppingCartService
     {
         private readonly IRepository<HiddenAttributeValue> _hiddenAttributeValueRepository;
+        private readonly IAbcCategoryService _abcCategoryService;
+        private readonly IAttributeUtilities _attributeUtilities;
+        private readonly ICustomerShopService _customerShopService;
+        private readonly IBackendStockService _backendStockService;
+        private readonly IShopService _shopService;
+
 
         public AbcShoppingCartService(
             CatalogSettings catalogSettings,
@@ -123,6 +129,12 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         {
             _hiddenAttributeValueRepository =
                     EngineContext.Current.Resolve<IRepository<HiddenAttributeValue>>();
+
+            _abcCategoryService = abcCategoryService;
+            _attributeUtilities = attributeUtilities;
+            _backendStockService = backendStockService;
+            _customerShopService = customerShopService;
+            _shopService = shopService;
         }
 
         public async Task<bool> IsCartEligibleForCheckoutAsync(object model)
@@ -289,8 +301,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
             if (combination?.OverriddenPrice.HasValue ?? false)
             {
-                (_, finalPrice, discountAmount, appliedDiscounts) =  await _priceCalculationService.GetFinalPriceAsync(product,
+                (decimal _, finalPrice, discountAmount, appliedDiscounts) =  await _priceCalculationService.GetFinalPriceAsync(product,
                         customer,
+                        store,
                         combination.OverriddenPrice.Value,
                         decimal.Zero,
                         includeDiscounts,
@@ -321,6 +334,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
                                     product,
                                     attributeValue,
                                     customer,
+                                    store,
                                     product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
                                 );
                         }
@@ -330,6 +344,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
                                 product,
                                 attributeValue,
                                 customer,
+                                store,
                                 product.CustomerEntersPrice ? (decimal?)customerEnteredPrice : null
                             );
                         }
@@ -361,8 +376,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
                         qty = quantity;
                     }
 
-                    (_, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(product,
+                    (decimal _, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(product,
                         customer,
+                        store,
                         attributesTotalPrice,
                         includeDiscounts,
                         qty,

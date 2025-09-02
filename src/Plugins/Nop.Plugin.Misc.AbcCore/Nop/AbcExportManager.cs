@@ -42,6 +42,8 @@ using Nop.Services.Tax;
 using Nop.Services.Vendors;
 using Nop.Services.Attributes;
 using Nop.Core.Domain.Security;
+using Nop.Core.Domain.Localization;
+
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -90,21 +92,64 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IWorkContext workContext,
             OrderSettings orderSettings,
             ProductEditorSettings productEditorSettings
-            )
+        ) : base(addressSettings,
+            catalogSettings,
+            securitySettings,
+            customerSettings,
+            dateTimeSettings,
+            forumSettings,
+            addressService,
+            customerAttributeFormatter,
+            categoryService,
+            countryService,
+            currencyService,
+            customerActivityService,
+            customerService,
+            dateRangeService,
+            dateTimeHelper,
+            discountService,
+            forumService,
+            gdprService,
+            genericAttributeService,
+            languageService,
+            localizationService,
+            localizedEntityService,
+            manufacturerService,
+            measureService,
+            newsLetterSubscriptionService,
+            orderService,
+            pictureService,
+            priceFormatter,
+            productAttributeService,
+            productService,
+            productTagService,
+            productTemplateService,
+            shipmentService,
+            specificationAttributeService,
+            stateProvinceService,
+            storeMappingService,
+            storeService,
+            taxCategoryService,
+            urlRecordService,
+            vendorService,
+            workContext,
+            orderSettings,
+            productEditorSettings
+        )
         {}
 
         public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<Log> logs)
         {
             var properties = new[]
             {
-                new PropertyByName<Log>("Slug", l => l.PageUrl),
-                new PropertyByName<Log>("Referrer", l => l.ReferrerUrl),
-                new PropertyByName<Log>("Customer", async l => (await _customerService.GetCustomerByIdAsync(l.CustomerId.Value)).Email),
-                new PropertyByName<Log>("IpAddress", l => l.IpAddress),
-                new PropertyByName<Log>("Date", async l => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
+                new PropertyByName<Log, Language>("Slug", (l, la) => l.PageUrl),
+                new PropertyByName<Log, Language>("Referrer", (l, la) => l.ReferrerUrl),
+                new PropertyByName<Log, Language>("Customer", async (l, la) => (await _customerService.GetCustomerByIdAsync(l.CustomerId.Value)).Email),
+                new PropertyByName<Log, Language>("IpAddress", (l, la) => l.IpAddress),
+                new PropertyByName<Log, Language>("Date", async (l, la) => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
             };
 
-            return await new PropertyManager<Log>(properties, _catalogSettings).ExportToXlsxAsync(logs);
+            return await new PropertyManager<Log, Language>(properties, _catalogSettings).ExportToXlsxAsync(logs);
         }
     }
 }

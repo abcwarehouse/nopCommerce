@@ -7,6 +7,7 @@ using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Services.Catalog;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -21,15 +22,29 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             "Warranty"
         };
 
-        public AbcProductAttributeService(
+        public AbcProductAttributeService(IRepository<Picture> pictureRepository,
             IRepository<PredefinedProductAttributeValue> predefinedProductAttributeValueRepository,
+            IRepository<Product> productRepository,
             IRepository<ProductAttribute> productAttributeRepository,
             IRepository<ProductAttributeCombination> productAttributeCombinationRepository,
+            IRepository<ProductAttributeCombinationPicture> productAttributeCombinationPictureRepository,
             IRepository<ProductAttributeMapping> productAttributeMappingRepository,
             IRepository<ProductAttributeValue> productAttributeValueRepository,
-            IStaticCacheManager staticCacheManager)
-        : base(predefinedProductAttributeValueRepository, productAttributeRepository, productAttributeCombinationRepository,
-               productAttributeMappingRepository, productAttributeValueRepository, staticCacheManager)
+            IRepository<ProductAttributeValuePicture> productAttributeValuePictureRepository,
+            IRepository<ProductPicture> productPictureRepository,
+            IStaticCacheManager staticCacheManager
+        )
+        : base( pictureRepository,
+            predefinedProductAttributeValueRepository,
+            productRepository,
+            productAttributeRepository,
+            productAttributeCombinationRepository,
+            productAttributeCombinationPictureRepository,
+            productAttributeMappingRepository,
+            productAttributeValueRepository,
+            productAttributeValuePictureRepository,
+            productPictureRepository,
+            staticCacheManager)
         { }
 
         public async Task<ProductAttribute> GetProductAttributeByNameAsync(string name)

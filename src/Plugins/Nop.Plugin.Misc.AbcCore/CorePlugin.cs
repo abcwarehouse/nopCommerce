@@ -23,6 +23,7 @@ using SevenSpikes.Nop.Plugins.HtmlWidgets.Domain;
 using Nop.Core.Caching;
 using Nop.Plugin.Misc.AbcCore.Tasks;
 using Nop.Services.ScheduleTasks;
+using Nop.Plugin.Misc.AbcCore.Components;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
@@ -137,53 +138,48 @@ namespace Nop.Plugin.Misc.AbcCore
         {
             return System.Threading.Tasks.Task.Run(() => 
             {
-                var rootMenuItem = new SiteMapNode()
+                var rootMenuItem = new AdminMenuItem()
                 {
                     SystemName = "ABCWarehouse",
                     Title = "ABC Warehouse",
                     Visible = true,
-                    RouteValues = new RouteValueDictionary() { { "area", "Admin" } },
-                    ChildNodes = new List<SiteMapNode>()
+                    //RouteValues = new RouteValueDictionary() { { "area", "Admin" } },
+                    ChildNodes = new List<AdminMenuItem>()
                     {
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.Promos",
                             Title = "Promos",
                             Visible = true,
-                            ControllerName = "AbcPromo",
-                            ActionName = "List"
+                            Url = "AbcPromo/List"
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.MissingImageProducts",
                             Title = "Missing Image Products",
                             Visible = true,
-                            ControllerName = "MissingImageProduct",
-                            ActionName = "List"
+                            Url = "MissingImageProducts/List",
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.NewProducts",
                             Title = "New Products",
                             Visible = true,
-                            ControllerName = "NewProduct",
-                            ActionName = "List"
+                            Url  = "NewProduct/List"
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.PageNotFound",
                             Title = "Page Not Found List",
                             Visible = true,
-                            ControllerName = "PageNotFound",
-                            ActionName = "List"
+                            Url = "PageNotFound/List"
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.PageNotFoundFreq",
                             Title = "Page Not Found Frequency",
                             Visible = true,
-                            ControllerName = "PageNotFound",
-                            ActionName = "Frequency"
+                            Url = "PageNotFound/Frequency"
                         }
                     }
                 };

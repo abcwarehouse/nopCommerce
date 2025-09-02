@@ -29,6 +29,8 @@ using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Services.Orders;
+using Nop.Services.Stores;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
@@ -48,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             IDateTimeHelper dateTimeHelper,
             IDownloadService downloadService,
             IGenericAttributeService genericAttributeService,
+            IJsonLdModelFactory jsonLdModelFactory,
             ILocalizationService localizationService,
             IManufacturerService manufacturerService,
             IPermissionService permissionService,
@@ -60,13 +63,16 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             IProductTagService productTagService,
             IProductTemplateService productTemplateService,
             IReviewTypeService reviewTypeService,
+            IShoppingCartService shoppingCartService,
             ISpecificationAttributeService specificationAttributeService,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
+            IStoreService storeService,
             IShoppingCartModelFactory shoppingCartModelFactory,
             ITaxService taxService,
             IUrlRecordService urlRecordService,
             IVendorService vendorService,
+            IVideoService videoService,
             IWebHelper webHelper,
             IWorkContext workContext,
             MediaSettings mediaSettings,
@@ -74,17 +80,49 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             SeoSettings seoSettings,
             ShippingSettings shippingSettings,
             VendorSettings vendorSettings,
+            // ABC: custom services
             IAbcMattressListingPriceService abcMattressListingPriceService,
             IProductAbcDescriptionService productAbcDescriptionService)
-            : base(captchaSettings, catalogSettings, customerSettings,
-                categoryService, currencyService, customerService, dateRangeService,
-                dateTimeHelper, downloadService, genericAttributeService, localizationService,
-                manufacturerService, permissionService, pictureService, priceCalculationService,
-                priceFormatter, productAttributeParser, productAttributeService, productService,
-                productTagService, productTemplateService, reviewTypeService, specificationAttributeService,
-                staticCacheManager, storeContext, shoppingCartModelFactory, taxService, urlRecordService,
-                vendorService, webHelper, workContext, mediaSettings, orderSettings, seoSettings,
-                shippingSettings, vendorSettings
+            : base(captchaSettings,
+                  catalogSettings,
+                  customerSettings,
+                  categoryService,
+                  currencyService,
+                  customerService,
+                  dateRangeService,
+                  dateTimeHelper,
+                  downloadService,
+                  genericAttributeService,
+                  jsonLdModelFactory,
+                  localizationService,
+                  manufacturerService,
+                  permissionService,
+                  pictureService,
+                  priceCalculationService,
+                  priceFormatter,
+                  productAttributeParser,
+                  productAttributeService,
+                  productService,
+                  productTagService,
+                  productTemplateService,
+                  reviewTypeService,
+                  shoppingCartService,
+                  specificationAttributeService,
+                  staticCacheManager,
+                  storeContext,
+                  storeService,
+                  shoppingCartModelFactory,
+                  taxService,
+                  urlRecordService,
+                  vendorService,
+                  videoService,
+                  webHelper,
+                  workContext,
+                  mediaSettings,
+                  orderSettings,
+                  seoSettings,
+                  shippingSettings,
+                  vendorSettings
             )
         {
             _abcMattressListingPriceService = abcMattressListingPriceService;
