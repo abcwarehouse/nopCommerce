@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
+using Nop.Services.Logging;
 
 namespace Nop.Web
 {
@@ -46,10 +47,36 @@ namespace Nop.Web
         /// Configure the application HTTP request pipeline
         /// </summary>
         /// <param name="application">Builder for configuring an application's request pipeline</param>
+      
+
+      
         public void Configure(IApplicationBuilder application)
         {
             application.ConfigureRequestPipeline();
             application.StartEngine();
+
+            // Create a scoped service provider to get nopCommerce services
+            var serviceProvider = application.ApplicationServices;
+            var logger = serviceProvider.GetService<ILogger>();
+
+            // 410 error with nopCommerce DB logging
+            application.Use(async (context, next) =>
+            {
+                var goneUrls = new[] { "/water-heaters-delivered-installed-within-24hours" };
+
+                if (goneUrls.Contains(context.Request.Path.Value, StringComparer.OrdinalIgnoreCase))
+                {
+                    // Log to nopCommerce DB
+                    logger?.Information($"410 Gone - URL: {context.Request.Path.Value} | IP: {context.Connection.RemoteIpAddress}");
+
+                    context.Response.StatusCode = StatusCodes.Status410Gone;
+                    await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
+                    return;
+                }
+
+                await next();
+            });
         }
+
     }
 }
