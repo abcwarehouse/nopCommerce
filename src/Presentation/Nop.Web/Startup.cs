@@ -72,8 +72,7 @@ namespace Nop.Web
                 if (goneUrls.Contains(context.Request.Path.Value, StringComparer.OrdinalIgnoreCase))
                 {
                     // Log to nopCommerce DB
-                    logger?.InsertLog(Nop.Core.Domain.Logging.LogLevel.Information, 
-                     $"410 Gone - URL: {context.Request.Path.Value} | IP: {context.Connection.RemoteIpAddress}");
+                    logger?.Information($"410 Gone - URL: {context.Request.Path.Value} | IP: {context.Connection.RemoteIpAddress}");
 
                     context.Response.StatusCode = StatusCodes.Status410Gone;
                     await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
