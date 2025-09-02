@@ -4,6 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
 using Nop.Services.Logging;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace Nop.Web
 {
@@ -49,7 +54,7 @@ namespace Nop.Web
         /// <param name="application">Builder for configuring an application's request pipeline</param>
       
 
-      
+
         public void Configure(IApplicationBuilder application)
         {
             application.ConfigureRequestPipeline();
@@ -67,7 +72,8 @@ namespace Nop.Web
                 if (goneUrls.Contains(context.Request.Path.Value, StringComparer.OrdinalIgnoreCase))
                 {
                     // Log to nopCommerce DB
-                    logger?.Information($"410 Gone - URL: {context.Request.Path.Value} | IP: {context.Connection.RemoteIpAddress}");
+                    logger?.InsertLog(Nop.Core.Domain.Logging.LogLevel.Information, 
+                     $"410 Gone - URL: {context.Request.Path.Value} | IP: {context.Connection.RemoteIpAddress}");
 
                     context.Response.StatusCode = StatusCodes.Status410Gone;
                     await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
