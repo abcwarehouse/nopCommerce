@@ -32,63 +32,66 @@
         {
             <div class="min-qty-notification">@Model.AddToCart.MinimumQuantityNotification</div>
         }
-        @if (!Model.AddToCart.DisableBuyButton || !Model.ProductPrice.CallForPrice)
+        @if (!Model.AddToCart.DisableBuyButton)
         {
-            <span style="color:red; font-weight:bold;">
-                CallForPrice = @Model.ProductPrice.CallForPrice.ToString()
-            </span>
-            <div class="add-to-cart-panel">
-                @{
-                    var addToCartText = "";
-
-                    // Delivery options
-                    if (await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.AddToCart.ProductId))
-                    {
-                        <button type="button"
-                                id="add-to-cart-button-@Model.AddToCart.ProductId"
-                                class="button-1 add-to-cart-button"
-                                onclick="addCartItemAsync(@Model.AddToCart.ProductId)">
-                            <span>Add To Cart</span>
-                        </button>
-                    }
-                    else if (Model.AddToCart.UpdatedShoppingCartItemId > 0 
-                             && Model.AddToCart.UpdateShoppingCartItemType.HasValue 
-                             && Model.AddToCart.UpdateShoppingCartItemType.Value == ShoppingCartType.ShoppingCart)
-                    {
-                        addToCartText = T("ShoppingCart.AddToCart.Update").Text;
-                        <input type="button" 
-                               id="add-to-cart-button-@Model.AddToCart.ProductId" 
-                               class="button-1 add-to-cart-button" 
-                               value="@addToCartText" 
-                               data-productid="@Model.AddToCart.ProductId" 
-                               onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
-                    }
-                    else
-                    {
-                        addToCartText = T("ShoppingCart.AddToCart").Text;
-                        if (Model.AddToCart.IsRental)
-                        {
-                            addToCartText = T("ShoppingCart.Rent").Text;
-                        }
-                        if (Model.AddToCart.AvailableForPreOrder)
-                        {
-                            addToCartText = T("ShoppingCart.PreOrder").Text;
-                        }
-                        <input type="button" 
-                               id="add-to-cart-button-@Model.AddToCart.ProductId" 
-                               class="button-1 add-to-cart-button" 
-                               value="@addToCartText" 
-                               data-productid="@Model.AddToCart.ProductId" 
-                               onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
-                    }
-                }
-            </div>
-            @if (!string.IsNullOrEmpty(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime))
+            if(!Model.ProductPrice.CallForPrice)
             {
-                <div class="pre-order-availability-date">
-                    <label>@T("ShoppingCart.PreOrderAvailability"):</label>
-                    <span>@Html.Raw(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime)</span>
+                <span style="color:red; font-weight:bold;">
+                    CallForPrice = @Model.ProductPrice.CallForPrice.ToString()
+                </span>
+                <div class="add-to-cart-panel">
+                    @{
+                        var addToCartText = "";
+
+                        // Delivery options
+                        if (await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.AddToCart.ProductId))
+                        {
+                            <button type="button"
+                                    id="add-to-cart-button-@Model.AddToCart.ProductId"
+                                    class="button-1 add-to-cart-button"
+                                    onclick="addCartItemAsync(@Model.AddToCart.ProductId)">
+                                <span>Add To Cart</span>
+                            </button>
+                        }
+                        else if (Model.AddToCart.UpdatedShoppingCartItemId > 0 
+                                && Model.AddToCart.UpdateShoppingCartItemType.HasValue 
+                                && Model.AddToCart.UpdateShoppingCartItemType.Value == ShoppingCartType.ShoppingCart)
+                        {
+                            addToCartText = T("ShoppingCart.AddToCart.Update").Text;
+                            <input type="button" 
+                                id="add-to-cart-button-@Model.AddToCart.ProductId" 
+                                class="button-1 add-to-cart-button" 
+                                value="@addToCartText" 
+                                data-productid="@Model.AddToCart.ProductId" 
+                                onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
+                        }
+                        else
+                        {
+                            addToCartText = T("ShoppingCart.AddToCart").Text;
+                            if (Model.AddToCart.IsRental)
+                            {
+                                addToCartText = T("ShoppingCart.Rent").Text;
+                            }
+                            if (Model.AddToCart.AvailableForPreOrder)
+                            {
+                                addToCartText = T("ShoppingCart.PreOrder").Text;
+                            }
+                            <input type="button" 
+                                id="add-to-cart-button-@Model.AddToCart.ProductId" 
+                                class="button-1 add-to-cart-button" 
+                                value="@addToCartText" 
+                                data-productid="@Model.AddToCart.ProductId" 
+                                onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
+                        }
+                    }
                 </div>
+                @if (!string.IsNullOrEmpty(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime))
+                {
+                    <div class="pre-order-availability-date">
+                        <label>@T("ShoppingCart.PreOrderAvailability"):</label>
+                        <span>@Html.Raw(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime)</span>
+                    </div>
+                }
             }
         }
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model.AddToCart })
