@@ -39,12 +39,12 @@
                     var addToCartText = "";
 
                     // Delivery options
-                    if (await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.ProductId))
+                    if (await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.AddToCart.ProductId))
                     {
                         <button type="button"
-                                id="add-to-cart-button-@Model.ProductId"
+                                id="add-to-cart-button-@Model.AddToCart.ProductId"
                                 class="button-1 add-to-cart-button"
-                                onclick="addCartItemAsync(@Model.ProductId)">
+                                onclick="addCartItemAsync(@Model.AddToCart.ProductId)">
                             <span>Add To Cart</span>
                         </button>
                     }
@@ -54,11 +54,11 @@
                     {
                         addToCartText = T("ShoppingCart.AddToCart.Update").Text;
                         <input type="button" 
-                               id="add-to-cart-button-@Model.ProductId" 
+                               id="add-to-cart-button-@Model.AddToCart.ProductId" 
                                class="button-1 add-to-cart-button" 
                                value="@addToCartText" 
-                               data-productid="@Model.ProductId" 
-                               onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
+                               data-productid="@Model.AddToCart.ProductId" 
+                               onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
                     }
                     else
                     {
@@ -72,11 +72,11 @@
                             addToCartText = T("ShoppingCart.PreOrder").Text;
                         }
                         <input type="button" 
-                               id="add-to-cart-button-@Model.ProductId" 
+                               id="add-to-cart-button-@Model.AddToCart.ProductId" 
                                class="button-1 add-to-cart-button" 
                                value="@addToCartText" 
-                               data-productid="@Model.ProductId" 
-                               onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
+                               data-productid="@Model.AddToCart.ProductId" 
+                               onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
                     }
                 }
             </div>
