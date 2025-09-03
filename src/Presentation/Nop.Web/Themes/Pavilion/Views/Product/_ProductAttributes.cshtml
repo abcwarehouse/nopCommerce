@@ -58,6 +58,7 @@
                     @if (attribute.IsRequired || attribute.Name == "Warranty" || attribute.Name == "Box Spring or Adjustable Base")
                     {
                         <span class="required">*</span>
+                        attribute.Name
                     }
                     @* ABC: Use warranty-specific description *@
                     @if (attribute.Name != "Warranty" && !string.IsNullOrEmpty(attribute.Description))
