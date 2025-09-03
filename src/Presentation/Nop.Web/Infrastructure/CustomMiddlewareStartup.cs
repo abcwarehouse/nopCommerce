@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging; // <-- Use Microsoft logging
 using Nop.Core.Infrastructure;
-using Nop.Services.Logging; // For ILogger
-using Nop.Core.Domain.Logging; // For LogLevel enum
 using System;
 using System.Linq;
 
@@ -23,9 +22,8 @@ namespace Nop.Web.Infrastructure
 
         public void Configure(IApplicationBuilder application)
         {
-            
-            var serviceProvider = application.ApplicationServices;
-            var logger = serviceProvider.GetService<ILogger>();
+            // Get Microsoft logger
+            var logger = application.ApplicationServices.GetService<ILogger<CustomMiddlewareStartup>>();
 
             application.Use(async (context, next) =>
             {
@@ -34,15 +32,15 @@ namespace Nop.Web.Infrastructure
                     "/water-heaters-delivered-installed-within-24hours"
                 };
 
-                // Normalize path: lowercase + no trailing slash
+                // Normalize path
                 var requestPath = context.Request.Path.Value?.TrimEnd('/').ToLowerInvariant();
 
-                // Log the path being checked
-                logger?.InsertLog(LogLevel.Information, $"Custom middleware checking path: {requestPath}");
+                // Log that middleware ran
+                logger?.LogInformation("Custom middleware checking path: {Path}", requestPath);
 
                 if (goneUrls.Any(u => string.Equals(u, requestPath, StringComparison.OrdinalIgnoreCase)))
                 {
-                    logger?.InsertLog(LogLevel.Information, $"410 Gone returned for path: {requestPath}");
+                    logger?.LogInformation("410 Gone returned for path: {Path}", requestPath);
 
                     context.Response.StatusCode = StatusCodes.Status410Gone;
                     await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
