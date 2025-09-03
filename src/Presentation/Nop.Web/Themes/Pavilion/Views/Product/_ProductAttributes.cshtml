@@ -81,9 +81,12 @@
                                 if (attribute.Name.Contains("Frame")) { mattressClass = "mattress-frame"; }
                                 if (attribute.Name.Contains("Protector")) { mattressClass = "mattress-protector"; }
                                 <select class="@(mattressClass)" name="@(controlId)" id="@(controlId)" @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onchange=\"showHideDropdownQuantity('{controlId}')\"") : null)>
-                                    @if (!attribute.IsRequired || productId != 79952)
+                                    @if (!attribute.IsRequired)
                                     {
-                                        <option value="0">---</option>
+                                        @if (productId != 79952)
+                                        {
+                                            <option value="0">---</option>
+                                        }
                                     }
                                     @foreach (var attributeValue in attribute.Values)
                                     {
