@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
 using Nop.Services.Logging; // For ILogger
+using Nop.Core.Domain.Logging; // For LogLevel enum
 using System;
 using System.Linq;
 
@@ -37,11 +38,11 @@ namespace Nop.Web.Infrastructure
                 var requestPath = context.Request.Path.Value?.TrimEnd('/').ToLowerInvariant();
 
                 // Log the path being checked
-                logger?.Information($"Custom middleware checking path: {requestPath}");
+                logger?.InsertLog(LogLevel.Information, $"Custom middleware checking path: {requestPath}");
 
                 if (goneUrls.Any(u => string.Equals(u, requestPath, StringComparison.OrdinalIgnoreCase)))
                 {
-                    logger?.Information($"410 Gone returned for path: {requestPath}");
+                    logger?.InsertLog(LogLevel.Information, $"410 Gone returned for path: {requestPath}");
 
                     context.Response.StatusCode = StatusCodes.Status410Gone;
                     await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
