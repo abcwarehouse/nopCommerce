@@ -502,7 +502,6 @@
     var attributesHaveConditions = Model.Any(x => x.HasCondition);
     var attributesHaveAssociatedPictures = Model.Any(x => x.ProductId > 0);
     var attributeChangeScriptsBuilder = new StringBuilder();
-    var productId = Model.First().ProductId;
     var attributeChangeHandlerFuncName = $"attribute_change_handler_{productId}";
     if (catalogSettings.AjaxProcessAttributeChange)
     {
