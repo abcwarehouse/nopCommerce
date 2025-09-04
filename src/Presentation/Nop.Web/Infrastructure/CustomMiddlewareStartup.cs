@@ -40,16 +40,11 @@ namespace Nop.Web.Infrastructure
     context.Response.StatusCode = StatusCodes.Status410Gone;
     context.Response.ContentType = "text/html";
 
-    if (goneUrls.Any(u => string.Equals(u, requestPath, StringComparison.OrdinalIgnoreCase)))
-{
-    context.Response.StatusCode = StatusCodes.Status410Gone;
-    context.Response.ContentType = "text/html";
-
     await context.Response.WriteAsync(@"
         <html>
             <head>
                 <title>410 Gone</title>
-                <meta http-equiv='refresh' content='3;url=https://www.abcwarehouse.com/' />
+                <meta http-equiv='refresh' content='5;url=https://www.abcwarehouse.com/' />
                 <style>
                     body {
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -101,7 +96,7 @@ namespace Nop.Web.Infrastructure
                         <img alt='ABC Warehouse' src='https://www.abcwarehouse.com/images/thumbs/164/1641055_abc_web-logo_60th.png' />
                     </div>
                     <h1>410 - Page Removed</h1>
-                    <p>This page is no longer available.<br/>You’ll be redirected shortly.</p>
+                    <p>This page is no longer available.<br/>You will be redirected shortly.</p>
                     <a href='https://www.abcwarehouse.com/'>Go to Homepage</a>
                 </div>
             </body>
