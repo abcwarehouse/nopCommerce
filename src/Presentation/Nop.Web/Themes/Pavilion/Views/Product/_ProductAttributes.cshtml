@@ -83,7 +83,7 @@
                                 <select class="@(mattressClass)" name="@(controlId)" id="@(controlId)" @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onchange=\"showHideDropdownQuantity('{controlId}')\"") : null)>
                                     @if (!attribute.IsRequired)
                                     {
-                                        if (attribute.Name.Contains("Base")
+                                        if (attribute.Name.Contains("Base"))
                                         {
                                             <option value="0">---</option>
                                         }
