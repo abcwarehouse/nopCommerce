@@ -21,7 +21,7 @@ namespace Nop.Web.Infrastructure
 
         public void Configure(IApplicationBuilder application)
         {
-            // Add custom middleware
+            
             application.Use(async (context, next) =>
             {
                 // Log to console to confirm middleware runs
@@ -38,9 +38,22 @@ namespace Nop.Web.Infrastructure
                 if (goneUrls.Any(u => string.Equals(u, requestPath, StringComparison.OrdinalIgnoreCase)))
                 {
                     context.Response.StatusCode = StatusCodes.Status410Gone;
-                    await context.Response.WriteAsync("410 Gone - This page has been permanently removed.");
-                    return;
-                }
+                    context.Response.ContentType = "text/html";
+
+                     await context.Response.WriteAsync(@"
+                            <html>
+                                  <head>
+                                      <title>Page Removed</title>
+                                      <meta http-equiv='refresh' content='3;url=https://www.abcwarehouse.com/' />
+                                 </head>
+                                         <body style='font-family: Arial, sans-serif; text-align: center; margin-top: 50px;'>
+                                             <h1>410 - This page has been permanently removed</h1>
+                                             <p>You will be redirected to our <a href='https://www.abcwarehouse.com/'>homepage</a> in 3 seconds.</p>
+                                        </body>
+                            </html>
+                ");
+                 return;
+        }
 
                 await next();
             });
