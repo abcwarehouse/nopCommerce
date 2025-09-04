@@ -44,7 +44,7 @@ namespace Nop.Web.Infrastructure
         <html>
             <head>
                 <title>410 Gone</title>
-                <meta http-equiv='refresh' content='4;url=https://www.abcwarehouse.com/' />
+                <meta http-equiv='refresh' content='5;url=https://www.abcwarehouse.com/' />
                 <style>
                     body {
                         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -90,7 +90,7 @@ namespace Nop.Web.Infrastructure
             <body>
                 <div class='container'>
                     <h1>410 - Page Removed</h1>
-                    <p>This page is no longer available.<br/>You’ll be redirected shortly.</p>
+                    <p>This page is no longer available.<br/>You will be redirected shortly.</p>
                     <a href='https://www.abcwarehouse.com/'>Go to Homepage</a>
                 </div>
             </body>
