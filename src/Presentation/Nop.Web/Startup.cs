@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
 
+
 namespace Nop.Web
 {
     /// <summary>
@@ -46,10 +47,14 @@ namespace Nop.Web
         /// Configure the application HTTP request pipeline
         /// </summary>
         /// <param name="application">Builder for configuring an application's request pipeline</param>
+      
+
+
         public void Configure(IApplicationBuilder application)
         {
             application.ConfigureRequestPipeline();
             application.StartEngine();
         }
+
     }
 }

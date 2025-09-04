@@ -674,7 +674,7 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
                 {
                     ProductId = product.Id,
                     ProductAttributeId = pa.Id,
-                    IsRequired = true,
+                    IsRequired = false,
                     AttributeControlType = AttributeControlType.DropdownList,
                     DisplayOrder = 10,
                     TextPrompt = attributeName,

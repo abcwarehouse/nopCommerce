@@ -138,7 +138,13 @@
 					$(specificationPanels[i]).hide();
 				}
 
-				if (title.toLowerCase() === 'capacity') {
+				// This list should match the "Range" filters in SpecificationAttribute, so we're hiding the specific values from PLP
+				if (title.toLowerCase() === 'capacity' ||
+					title.toLowerCase() === 'width' || 
+					title.toLowerCase() === 'height' || 
+					title.toLowerCase() === 'depth' ||
+					title.toLowerCase() === 'maximum rpm' ||
+					title.toLowerCase() === 'decibel range') {
 					$(specificationPanels[i]).hide();
 				}
 				if (title.toLowerCase() === 'capacity_range') {
@@ -369,18 +375,6 @@
 								<div class="picture">
 									<a href="@Url.RouteUrl("Category", new {SeName = item.SeName})" title="@item.PictureModel.Title">
 										<img alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
-									</a>
-								</div>
-							</div>
-						</div>
-					}
-					@if(Model.Name == "Appliances")
-					{
-						<div class="item-box water">
-							<div class="sub-category-item">
-								<div class="picture">
-									<a href="/water-heaters-delivered-installed-within-24hours" title="Water Heater Delivered">
-										<img alt="Water Heaters Delivered Installed Within 24 hours" src="https://www.abcwarehouse.com/images/CategoryAd_WaterHeaters.jpg" title="Water Heater" />
 									</a>
 								</div>
 							</div>
