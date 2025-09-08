@@ -44,7 +44,7 @@
         decimal savedAmt = decimal.Parse(Model.OldPrice.Substring(1)) - decimal.Parse(Model.Price.Substring(1));
         if (savedAmt > 50)
         {
-            savedStr = "$" + savedAmt + " Off";
+            savedStr = "$" + savedAmt + "";
         }
     }
 
@@ -125,7 +125,7 @@
                 <div class="product-price">
                     @if (!String.IsNullOrWhiteSpace(savedStr))
                     {
-                        <label class="price-sale-label">Sale: </label>
+                        <label class="price-sale-label">Save</label>
                     }
 
                     @*render price*@
