@@ -376,6 +376,13 @@ function AddToCart()
         data: payload,
         type: "POST",
         success: function(response) {
+            console.log("Raw response:", response);
+            try {
+                    var parsed = typeof response === "string" ? JSON.parse(response) : response;
+                    console.log("Parsed response:", parsed);
+                } catch(e) {
+                    console.error("Response was not JSON:", e);
+                }
             addToCartButton.style.display = "none";
             title.style.display = "block";
             goToCartButton.style.display = "block";
