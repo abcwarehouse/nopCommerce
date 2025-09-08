@@ -378,8 +378,14 @@ function AddToCart()
         success: function(res) {
             console.log('AddToCart success response:', res);
             
-            const response = (typeof res === "string") ? JSON.parse(res) : res;
-            console.log('Parsed response:', response);
+            var parsedResponse;
+            try {
+                parsedResponse = (typeof res === "string") ? JSON.parse(res) : res;
+                console.log('Parsed response:', parsedResponse);
+            } catch (parseError) {
+                console.error('Error parsing response:', parseError);
+                parsedResponse = res;
+            }
 
             addToCartButton.style.display = "none";
             title.style.display = "block";
@@ -391,48 +397,55 @@ function AddToCart()
                 continueShoppingButton.style.display = "block";
             }
 
-            if (response && response.cartItems) {
-                console.log('Cart items found, processing Listrak...'); 
-                console.log('Cart items:', response.cartItems);
-                console.log('Cart total:', response.cartTotal);
+            // Enhanced Listrak implementation with debugging
+            if (parsedResponse && parsedResponse.cartItems) {
+                console.log('Cart items found, processing Listrak...');  
+                console.log('Cart items:', parsedResponse.cartItems);  
+                console.log('Cart total:', parsedResponse.cartTotal);  
                 
+                // Check if Listrak is loaded
                 if (typeof _ltk !== 'undefined' && _ltk.SCA) {
-                    console.log('Listrak SCA object found');
+                    console.log('Listrak SCA object found');  
                     
                     try {
                         _ltk.SCA.ClearCart();
-                        console.log('Cart cleared');
+                        console.log('Cart cleared');  
                         
-                        response.cartItems.forEach(function(item, index) {
-                            console.log(`Adding item ${index + 1}:`, item);
+                        parsedResponse.cartItems.forEach(function(item, index) {
+                            console.log('Adding item ' + (index + 1) + ':', item);  
                             _ltk.SCA.AddItemWithLinks(
-                                item.sku, 
-                                item.quantity, 
-                                item.price,
-                                item.name, 
-                                item.imageUrl, 
-                                item.productUrl
+                                item.sku || '', 
+                                item.quantity || 0, 
+                                item.price || 0,
+                                item.name || '', 
+                                item.imageUrl || '', 
+                                item.productUrl || ''
                             );
                         });
                         
-                        _ltk.SCA.Total = response.cartTotal;
-                        console.log('Cart total set to:', response.cartTotal);
+                        _ltk.SCA.Total = parsedResponse.cartTotal || 0;
+                        console.log('Cart total set to:', parsedResponse.cartTotal);  
                         
                         _ltk.SCA.Submit();
-                        console.log('Listrak SCA submitted');
+                        console.log('Listrak SCA submitted');  
                         
-                    } catch (error) {
-                        console.error('Error in Listrak processing:', error);
+                    } catch (listrakError) {
+                        console.error('Error in Listrak processing:', listrakError);
                     }
                 } else {
                     console.error('Listrak SCA object not found. Make sure Listrak is properly loaded.');
+                    console.log('Available _ltk object:', typeof _ltk !== 'undefined' ? _ltk : 'undefined');
                 }
             } else {
-                console.log('No cart items in response or response is invalid');
+                console.log('No cart items in response or response is invalid');  
+                console.log('Response structure check:');
+                console.log('- parsedResponse exists:', !!parsedResponse);
+                console.log('- parsedResponse.cartItems exists:', !!(parsedResponse && parsedResponse.cartItems));
+                console.log('- cartItems is array:', !!(parsedResponse && parsedResponse.cartItems && Array.isArray(parsedResponse.cartItems)));
             }
         },
         error: function(xhr, status, error) {
-            console.error('AddToCart AJAX error:', status, error);
+            console.error('AddToCart AJAX error:', status, error);  
             alert('Error when adding item to cart.');
             cartSlideoutBackButton.style.display = "block";
             deliveryOptions.style.display = "block";
