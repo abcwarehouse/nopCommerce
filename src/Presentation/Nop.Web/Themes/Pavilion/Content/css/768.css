@@ -348,7 +348,7 @@
 .overview .prices > div,
 .variant-overview .prices > div {
 	display: inline-block;
-	margin: 0 5px 5px 0;
+	margin: 0 5px 0 0;
 }
 .discounted-price label {
 	display: none;
