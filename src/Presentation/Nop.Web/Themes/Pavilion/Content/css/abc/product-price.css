@@ -11,6 +11,7 @@
     font-size: 0.93rem;
     font-weight: bold;
     color: black;
+    display: inline-block !important;
 }
 
 .old-product-price label {
