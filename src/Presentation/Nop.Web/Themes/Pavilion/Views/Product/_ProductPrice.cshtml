@@ -109,6 +109,15 @@
                     @if (!String.IsNullOrWhiteSpace(savedStr))
                     {
                         <label class="price-sale-label">Sale: </label>
+                        // Should always exist for mattress manipulation
+                if (!String.IsNullOrWhiteSpace(savedStr))
+                {
+                    <div class="you-save-amt">@savedStr.Replace(".00", "")</div>
+                }
+                else
+                {
+                    <div class="you-save-amt" style="display: none"></div>
+                }
                     }
 
                     @*render price*@
@@ -127,7 +136,7 @@
                         <span>@Model.OldPrice.Replace(".00", "")</span>
                     </div>
                 }
-                // Should always exist for mattress manipulation
+                @* // Should always exist for mattress manipulation
                 if (!String.IsNullOrWhiteSpace(savedStr))
                 {
                     <div class="you-save-amt">@savedStr.Replace(".00", "")</div>
@@ -135,7 +144,7 @@
                 else
                 {
                     <div class="you-save-amt" style="display: none"></div>
-                }
+                } *@
                
 
 
