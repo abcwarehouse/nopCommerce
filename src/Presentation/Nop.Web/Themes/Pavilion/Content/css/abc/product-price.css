@@ -3,15 +3,19 @@
 }
 
 .overview .prices .product-price {
-    color: #B70000;
+    color: black;
     display: inline-block;
 }
 
 .you-save-amt {
     font-size: 0.93rem;
-    font-weight: bold;
+    font-weight: 400;
     color: black;
     display: inline-block !important;
+    background: #b70000;
+    color: white;
+    padding: 1px 9px;
+
 }
 
 .old-product-price label {

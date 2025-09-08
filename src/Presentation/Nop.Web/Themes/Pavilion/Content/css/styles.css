@@ -2485,7 +2485,7 @@ input#sli_search_1 {
 .overview .product-price,
 .variant-overview .product-price {
 	font-size: 20px;
-	font-weight: bold;
+	font-weight: 600;
 	color: #00a1b1;
 }
 .overview .rental-price,
