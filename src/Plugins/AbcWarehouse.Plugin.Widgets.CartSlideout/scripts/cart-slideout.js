@@ -371,50 +371,72 @@ function AddToCart()
     }
 
     $.ajax({
-    cache: false,
-    url: `/addproducttocart/details/${productId}/1`,
-    data: payload,
-    type: "POST",
-    success: function(res) {
-        const response = (typeof res === "string") ? JSON.parse(res) : res;
+        cache: false,
+        url: `/addproducttocart/details/${productId}/1`,
+        data: payload,
+        type: "POST",
+        success: function(res) {
+            console.log('AddToCart success response:', res);
+            
+            const response = (typeof res === "string") ? JSON.parse(res) : res;
+            console.log('Parsed response:', response);
 
-        addToCartButton.style.display = "none";
-        title.style.display = "block";
-        goToCartButton.style.display = "block";
-        if (editMode) {
-        title.innerHTML = "<i class='fas fa-check-circle'></i> Item Updated";
-        } else {
-        continueShoppingButton.style.display = "block";
-        }
+            addToCartButton.style.display = "none";
+            title.style.display = "block";
+            goToCartButton.style.display = "block";
+            
+            if (editMode) {
+                title.innerHTML = "<i class='fas fa-check-circle'></i> Item Updated";
+            } else {
+                continueShoppingButton.style.display = "block";
+            }
 
-        if (response && response.cartItems) {
-        _ltk.SCA.ClearCart();
-        response.cartItems.forEach(function(item) {
-            _ltk.SCA.AddItemWithLinks(
-            item.sku, item.quantity, item.price,
-            item.name, item.imageUrl, item.productUrl
-            );
-        });
-        _ltk.SCA.Total = response.cartTotal;
-        _ltk.SCA.Submit();
+            if (response && response.cartItems) {
+                console.log('Cart items found, processing Listrak...'); 
+                console.log('Cart items:', response.cartItems);
+                console.log('Cart total:', response.cartTotal);
+                
+                if (typeof _ltk !== 'undefined' && _ltk.SCA) {
+                    console.log('Listrak SCA object found');
+                    
+                    try {
+                        _ltk.SCA.ClearCart();
+                        console.log('Cart cleared');
+                        
+                        response.cartItems.forEach(function(item, index) {
+                            console.log(`Adding item ${index + 1}:`, item);
+                            _ltk.SCA.AddItemWithLinks(
+                                item.sku, 
+                                item.quantity, 
+                                item.price,
+                                item.name, 
+                                item.imageUrl, 
+                                item.productUrl
+                            );
+                        });
+                        
+                        _ltk.SCA.Total = response.cartTotal;
+                        console.log('Cart total set to:', response.cartTotal);
+                        
+                        _ltk.SCA.Submit();
+                        console.log('Listrak SCA submitted');
+                        
+                    } catch (error) {
+                        console.error('Error in Listrak processing:', error);
+                    }
+                } else {
+                    console.error('Listrak SCA object not found. Make sure Listrak is properly loaded.');
+                }
+            } else {
+                console.log('No cart items in response or response is invalid');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AddToCart AJAX error:', status, error);
+            alert('Error when adding item to cart.');
+            cartSlideoutBackButton.style.display = "block";
+            deliveryOptions.style.display = "block";
+            addToCartButton.disabled = false;
         }
-    },
-    error: function() {
-        alert('Error when adding item to cart.');
-        cartSlideoutBackButton.style.display = "block";
-        deliveryOptions.style.display = "block";
-        addToCartButton.disabled = false;
-    }
     });
 }
-// Listrak Whitelist for cors light error. Mountains not blue
-  if (location.hostname !== 'stage.abcwarehouse.com') {
-    (function(d, tid, vid){
-      if (typeof _ltk !== 'undefined') return;
-      var js = d.createElement('script'); js.id = 'ltkSDK';
-      js.src = "https://cdn.listrakbi.com/scripts/script.js?m=" + tid + "&v=" + vid;
-      document.head.appendChild(js);
-    })(document, '@Model.MerchantId', '1');
-  } else {
-    console.warn('Listrak disabled on staging');
-  }
