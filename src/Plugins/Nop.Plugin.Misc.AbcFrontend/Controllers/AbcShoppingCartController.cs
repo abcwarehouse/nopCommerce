@@ -38,7 +38,6 @@ using Nop.Services.Caching;
 using Nop.Core.Infrastructure;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Microsoft.AspNetCore.Http;
-using Nop.Core.Html;
 using Microsoft.Extensions.Primitives;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Events;
@@ -54,13 +53,16 @@ using Nop.Plugin.Misc.AbcCore.Nop;
 using SevenSpikes.Nop.Plugins.StoreLocator.Domain.Shops;
 using SevenSpikes.Nop.Plugins.StoreLocator.Services;
 using Nop.Services.Attributes;
+using Nop.Services.Html;                                       // for IHtmlFormatter interface reference
+using Nop.Web.Framework.Mvc.Routing;                           // for INopUrlHelper interface reference
+using Nop.Services.Stores;                                     // for IStoreMappingService interface reference
+using Nop.Web.Components;                                      // for FlyoutShoppingCartViewComponent reference
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
-    public partial class CustomShoppingCartController : ShoppingCartController
+    public partial class AbcShoppingCartController : ShoppingCartController
     {
-
-        // custom
+        private readonly IAbcProductAttributeService _abcProductAttributeService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly IRepository<CustomerShopMapping> _customerShopMappingRepository;
         private readonly IBackendStockService _backendStockService;
@@ -69,11 +71,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
         private readonly CoreSettings _coreSettings;
         private readonly IShopService _shopService;
 
-        public CustomShoppingCartController(
+        public AbcShoppingCartController(
             CaptchaSettings captchaSettings,
             CustomerSettings customerSettings,
             IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser,
-            IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
+            IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
             ICurrencyService currencyService,
             ICustomerActivityService customerActivityService,
             ICustomerService customerService,
@@ -81,20 +83,23 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IDownloadService downloadService,
             IGenericAttributeService genericAttributeService,
             IGiftCardService giftCardService,
+            IHtmlFormatter htmlFormatter,
             ILocalizationService localizationService,
             INopFileProvider fileProvider,
+            INopUrlHelper nopUrlHelper,
             INotificationService notificationService,
             IPermissionService permissionService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
             IProductAttributeParser productAttributeParser,
-            IAbcProductAttributeService productAttributeService,
+            IProductAttributeService productAttributeService,        // using AbcProductAttributeService instead of the default ProductAttributeService
             IProductService productService,
             IShippingService shippingService,
             IShoppingCartModelFactory shoppingCartModelFactory,
             IShoppingCartService shoppingCartService,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
+            IStoreMappingService storeMappingService,
             ITaxService taxService,
             IUrlRecordService urlRecordService,
             IWebHelper webHelper,
@@ -105,6 +110,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             ShoppingCartSettings shoppingCartSettings,
             ShippingSettings shippingSettings,
             // custom
+            IAbcProductAttributeService abcProductAttributeService,
             IAttributeUtilities attributeUtilities,
             IRepository<CustomerShopMapping> customerShopMappingRepository,
             IBackendStockService backendStockService,
@@ -112,16 +118,47 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IWidgetPluginManager widgetPluginManager,
             CoreSettings coreSettings,
             IShopService shopService
-        ) : base(captchaSettings, customerSettings, checkoutAttributeParser, checkoutAttributeService,
-            currencyService, customerActivityService, customerService, discountService,
-            downloadService, genericAttributeService, giftCardService, localizationService,
-            fileProvider, notificationService, permissionService, pictureService,
-            priceFormatter, productAttributeParser, productAttributeService, productService,
-            shippingService, shoppingCartModelFactory, shoppingCartService, staticCacheManager,
-            storeContext, taxService, urlRecordService, webHelper,
-            workContext, workflowMessageService, mediaSettings, orderSettings,
-            shoppingCartSettings, shippingSettings)
-        {          
+        ) : base(
+            captchaSettings,
+            customerSettings,
+            checkoutAttributeParser,
+            checkoutAttributeService,
+            currencyService,
+            customerActivityService,
+            customerService,
+            discountService,
+            downloadService,
+            genericAttributeService,
+            giftCardService,
+            htmlFormatter,
+            localizationService,
+            fileProvider,
+            nopUrlHelper,
+            notificationService,
+            permissionService,
+            pictureService,
+            priceFormatter,
+            productAttributeParser,
+            productAttributeService,
+            productService,
+            shippingService,
+            shoppingCartModelFactory,
+            shoppingCartService,
+            staticCacheManager,
+            storeContext,
+            storeMappingService,
+            taxService,
+            urlRecordService,
+            webHelper,
+            workContext,
+            workflowMessageService,
+            mediaSettings,
+            orderSettings,
+            shoppingCartSettings,
+            shippingSettings
+        )
+        {
+            _abcProductAttributeService = abcProductAttributeService;
             _attributeUtilities = attributeUtilities;
             _customerShopMappingRepository = customerShopMappingRepository;
             _backendStockService = backendStockService;
@@ -598,7 +635,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             {
                 if (element.Key.ToString() == "selectedShopId")
                 {
-                    var legacyPickupPa = await _productAttributeService.GetProductAttributeByNameAsync("Pickup");
+                    var legacyPickupPa = await _abcProductAttributeService.GetProductAttributeByNameAsync("Pickup");
                     var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
                     var pickupPam = pams.FirstOrDefault(pam => pam.ProductAttributeId == legacyPickupPa.Id);
 
@@ -714,11 +751,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 (await _storeContext.GetCurrentStoreAsync()).Id);
 
             var updatetopcartsectionhtml = string.Format(
-                await _localizationService.GetResourceAsync( "ShoppingCart.HeaderQuantity"),
+                await _localizationService.GetResourceAsync("ShoppingCart.HeaderQuantity"),
                 shoppingCarts.Sum(item => item.Quantity));
 
             var updateflyoutcartsectionhtml = _shoppingCartSettings.MiniShoppingCartEnabled
-                ? await RenderViewComponentToStringAsync("FlyoutShoppingCart")
+                ? await RenderViewComponentToStringAsync(typeof(FlyoutShoppingCartViewComponent))
                 : string.Empty;
 
             var sci = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(
@@ -755,22 +792,24 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var productId = product.Id;
 
             return new CartSlideoutInfo() {
-                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId} ),
-                DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
-                    "CartSlideoutProductAttributes",
-                    new {
-                        product = product,
-                        includedAttributeNames = new string[]
-                        {
-                            AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
-                            AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
-                            AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
-                            "Warranty",
-                            AbcDeliveryConsts.DeliveryAccessoriesProductAttributeName,
-                            AbcDeliveryConsts.DeliveryInstallAccessoriesProductAttributeName,
-                            AbcDeliveryConsts.PickupAccessoriesProductAttributeName
-                        }
-                    }),
+                // commented out, we depend on CartSlideout plugin, just bring that into this plugin after
+                ProductInfoHtml = string.Empty, //await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId} ),
+                DeliveryOptionsHtml = string.Empty,
+                // DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
+                //     "CartSlideoutProductAttributes",
+                //     new {
+                //         product = product,
+                //         includedAttributeNames = new string[]
+                //         {
+                //             AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
+                //             AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
+                //             AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
+                //             "Warranty",
+                //             AbcDeliveryConsts.DeliveryAccessoriesProductAttributeName,
+                //             AbcDeliveryConsts.DeliveryInstallAccessoriesProductAttributeName,
+                //             AbcDeliveryConsts.PickupAccessoriesProductAttributeName
+                //         }
+                //     }),
                 ShoppingCartItemId = shoppingCartItemId,
                 ProductId = productId
             };

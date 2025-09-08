@@ -41,36 +41,14 @@ using Nop.Plugin.Misc.AbcExportOrder.Services;
 using System.Threading.Tasks;
 using Nop.Core.Domain.Logging;
 using Nop.Services.Attributes;
+using Nop.Core.Domain.Security;                 // CaptchaSettings
+using Nop.Services.Tax;                         // ITaxService
+using Nop.Core.Domain.Tax;                      // TaxSettings
 
 namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 {
     public class AbcCheckoutController : CheckoutController
     {
-        private readonly AddressSettings _addressSettings;
-        private readonly CustomerSettings _customerSettings;
-        private readonly IAddressAttributeParser _addressAttributeParser;
-        private readonly IAddressService _addressService;
-        private readonly ICheckoutModelFactory _checkoutModelFactory;
-        private readonly ICountryService _countryService;
-        private readonly ICustomerService _customerService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILogger _logger;
-        private readonly IOrderProcessingService _orderProcessingService;
-        private readonly IAbcOrderService _orderService;
-        private readonly IPaymentPluginManager _paymentPluginManager;
-        private readonly IPaymentService _paymentService;
-        private readonly IProductService _productService;
-        private readonly IShippingService _shippingService;
-        private readonly IShoppingCartService _shoppingCartService;
-        private readonly IStoreContext _storeContext;
-        private readonly IWebHelper _webHelper;
-        private readonly IWorkContext _workContext;
-
-        private readonly OrderSettings _orderSettings;
-        private readonly PaymentSettings _paymentSettings;
-        private readonly RewardPointsSettings _rewardPointsSettings;
-        private readonly ShippingSettings _shippingSettings;
         private readonly CoreSettings _coreSettings;
 
         private readonly IProductAttributeService _productAttributeService;
@@ -85,9 +63,11 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         public AbcCheckoutController(
             AddressSettings addressSettings,
+            CaptchaSettings captchaSettings,
             CustomerSettings customerSettings,
-            IAttributeParser<AddressAttribute, AddressAttributeValue> addressAttributeParser,
+            IAddressModelFactory addressModelFactory,
             IAddressService addressService,
+            IAttributeParser<AddressAttribute, AddressAttributeValue> addressAttributeParser,
             ICheckoutModelFactory checkoutModelFactory,
             ICountryService countryService,
             ICustomerService customerService,
@@ -95,19 +75,22 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             ILocalizationService localizationService,
             ILogger logger,
             IOrderProcessingService orderProcessingService,
-            IAbcOrderService orderService,
+            IOrderService orderService,
             IPaymentPluginManager paymentPluginManager,
             IPaymentService paymentService,
             IProductService productService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
             IStoreContext storeContext,
+            ITaxService taxService,
             IWebHelper webHelper,
             IWorkContext workContext,
             OrderSettings orderSettings,
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
             ShippingSettings shippingSettings,
+            TaxSettings taxSettings,
+            // ABC: custom
             CoreSettings coreSettings,
             IProductAttributeService productAttributeService,
             IProductAttributeParser productAttributeParser,
@@ -117,40 +100,39 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             IWarrantyService warrantyService,
             ITermLookupService termLookupService,
             ICardCheckService cardCheckService
-        ) : base(addressSettings, customerSettings, addressAttributeParser, 
-            addressService, checkoutModelFactory, countryService, customerService,
-            genericAttributeService, localizationService, logger, orderProcessingService,
-            orderService, paymentPluginManager, paymentService, productService,
-            shippingService, shoppingCartService, storeContext, webHelper,
-            workContext, orderSettings, paymentSettings, rewardPointsSettings,
-            shippingSettings)
+        ) : base
+        (
+            addressSettings,
+            captchaSettings,
+            customerSettings,
+            addressModelFactory,
+            addressService,
+            addressAttributeParser,
+            checkoutModelFactory,
+            countryService,
+            customerService,
+            genericAttributeService,
+            localizationService,
+            logger,
+            orderProcessingService,
+            orderService,
+            paymentPluginManager,
+            paymentService,
+            productService,
+            shippingService,
+            shoppingCartService,
+            storeContext,
+            taxService,
+            webHelper,
+            workContext,
+            orderSettings,
+            paymentSettings,
+            rewardPointsSettings,
+            shippingSettings,
+            taxSettings
+        )
         {
-            _addressSettings = addressSettings;
-            _customerSettings = customerSettings;
-            _addressAttributeParser = addressAttributeParser;
-            _addressService = addressService;
-            _checkoutModelFactory = checkoutModelFactory;
-            _countryService = countryService;
-            _customerService = customerService;
-            _genericAttributeService = genericAttributeService;
-            _localizationService = localizationService;
-            _logger = logger;
-            _orderProcessingService = orderProcessingService;
-            _orderService = orderService;
-            _paymentPluginManager = paymentPluginManager;
-            _paymentService = paymentService;
-            _productService = productService;
-            _shippingService = shippingService;
-            _shoppingCartService = shoppingCartService;
-            _storeContext = storeContext;
-            _webHelper = webHelper;
-            _workContext = workContext;
-            _orderSettings = orderSettings;
-            _paymentSettings = paymentSettings;
-            _rewardPointsSettings = rewardPointsSettings;
-            _shippingSettings = shippingSettings;
             _coreSettings = coreSettings;
-
             _productAttributeService = productAttributeService;
             _productAttributeParser = productAttributeParser;
             _settingService = settingService;
@@ -161,7 +143,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             _cardCheckService = cardCheckService;
         }
 
-        #region Methods (one page checkout)
         private async Task<string> SendExternalShippingMethodRequestAsync()
         {
             var defaultTransPromo = (await _settingService.GetSettingAsync("ordersettings.defaulttranspromo"))?.Value;
@@ -181,7 +162,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 if (cart.Any())
                 {
                     var termLookup = await _termLookupService.GetTermAsync(cart);
-                    HttpContext.Session.Set("TransPromo", termLookup.termNo ?? defaultTransPromo);
+                    HttpContext.Session.SetString("TransPromo", termLookup.termNo ?? defaultTransPromo);
                     HttpContext.Session.SetString("TransDescription", $"{termLookup.description}");
                 }
             }
@@ -220,7 +201,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     ip
                 );
 
-                HttpContext.Session.Set("Auth_No", cardCheck.AuthNo ?? "");
+                HttpContext.Session.SetString("Auth_No", cardCheck.AuthNo ?? "");
                 HttpContext.Session.SetString("Ref_No", cardCheck.RefNo ?? "");
                 status_code = cardCheck.StatusCode ?? "00";
                 response_message = cardCheck.ResponseMessage;
@@ -230,7 +211,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 await _logger.ErrorAsync("Error occurred when making external payment request. Setting status code to 00 and Ref_No Auth_No to null.", e);
                 status_code = "00";
                 HttpContext.Session.SetString("Ref_No", "");
-                HttpContext.Session.Set("Auth_No", "");
+                HttpContext.Session.SetString("Auth_No", "");
             }
 
             return (status_code, response_message);
@@ -269,9 +250,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             }
         }
 
-        #endregion
-
-        #region Utilities
         [NonAction]
         private async Task<IDictionary<ShoppingCartItem, List<ProductAttributeValue>>> GetWarrantiesAsync(
             IList<ShoppingCartItem> cart
@@ -310,8 +288,6 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
             return warranties;
         }
-
-        #endregion
 
         public override async Task<IActionResult> ShippingMethod()
         {
@@ -387,7 +363,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 var pickupInStore = ParsePickupInStore(form);
                 if (pickupInStore)
                 {
-                    var pickupOption = await ParsePickupOptionAsync(form);
+                    var pickupOption = await ParsePickupOptionAsync(cart, form);
                     await SavePickupOptionAsync(pickupOption);
 
                     return RedirectToRoute("CheckoutPaymentMethod");
@@ -580,7 +556,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         // Custom - uses CC_REF_NO and AUTH_CODE
         [HttpPost, ActionName("Confirm")]
-        public override async Task<IActionResult> ConfirmOrder()
+        public override async Task<IActionResult> ConfirmOrder(bool captchaValid)
         {
             //validation
             if (_orderSettings.CheckoutDisabled)
@@ -611,7 +587,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     throw new Exception(await _localizationService.GetResourceAsync( "Checkout.MinOrderPlacementInterval"));
 
                 //place order
-                var processPaymentRequest = HttpContext.Session.Get<ProcessPaymentRequest>("OrderPaymentInfo");
+                var processPaymentRequest = await HttpContext.Session.GetAsync<ProcessPaymentRequest>("OrderPaymentInfo");
                 if (processPaymentRequest == null)
                 {
                     //Check whether payment workflow is required
@@ -621,12 +597,12 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                     processPaymentRequest = new ProcessPaymentRequest();
                 }
 
-                _paymentService.GenerateOrderGuid(processPaymentRequest);
+                await _paymentService.GenerateOrderGuidAsync(processPaymentRequest);
                 processPaymentRequest.StoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
                 processPaymentRequest.CustomerId = (await _workContext.GetCurrentCustomerAsync()).Id;
                 processPaymentRequest.PaymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentCustomerAsync(),
                     NopCustomerDefaults.SelectedPaymentMethodAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
-                HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
+                await HttpContext.Session.SetAsync<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
 
                 // Set ABC custom values
                 var refNo = HttpContext.Session.GetString("Ref_No");
@@ -646,7 +622,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
                 if (placeOrderResult.Success)
                 {
-                    HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", null);
+                    await HttpContext.Session.SetAsync<ProcessPaymentRequest>("OrderPaymentInfo", null);
                     var postProcessPaymentRequest = new PostProcessPaymentRequest
                     {
                         Order = placeOrderResult.PlacedOrder
@@ -731,9 +707,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 //get payment info
                 var paymentInfo = await paymentMethod.GetPaymentInfoAsync(form);
                 //set previous order GUID (if exists)
-                _paymentService.GenerateOrderGuid(paymentInfo);
+                await _paymentService.GenerateOrderGuidAsync(paymentInfo);
 
-                HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
+                await HttpContext.Session.SetAsync<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
 
                 // If calling this route via AJAX (for Synchrony plugin), 
                 // return 200 so the plugin can handle redirecting to /confirm
@@ -753,7 +729,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 if (paymentResponse.status_code == "00")
                 {
                     //session save
-                    HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
+                    await HttpContext.Session.SetAsync<ProcessPaymentRequest>("OrderPaymentInfo", paymentInfo);
                     return RedirectToRoute("CheckoutConfirm");
                 }
                 else
