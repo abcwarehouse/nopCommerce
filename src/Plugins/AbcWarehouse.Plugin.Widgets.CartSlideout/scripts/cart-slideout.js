@@ -371,56 +371,50 @@ function AddToCart()
     }
 
     $.ajax({
-        cache: false,
-        url: `/addproducttocart/details/${productId}/1`,
-        data: payload,
-        type: "POST",
-        success: function(response) {
-            console.log("Raw response:", response);
-            try {
-                    var parsed = typeof response === "string" ? JSON.parse(response) : response;
-                    console.log("Parsed response:", parsed);
-                } catch(e) {
-                    console.error("Response was not JSON:", e);
-                }
-            addToCartButton.style.display = "none";
-            title.style.display = "block";
-            goToCartButton.style.display = "block";
-            if (editMode) {
-                title.innerHTML = "<i class='fas fa-check-circle'></i> Item Updated";
-            } else {
-                continueShoppingButton.style.display = "block";
-            }
+    cache: false,
+    url: `/addproducttocart/details/${productId}/1`,
+    data: payload,
+    type: "POST",
+    success: function(res) {
+        const response = (typeof res === "string") ? JSON.parse(res) : res;
 
-            // ---- Listrak tracking ----
-            if (response && response.cartItems) {
-                _ltk.SCA.ClearCart();
-                response.cartItems.forEach(function(item) {
-                    _ltk.SCA.AddItemWithLinks(
-                        item.sku,
-                        item.quantity,
-                        item.price,
-                        item.name,
-                        item.imageUrl,
-                        item.productUrl
-                    );
-                });
-                _ltk.SCA.Total = response.cartTotal;
-                _ltk.SCA.Submit();
-            }
-        },
-        error: function() {
-            alert('Error when adding item to cart.');
-            cartSlideoutBackButton.style.display = "block";
-            deliveryOptions.style.display = "block";
-            addToCartButton.disabled = false;
+        addToCartButton.style.display = "none";
+        title.style.display = "block";
+        goToCartButton.style.display = "block";
+        if (editMode) {
+        title.innerHTML = "<i class='fas fa-check-circle'></i> Item Updated";
+        } else {
+        continueShoppingButton.style.display = "block";
         }
+
+        if (response && response.cartItems) {
+        _ltk.SCA.ClearCart();
+        response.cartItems.forEach(function(item) {
+            _ltk.SCA.AddItemWithLinks(
+            item.sku, item.quantity, item.price,
+            item.name, item.imageUrl, item.productUrl
+            );
+        });
+        _ltk.SCA.Total = response.cartTotal;
+        _ltk.SCA.Submit();
+        }
+    },
+    error: function() {
+        alert('Error when adding item to cart.');
+        cartSlideoutBackButton.style.display = "block";
+        deliveryOptions.style.display = "block";
+        addToCartButton.disabled = false;
+    }
     });
-
-    return false;
 }
-
-function resetSelectStoreButtons() {
-    var elements = document.querySelectorAll("button[id^='select_store_'");
-    elements.forEach(e => e.classList.remove("selected"));
-}
+// Listrak Whitelist for cors light error. Mountains not blue
+  if (location.hostname !== 'stage.abcwarehouse.com') {
+    (function(d, tid, vid){
+      if (typeof _ltk !== 'undefined') return;
+      var js = d.createElement('script'); js.id = 'ltkSDK';
+      js.src = "https://cdn.listrakbi.com/scripts/script.js?m=" + tid + "&v=" + vid;
+      document.head.appendChild(js);
+    })(document, '@Model.MerchantId', '1');
+  } else {
+    console.warn('Listrak disabled on staging');
+  }
