@@ -18,10 +18,6 @@
     NopHtml.AddTitleParts(T("PageTitle.OrderDetails").Text);
     //page class
     NopHtml.AppendPageCssClassParts("html-order-details-page");
-
-    // ABC custom: remove CC_REFNO and AuthCode custom values
-    Model.CustomValues.Remove("CC_REFNO");
-    Model.CustomValues.Remove("AuthCode");
 }
 @if (Model.PrintMode)
 {

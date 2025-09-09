@@ -1,9 +1,6 @@
 ﻿@using Nop.Core
 @using Nop.Services.Configuration
 @using Nop.Services.Localization
-@* custom *@
-@using Nop.Web.Framework.Infrastructure;
-@using Nop.Plugin.Misc.AbcCore.Infrastructure;
 
 @inject ILocalizationService localizationService
 @inject ISettingService settingService
@@ -31,46 +28,12 @@
     //page class
     NopHtml.AppendPageCssClassParts("html-home-page");
 
-    @* custom *@
-    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
-    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
-    var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) &&
-                        actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
-
     int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
+}
 
-
-    if (storeId == 8) 
-        {
-            Html.AppendPageCssClassParts("html-home-page hawthorne-home-content");
-
-            <video autoplay controls muted loop controls playsinline disablepictureinpicture controlslist="nodownload noplaybackrate " id="background-video">
-                <source src="https://www.abcwarehouse.com/images/videos/hawthorne-vid.mp4" type="video/mp4">
-            </video>
-            <div class="video-text-container">
-                <div class="video-text">
-                    <h2>Shop our selection of luxury appliance brands</h2>
-                    <a href="https://hawthorne.abcwarehouse.com/manufacturer/all" class="video-button">Explore Brands</a>
-                </div>
-            </div>
-            @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_content_after" })
-
-            @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HawthorneVideo })
-            Html.AppendCssFileParts("~/Themes/Pavilion/Content/css/hawthorne.css");
-            <div class="page home-page hawthorne-home">
-                <div class="page-body hawthorne">
-                    <div class="hawthorne-content">
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HawthorneHome })
-                    </div>
-                </div>
-            </div>
-        }
-    else
-    {
-        <!-- ABC Homepage  -->
-        <div class="page home-page">
-            <div class="page-body">
+<div class="page home-page">
+    <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageTop })
         @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
@@ -91,20 +54,6 @@
         @await Component.InvokeAsync(typeof(HomepagePollsViewComponent))
         <div class="homepage-bottom-wrapper">
         	@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageBottom })
-            <div class="widget-min">
-                            @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomepageBottomBelow480px })
-                        </div>
-                        <div class="widget-480">
-                            @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomepageBottomMin480px })
-                        </div>
-                        <div class="widget-768">
-                            @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomepageBottomMin768px })
-                        </div>
-                        <div class="widget-1000">
-                            @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomepageBottomAbove1000px })
-                        </div>
         </div>
     </div>
 </div>
-    }
-}

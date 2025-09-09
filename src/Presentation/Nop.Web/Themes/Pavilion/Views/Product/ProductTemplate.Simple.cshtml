@@ -4,34 +4,11 @@
 @using Nop.Core.Domain.Catalog
 @using Nop.Core.Domain.Seo
 @using Nop.Services.Html
-@* ABC custom *@
-@using Nop.Web.Models.Catalog
-@using Nop.Plugin.Misc.AbcCore.Services
-@using Nop.Services.Catalog
-@using Nop.Plugin.Misc.AbcCore.Domain
-@using Nop.Web.Framework.Infrastructure
-@using Nop.Plugin.Misc.AbcCore.Infrastructure
-@using Nop.Plugin.Misc.AbcFrontend.Extensions
-@using Nop.Plugin.Misc.AbcCore.Extensions
-@using Nop.Services.Configuration;
-@using Nop.Plugin.Misc.AbcCore.Nop;
-@using Microsoft.Extensions.Logging;
-@using Newtonsoft.Json
-@using System.Text.RegularExpressions
-@using System.Globalization
 
 @inject CatalogSettings catalogSettings
 @inject IHtmlFormatter htmlFormatter
 @inject IWebHelper webHelper
 @inject SeoSettings seoSettings
-@* ABC custom *@
-@inject FrontEndService frontEndService
-@inject IProductService productService
-@inject IStoreContext storeContext
-@inject ISettingService _settingService
-@inject IProductAttributeService _productAttributeService
-@inject IAbcCategoryService abcCategoryService
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
 @{
     Layout = "_ColumnsOne";
@@ -77,91 +54,11 @@
     }
     NopHtml.AddJsonLdParts(Model.JsonLd);
 }
-
 <!--product breadcrumb-->
 @section Breadcrumb
 {
     @await Html.PartialAsync("_ProductBreadcrumb", Model.Breadcrumb)
 }
-
-@{
-    // custom
-    Product currentProduct = await productService.GetProductByIdAsync(Model.Id);
-    var productCategories = await abcCategoryService.GetProductCategoriesByProductIdAsync(Model.Id);
-    var isClearance = false;
-    foreach (var productCategory in productCategories)
-    {
-        isClearance = await abcCategoryService.IsCategoryIdClearance(productCategory.CategoryId);
-        if (isClearance)
-        {
-            break;
-        }
-    }
-    string displayIdStr = "";
-
-    bool productIsAbc = frontEndService.ProductIsAbc(currentProduct.Id);
-    ProductAbcDescription abcP = null;
-    var productFlag = frontEndService.GetProductFlag(currentProduct.Id);
-
-    if (productIsAbc)
-    {
-        abcP = frontEndService.GetProductAbcDescriptionByProductId(currentProduct.Id);
-        string itemNumber = abcP.AbcItemNumber;
-        displayIdStr = itemNumber + (productFlag != null && productFlag.IsSpecialOrder() ? "+" : "");
-    }
-
-    // ABC: For some reason I can't get the typed version, so this is from AbcCoreSettings
-    var isFedExMode = await _settingService.GetSettingByKeyAsync<bool>("coresettings.isfedexmode");
-
-    ProductAttribute fedExProductAttribute = null;
-    var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(Model.Id);
-    foreach (var pam in productAttributeMappings)
-    {
-        var pa = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
-        if (pa.Name == "FedEx")
-        {
-            fedExProductAttribute = pa;
-            break;
-        }
-    }
-}
-
-@if (isClearance)
-{
-	<style>
-		.product-price.product-price.product-price span[itemprop="price"] {
-            color: #f00;
-            text-decoration: line-through;
-            font-weight: normal;
-        }
-
-        span.clearance-or-less {
-            display: inline-block;
-            margin-left: 8px;
-            font-weight: bold;
-            color: #949494;
-            text-transform: uppercase;
-            font-style: italic;
-        }
-
-        .clearance-msg {
-            font-size: 1.0rem;
-            color: #12659B;
-            font-weight: bold;
-            margin-right: 7px;
-        }
-
-        .clearance-msg-additional {
-            font-size: 0.8rem;
-            color: #4f4f4f;
-        }
-
-        .clearance-msg-block.clearance-msg-block.clearance-msg-block {
-            display: block;
-        }
-	</style>
-}
-
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
 <div class="page product-details-page">
     <div class="page-body">
@@ -169,8 +66,6 @@
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
             <div data-productid="@Model.Id">
                 <div class="product-essential">
-                    <!-- ABC: for clearance -->
-                    <span class="corner-picture"><img src="~/Plugins/Misc.AbcFrontend/Images/clearance_banner.png" alt="Clearance Banner"/></span>
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
                     <div class="gallery">
                         @{
@@ -189,7 +84,6 @@
                             @await Html.PartialAsync("_ProductDetailsVideos", Model)
                         }
                     </div>
-                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
                     <div class="overview">
                         @await Html.PartialAsync("_Discontinued", Model)
                         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
@@ -199,51 +93,17 @@
                             <h1>
                                 @Model.Name
                             </h1>
-                            <!-- ABC custom -->
-                            @if (!string.IsNullOrEmpty(displayIdStr))
-                            {
-                                <span class="product-name__isam-id">@displayIdStr</span>
-                            }
                         </div>
-                        <!-- ABC bazaar voice -->
-                        <!-- Rating summary goes above the fold near product name or image -->
-                        <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
-
-                        <div id="questions_tab" style="display: none;">
-                            <!-- Instruct BV loader to show the Q&A feature for productID123 here -->
-                            <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
-                        </div>
-
-                        <script>
-                            // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
-                            window.bvCallback = function (BV) {
-
-                        // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
-                            BV.reviews.on('show', function () {
-                                // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                                $('#review_tab').show();
-                            });
-
-                        // Register a function to be called when a BV feature needs to 
-                        // display the Q&A element, such as when selecting the number of questions link
-                            BV.questions.on('show', function () {
-                                // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
-                                $('#questions_tab').show();
-                            });
-                            };
-                        </script>
-
                         <!--reviews-->
                         @await Html.PartialAsync("_ProductReviewOverview", Model.ProductReviewOverview)
-                        <!--price -->
-                        @* ABC moved to bottom
+                        <!--price-->
                         @{
                             var dataDictPrice = new ViewDataDictionary(ViewData);
                             dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
                             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductPriceTop, additionalData = Model })
                             @await Html.PartialAsync("_ProductPrice", Model.ProductPrice, dataDictPrice)
                             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductPriceBottom, additionalData = Model })
-                        } *@
+                        }
                         <!--rental info-->
                         @{
                             var dataDictRental = new ViewDataDictionary(ViewData);
@@ -276,32 +136,11 @@
                         @await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)
                         <!--availability-->
                         @await Html.PartialAsync("_Availability", Model)
-                       
-                        <!--price & add to cart-->
-                        @{
-                            var dataDictPrice = new ViewDataDictionary(ViewData);
-                            dataDictPrice.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
-                            <div class="product-price-block">
-                                @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
-                            </div>
-                        }
-
-                        @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsBeforeAddToCart, additionalData = Model })
-
                         <!--add to cart-->
-                        @if (!isFedExMode || fedExProductAttribute != null)
-                        {
+                        @{
                             var dataDictAddToCart = new ViewDataDictionary(ViewData);
                             dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
                             @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
-                        }
-                        
-                        <!-- ABC clearance -->
-                        @if (isClearance)
-                        {
-                            <button style="color: #446588; border: 2px solid #446588; padding: .4rem 1rem; font-weight: 700; text-transform: uppercase; background-color: #fff;"
-                                    type="button"
-                                    onclick="location.href='#clearance_stock_widget'">View Availability</button>
                         }
                         <!--wishlist, compare, email a friend-->
                         <div class="overview-buttons">
@@ -358,10 +197,7 @@
             }
             @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
             @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
-            @*
-            ABC: Since we use product tags for InstantSearch, don't display them
             @await Html.PartialAsync("_ProductTags", Model.ProductTags)
-            *@
             @if (Model.ProductReviewOverview.AllowCustomerReviews)
             {
                 @await Html.PartialAsync("_ProductReviews", Model.ProductReviews)
@@ -372,38 +208,3 @@
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
     </div>
 </div>
-
-@* ABC bazaar voice *@
-@{
-    var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
-    var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
-}
-@{
-    var schema = new Dictionary<string, object>
-    {
-        ["@context"] = "https://schema.org",
-        ["@type"] = "Product",
-        ["@id"] = bvProductUrl,
-        ["name"] = Model.Name,
-        ["image"] = productImageUrl,
-        ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
-        ["sku"] = Model.Sku,
-        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name))
-    };
-
-    var jsonLd = JsonConvert.SerializeObject(schema, Formatting.Indented);
-}
-<script type="application/ld+json">
-@Html.Raw(jsonLd)
-</script>
-    <!--BV injected code-->
-    <script>
-        // Make sure that BV.configure is defined before running this script
-        BV.configure('global', {
-            events : {
-                bvRender : function (data) {
-                // JavaScript code that executes when the Bazaarvoice application renders.
-                }
-            }
-        });
-    </script>

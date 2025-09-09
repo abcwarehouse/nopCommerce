@@ -5,11 +5,6 @@
 @using Nop.Core.Domain.Seo
 @using Nop.Services.Security
 @using Nop.Core.Events
-@* custom *@
-@using Nop.Plugin.Misc.AbcFrontend.Services
-@using Nop.Plugin.Misc.AbcCore
-@using Nop.Plugin.Misc.AbcCore.Services
-@using Nop.Web.Framework.Infrastructure
 
 @inject CatalogSettings catalogSettings
 @inject CommonSettings commonSettings
@@ -18,9 +13,6 @@
 @inject IWorkContext workContext
 @inject SeoSettings seoSettings
 @inject AppSettings appSettings
-@* Custom injects *@
-@inject FrontEndService frontEndService
-@inject IStoreContext storeContext
 
 @{
     if (catalogSettings.DisplayAllPicturesOnCatalogPages)
@@ -28,25 +20,9 @@
         NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/swiper/swiper-bundle.min.js");
     }
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
-    // ABC: Using custom AjaxCart implementation
-    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/Themes/Pavilion/Content/scripts/abc/public.ajaxcart.js");
+    NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.ajaxcart.js");
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
     //when jQuery migrate script logging is active you will see the log in the browser console
-
-    // ABC custom
-    string fullTitle = Html.NopTitle().ToString();
-    string shortTitle = "";
-    if(fullTitle.Length >= 60) 
-    {
-        shortTitle = fullTitle.Substring(0, 60);
-    }
-    else
-    {
-        shortTitle = fullTitle;
-    }
-
-    var currentStore = await storeContext.GetCurrentStoreAsync();
-    string storeId = "storeId" + currentStore.Id.ToString();
     if (commonSettings.JqueryMigrateScriptLoggingActive)
     {
         NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.js");
@@ -58,7 +34,6 @@
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
-    // ABC: Might need to move this to head
     NopHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery/jquery.min.js");
 
     //custom tag(s);
@@ -78,28 +53,12 @@
 
     var currentPageClass = (await (await Html.PartialAsync("_CurrentPageClass")).RenderHtmlContentAsync()).Trim();
     var supportRtl = await Html.ShouldUseRtlThemeAsync();
-
-    // ABC: custom stuff
-    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
-
-    string equalPaymentModalTextColor = isHawthorne ?
-        "gray" :
-        await HtmlHelpers.GetPavilionPrimaryColorAsync();
 }
 
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
-    <!-- ABC: Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
-    <!-- End Google Tag Manager -->
-
-    <!-- ABC: use custom title -->
-    <title>@shortTitle</title>
+    <title>@title</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="description" content="@description" />
     <meta name="keywords" content="@keywords" />
@@ -121,235 +80,9 @@
     @NopHtml.GenerateInlineScripts(ResourceLocation.Head)
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
     @Html.Raw(commonSettings.HeaderCustomHtml)
-
-    <!-- ABC custom -->
-    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- SearchSpring Scripts -->
-    <script src="https://cdn.searchspring.io/script.js"></script>
-    <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
-    <script>
-        window.intellisuggest = window.intellisuggest || [];
-        intellisuggest.push(['setSiteId', '4lt84w']);
-    </script>
-
-    <!-- End SearchSpring Scripts -->
-
-    <!-- Meta Pixel Code -->
-<script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window,document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '279056429645080'); 
-    fbq('track', 'PageView');
-
-    document.addEventListener('DOMContentLoaded', function() {
-  // Check if .storeId8 exists
-  if (document.querySelector('.storeId8')) {
-
-<!-- Begin Adtaxi Container Tag - Loading asynchronously -->
-    (function(a,b,c,d){
-        a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-        b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/java"+c;d.async=true;
-        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-    })();
-    <!-- End Adtaxi Container Tag -->
-
-
-
-
-
-    // Update Instagram link only if .storeId8 is present
-    const instagramLink = document.querySelector('li.instagram a');
-    if (instagramLink) {
-      instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
-    }
-  }
-
-  
-});    
-   
-
-</script>
-
-<script>
-
-        @* Brand Filter Search *@
-document.addEventListener('DOMContentLoaded', function() {
-    const brandSearchInput = document.getElementById('brandSearchInput');
-    
-    if (brandSearchInput) {
-        // Trigger search on input
-        brandSearchInput.addEventListener('input', function() {
-            const searchTerm = this.value.trim().toLowerCase();
-            const brandItems = document.querySelectorAll('.brand-list li');
-            
-            brandItems.forEach(item => {
-                const brandName = item.getAttribute('data-brand-name');
-                if (brandName.includes(searchTerm)) {
-                    item.style.display = 'block'; // Show matching items
-                } else {
-                    item.style.display = 'none';  // Hide non-matching items
-                }
-            });
-        });
-    }
-});
-    </script>
-
-    <noscript>
-    <img height="1" width="1" 
-    src="https://www.facebook.com/tr?id=279056429645080&ev=PageView
-    &noscript=1"/>
-    </noscript>
-    <!-- End Meta Pixel Code -->
-
-    <script src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
-
-    <!-- Include the uuid library -->
-    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
-    <script>
-    function initializeSessionIdNamespace() {
-        var sessionKey = "ssSessionIdNamespace";
-
-        // Log current sessionStorage for debugging purposes
-        console.log("Current sessionStorage value:", sessionStorage.getItem(sessionKey));
-
-        // Check if the ssSessionIdNamespace is already set in sessionStorage
-        if (!sessionStorage.getItem(sessionKey)) {
-        console.log("ssSessionIdNamespace not found, creating a new one...");
-        // Generate a new UUID (ensure uuidv4 is properly loaded in your environment)
-        var uuid = uuidv4();
-        sessionStorage.setItem(sessionKey, uuid);
-        document.cookie = sessionKey + "=" + uuid + "; path=/; SameSite=Lax";
-        }
-
-        // Log the sessionId after ensuring it has been set
-        var sessionId = sessionStorage.getItem(sessionKey);
-        console.log("Session ID for this tab:", sessionId);
-    }
-
-    // Run the function when the page loads
-    window.addEventListener("load", initializeSessionIdNamespace);
-    </script>
 </head>
 <body class="@currentPageClass @if (supportRtl){<text>rtl</text>}">
     <nop-antiforgery-token />
-
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
-    @* ABC: A bunch of custom styles *@
-    <style>
-        .flyout-cart-wrapper:hover .flyout-cart {
-            z-index: 1001;
-        }
-        .abc-clearance .price.you-save, .abc-clearance .you-save-amt {
-            display: none;
-        }
-        .abc-clearance .price.old-price, .abc-clearance .price.old-product-price {
-            display: none;
-        }
-        .abc-clearance .price.actual-price {
-            text-decoration: line-through;
-        }
-        .abc-clearance .product-item.product-item.product-item {
-            min-height: 390px;
-        }
-        .abc-clearance .price-sale-tag {
-            display: none;
-        }
-        /* The Modal (background) */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1050; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        }
-        /* Modal Content */
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 2px solid #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
-            width: 300px;
-        }
-        #dbuymodel2 .modal-content {
-            width: 100%;
-        }
-        .modal-content p {
-            font-size: 10px;
-        }
-        .modal-content input {
-            box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            -webkit-box-sizing: border-box;
-        }
-        .modal-content form label {
-            width: 9em;
-            text-align: right;
-            display: inline-block;
-            font-weight: bold;
-            font-size: 0.8em;
-        }
-        .modal-content form {
-            margin: 0.5em 0;
-        }
-        .modal-content form input {
-            width: 145px;
-            margin: 6px 0;
-        }
-        .modal-content form .required {
-            color: red;
-        }
-        .modal-content .required-text {
-            color: red;
-            font-style: italic;
-            text-align: right;
-        }
-        .modal-content button {
-            float: right;
-            background-color: #31699C;
-            color: white;
-            border: 0;
-            padding: 6px 30px;
-            margin: 14px;
-            font-weight: bold;
-            border-radius: 6px;
-        }
-        .modal-content button:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-        }
-        .modal-content h3 {
-            clear: both;
-        }
-        .month-count {
-            font-size: 7em;
-            font-weight: 700;
-            float: left;
-        }
-        .months-text {
-            font-size: 3em;
-            font-weight: 600;
-            text-decoration: underline;
-            margin-top: 0.5em;
-        }
-    </style>
     @RenderBody()
     <div id="goToTop"></div>
     @NopHtml.GenerateScripts(ResourceLocation.Footer)
