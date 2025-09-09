@@ -22,6 +22,9 @@ using Newtonsoft.Json;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Nop.Services.Media;
+using Nop.Services.Seo;
+using Nop.Services.Tax;
 
 namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
@@ -38,6 +41,10 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IShopService _shopService;
         private readonly IWorkContext _workContext;
+        private readonly IPictureService _pictureService;
+        private readonly IUrlRecordService _urlRecordService;
+        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly IPriceCalculationService _priceCalculationService;
 
         public CartSlideoutController(
             IAbcMattressModelService abcMattressModelService,
@@ -50,8 +57,13 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             IProductAttributeParser productAttributeParser,
             IShoppingCartService shoppingCartService,
             IShopService shopService,
-            IWorkContext workContext
-        ) {
+            IWorkContext workContext,
+            IPictureService pictureService,
+            IUrlRecordService urlRecordService,
+            IOrderTotalCalculationService orderTotalCalculationService,
+            IPriceCalculationService priceCalculationService
+        )
+        {
             _abcMattressModelService = abcMattressModelService;
             _abcProductAttributeService = abcProductAttributeService;
             _backendStockService = backendStockService;
@@ -63,6 +75,10 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             _shoppingCartService = shoppingCartService;
             _shopService = shopService;
             _workContext = workContext;
+            _pictureService = pictureService;
+            _urlRecordService = urlRecordService;
+            _orderTotalCalculationService = orderTotalCalculationService;
+            _priceCalculationService = priceCalculationService;
         }
 
         public async Task<IActionResult> GetDeliveryOptions(int? productId, string zip)
@@ -127,6 +143,147 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             { 
                 NullValueHandling = NullValueHandling.Ignore 
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddToCartWithListrak(int productId, IFormCollection form)
+        {
+            try
+            {
+                var customer = await _workContext.GetCurrentCustomerAsync();
+                var product = await _productService.GetProductByIdAsync(productId);
+
+                if (product == null)
+                    return Json(new { success = false, message = "Product not found" });
+
+                // Parse form data
+                var selectedShopId = "";
+                var updatedShoppingCartItemId = 0;
+
+                foreach (var formKey in form.Keys)
+                {
+                    if (formKey == "selectedShopId")
+                    {
+                        selectedShopId = form[formKey];
+                    }
+                    else if (formKey.Contains("UpdatedShoppingCartItemId"))
+                    {
+                        int.TryParse(form[formKey], out updatedShoppingCartItemId);
+                    }
+                }
+
+                // Get product attributes from form - Fix: Convert IList<string> to List<string>
+                var attributeXml = await _productAttributeParser.ParseProductAttributesAsync(product, form, new List<string>().ToList());
+
+                // Add or update cart item
+                List<string> warnings; // Fix: Use List<string> instead of var
+
+                if (updatedShoppingCartItemId > 0)
+                {
+                    // Update existing cart item - Fix: Convert IList<string> to List<string>
+                    var existingCartItem = (await _shoppingCartService.GetShoppingCartAsync(customer))
+                        .FirstOrDefault(x => x.Id == updatedShoppingCartItemId);
+
+                    if (existingCartItem != null)
+                    {
+                        var updateResult = await _shoppingCartService.UpdateShoppingCartItemAsync(
+                            customer,
+                            existingCartItem.Id,
+                            attributeXml,
+                            0, // customerEnteredPrice 
+                            existingCartItem.RentalStartDateUtc,
+                            existingCartItem.RentalEndDateUtc,
+                            existingCartItem.Quantity);
+
+                        warnings = updateResult.ToList(); // Convert to List<string>
+                    }
+                    else
+                    {
+                        warnings = new List<string> { "Cart item not found" };
+                    }
+                }
+                else
+                {
+                    // Add new cart item - Fix: Convert IList<string> to List<string>
+                    var addResult = await _shoppingCartService.AddToCartAsync(
+                        customer,
+                        product,
+                        ShoppingCartType.ShoppingCart,
+                        0, // storeId
+                        attributeXml,
+                        0, // customerEnteredPrice
+                        null, // rentalStartDate
+                        null, // rentalEndDate
+                        1, // quantity
+                        true); // automatically add required products
+
+                    warnings = addResult.ToList(); // Convert to List<string>
+                }
+
+                if (warnings.Any())
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = string.Join(", ", warnings)
+                    });
+                }
+
+                // Get updated cart for Listrak
+                var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart);
+                var cartItems = new List<object>();
+                decimal itemTotal = 0;
+
+                foreach (var cartItem in cart)
+                {
+                    var cartProduct = await _productService.GetProductByIdAsync(cartItem.ProductId);
+
+                    // Fix: Use correct method for calculating subtotal
+                    var subTotal = await _shoppingCartService.GetSubTotalAsync(cartItem, true);
+
+                    // Fix: Pass product entity ID instead of product entity
+                    var seName = await _urlRecordService.GetSeNameAsync(cartProduct.Id, cartProduct.GetType().Name);
+                    var productUrl = Url.RouteUrl("Product", new { SeName = seName });
+
+                    cartItems.Add(new
+                    {
+                        sku = cartProduct.Sku ?? "",
+                        quantity = cartItem.Quantity,
+                        price = subTotal.subTotal, // Adjust based on actual return type
+                        name = cartProduct.Name ?? "",
+                        productUrl = productUrl ?? ""
+                    });
+
+                    itemTotal += subTotal.subTotal; // Adjust based on actual return type
+                }
+
+                // Calculate totals
+                var cartTotals = await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart);
+                var shippingTotal = await _orderTotalCalculationService.GetShoppingCartShippingTotalAsync(cart);
+                var taxTotal = await _orderTotalCalculationService.GetTaxTotalAsync(cart);
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Product added to cart successfully",
+                    cartItems = cartItems,
+                    itemTotal = itemTotal,
+                    shippingTotal = shippingTotal ?? 0,
+                    taxTotal = taxTotal.taxTotal,
+                    handlingTotal = 0m,
+                    orderTotal = cartTotals.shoppingCartTotal ?? 0,
+                    cartTotal = cartTotals.shoppingCartTotal ?? 0
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if you have logging set up
+                return Json(new
+                {
+                    success = false,
+                    message = "An error occurred while adding the product to cart"
+                });
+            }
         }
 
         [HttpPost]

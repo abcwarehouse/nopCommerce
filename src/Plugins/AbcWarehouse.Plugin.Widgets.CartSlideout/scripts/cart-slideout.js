@@ -356,6 +356,8 @@ function getCookie(cookieName) {
 
 function AddToCart()
 {
+    console.log('=== AddToCart function started ===');
+    
     cartSlideoutBackButton.style.display = "none";
     deliveryOptions.style.display = "none";
     addToCartButton.disabled = true;
@@ -370,21 +372,34 @@ function AddToCart()
         payload += `&addtocart_${productId}.UpdatedShoppingCartItemId=${cartSlideoutShoppingCartItemId}`;
     }
 
+    console.log('AJAX request details:');
+    console.log('- URL:', `/CartSlideout/AddToCartWithListrak/${productId}`);
+    console.log('- Payload:', payload);
+
     $.ajax({
         cache: false,
-        url: `/addproducttocart/details/${productId}/1`,
+        url: `/CartSlideout/AddToCartWithListrak/${productId}`, // Updated to use your custom endpoint
         data: payload,
         type: "POST",
         success: function(res) {
-            console.log('AddToCart success response:', res); // Debug log
+            console.log('=== AJAX SUCCESS ===');
+            console.log('Raw response:', res);
             
-            var parsedResponse;
+            var response;
             try {
-                parsedResponse = (typeof res === "string") ? JSON.parse(res) : res;
-                console.log('Parsed response:', parsedResponse); // Debug log
+                response = (typeof res === "string") ? JSON.parse(res) : res;
+                console.log('Parsed response:', response);
             } catch (parseError) {
                 console.error('Error parsing response:', parseError);
-                parsedResponse = res; // Use original response if parsing fails
+                response = res;
+            }
+
+            if (!response.success) {
+                alert(response.message || 'Error adding item to cart');
+                cartSlideoutBackButton.style.display = "block";
+                deliveryOptions.style.display = "block";
+                addToCartButton.disabled = false;
+                return;
             }
 
             addToCartButton.style.display = "none";
@@ -397,51 +412,61 @@ function AddToCart()
                 continueShoppingButton.style.display = "block";
             }
 
-            // Enhanced Listrak implementation with debugging
-            if (parsedResponse && parsedResponse.cartItems) {
-                console.log('Cart items found, processing Listrak...'); // Debug log
-                console.log('Cart items:', parsedResponse.cartItems); // Debug log
-                console.log('Cart total:', parsedResponse.cartTotal); // Debug log
-                
+            // ---- Listrak Order API tracking ----
+            console.log('=== Starting Listrak Order tracking ===');
+            
+            try {
                 // Check if Listrak is loaded
-                if (typeof _ltk !== 'undefined' && _ltk.SCA) {
-                    console.log('Listrak SCA object found'); // Debug log
+                if (typeof _ltk !== 'undefined' && _ltk.Order) {
+                    console.log('Listrak Order API found');
                     
-                    try {
-                        _ltk.SCA.ClearCart();
-                        console.log('Cart cleared'); // Debug log
-                        
-                        parsedResponse.cartItems.forEach(function(item, index) {
-                            console.log('Adding item ' + (index + 1) + ':', item); // Debug log
-                            _ltk.SCA.AddItemWithLinks(
-                                item.sku || '', 
-                                item.quantity || 0, 
-                                item.price || 0,
-                                item.name || '', 
-                                item.imageUrl || '', 
-                                item.productUrl || ''
+                    // Set customer information if available
+                    var customerEmail = getCookie('customerEmail') || '';
+                    var customerFirstName = getCookie('customerFirstName') || '';
+                    var customerLastName = getCookie('customerLastName') || '';
+                    
+                    if (customerEmail) {
+                        _ltk.Order.SetCustomer(customerEmail, customerFirstName, customerLastName);
+                        console.log('Customer set:', customerEmail, customerFirstName, customerLastName);
+                    }
+                    
+                    // Set order totals
+                    _ltk.Order.ItemTotal = response.itemTotal || 0;
+                    _ltk.Order.ShippingTotal = response.shippingTotal || 0;
+                    _ltk.Order.TaxTotal = response.taxTotal || 0;
+                    _ltk.Order.HandlingTotal = response.handlingTotal || 0;
+                    _ltk.Order.OrderTotal = response.orderTotal || 0;
+                    
+                    console.log('Order totals set:', {
+                        itemTotal: _ltk.Order.ItemTotal,
+                        shippingTotal: _ltk.Order.ShippingTotal,
+                        taxTotal: _ltk.Order.TaxTotal,
+                        handlingTotal: _ltk.Order.HandlingTotal,
+                        orderTotal: _ltk.Order.OrderTotal
+                    });
+                    
+                    // Add all cart items
+                    if (response.cartItems && response.cartItems.length > 0) {
+                        response.cartItems.forEach(function(item, index) {
+                            console.log('Adding item ' + (index + 1) + ':', item);
+                            _ltk.Order.AddItem(
+                                item.sku || '',
+                                item.quantity || 0,
+                                item.price || 0
                             );
                         });
-                        
-                        _ltk.SCA.Total = parsedResponse.cartTotal || 0;
-                        console.log('Cart total set to:', parsedResponse.cartTotal); // Debug log
-                        
-                        _ltk.SCA.Submit();
-                        console.log('Listrak SCA submitted'); // Debug log
-                        
-                    } catch (listrakError) {
-                        console.error('Error in Listrak processing:', listrakError);
                     }
+                    
+                    // Submit the order
+                    _ltk.Order.Submit();
+                    console.log('Listrak Order submitted successfully');
+                    
                 } else {
-                    console.error('Listrak SCA object not found. Make sure Listrak is properly loaded.');
+                    console.error('Listrak Order API not found. Make sure Listrak script is loaded.');
                     console.log('Available _ltk object:', typeof _ltk !== 'undefined' ? _ltk : 'undefined');
                 }
-            } else {
-                console.log('No cart items in response or response is invalid'); // Debug log
-                console.log('Response structure check:');
-                console.log('- parsedResponse exists:', !!parsedResponse);
-                console.log('- parsedResponse.cartItems exists:', !!(parsedResponse && parsedResponse.cartItems));
-                console.log('- cartItems is array:', !!(parsedResponse && parsedResponse.cartItems && Array.isArray(parsedResponse.cartItems)));
+            } catch (listrakError) {
+                console.error('Error in Listrak Order processing:', listrakError);
             }
         },
         error: function(xhr, status, error) {
@@ -449,20 +474,12 @@ function AddToCart()
             console.error('Status:', status);
             console.error('Error:', error);
             console.error('Response Text:', xhr.responseText);
-            console.error('Status Code:', xhr.status);
-            console.error('Ready State:', xhr.readyState);
             
             alert('Error when adding item to cart.');
             cartSlideoutBackButton.style.display = "block";
             deliveryOptions.style.display = "block";
             addToCartButton.disabled = false;
-        },
-        complete: function(xhr, status) {
-            console.log('=== AJAX COMPLETE ===');
-            console.log('Final status:', status);
-            console.log('Response status:', xhr.status);
         }
     });
-    
-    console.log('=== AddToCart function ended ===');
+    return false;
 }
