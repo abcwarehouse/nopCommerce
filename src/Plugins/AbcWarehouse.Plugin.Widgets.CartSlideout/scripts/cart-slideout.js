@@ -327,6 +327,24 @@ async function editCartItemAsync(shoppingCartItemId) {
 
 async function addCartItemAsync(productId) {
     AjaxCart.setLoadWaiting(true);
+
+        // ---- Listrak tracking ----
+        if (response && response.cartItems) {
+            _ltk.SCA.ClearCart();
+            response.cartItems.forEach(function(item) {
+                _ltk.SCA.AddItemWithLinks(
+                    item.sku,
+                    item.quantity,
+                    item.price,
+                    item.name,
+                    item.imageUrl,
+                    item.productUrl
+                );
+            });
+            _ltk.SCA.Total = response.cartTotal;
+            _ltk.SCA.Submit();
+        }
+
     const response = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
         method: 'POST',
         headers: {
@@ -385,22 +403,6 @@ function AddToCart()
                 continueShoppingButton.style.display = "block";
             }
 
-            // ---- Listrak tracking ----
-            if (response && response.cartItems) {
-                _ltk.SCA.ClearCart();
-                response.cartItems.forEach(function(item) {
-                    _ltk.SCA.AddItemWithLinks(
-                        item.sku,
-                        item.quantity,
-                        item.price,
-                        item.name,
-                        item.imageUrl,
-                        item.productUrl
-                    );
-                });
-                _ltk.SCA.Total = response.cartTotal;
-                _ltk.SCA.Submit();
-            }
         },
         error: function() {
             alert('Error when adding item to cart.');
