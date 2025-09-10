@@ -328,38 +328,40 @@ async function editCartItemAsync(shoppingCartItemId) {
 async function addCartItemAsync(productId) {
     AjaxCart.setLoadWaiting(true);
 
-        // ---- Listrak tracking ----
-        if (response && response.cartItems) {
-            _ltk.SCA.ClearCart();
-            response.cartItems.forEach(function(item) {
-                _ltk.SCA.AddItemWithLinks(
-                    item.sku,
-                    item.quantity,
-                    item.price,
-                    item.name,
-                    item.imageUrl,
-                    item.productUrl
-                );
-            });
-            _ltk.SCA.Total = response.cartTotal;
-            _ltk.SCA.Submit();
-        }
-
-    const response = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
+    const fetchResponse = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
         method: 'POST',
         headers: {
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
         body: $('#product-details-form').serialize()
     });
-    if (response.status != 200) {
+
+    if (fetchResponse.status !== 200) {
         alert('Error occurred when getting delivery information.');
         AjaxCart.setLoadWaiting(false);
         return;
     }
-    AjaxCart.setLoadWaiting(false);
 
-    const responseJson = await response.json();
+    const responseJson = await fetchResponse.json();
+
+    // ---- Listrak tracking ----
+    if (responseJson && responseJson.cartItems) {
+        _ltk.SCA.ClearCart();
+        responseJson.cartItems.forEach(function(item) {
+            _ltk.SCA.AddItemWithLinks(
+                item.sku,
+                item.quantity,
+                item.price,
+                item.name,
+                item.imageUrl,
+                item.productUrl
+            );
+        });
+        _ltk.SCA.Total = responseJson.cartTotal;
+        _ltk.SCA.Submit();
+    }
+
+    AjaxCart.setLoadWaiting(false);
     showCartSlideout(responseJson);
 }
 
