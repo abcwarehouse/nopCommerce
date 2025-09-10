@@ -325,45 +325,56 @@ async function editCartItemAsync(shoppingCartItemId) {
     updateAttributes();
 }
 
-async function addCartItemAsync(productId) {
+window.addCartItemAsync = async function (productId) {
     AjaxCart.setLoadWaiting(true);
 
-    const fetchResponse = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        body: $('#product-details-form').serialize()
-    });
+    let fetchResp;
+    try {
+        fetchResp = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: $('#product-details-form').serialize()
+        });
+    } catch (err) {
+        console.error("Fetch error:", err);
+        AjaxCart.setLoadWaiting(false);
+        return;
+    }
 
-    if (fetchResponse.status !== 200) {
+    if (fetchResp.status !== 200) {
         alert('Error occurred when getting delivery information.');
         AjaxCart.setLoadWaiting(false);
         return;
     }
 
-    const responseJson = await fetchResponse.json();
+    const cartData = await fetchResp.json();
 
     // ---- Listrak tracking ----
-    if (responseJson && responseJson.cartItems) {
-        _ltk.SCA.ClearCart();
-        responseJson.cartItems.forEach(function(item) {
-            _ltk.SCA.AddItemWithLinks(
-                item.sku,
-                item.quantity,
-                item.price,
-                item.name,
-                item.imageUrl,
-                item.productUrl
-            );
-        });
-        _ltk.SCA.Total = responseJson.cartTotal;
-        _ltk.SCA.Submit();
+    try {
+        if (cartData && cartData.cartItems && window._ltk && _ltk.SCA) {
+            _ltk.SCA.ClearCart();
+            cartData.cartItems.forEach(function(item) {
+                _ltk.SCA.AddItemWithLinks(
+                    item.sku,
+                    item.quantity,
+                    item.price,
+                    item.name,
+                    item.imageUrl,
+                    item.productUrl
+                );
+            });
+            _ltk.SCA.Total = cartData.cartTotal;
+            _ltk.SCA.Submit();
+        }
+    } catch (trkErr) {
+        console.warn("Listrak tracking failed:", trkErr);
     }
 
     AjaxCart.setLoadWaiting(false);
-    showCartSlideout(responseJson);
-}
+    showCartSlideout(cartData);
+};
 
 function getCookie(cookieName) {
     let cookie = {};
