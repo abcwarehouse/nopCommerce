@@ -325,56 +325,28 @@ async function editCartItemAsync(shoppingCartItemId) {
     updateAttributes();
 }
 
-window.addCartItemAsync = async function (productId) {
+async function addCartItemAsync(productId) {
     AjaxCart.setLoadWaiting(true);
 
-    let fetchResp;
-    try {
-        fetchResp = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: $('#product-details-form').serialize()
-        });
-    } catch (err) {
-        console.error("Fetch error:", err);
-        AjaxCart.setLoadWaiting(false);
-        return;
-    }
+    const fetchResponse = await fetch(`/AddToCart/GetAddCartItemInfo?productId=${productId}`, {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: $('#product-details-form').serialize()
+    });
 
-    if (fetchResp.status !== 200) {
+    if (fetchResponse.status !== 200) {
         alert('Error occurred when getting delivery information.');
         AjaxCart.setLoadWaiting(false);
         return;
     }
 
-    const cartData = await fetchResp.json();
-
-    // ---- Listrak tracking ----
-    try {
-        if (cartData && cartData.cartItems && window._ltk && _ltk.SCA) {
-            _ltk.SCA.ClearCart();
-            cartData.cartItems.forEach(function(item) {
-                _ltk.SCA.AddItemWithLinks(
-                    item.sku,
-                    item.quantity,
-                    item.price,
-                    item.name,
-                    item.imageUrl,
-                    item.productUrl
-                );
-            });
-            _ltk.SCA.Total = cartData.cartTotal;
-            _ltk.SCA.Submit();
-        }
-    } catch (trkErr) {
-        console.warn("Listrak tracking failed:", trkErr);
-    }
+    const responseJson = await fetchResponse.json();
 
     AjaxCart.setLoadWaiting(false);
-    showCartSlideout(cartData);
-};
+    showCartSlideout(responseJson);
+}
 
 function getCookie(cookieName) {
     let cookie = {};
@@ -385,19 +357,16 @@ function getCookie(cookieName) {
     return cookie[cookieName] ?? '';
 }
 
-function AddToCart()
-{
+function AddToCart() {
     cartSlideoutBackButton.style.display = "none";
     deliveryOptions.style.display = "none";
     addToCartButton.disabled = true;
 
     var payload = $('#delivery-options, #product-details-form').serialize();
-    if (selectedShop != "")
-    {
+    if (selectedShop != "") {
         payload += `&selectedShopId=${selectedShop}`;
     }
-    if (cartSlideoutShoppingCartItemId != 0)
-    {
+    if (cartSlideoutShoppingCartItemId != 0) {
         payload += `&addtocart_${productId}.UpdatedShoppingCartItemId=${cartSlideoutShoppingCartItemId}`;
     }
 
@@ -406,7 +375,7 @@ function AddToCart()
         url: `/addproducttocart/details/${productId}/1`,
         data: payload,
         type: "POST",
-        success: function() {
+        success: function(responseJson) {
             addToCartButton.style.display = "none";
             title.style.display = "block";
             goToCartButton.style.display = "block";
@@ -416,6 +385,29 @@ function AddToCart()
                 continueShoppingButton.style.display = "block";
             }
 
+            // ---- Listrak tracking ----
+            if (responseJson && responseJson.cartItems) {
+                if (typeof _ltk !== "undefined" && _ltk.SCA) {
+                    _ltk.SCA.ClearCart();
+                    responseJson.cartItems.forEach(function(item) {
+                        _ltk.SCA.AddItemWithLinks(
+                            item.sku,
+                            item.quantity,
+                            item.price,
+                            item.name,
+                            item.imageUrl,
+                            item.productUrl
+                        );
+                    });
+                    _ltk.SCA.Total = responseJson.cartTotal;
+                    _ltk.SCA.Submit();
+                } else {
+                    console.warn("Listrak _ltk not defined yet");
+                }
+            }
+
+            // ---- Debugging: log to console so you can see in DevTools ----
+            console.log("Listrak payload:", responseJson);
         },
         error: function() {
             alert('Error when adding item to cart.');
