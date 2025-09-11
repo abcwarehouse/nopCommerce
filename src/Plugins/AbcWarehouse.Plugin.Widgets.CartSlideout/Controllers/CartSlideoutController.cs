@@ -81,6 +81,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                     quantity = sci.Quantity,
                     price = unitPrice, // tax-inclusive
                     name = product.Name,
+                    imageUrl = string.Empty,
                     productUrl = productUrl
                 });
             }
