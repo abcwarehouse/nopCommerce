@@ -9,7 +9,9 @@
 
     <div class="picture">
         <!-- Main product image always wrapped in anchor for fullscreen popup -->
-        <a href="@Model.DefaultPictureModel.FullSizeImageUrl"
+        <a href="@(string.IsNullOrEmpty(Model.DefaultPictureModel?.FullSizeImageUrl) 
+                    ? Model.DefaultPictureModel?.ImageUrl 
+                    : Model.DefaultPictureModel?.FullSizeImageUrl)"
            title="@Model.DefaultPictureModel.Title"
            id="main-product-img-lightbox-anchor-@Model.Id">
             <img id="main-product-img-@Model.Id"
@@ -70,5 +72,6 @@
         });
     });
 </script>
+
 
 
