@@ -14,15 +14,15 @@
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
 
     <div class="picture">
-        <!-- ALWAYS wrap the main image with an anchor so it can open fullscreen -->
+        <!-- Always wrap the main image in an anchor so it's clickable for fullscreen -->
         <a href="@Model.DefaultPictureModel.FullSizeImageUrl"
            title="@Model.DefaultPictureModel.Title"
            id="main-product-img-lightbox-anchor-@Model.Id"
            class="mfp-image">
-            <img id="main-product-img-@Model.Id"
+            <img alt="@Model.DefaultPictureModel.AlternateText"
                  src="@Model.DefaultPictureModel.ImageUrl"
-                 alt="@Model.DefaultPictureModel.AlternateText"
-                 title="@Model.DefaultPictureModel.Title" />
+                 title="@Model.DefaultPictureModel.Title"
+                 id="main-product-img-@Model.Id" />
         </a>
     </div>
 
@@ -33,15 +33,17 @@
 
             <div class="jcarousel">
                 <ul>
+                    @{
+                        var idx = 0;
+                    }
                     @foreach (var picture in Model.PictureModels)
                     {
-                        var typeClass = picture.Title?.Contains("video", StringComparison.InvariantCultureIgnoreCase) == true
-                            ? "mfp-iframe"
-                            : "mfp-image";
-
+                        var isVideo = picture.Title?.Contains("video", System.StringComparison.OrdinalIgnoreCase) ?? false;
+                        var typeClass = isVideo ? "mfp-iframe" : "mfp-image";
                         <li>
                             <a class="jcarousel-item @typeClass"
                                href="@picture.FullSizeImageUrl"
+                               data-index="@idx"
                                title="@picture.Title">
                                 <img class="@typeClass"
                                      src="@picture.ThumbImageUrl"
@@ -51,83 +53,126 @@
                                      data-fullsize="@picture.FullSizeImageUrl" />
                             </a>
                         </li>
+                        idx++;
                     }
                 </ul>
             </div>
 
             <a class="jcarousel-next"><i class="fas fa-arrow-right"></i></a>
         </div>
+
+        <!-- Thumbnails lightbox (gallery) -->
+        <script asp-location="Footer">
+            $(function () {
+                $('.jcarousel').magnificPopup({
+                    type: 'image',
+                    delegate: 'a.mfp-image',
+                    removalDelay: 300,
+                    gallery: {
+                        enabled: true,
+                        navigateByImgClick: true,
+                        preload: [0, 1],
+                        tPrev: '@T("Media.MagnificPopup.Previous")',
+                        tNext: '@T("Media.MagnificPopup.Next")',
+                        tCounter: '@T("Media.MagnificPopup.Counter")'
+                    },
+                    tClose: '@T("Media.MagnificPopup.Close")',
+                    tLoading: '@T("Media.MagnificPopup.Loading")'
+                });
+            });
+        </script>
+
+        <!-- Keep main image + its lightbox target in sync with thumbnail selection -->
+        <script asp-location="Footer">
+            $(function () {
+                var $mainImg = $('#main-product-img-@Model.Id');
+                var $mainAnchor = $('#main-product-img-lightbox-anchor-@Model.Id');
+
+                // Track which index is currently shown on the main image
+                var currentIndex = 0;
+
+                // When a thumbnail is clicked, update the main image and the anchor's href/title
+                $('.jcarousel .jcarousel-item img').on('click', function (e) {
+                    var $img = $(this);
+                    var defaultSrc = $img.attr('data-defaultsize');
+                    var fullSrc = $img.attr('data-fullsize');
+                    var title = $img.attr('title');
+                    var alt = $img.attr('alt');
+
+                    $mainImg.attr({ src: defaultSrc, title: title, alt: alt });
+                    $mainAnchor.attr({ href: fullSrc, title: title });
+
+                    // store the index for opening correct slide in gallery
+                    currentIndex = parseInt($img.closest('a.jcarousel-item').attr('data-index')) || 0;
+                });
+
+                // Build a gallery items array from current thumbnails
+                function buildGalleryItems() {
+                    var items = [];
+                    $('.jcarousel a.mfp-image').each(function () {
+                        items.push({ src: $(this).attr('href'), type: 'image', title: $(this).attr('title') });
+                    });
+                    return items;
+                }
+
+                // Make the MAIN IMAGE open the same gallery overlay as thumbnails, at currentIndex
+                $mainAnchor.on('click', function (e) {
+                    e.preventDefault();
+
+                    // If there are multiple images, open the gallery at the current index
+                    var count = $('.jcarousel a.mfp-image').length;
+                    if (count > 0) {
+                        $.magnificPopup.open({
+                            items: buildGalleryItems(),
+                            type: 'image',
+                            gallery: {
+                                enabled: true,
+                                navigateByImgClick: true,
+                                preload: [0, 1],
+                                tPrev: '@T("Media.MagnificPopup.Previous")',
+                                tNext: '@T("Media.MagnificPopup.Next")',
+                                tCounter: '@T("Media.MagnificPopup.Counter")'
+                            },
+                            tClose: '@T("Media.MagnificPopup.Close")',
+                            tLoading: '@T("Media.MagnificPopup.Loading")'
+                        }, currentIndex);
+                    } else {
+                        // Fallback for single image: just open that one
+                        $(this).magnificPopup({ type: 'image' }).magnificPopup('open');
+                    }
+                });
+            });
+        </script>
+    }
+    else
+    {
+        <!-- Single image: simple lightbox on the main anchor -->
+        <script asp-location="Footer">
+            $(function () {
+                $('#main-product-img-lightbox-anchor-@Model.Id').magnificPopup({ type: 'image' });
+            });
+        </script>
     }
 
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
 </div>
 
-<!-- carousel -->
+<!-- carousel init -->
 <script>
-    $(document).ready(function () {
-        // Init carousel
-        var $carousel = $('.jcarousel').jcarousel({ wrap: 'circular' });
-
-        $('.jcarousel-prev').jcarouselControl({ target: '-=2', carousel: $carousel });
-        $('.jcarousel-next').jcarouselControl({ target: '+=2', carousel: $carousel });
-
-        // --- Magnific Popup: one setup to rule them all ---
-        // Images (main image + any image thumbnail)
-        $('.gallery').magnificPopup({
-            delegate: 'a.mfp-image',
-            type: 'image',
-            removalDelay: 300,
-            gallery: {
-                enabled: true,
-                navigateByImgClick: true,
-                preload: [0, 1],
-                tPrev: '@T("Media.MagnificPopup.Previous")',
-                tNext: '@T("Media.MagnificPopup.Next")',
-                tCounter: '@T("Media.MagnificPopup.Counter")'
-            },
-            tClose: '@T("Media.MagnificPopup.Close")',
-            tLoading: '@T("Media.MagnificPopup.Loading")'
-        });
-
-        // Optional videos (if any thumbnails use mfp-iframe)
-        $('.gallery').magnificPopup({
-            delegate: 'a.mfp-iframe',
-            type: 'iframe',
-            removalDelay: 300,
-            tClose: '@T("Media.MagnificPopup.Close")',
-            tLoading: '@T("Media.MagnificPopup.Loading")'
-        });
-
-        // --- When a thumbnail is clicked, update the big image + its lightbox href ---
-        $(document).on('click', '.jcarousel-item > img', function () {
-            var $img = $(this);
-            var defaultSrc = $img.attr('data-defaultsize');
-            var fullSrc = $img.attr('data-fullsize');
-            var title = $img.attr('title');
-            var alt = $img.attr('alt');
-
-            $('#main-product-img-@Model.Id')
-                .attr('src', defaultSrc)
-                .attr('title', title)
-                .attr('alt', alt);
-
-            $('#main-product-img-lightbox-anchor-@Model.Id')
-                .attr('href', fullSrc)
-                .attr('title', title);
-        });
+    $(function () {
+        var carousel = $('.jcarousel').jcarousel({ wrap: 'circular' });
+        $('.jcarousel-prev').jcarouselControl({ target: '-=2', carousel: carousel });
+        $('.jcarousel-next').jcarouselControl({ target: '+=2', carousel: carousel });
     });
 </script>
 
 <style>
-    /* Visible area of the carousel */
     .jcarousel {
         position: relative;
         overflow: hidden;
         margin: 20px auto;
         width: 200px;
     }
-
-    /* The container of the carousel items */
     .jcarousel ul {
         width: 10000em;
         position: relative;
@@ -135,39 +180,25 @@
         margin: 0;
         padding: 0;
     }
-
-    /* Each item */
     .jcarousel li {
         float: left;
         width: 100px;
     }
-
     .jcarousel-nav {
         margin: 0 auto;
         text-align: center;
     }
-
     .jcarousel-wrapper {
         display: flex;
         align-items: center;
         max-width: 500px;
         margin: 0 auto;
-        gap: .5rem;
     }
 
-    @@media screen and (min-width: 475px) {
-        .jcarousel { width: 300px; }
-    }
+    /* Responsive widths */
+    @media screen and (min-width: 475px) { .jcarousel { width: 300px; } }
+    @media screen and (min-width: 595px) { .jcarousel { width: 400px; } }
+    @media screen and (min-width: 769px) { .jcarousel { width: 200px; } }
+    @media screen and (min-width: 1001px) { .jcarousel { width: 300px; } }
 
-    @@media screen and (min-width: 595px) {
-        .jcarousel { width: 400px; }
-    }
-
-    @@media screen and (min-width: 769px) {
-        .jcarousel { width: 200px; }
-    }
-
-    @@media screen and (min-width: 1001px) {
-        .jcarousel { width: 300px; }
-    }
 </style>
