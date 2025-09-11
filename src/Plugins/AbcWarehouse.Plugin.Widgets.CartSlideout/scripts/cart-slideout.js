@@ -375,53 +375,64 @@ function AddToCart() {
         url: `/addproducttocart/details/${productId}/1`,
         data: payload,
         type: "POST",
-        success: function(responseJson) {
+        success: function (responseJson) {
             addToCartButton.style.display = "none";
             title.style.display = "block";
             goToCartButton.style.display = "block";
             if (editMode) {
-                title.innerHTML = "<i class='fas fa-check-circle'></i> Item Updated"
+                title.innerHTML = "<i class='fas fa-check-circle'></i> Item Updated";
             } else {
                 continueShoppingButton.style.display = "block";
             }
 
+            // Always reload full cart after add
             $.getJSON('/api/cart')
-                .done(function(cart) {
+                .done(function (cart) {
                     console.log('Cart JSON (for Listrak):', cart);
-
-                    if (typeof _ltk !== 'undefined' && _ltk.SCA) {
-                    _ltk.SCA.ClearCart();
-                    cart.items.forEach(function(item) {
-                        _ltk.SCA.AddItemWithLinks(
-                        item.sku,
-                        item.quantity,
-                        item.price,
-                        item.name,
-                        item.imageUrl,
-                        item.productUrl
-                        );
-                    });
-                    _ltk.SCA.Total = cart.total;
-                    _ltk.SCA.Submit();
-                    console.log('Listrak SCA submitted');
-                    } else {
-                    console.warn('Listrak _ltk not available yet');
-                    }
+                    submitListrak(cart);
                 })
-                .fail(function() {
+                .fail(function () {
                     console.error('Failed to load /api/cart');
                 });
 
             console.log("Listrak payload:", responseJson);
         },
-        error: function() {
+        error: function () {
             alert('Error when adding item to cart.');
             cartSlideoutBackButton.style.display = "block";
             deliveryOptions.style.display = "block";
             addToCartButton.disabled = false;
         }
     });
+
     return false;
+}
+
+// Helper: submits cart to Listrak with retry if _ltk not ready
+function submitListrak(cart, attempt = 0) {
+    if (typeof _ltk !== 'undefined' && _ltk.SCA) {
+        _ltk.SCA.ClearCart();
+        cart.items.forEach(function (item) {
+            _ltk.SCA.AddItemWithLinks(
+                item.sku,
+                item.quantity,
+                item.price,
+                item.name,
+                item.imageUrl,
+                item.productUrl
+            );
+        });
+        _ltk.SCA.Total = cart.total;
+        _ltk.SCA.Submit();
+        console.log('Listrak SCA submitted');
+    } else {
+        if (attempt < 5) { // retry up to 5 times
+            console.warn('Listrak _ltk not ready, retrying...');
+            setTimeout(() => submitListrak(cart, attempt + 1), 500);
+        } else {
+            console.error('Listrak _ltk never loaded, skipping SCA');
+        }
+    }
 }
 
 function resetSelectStoreButtons() {
