@@ -52,8 +52,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             _urlRecordService = urlRecordService;
         }
 
-        [HttpGet]
-        [Route("api/cart")]
+        [HttpGet("api/cart")]
         public async Task<IActionResult> GetCart()
         {
             var customer = await _workContext.GetCurrentCustomerAsync();
@@ -63,15 +62,16 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                 customer, ShoppingCartType.ShoppingCart, store.Id);
 
             var items = new List<object>();
+            decimal total = 0;
+
             foreach (var sci in cartItems)
             {
                 var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                if (product == null)
+                    continue;
 
-                // calculate price including tax
-                var unitPrice = await _shoppingCartService.GetUnitPriceAsync(sci, true);
+                var (unitPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(sci, true);
 
-
-                // product url
                 var seName = await _urlRecordService.GetSeNameAsync(product.Id, "Product", store.Id);
                 var productUrl = Url.RouteUrl("Product", new { SeName = seName });
 
@@ -79,15 +79,14 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                 {
                     sku = product.Sku,
                     quantity = sci.Quantity,
-                    price = unitPrice, // tax-inclusive
+                    price = unitPrice,
                     name = product.Name,
                     imageUrl = string.Empty,
                     productUrl = productUrl
                 });
-            }
 
-            var total = items.Sum(i => (decimal)i.GetType().GetProperty("quantity")!.GetValue(i) *
-                                       (decimal)i.GetType().GetProperty("price")!.GetValue(i));
+                total += sci.Quantity * unitPrice;
+            }
 
             return Json(new
             {
@@ -95,6 +94,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
                 total
             });
         }
+
 
         // very similiar to OrderController.ProductDetails_AttributeChange
         [HttpPost]
