@@ -8,7 +8,7 @@
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
 
     <div class="picture">
-        <!-- Main product image always wrapped in anchor for fullscreen popup -->
+        <!-- Main product image wrapped in anchor (falls back to ImageUrl if FullSizeImageUrl is empty) -->
         <a href="@(string.IsNullOrEmpty(Model.DefaultPictureModel?.FullSizeImageUrl) 
                     ? Model.DefaultPictureModel?.ImageUrl 
                     : Model.DefaultPictureModel?.FullSizeImageUrl)"
@@ -21,16 +21,14 @@
         </a>
     </div>
 
-    @* Thumbnails section *@
+    @* Thumbnails *@
     @if (Model.PictureModels.Count > 1)
     {
         <div class="picture-thumbs">
             @foreach (var picture in Model.PictureModels)
             {
                 var thumbFull = string.IsNullOrEmpty(picture.FullSizeImageUrl) ? picture.ImageUrl : picture.FullSizeImageUrl;
-                <a class="thumb-item"
-                   href="@thumbFull"
-                   title="@picture.Title">
+                <a class="thumb-item" href="@thumbFull" title="@picture.Title">
                     <img src="@picture.ThumbImageUrl"
                          alt="@picture.AlternateText"
                          title="@picture.Title"
@@ -48,8 +46,9 @@
     (function ($) {
         $(function () {
             var anchorSel = '#main-product-img-lightbox-anchor-@Model.Id';
+            var imgSel    = '#main-product-img-@Model.Id';
 
-            // Initialize popup on the main image anchor
+            // Initialize on the anchor (harmless if also force-opening below)
             $(anchorSel).magnificPopup({
                 type: 'image',
                 closeOnContentClick: true,
@@ -57,30 +56,40 @@
                 image: { verticalFit: true }
             });
 
-            // B: Explicitly open popup on click (guards against theme handlers swallowing the click)
-            $(document).on('click', anchorSel, function (e) {
+            // Force-open popup on main anchor or image to beat conflicting handlers
+            $(document).on('click', anchorSel + ',' + imgSel, function (e) {
                 e.preventDefault();
-                $(this).magnificPopup('open');
+                e.stopImmediatePropagation();
+
+                var src = $(anchorSel).attr('href') || $(imgSel).attr('src');
+                if (!src) return;
+
+                $.magnificPopup.open({
+                    items: { src: src },
+                    type: 'image',
+                    mainClass: 'mfp-img-mobile',
+                    image: { verticalFit: true }
+                });
+
+                return false;
             });
 
-            // Thumbnails gallery popup
+            // Thumbnails gallery
             $('.picture-thumbs').magnificPopup({
                 type: 'image',
                 delegate: 'a',
                 gallery: { enabled: true }
             });
 
-            // Swap main image when a thumbnail is clicked
+            // Swap main image and update lightbox link when a thumbnail is clicked
             $('.thumb-item > img').on('click', function () {
                 var $img = $(this);
 
-                // Update main displayed image
-                $('#main-product-img-@Model.Id')
+                $(imgSel)
                     .attr('src', $img.data('defaultsize'))
                     .attr('alt', $img.attr('alt'))
                     .attr('title', $img.attr('title'));
 
-                // Update lightbox anchor target
                 $(anchorSel)
                     .attr('href', $img.data('fullsize'))
                     .attr('title', $img.attr('title'));
@@ -88,3 +97,9 @@
         });
     })(jQuery);
 </script>
+
+<style>
+  /* Optional: helps if an overlay or layout was eating clicks */
+  .picture a { display: inline-block; }
+  .picture img { pointer-events: auto; }
+</style>
