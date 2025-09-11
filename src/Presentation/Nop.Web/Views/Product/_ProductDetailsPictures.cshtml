@@ -12,12 +12,12 @@
         <a href="@(string.IsNullOrEmpty(Model.DefaultPictureModel?.FullSizeImageUrl) 
                     ? Model.DefaultPictureModel?.ImageUrl 
                     : Model.DefaultPictureModel?.FullSizeImageUrl)"
-           title="@Model.DefaultPictureModel.Title"
+           title="@Model.DefaultPictureModel?.Title"
            id="main-product-img-lightbox-anchor-@Model.Id">
             <img id="main-product-img-@Model.Id"
-                 src="@Model.DefaultPictureModel.ImageUrl"
-                 alt="@Model.DefaultPictureModel.AlternateText"
-                 title="@Model.DefaultPictureModel.Title" />
+                 src="@Model.DefaultPictureModel?.ImageUrl"
+                 alt="@Model.DefaultPictureModel?.AlternateText"
+                 title="@Model.DefaultPictureModel?.Title" />
         </a>
     </div>
 
@@ -27,14 +27,15 @@
         <div class="picture-thumbs">
             @foreach (var picture in Model.PictureModels)
             {
+                var thumbFull = string.IsNullOrEmpty(picture.FullSizeImageUrl) ? picture.ImageUrl : picture.FullSizeImageUrl;
                 <a class="thumb-item"
-                   href="@picture.FullSizeImageUrl"
+                   href="@thumbFull"
                    title="@picture.Title">
                     <img src="@picture.ThumbImageUrl"
                          alt="@picture.AlternateText"
                          title="@picture.Title"
                          data-defaultsize="@picture.ImageUrl"
-                         data-fullsize="@picture.FullSizeImageUrl" />
+                         data-fullsize="@thumbFull" />
                 </a>
             }
         </div>
@@ -44,34 +45,46 @@
 </div>
 
 <script asp-location="Footer">
-    $(function () {
-        // Main image fullscreen popup
-        $('#main-product-img-lightbox-anchor-@Model.Id').magnificPopup({
-            type: 'image',
-            closeOnContentClick: true,
-            mainClass: 'mfp-img-mobile',
-            image: { verticalFit: true }
-        });
+    (function ($) {
+        $(function () {
+            var anchorSel = '#main-product-img-lightbox-anchor-@Model.Id';
 
-        // Thumbnail gallery popup
-        $('.picture-thumbs').magnificPopup({
-            type: 'image',
-            delegate: 'a',
-            gallery: { enabled: true }
-        });
+            // Initialize popup on the main image anchor
+            $(anchorSel).magnificPopup({
+                type: 'image',
+                closeOnContentClick: true,
+                mainClass: 'mfp-img-mobile',
+                image: { verticalFit: true }
+            });
 
-        // Swap main image when a thumbnail is clicked
-        $('.thumb-item > img').on('click', function () {
-            $('#main-product-img-@Model.Id')
-                .attr('src', $(this).data('defaultsize'))
-                .attr('alt', $(this).attr('alt'))
-                .attr('title', $(this).attr('title'));
-            $('#main-product-img-lightbox-anchor-@Model.Id')
-                .attr('href', $(this).data('fullsize'))
-                .attr('title', $(this).attr('title'));
+            // B: Explicitly open popup on click (guards against theme handlers swallowing the click)
+            $(document).on('click', anchorSel, function (e) {
+                e.preventDefault();
+                $(this).magnificPopup('open');
+            });
+
+            // Thumbnails gallery popup
+            $('.picture-thumbs').magnificPopup({
+                type: 'image',
+                delegate: 'a',
+                gallery: { enabled: true }
+            });
+
+            // Swap main image when a thumbnail is clicked
+            $('.thumb-item > img').on('click', function () {
+                var $img = $(this);
+
+                // Update main displayed image
+                $('#main-product-img-@Model.Id')
+                    .attr('src', $img.data('defaultsize'))
+                    .attr('alt', $img.attr('alt'))
+                    .attr('title', $img.attr('title'));
+
+                // Update lightbox anchor target
+                $(anchorSel)
+                    .attr('href', $img.data('fullsize'))
+                    .attr('title', $img.attr('title'));
+            });
         });
-    });
+    })(jQuery);
 </script>
-
-
-
