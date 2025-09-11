@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Nop.Web.Framework.Mvc;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
+using Nop.Services.Seo;
 
 namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
 {
@@ -25,6 +26,9 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
         private readonly IAbcProductAttributeService _productAttributeService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IWorkContext _workContext;
+        private readonly IStoreContext _storeContext;
+        private readonly IPriceCalculationService _priceCalculationService;
+        private readonly IUrlRecordService _urlRecordService;
 
         public CartSlideoutController(
             IProductAttributeParser productAttributeParser,
@@ -32,7 +36,10 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             IAbcMattressModelService abcMattressModelService,
             IAbcProductAttributeService productAttributeService,
             IShoppingCartService shoppingCartService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IStoreContext storeContext,
+            IPriceCalculationService priceCalculationService,
+            IUrlRecordService urlRecordService)
         {
             _productAttributeParser = productAttributeParser;
             _productService = productService;
@@ -40,6 +47,52 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Controllers
             _productAttributeService = productAttributeService;
             _shoppingCartService = shoppingCartService;
             _workContext = workContext;
+            _storeContext = storeContext;
+            _priceCalculationService = priceCalculationService;
+            _urlRecordService = urlRecordService;
+        }
+
+        [HttpGet]
+        [Route("api/cart")]
+        public async Task<IActionResult> GetCart()
+        {
+            var customer = await _workContext.GetCurrentCustomerAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+
+            var cartItems = await _shoppingCartService.GetShoppingCartAsync(
+                customer, ShoppingCartType.ShoppingCart, store.Id);
+
+            var items = new List<object>();
+            foreach (var sci in cartItems)
+            {
+                var product = await _productService.GetProductByIdAsync(sci.ProductId);
+
+                // calculate price including tax
+                var unitPrice = await _shoppingCartService.GetUnitPriceAsync(sci, true);
+
+
+                // product url
+                var seName = await _urlRecordService.GetSeNameAsync(product.Id, "Product", store.Id);
+                var productUrl = Url.RouteUrl("Product", new { SeName = seName });
+
+                items.Add(new
+                {
+                    sku = product.Sku,
+                    quantity = sci.Quantity,
+                    price = unitPrice, // tax-inclusive
+                    name = product.Name,
+                    productUrl = productUrl
+                });
+            }
+
+            var total = items.Sum(i => (decimal)i.GetType().GetProperty("quantity")!.GetValue(i) *
+                                       (decimal)i.GetType().GetProperty("price")!.GetValue(i));
+
+            return Json(new
+            {
+                items,
+                total
+            });
         }
 
         // very similiar to OrderController.ProductDetails_AttributeChange

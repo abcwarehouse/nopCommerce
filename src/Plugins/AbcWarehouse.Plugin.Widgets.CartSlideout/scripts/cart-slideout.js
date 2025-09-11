@@ -385,28 +385,33 @@ function AddToCart() {
                 continueShoppingButton.style.display = "block";
             }
 
-            // ---- Listrak tracking ----
-            if (responseJson && responseJson.cartItems) {
-                if (typeof _ltk !== "undefined" && _ltk.SCA) {
+            $.getJSON('/api/cart')
+                .done(function(cart) {
+                    console.log('Cart JSON (for Listrak):', cart);
+
+                    if (typeof _ltk !== 'undefined' && _ltk.SCA) {
                     _ltk.SCA.ClearCart();
-                    responseJson.cartItems.forEach(function(item) {
+                    cart.items.forEach(function(item) {
                         _ltk.SCA.AddItemWithLinks(
-                            item.sku,
-                            item.quantity,
-                            item.price,
-                            item.name,
-                            item.imageUrl,
-                            item.productUrl
+                        item.sku,
+                        item.quantity,
+                        item.price,
+                        item.name,
+                        item.imageUrl,
+                        item.productUrl
                         );
                     });
-                    _ltk.SCA.Total = responseJson.cartTotal;
+                    _ltk.SCA.Total = cart.total;
                     _ltk.SCA.Submit();
-                } else {
-                    console.warn("Listrak _ltk not defined yet");
-                }
-            }
+                    console.log('Listrak SCA submitted');
+                    } else {
+                    console.warn('Listrak _ltk not available yet');
+                    }
+                })
+                .fail(function() {
+                    console.error('Failed to load /api/cart');
+                });
 
-            // ---- Debugging: log to console so you can see in DevTools ----
             console.log("Listrak payload:", responseJson);
         },
         error: function() {
