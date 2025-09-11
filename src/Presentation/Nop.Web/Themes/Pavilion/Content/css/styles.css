@@ -2480,7 +2480,7 @@ input#sli_search_1 {
 .overview .non-discounted-price,
 .variant-overview .non-discounted-price {
 	font-size: 17px;
-	text-decoration: line-through;
+	
 }
 .overview .product-price,
 .variant-overview .product-price {
