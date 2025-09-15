@@ -505,28 +505,54 @@
                                 <td class="unit-price">
                                     <span class="product-unit-price">@adjustedUnitPriceString</span>
                                 </td>
+
+
                                 <td class="quantity">
-                                    @if (Model.IsEditable)
-                                    {
-                                        if (item.AllowedQuantities.Count > 0)
-                                        {
-                                            <select name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" class="qty-dropdown">
-                                                @foreach (var qty in item.AllowedQuantities)
-                                                {
-                                                    <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
-                                                }
-                                            </select>
-                                        }
-                                        else
-                                        {
-                                            <input name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" class="qty-input" aria-label="@T("ShoppingCart.Quantity")" />
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <span>@item.Quantity</span>
-                                    }
-                                </td>
+    @if (Model.IsEditable)
+    {
+        <div class="qty-control" data-item-id="@item.Id">
+            <button type="button"
+                    class="qty-btn qty-minus"
+                    aria-label="Decrease quantity"
+                    data-item-id="@item.Id">−</button>
+
+            @if (item.AllowedQuantities.Count > 0)
+            {
+                <select name="itemquantity@(item.Id)"
+                        id="itemquantity@(item.Id)"
+                        class="qty-dropdown"
+                        aria-label="@T("ShoppingCart.Quantity")">
+                    @foreach (var qty in item.AllowedQuantities)
+                    {
+                        <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <input  name="itemquantity@(item.Id)"
+                        id="itemquantity@(item.Id)"
+                        type="text"
+                        value="@(item.Quantity)"
+                        class="qty-input"
+                        aria-label="@T("ShoppingCart.Quantity")" />
+            }
+
+            <button type="button"
+                    class="qty-btn qty-plus"
+                    aria-label="Increase quantity"
+                    data-item-id="@item.Id">+</button>
+        </div>
+    }
+    else
+    {
+        <span>@item.Quantity</span>
+    }
+</td>
+
+
+
+                                
                                 <td class="subtotal">
                                     <span class="product-subtotal">@item.SubTotal</span>
                                     @if (!string.IsNullOrEmpty(item.Discount))
@@ -780,4 +806,72 @@
 
         expandCartItems();
     });
+</script>
+
+
+
+
+<script>
+(function () {
+  // Debounce to avoid multiple rapid submits
+  let submitTimer = null;
+
+  function submitCartUpdate() {
+    if (submitTimer) { clearTimeout(submitTimer); }
+    submitTimer = setTimeout(function () {
+      // show the same spinner you already use elsewhere
+      $('.spinner').removeClass('hidden-loading').show();
+
+      // disable buttons briefly to prevent spam
+      $('.qty-btn').prop('disabled', true);
+
+      // trigger the built-in update (posts the form with name="updatecart")
+      $('#shopping-cart-form .update-cart-button').trigger('click');
+    }, 250);
+  }
+
+  function adjustInput($input, delta) {
+    const current = parseInt($input.val(), 10);
+    let next = isNaN(current) ? 1 : current + delta;
+    if (next < 1) next = 1; // prevent 0/negative
+    $input.val(next);
+    submitCartUpdate();
+  }
+
+  function adjustSelect($select, delta) {
+    const idx = $select.prop('selectedIndex');
+    let nextIdx = idx + delta;
+    const maxIdx = $select[0].options.length - 1;
+    if (nextIdx < 0) nextIdx = 0;
+    if (nextIdx > maxIdx) nextIdx = maxIdx;
+    if (nextIdx !== idx) {
+      $select.prop('selectedIndex', nextIdx).trigger('change');
+      submitCartUpdate();
+    }
+  }
+
+  $(document).on('click', '.qty-minus, .qty-plus', function () {
+    const itemId = $(this).data('item-id');
+    const $input = $('#itemquantity' + itemId);
+    const isPlus = $(this).hasClass('qty-plus');
+    const delta = isPlus ? 1 : -1;
+
+    if (!$input.length) return;
+
+    if ($input.is('select')) {
+      adjustSelect($input, delta);
+    } else {
+      adjustInput($input, delta);
+    }
+  });
+
+  // If user types a value manually, keep it >= 1 and update on blur/enter
+  $(document).on('blur keydown', '.qty-input', function (e) {
+    if (e.type === 'keydown' && e.key !== 'Enter') return;
+    let v = parseInt(this.value, 10);
+    if (isNaN(v) || v < 1) v = 1;
+    this.value = v;
+    submitCartUpdate();
+  });
+})();
 </script>
