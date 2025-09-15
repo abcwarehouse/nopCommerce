@@ -511,10 +511,15 @@
     @if (Model.IsEditable)
     {
         <div class="qty-control" data-item-id="@item.Id">
-            <button type="button"
-                    class="qty-btn qty-minus"
-                    aria-label="Decrease quantity"
-                    data-item-id="@item.Id">−</button>
+
+           <button type="button"
+                 class="qty-btn qty-minus"
+                 aria-label="Decrease quantity"
+                 data-item-id="@item.Id">
+                 <svg class="qty-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                </svg>
+        </button>
 
             @if (item.AllowedQuantities.Count > 0)
             {
@@ -539,9 +544,14 @@
             }
 
             <button type="button"
-                    class="qty-btn qty-plus"
-                    aria-label="Increase quantity"
-                    data-item-id="@item.Id">+</button>
+                 class="qty-btn qty-plus"
+                 aria-label="Increase quantity"
+                 data-item-id="@item.Id">
+                    <svg class="qty-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="11" y="4" width="2" height="16" rx="1" fill="currentColor"/>
+                    <rect x="4"  y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                    </svg>
+            </button>
         </div>
     }
     else

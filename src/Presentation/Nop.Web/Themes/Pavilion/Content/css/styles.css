@@ -828,15 +828,14 @@ label, label + * {
 }
 
 /* Cart Plus and Minus Button */
-/* Consistent + / − size across devices */
+
 .quantity .qty-btn{
   display:inline-flex;
   justify-content:center;
   align-items:center;
 
-  
-  width:36px;
-  height:36px;
+  width:40px;              
+  height:40px;
   padding:0;
 
   border:1px solid #ddd;
@@ -844,19 +843,17 @@ label, label + * {
   background:#fff;
   cursor:pointer;
 
-
-  font-size:22px;
-  line-height:1;
-  font-weight:700;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-               Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-  font-kerning:none;
-  font-variant-ligatures:none;
+  color:#333;              
 }
 
+/* Identical +/− icon size everywhere */
+.quantity .qty-icon{
+  width:20px;
+  height:20px;
+  display:block;
+}
 
+/* Keep the controls on one line with the field */
 .quantity .qty-control{
   display:inline-flex;
   align-items:center;
@@ -864,22 +861,21 @@ label, label + * {
   white-space:nowrap;
 }
 
-
+/* Align the field with the buttons */
 .quantity .qty-input,
 .quantity .qty-dropdown{
   display:inline-block;
   min-width:3.2rem;
   text-align:center;
   margin:0;
-  line-height:1;   
+  line-height:1;
   vertical-align:middle;
 }
 
 
-@media (max-width:600px){
-  .cart td.quantity { overflow:visible; }
-}
-
+.quantity .qty-btn:focus{ outline:2px solid #a3c7ff; outline-offset:2px; }
+.quantity .qty-btn:active .qty-icon{ transform:scale(0.95); transform-origin:center; }
+@media (max-width:600px){ .cart td.quantity{ overflow:visible; } }
 
 
 /*********** Hawthorne Header Changes  ***********/
