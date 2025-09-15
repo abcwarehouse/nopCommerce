@@ -829,26 +829,35 @@ label, label + * {
 
 /* Cart Plus and Minus Button */
 
-.qty-control{
+
+.quantity .qty-control{
   display:inline-flex;
   align-items:center;
+  flex-wrap:nowrap;
+  white-space:nowrap;
   gap:.35rem;
 }
 
-.qty-btn{
-  width:2rem;height:2rem;line-height:2rem;
-  border:1px solid #ddd;border-radius:.4rem;
+.quantity .qty-btn{
+  width:2rem; height:2rem; line-height:2rem;
+  border:1px solid #ddd; border-radius:.4rem;
   font-weight:700; background:#fff; cursor:pointer;
 }
 
-.qty-btn:disabled{opacity:.5;cursor:not-allowed}
+.quantity .qty-btn:disabled{ opacity:.5; cursor:not-allowed; }
 
-.qty-input, .qty-dropdown{
+.quantity .qty-input,
+.quantity .qty-dropdown{
+  display:inline-block;
   min-width:3.2rem;
   text-align:center;
+  margin:0;
+  vertical-align:middle;
 }
 
-
+@media (max-width:600px){
+  .cart td.quantity { overflow:visible; }
+}
 
 
 /*********** Hawthorne Header Changes  ***********/
