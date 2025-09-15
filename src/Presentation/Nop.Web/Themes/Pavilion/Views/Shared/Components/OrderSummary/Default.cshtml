@@ -809,32 +809,48 @@
 </script>
 
 
-
 <script>
 (function () {
-  // Debounce to avoid multiple rapid submits
   let submitTimer = null;
 
   function submitCartUpdate() {
-    if (submitTimer) { clearTimeout(submitTimer); }
+    if (submitTimer) clearTimeout(submitTimer);
     submitTimer = setTimeout(function () {
-      $('.spinner').removeClass('hidden-loading').show();
+      $('.spinner').show();
       $('.qty-btn').prop('disabled', true);
+      // use the built-in update button so we keep server-side logic identical
       $('#shopping-cart-form .update-cart-button').trigger('click');
-    }, 250);
+    }, 200);
   }
 
-  // NEW: direct remove using your existing AJAX endpoint & handlers
-  function removeCartItem(itemId) {
-    $('.spinner').removeClass('hidden-loading').show();
+  // Prefer the built-in "remove from cart" flow (checkbox + update)
+  function removeViaForm(itemId) {
+    const $chk = $('#removefromcart' + itemId);
+    if ($chk.length) {
+      $chk.prop('checked', true);
+      submitCartUpdate();
+      return true;
+    }
+    return false;
+  }
+
+  // Fallback: your existing AJAX remover (only used if checkbox not present)
+  function removeViaAjax(itemId) {
+    $('.spinner').show();
     $.ajax({
       cache: false,
       url: '/ShoppingCart/RemoveItem',
-      data: { 'shoppingCartItemId': itemId },
+      data: { shoppingCartItemId: itemId },
       type: 'post',
-      success: success, // uses your existing global success handler
-      error: error      // uses your existing global error handler
+      success: success, // uses your global handlers
+      error: error
     });
+  }
+
+  function removeItem(itemId) {
+    if (!removeViaForm(itemId)) {
+      removeViaAjax(itemId);
+    }
   }
 
   function adjustInput($input, delta) {
@@ -847,10 +863,8 @@
 
   function adjustSelect($select, delta) {
     const idx = $select.prop('selectedIndex');
-    let nextIdx = idx + delta;
     const maxIdx = $select[0].options.length - 1;
-    if (nextIdx < 0) nextIdx = 0;
-    if (nextIdx > maxIdx) nextIdx = maxIdx;
+    let nextIdx = Math.max(0, Math.min(maxIdx, idx + delta));
     if (nextIdx !== idx) {
       $select.prop('selectedIndex', nextIdx).trigger('change');
       submitCartUpdate();
@@ -861,28 +875,27 @@
     const itemId = $(this).data('item-id');
     const $control = $('#itemquantity' + itemId);
     const isPlus = $(this).hasClass('qty-plus');
-    const isMinus = !isPlus;
 
     if (!$control.length) return;
 
-    // If user clicks "−" at quantity 1  remove the item
-    if (isMinus) {
+    if (!isPlus) {
+      // MINUS path: if quantity is 1 → remove
       if ($control.is('select')) {
         const selectedVal = parseInt($control.val(), 10);
         if (!isNaN(selectedVal) && selectedVal === 1) {
-          removeCartItem(itemId);
+          removeItem(itemId);
           return;
         }
       } else {
         const current = parseInt($control.val(), 10);
         if (isNaN(current) || current <= 1) {
-          removeCartItem(itemId);
+          removeItem(itemId);
           return;
         }
       }
     }
 
-    // Otherwise just adjust quantity and submit
+    // Otherwise just adjust value and submit
     if ($control.is('select')) {
       adjustSelect($control, isPlus ? 1 : -1);
     } else {
@@ -890,7 +903,7 @@
     }
   });
 
-  // Optional: keep manual edits behavior unchanged
+  // Manual entry still supported
   $(document).on('blur keydown', '.qty-input', function (e) {
     if (e.type === 'keydown' && e.key !== 'Enter') return;
     let v = parseInt(this.value, 10);
