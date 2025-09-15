@@ -810,7 +810,6 @@
 
 
 
-
 <script>
 (function () {
   // Debounce to avoid multiple rapid submits
@@ -819,21 +818,29 @@
   function submitCartUpdate() {
     if (submitTimer) { clearTimeout(submitTimer); }
     submitTimer = setTimeout(function () {
-      // show the same spinner you already use elsewhere
       $('.spinner').removeClass('hidden-loading').show();
-
-      // disable buttons briefly to prevent spam
       $('.qty-btn').prop('disabled', true);
-
-      // trigger the built-in update (posts the form with name="updatecart")
       $('#shopping-cart-form .update-cart-button').trigger('click');
     }, 250);
+  }
+
+  // NEW: direct remove using your existing AJAX endpoint & handlers
+  function removeCartItem(itemId) {
+    $('.spinner').removeClass('hidden-loading').show();
+    $.ajax({
+      cache: false,
+      url: '/ShoppingCart/RemoveItem',
+      data: { 'shoppingCartItemId': itemId },
+      type: 'post',
+      success: success, // uses your existing global success handler
+      error: error      // uses your existing global error handler
+    });
   }
 
   function adjustInput($input, delta) {
     const current = parseInt($input.val(), 10);
     let next = isNaN(current) ? 1 : current + delta;
-    if (next < 1) next = 1; // prevent 0/negative
+    if (next < 1) next = 1;
     $input.val(next);
     submitCartUpdate();
   }
@@ -852,20 +859,38 @@
 
   $(document).on('click', '.qty-minus, .qty-plus', function () {
     const itemId = $(this).data('item-id');
-    const $input = $('#itemquantity' + itemId);
+    const $control = $('#itemquantity' + itemId);
     const isPlus = $(this).hasClass('qty-plus');
-    const delta = isPlus ? 1 : -1;
+    const isMinus = !isPlus;
 
-    if (!$input.length) return;
+    if (!$control.length) return;
 
-    if ($input.is('select')) {
-      adjustSelect($input, delta);
+    // If user clicks "−" at quantity 1  remove the item
+    if (isMinus) {
+      if ($control.is('select')) {
+        const selectedVal = parseInt($control.val(), 10);
+        if (!isNaN(selectedVal) && selectedVal === 1) {
+          removeCartItem(itemId);
+          return;
+        }
+      } else {
+        const current = parseInt($control.val(), 10);
+        if (isNaN(current) || current <= 1) {
+          removeCartItem(itemId);
+          return;
+        }
+      }
+    }
+
+    // Otherwise just adjust quantity and submit
+    if ($control.is('select')) {
+      adjustSelect($control, isPlus ? 1 : -1);
     } else {
-      adjustInput($input, delta);
+      adjustInput($control, isPlus ? 1 : -1);
     }
   });
 
-  // If user types a value manually, keep it >= 1 and update on blur/enter
+  // Optional: keep manual edits behavior unchanged
   $(document).on('blur keydown', '.qty-input', function (e) {
     if (e.type === 'keydown' && e.key !== 'Enter') return;
     let v = parseInt(this.value, 10);
