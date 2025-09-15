@@ -859,6 +859,34 @@ label, label + * {
   .cart td.quantity { overflow:visible; }
 }
 
+/* Mobile */
+@media (max-width:1024px){
+button.qty-btn.qty-plus
+ {
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    border: 1px solid #ddd;
+    border-radius: .4rem;
+    font-weight: 700;
+    background: #fff;
+    cursor: pointer;
+}
+
+button.qty-btn.qty-minus
+ {
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    border: 1px solid #ddd;
+    border-radius: .4rem;
+    font-weight: 700;
+    background: #fff;
+    cursor: pointer;
+}
+
+}
+
 
 /*********** Hawthorne Header Changes  ***********/
 @media (max-width: 1024px) {
