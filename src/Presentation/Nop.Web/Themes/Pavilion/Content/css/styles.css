@@ -829,6 +829,10 @@ label, label + * {
 
 /* Cart Plus and Minus Button */
 
+.quantity .qty-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
 
 .quantity .qty-control{
   display:inline-flex;

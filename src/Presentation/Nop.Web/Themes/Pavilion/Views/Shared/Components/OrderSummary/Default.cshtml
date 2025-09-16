@@ -900,3 +900,51 @@
   });
 })();
 </script>
+
+
+
+
+@* Disables the minus button when teh quantity is at 1 *@
+<script>
+(function(){
+  function getVal($ctrl){
+    // Works for both input and select
+    var v = parseInt(($ctrl.val() || '').toString(), 10);
+    return isNaN(v) ? 1 : v;
+  }
+
+  function syncMinus($wrap){
+    var $minus = $wrap.find('.qty-minus');
+    var itemId = $minus.data('item-id');
+    var $ctrl  = $('#itemquantity' + itemId);
+    if (!$ctrl.length) return;
+
+    var val = getVal($ctrl);
+    var disable = val <= 1;
+
+    // Disable/enable the minus button + ARIA
+    $minus.prop('disabled', disable)
+          .attr('aria-disabled', disable ? 'true' : 'false')
+          .attr('title', disable ? 'Minimum quantity is 1' : 'Decrease');
+  }
+
+  function syncAll(){
+    $('.qty-control').each(function(){ syncMinus($(this)); });
+  }
+
+  // Initial sync
+  $(document).ready(syncAll);
+
+  // When user types or chooses a new quantity
+  $(document).on('input change', '.qty-input, .qty-dropdown', function(){
+    syncMinus($(this).closest('.qty-control'));
+  });
+
+  // After +/− is clicked (value is changed by your other handler)
+  $(document).on('click', '.qty-plus, .qty-minus', function(){
+    var $wrap = $(this).closest('.qty-control');
+    // let your existing handler run first, then re-check
+    setTimeout(function(){ syncMinus($wrap); }, 0);
+  });
+})();
+</script>
