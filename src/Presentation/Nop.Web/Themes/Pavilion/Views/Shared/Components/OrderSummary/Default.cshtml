@@ -832,8 +832,8 @@
       url: '/ShoppingCart/RemoveItem',
       data: { 'shoppingCartItemId': itemId },
       type: 'post',
-      success: success, // uses your existing global success handler
-      error: error      // uses your existing global error handler
+      success: success, 
+      error: error      
     });
   }
 
@@ -857,40 +857,56 @@
     }
   }
 
-  $(document).on('click', '.qty-minus, .qty-plus', function () {
-    const itemId = $(this).data('item-id');
-    const $control = $('#itemquantity' + itemId);
-    const isPlus = $(this).hasClass('qty-plus');
+  (function () {
+  
+  // Deduplicate touchend → click on mobile
+  let lastTouchTs = 0;
+  function isTouchDedup(e) {
+    const now = Date.now();
+    if (e.type === 'touchend') { lastTouchTs = now; return false; }
+    if (e.type === 'click' && now - lastTouchTs < 400) return true;
+    return false;
+  }
+
+  // MOBILE-SAFE, LOCALLY-SCOPED HANDLER
+  $(document).on('touchend click', '.qty-minus, .qty-plus', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();      // block theme form-submit handlers
+    if (isTouchDedup(e)) return;
+
+    const $btn  = $(this);
+    if ($btn.prop('disabled')) return; // “minus disabled at 1”
+
+    const $wrap = $btn.closest('.qty-control');
+    // find the input/select inside THIS qty-control only (no global IDs)
+    const $ctrl = $wrap.find('.qty-input, .qty-dropdown').first();
+    if (!$ctrl.length) return;
+
+    const isPlus  = $btn.hasClass('qty-plus');
     const isMinus = !isPlus;
 
-    if (!$control.length) return;
-
-    // If user clicks "−" at quantity 1  remove the item
-    if (isMinus) {
-      if ($control.is('select')) {
-        const selectedVal = parseInt($control.val(), 10);
-        if (!isNaN(selectedVal) && selectedVal === 1) {
-          removeCartItem(itemId);
-          return;
-        }
-      } else {
-        const current = parseInt($control.val(), 10);
-        if (isNaN(current) || current <= 1) {
-          removeCartItem(itemId);
-          return;
-        }
-      }
+    // Enforce: minus is inactive at 1 (do nothing)
+    const val = parseInt($ctrl.val(), 10);
+    if (isMinus && (( $ctrl.is('select') && !isNaN(val) && val <= 1 )
+                 || ( !$ctrl.is('select') && (isNaN(val) || val <= 1) ))) {
+      return;
     }
 
-    // Otherwise just adjust quantity and submit
-    if ($control.is('select')) {
-      adjustSelect($control, isPlus ? 1 : -1);
+    if ($ctrl.is('select')) {
+      adjustSelect($ctrl, isPlus ? 1 : -1);
     } else {
-      adjustInput($control, isPlus ? 1 : -1);
+      adjustInput($ctrl, isPlus ? 1 : -1);
     }
   });
+})();
 
-  // Optional: keep manual edits behavior unchanged
+
+
+
+
+
+  // this is for manual edits if someone types a number for the quantity
   $(document).on('blur keydown', '.qty-input', function (e) {
     if (e.type === 'keydown' && e.key !== 'Enter') return;
     let v = parseInt(this.value, 10);
