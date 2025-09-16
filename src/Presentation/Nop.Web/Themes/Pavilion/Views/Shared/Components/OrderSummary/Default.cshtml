@@ -511,7 +511,7 @@
     @if (Model.IsEditable)
     {
         <div class="qty-control" data-item-id="@item.Id">
-            <button type="button"
+            <button type="button" formnovalidate
                     class="qty-btn qty-minus"
                     aria-label="Decrease quantity"
                     data-item-id="@item.Id">−</button>
@@ -538,7 +538,7 @@
                         aria-label="@T("ShoppingCart.Quantity")" />
             }
 
-            <button type="button"
+            <button type="button" formnovalidate
                     class="qty-btn qty-plus"
                     aria-label="Increase quantity"
                     data-item-id="@item.Id">+</button>
