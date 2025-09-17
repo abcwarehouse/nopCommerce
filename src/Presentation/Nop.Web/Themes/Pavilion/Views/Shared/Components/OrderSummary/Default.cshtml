@@ -144,27 +144,6 @@
 		margin: 1rem auto 0 auto;
 	}
 
-	button.mobile-remove-btn {
-		display: none;
-		font-size: 0.8rem;
-		padding: 4px 8px;
-		background-color: #ff4444;
-		color: white;
-		border-radius: 4px;
-		margin: 0.5rem 0 0 0;
-		text-decoration: none;
-	}
-
-	button.mobile-remove-btn:hover {
-		background-color: #cc3333;
-	}
-
-	@@media (max-width: 580px) {
-		button.mobile-remove-btn {
-			display: block;
-		}
-	}
-
 	@@media (min-width: 523px) {
 		.prices-bottom-message-mobile,
 		.shopping-cart-page .message-error-mobile {
@@ -197,16 +176,16 @@
             return false;
         });
 
-		$(document).on('click', '.remove-link, .mobile-remove-btn', function () {
-            $('.remove-link, .mobile-remove-btn').attr('disabled', 'disabled');
+		$(document).on('click', '.remove-link', function () {
+            $('.remove-link').attr('disabled', 'disabled');
             $('.spinner').show();
             $.ajax({
                 cache: false,
                 url: '/ShoppingCart/RemoveItem',
                 data: { 'shoppingCartItemId': $(this).val() },
                 type: 'post',
-                success: success, 
-                error: error      
+                success: success,
+                error: error
             });
             return false;
         });
@@ -605,11 +584,6 @@
                                                 @T("ShoppingCart.MaximumDiscountedQty", item.MaximumDiscountedQty.Value)
                                             </div>
                                         }
-                                    }
-                                    @* Mobile remove button - always visible *@
-                                    @if (Model.IsEditable && !item.DisableRemoval)
-                                    {
-                                        <button value="@item.Id" class="remove-link mobile-remove-btn">🗑️ Remove</button>
                                     }
                                 </td>
                             </tr>
