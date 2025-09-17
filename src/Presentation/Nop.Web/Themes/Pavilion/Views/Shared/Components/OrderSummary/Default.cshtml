@@ -596,7 +596,8 @@
                 @if (Model.IsEditable)
                 {
                     <div class="common-buttons">
-                        <button type="submit" name="updatecart" class="button-2 update-cart-button">@T("ShoppingCart.UpdateCart")</button>
+                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
+                        <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
                         <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
                     </div>
                 }
@@ -963,4 +964,14 @@
     setTimeout(function(){ syncMinus($wrap); }, 0);
   });
 })();
+</script>
+
+<script>
+// Empty cart: checks all remove checkboxes and triggers submit
+$(document).on('click', '.empty-cart-button', function (e) {
+    e.preventDefault();
+    $('#shopping-cart-form input[name="removefromcart"]').prop('checked', true);
+    $('.spinner').removeClass('hidden-loading').show();
+    $('#shopping-cart-form .update-cart-button').trigger('click');
+});
 </script>
