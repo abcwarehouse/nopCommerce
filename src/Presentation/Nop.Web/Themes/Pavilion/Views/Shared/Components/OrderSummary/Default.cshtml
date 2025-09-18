@@ -824,22 +824,14 @@
             return;
         }
 
-        var i = 1;
-        function expandCartItems() {
-            setTimeout(function() {
-                for (button of document.getElementsByClassName("footable-toggle")) {
-                    button.click();
-                    i = 20;
-                }
-                i++;
-                // will attempt for 10 seconds
-                if (i < 10) {
-                    expandCartItems();
-                }
-            }, 1000)
-        }
-
-        expandCartItems();
+        // Expand only the first cart item once (mobile only)
+        setTimeout(function () {
+            var toggles = document.getElementsByClassName("footable-toggle");
+            if (toggles && toggles.length > 0) {
+                // Click only the first toggle
+                toggles[0].click();
+            }
+        }, 600);
     });
 </script>
 
