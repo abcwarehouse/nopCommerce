@@ -144,6 +144,23 @@
 		margin: 1rem auto 0 auto;
 	}
 
+	.empty-cart-top {
+		margin-bottom: 1rem;
+	}
+
+	.empty-cart-top .empty-cart-button {
+		background-color: #ff4444;
+		color: white;
+		border: none;
+		padding: 8px 16px;
+		border-radius: 4px;
+		font-size: 0.9rem;
+	}
+
+	.empty-cart-top .empty-cart-button:hover {
+		background-color: #cc3333;
+	}
+
 	@@media (min-width: 523px) {
 		.prices-bottom-message-mobile,
 		.shopping-cart-page .message-error-mobile {
@@ -242,6 +259,14 @@
     
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
     @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
+    
+    @* Empty cart button  top left *@
+    @if (Model.IsEditable && Model.Items.Count > 0)
+    {
+        <div class="empty-cart-top">
+            <button type="button" class="button-2 empty-cart-button">Empty cart</button>
+        </div>
+    }
     @if (Model.Items.Count > 0)
     {
         if (Model.Warnings.Count > 0)
@@ -630,7 +655,6 @@
                 @if (Model.IsEditable)
                 {
                     <div class="common-buttons">
-                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
                         <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
                         <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
                     </div>
