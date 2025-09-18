@@ -791,7 +791,7 @@ label, label + * {
 	height: 37px;
 	margin: auto;
 	border: none;
-	background: #777 url('../img/account-sprite.png') center -37px no-repeat;
+	/* background: #777 url('../img/account-sprite.png') center -37px no-repeat; */
 	transition: all 0.2s ease;
 }
 .cart .remove-from-cart button:hover {
