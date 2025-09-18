@@ -1010,17 +1010,15 @@ $(document).on('click', '.empty-cart-button', function (e) {
 });
 
 
+
 $(document).on('click', '.remove-item-btn', function () {
     var itemId = $(this).data('item-id');
     $('.spinner').show();
     
-    $.ajax({
-        cache: false,
-        url: '/ShoppingCart/RemoveItem',
-        data: { 'shoppingCartItemId': itemId },
-        type: 'post',
-        success: success,
-        error: error
-    });
+    // Check the hidden checkbox
+    $('#removefromcart' + itemId).prop('checked', true);
+    
+    // Submit the form to remove the item
+    $('#shopping-cart-form .update-cart-button').trigger('click');
 });
 </script>
