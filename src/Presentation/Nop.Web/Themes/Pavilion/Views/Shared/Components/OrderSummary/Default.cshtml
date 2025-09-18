@@ -161,6 +161,27 @@
 		background-color: #cc3333;
 	}
 
+	/* Desktop: move empty cart to bottom left */
+	@@media (min-width: 769px) {
+		.order-summary-content {
+			position: relative;
+		}
+		
+		.empty-cart-top {
+			position: absolute;
+			bottom: 1rem;
+			left: 1rem;
+			margin-bottom: 0;
+		}
+	}
+
+	/* Mobile: keep at top */
+	@@media (max-width: 768px) {
+		.empty-cart-top {
+			margin-bottom: 1rem;
+		}
+	}
+
 	@@media (min-width: 523px) {
 		.prices-bottom-message-mobile,
 		.shopping-cart-page .message-error-mobile {
