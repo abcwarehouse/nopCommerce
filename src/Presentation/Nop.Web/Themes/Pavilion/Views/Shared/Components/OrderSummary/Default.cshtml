@@ -161,32 +161,30 @@
 		}
 	}
 
-    @* trashcan *@
-    @@media (max-width: 768px) {
-    .remove-item-btn {
-        padding: 3px;
-    }
-    
-    .remove-item-btn svg {
-        width: 18px;
-        height: 18px;
-    }
-    
-    /* Move empty cart and continue shopping buttons below checkout on mobile */
-    .cart-footer {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .cart-options .common-buttons {
-        order: 2;
-        margin-top: 1rem;
-    }
-    
-    .checkout-buttons {
-        order: 1;
-    }
-}
+     @* trashcan *@
+     @@media (max-width: 768px) {
+     .remove-item-btn {
+         padding: 3px;
+     }
+     
+     .remove-item-btn svg {
+         width: 18px;
+         height: 18px;
+     }
+     
+     /* Style cart action buttons after order summary */
+     .cart-action-buttons {
+         margin-top: 1rem;
+         text-align: center;
+     }
+     
+     .cart-action-buttons .common-buttons {
+         display: flex;
+         gap: 1rem;
+         justify-content: center;
+         flex-wrap: wrap;
+     }
+ }
 
 
 
@@ -642,14 +640,6 @@
             </div>
         
             <div class="cart-options">
-                @if (Model.IsEditable)
-                {
-                    <div class="common-buttons">
-                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
-                        <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
-                        <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
-                    </div>
-                }
                 @if (Model.CheckoutAttributes.Count > 0)
                 {
                     @await Component.InvokeAsync("SelectedCheckoutAttributes")
@@ -814,6 +804,19 @@
                     }
                 </div>
             </div>
+            
+            @* Cart action buttons moved after order summary *@
+            @if (Model.IsEditable)
+            {
+                <div class="cart-action-buttons">
+                    <div class="common-buttons">
+                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
+                        <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
+                        <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
+                    </div>
+                </div>
+            }
+            
             @if (Model.IsEditable)
             {
                 @await Component.InvokeAsync("CrossSellProducts")
