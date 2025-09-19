@@ -172,7 +172,12 @@
          height: 18px;
      }
      
-     /* Style cart action buttons after order summary */
+     /* Hide desktop buttons on mobile */
+     .desktop-cart-buttons {
+         display: none;
+     }
+     
+     /* Style mobile cart action buttons after order summary */
      .cart-action-buttons {
          margin-top: 1rem;
          text-align: center;
@@ -183,6 +188,17 @@
          gap: 1rem;
          justify-content: center;
          flex-wrap: wrap;
+     }
+ }
+ 
+ /* Show desktop buttons on larger screens */
+ @@media (min-width: 769px) {
+     .desktop-cart-buttons {
+         display: block;
+     }
+     
+     .cart-action-buttons {
+         display: none;
      }
  }
 
@@ -640,6 +656,14 @@
             </div>
         
             <div class="cart-options">
+                @if (Model.IsEditable)
+                {
+                    <div class="common-buttons desktop-cart-buttons">
+                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
+                        <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
+                        <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
+                    </div>
+                }
                 @if (Model.CheckoutAttributes.Count > 0)
                 {
                     @await Component.InvokeAsync("SelectedCheckoutAttributes")
