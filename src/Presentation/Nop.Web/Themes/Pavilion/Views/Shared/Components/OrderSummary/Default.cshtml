@@ -138,7 +138,6 @@
 		text-decoration: underline;
 		font-size: 0.7rem;
 		display: block;
-		color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
 		background-color: transparent;
 		border: 0;
 		margin: 1rem auto 0 auto;
@@ -442,7 +441,7 @@
                     }
                     else
                     {
-                        <!-- Hide the checkbox but keep it for functionality -->
+                        <!-- Hide the checkbox but keep it for the functionality that is happening in the background -->
                         <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" style="display: none;" />
                         
                         <!-- Add trashcan icon that triggers removal -->
@@ -493,7 +492,7 @@
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
-                                            <!-- ABC: use custom attribute info listing -->
+                                            
                                             <!-- @Html.Raw(item.AttributeInfo) -->
                                             
                                             @await Html.PartialAsync("_AttributeInfo", (item.Id, item.AttributeInfo))
@@ -937,7 +936,7 @@
     return false;
   }
 
-  // MOBILE-SAFE, LOCALLY-SCOPED HANDLER
+  // MOBILE-SAFE, HANDLER
   $(document).on('touchend click', '.qty-minus, .qty-plus', function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -975,7 +974,7 @@
 
 
 
-  // this is for manual edits if someone types a number for the quantity
+  // this is for manual edits if someone types a number for the quantity it will still register
   $(document).on('blur keydown', '.qty-input', function (e) {
     if (e.type === 'keydown' && e.key !== 'Enter') return;
     let v = parseInt(this.value, 10);
@@ -989,7 +988,7 @@
 
 
 
-@* Disables the minus button when teh quantity is at 1 *@
+@* Disables the minus button when the quantity is at 1 to prevent people from emoving an item from cart by mistake *@
 <script>
 (function(){
   function getVal($ctrl){
