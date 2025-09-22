@@ -791,7 +791,6 @@ label, label + * {
 	height: 37px;
 	margin: auto;
 	border: none;
-	/* background: #777 url('../img/account-sprite.png') center -37px no-repeat; */
 	transition: all 0.2s ease;
 }
 .cart .remove-from-cart button:hover {
@@ -4716,7 +4715,7 @@ input#sli_search_1 {
 	border: none;
 	font-size: 13px;
 	font-weight: bold;
-	color: #777; 
+	color: #777;
 	text-transform: uppercase;
 	outline: 2px solid transparent;
 	transition: all 0.2s ease;
