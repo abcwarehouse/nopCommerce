@@ -60,6 +60,9 @@
     <None Remove="Images\SaleAdButton.png" />
     <None Remove="Images\search-button.png" />
     <!-- Pavilion overwrites -->
+    <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
+    <None Remove="Views\Shared\_ProductBox.cshtml" />
+    <None Remove="Views\Shared\_Root.cshtml" />
     <None Remove="Views\Shared\_Root.Head.cshtml" />
   </ItemGroup>
 
@@ -191,6 +194,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <!-- Pavilion overwrites -->
+    <Content Include="Views\Product\ProductTemplate.Simple.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_ProductBox.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Root.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Shared\_Root.Head.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

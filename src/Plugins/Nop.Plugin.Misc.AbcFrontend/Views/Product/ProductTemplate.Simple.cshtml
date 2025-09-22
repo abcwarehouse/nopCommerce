@@ -1,0 +1,409 @@
+@model ProductDetailsModel
+@using Nop.Core.Domain.Seo
+@using Nop.Core.Domain.Catalog
+@using Nop.Web.Models.Catalog
+@using Nop.Plugin.Misc.AbcCore.Services
+@using Nop.Core
+@using Nop.Services.Catalog
+@using Nop.Plugin.Misc.AbcCore.Domain
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Plugin.Misc.AbcFrontend.Extensions
+@using Nop.Plugin.Misc.AbcCore.Extensions
+@using Nop.Services.Configuration;
+@using Nop.Plugin.Misc.AbcCore.Nop;
+@using Microsoft.Extensions.Logging;
+@using Newtonsoft.Json
+@using System.Text.RegularExpressions
+@using System.Globalization
+
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject CatalogSettings catalogSettings
+@inject FrontEndService frontEndService
+@inject IProductService productService
+@inject IStoreContext storeContext
+@inject ISettingService _settingService
+@inject IProductAttributeService _productAttributeService
+@inject IAbcCategoryService abcCategoryService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    Html.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    Html.AddMetaDescriptionParts(Model.MetaDescription);
+    Html.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    Html.AppendPageCssClassParts("html-product-details-page");
+
+    var showShareButton = catalogSettings.ShowShareButton;
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var productUrl = Url.RouteUrl("Product", new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        Html.AddCanonicalUrlParts(productUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        Html.AddHeadCustomParts("<meta property=\"og:type\" content=\"product\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        Html.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(Nop.Core.Html.HtmlHelper.StripTags(Model.MetaDescription)) + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        Html.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+    }
+}
+
+<!--product breadcrumb-->
+@section Breadcrumb
+            {
+    @Html.Partial("_ProductBreadcrumb", Model.Breadcrumb)
+}
+
+@{
+    // custom
+    Product currentProduct = await productService.GetProductByIdAsync(Model.Id);
+    var productCategories = await abcCategoryService.GetProductCategoriesByProductIdAsync(Model.Id);
+    var isClearance = false;
+    foreach (var productCategory in productCategories)
+    {
+        isClearance = await abcCategoryService.IsCategoryIdClearance(productCategory.CategoryId);
+        if (isClearance)
+        {
+            break;
+        }
+    }
+    string displayIdStr = "";
+
+    bool productIsAbc = frontEndService.ProductIsAbc(currentProduct.Id);
+    ProductAbcDescription abcP = null;
+    var productFlag = frontEndService.GetProductFlag(currentProduct.Id);
+
+    if (productIsAbc)
+    {
+        abcP = frontEndService.GetProductAbcDescriptionByProductId(currentProduct.Id);
+        string itemNumber = abcP.AbcItemNumber;
+        displayIdStr = itemNumber + (productFlag != null && productFlag.IsSpecialOrder() ? "+" : "");
+    }
+
+    // ABC: For some reason I can't get the typed version, so this is from AbcCoreSettings
+    var isFedExMode = await _settingService.GetSettingByKeyAsync<bool>("coresettings.isfedexmode");
+
+    ProductAttribute fedExProductAttribute = null;
+    var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(Model.Id);
+    foreach (var pam in productAttributeMappings)
+    {
+        var pa = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
+        if (pa.Name == "FedEx")
+        {
+            fedExProductAttribute = pa;
+            break;
+        }
+    }
+}
+
+@if (isClearance)
+{
+	<style>
+		.product-price.product-price.product-price span[itemprop="price"] {
+            color: #f00;
+            text-decoration: line-through;
+            font-weight: normal;
+        }
+
+        span.clearance-or-less {
+            display: inline-block;
+            margin-left: 8px;
+            font-weight: bold;
+            color: #949494;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+
+        .clearance-msg {
+            font-size: 1.0rem;
+            color: #12659B;
+            font-weight: bold;
+            margin-right: 7px;
+        }
+
+        .clearance-msg-additional {
+            font-size: 0.8rem;
+            color: #4f4f4f;
+        }
+
+        .clearance-msg-block.clearance-msg-block.clearance-msg-block {
+            display: block;
+        }
+	</style>
+}
+
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
+<div class="page product-details-page">
+    <div class="page-body">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
+        <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
+            @if (seoSettings.MicrodataEnabled)
+            {
+                @await Html.PartialAsync("_Microdata", Model)
+            }
+            <div data-productid="@Model.Id">
+                <div class="product-essential">
+                    <!-- ABC: for clearance -->
+                    <span class="corner-picture"><img src="~/Plugins/Misc.AbcFrontend/Images/clearance_banner.png" alt="Clearance Banner"/></span>
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialTop, additionalData = Model })
+                    @{
+                        var cloudZoom = await Component.InvokeAsync("Widget", new { widgetZone = "sevenspikes_cloud_zoom", additionalData = Model });
+                    }
+                    @if (!String.IsNullOrEmpty(await cloudZoom.RenderHtmlContentAsync()))
+                    {
+                        @cloudZoom
+                    }
+                    else
+                    {
+                    	@await Html.PartialAsync("_ProductDetailsPictures", Model)
+                    }
+                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
+                <div class="overview">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewTop, additionalData = Model })
+                    @await Html.PartialAsync("_Discontinued", Model)
+                    <!--manufacturers-->
+                    @await Html.PartialAsync("_ProductManufacturers", Model.ProductManufacturers)
+                    <div class="product-name">
+                        <h1>
+                            @Model.Name
+                        </h1>
+                        @if (!string.IsNullOrEmpty(displayIdStr))
+                        {
+                            <span class="product-name__isam-id">@displayIdStr</span>
+                        }
+                    </div>
+
+                    <!-- Rating summary goes above the fold near product name or image -->
+                    <div data-bv-show="rating_summary" data-bv-product-id="@currentProduct.Id"></div>
+
+                    <div id="questions_tab" style="display: none;">
+                        <!-- Instruct BV loader to show the Q&A feature for productID123 here -->
+                        <div data-bv-show="questions" data-bv-product-id="@currentProduct.Id"></div>
+                    </div>
+
+                    <script>
+                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
+                        window.bvCallback = function (BV) {
+
+                    // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
+                        BV.reviews.on('show', function () {
+                            // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
+                            $('#review_tab').show();
+                        });
+
+                    // Register a function to be called when a BV feature needs to 
+                    // display the Q&A element, such as when selecting the number of questions link
+                        BV.questions.on('show', function () {
+                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
+                            $('#questions_tab').show();
+                        });
+                        };
+                    </script>
+
+                    <!--rental info-->
+                    @{
+                        var dataDictRental = new ViewDataDictionary(ViewData);
+                        dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
+                        @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                    {
+                        <div class="short-description">
+                            @Html.Raw(Model.ShortDescription)
+                        </div>
+                    }
+                    <!--SKU, MAN, GTIN, vendor-->
+                    @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)
+                    <!--sample download-->
+                    @await Html.PartialAsync("_DownloadSample", Model)
+                    <!--attributes-->
+                    @{
+                        var dataDictAttributes = new ViewDataDictionary(ViewData);
+                        dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+                        @await Html.PartialAsync("_ProductAttributes", Model.ProductAttributes, dataDictAttributes)
+                    }
+                    <!--gift card-->
+                    @{
+                        var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                        dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{Model.Id}";
+                        @await Html.PartialAsync("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
+                    }
+                    <!--estimate shipping-->
+                    @await Html.PartialAsync("_ProductEstimateShipping", Model.ProductEstimateShipping)
+                    <!--availability-->
+                    @await Html.PartialAsync("_Availability", Model)
+
+                    <!--price & add to cart-->
+                    @{
+                        var dataDictPrice = new ViewDataDictionary(ViewData);
+                        dataDictPrice.TemplateInfo.HtmlFieldPrefix = string.Format("price_{0}", Model.Id);
+                        <div class="product-price-block">
+                            @Html.Partial("_ProductPrice", Model.ProductPrice, dataDictPrice)
+                        </div>
+                    }
+
+                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsBeforeAddToCart, additionalData = Model })
+
+                    <!--add to cart-->
+                    @if (!isFedExMode || fedExProductAttribute != null)
+                    {
+                        var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                        dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                        @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
+                    }
+                    <!--wishlist, compare, email a friend-->
+                    @if (isClearance)
+                    {
+                        <button style="color: #446588; border: 2px solid #446588; padding: .4rem 1rem; font-weight: 700; text-transform: uppercase; background-color: #fff;"
+                                type="button"
+                                onclick="location.href='#clearance_stock_widget'">View Availability</button>
+                    }
+                    
+                    <!--wishlist, compare, email a friend-->
+                    <div class="overview-buttons">
+                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsBefore, additionalData = Model })
+                        @{
+                            var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                            dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                            @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                        }
+                        @await Html.PartialAsync("_CompareProductsButton", Model)
+                        @await Html.PartialAsync("_ProductEmailAFriendButton", Model)
+                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsInsideOverviewButtonsAfter, additionalData = Model })
+                    </div>
+
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsOverviewBottom, additionalData = Model })
+                </div>
+                    <div class="overview-bottom">
+                        <!--sharing-->
+                        @if (showShareButton)
+                        {
+                            @Html.Partial("_ShareButton", Model)
+                        }
+                        <!--delivery-->
+                        @Html.Partial("_DeliveryInfo", Model)
+                    </div>
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsEssentialBottom, additionalData = Model })
+                </div>
+
+                @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsBeforeTabs, additionalData = Model })
+
+                @{
+                    var nopQuickTabsHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productdetails_before_collateral", additionalData = Model.Id });
+                }
+
+                @if (!String.IsNullOrEmpty(await nopQuickTabsHtml.RenderHtmlContentAsync()))
+                {
+                    var productsCarouselHtml = await Component.InvokeAsync("Widget", new { widgetZone = "productpage_after_collateral", additionalData = Model.Id });
+                    var carouselQuickTabsWrapperClass = "one-column-wrapper";
+                    if (!String.IsNullOrEmpty(await productsCarouselHtml.RenderHtmlContentAsync()))
+                    {
+                        carouselQuickTabsWrapperClass = "two-column-wrapper";
+                    }
+                    
+                    <div class="@carouselQuickTabsWrapperClass">
+                        @nopQuickTabsHtml @*nop quick tabs*@
+
+                        @productsCarouselHtml @*products carousel for related or also purchased with 1 visible item*@
+                    </div>
+                }
+                
+                <div class="product-collateral">
+                    @if (!string.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }
+                    @await Html.PartialAsync("_ProductTierPrices", Model.TierPrices)
+                    @await Html.PartialAsync("_ProductSpecifications", Model.ProductSpecificationModel)
+                    @*
+                    ABC: Since we use product tags for InstantSearch, don't display them
+                    @await Html.PartialAsync("_ProductTags", Model.ProductTags)
+                    *@
+                </div>
+                @await Component.InvokeAsync("ProductsAlsoPurchased", new { productId = Model.Id })
+                @await Component.InvokeAsync("RelatedProducts", new { productId = Model.Id })
+            </div>
+        </form>
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
+    </div>
+</div>
+
+@{
+    var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+    var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
+}
+@{
+    string offerPrice = null;
+
+    if (Model?.ProductPrice != null)
+    {
+        offerPrice = Model.ProductPrice.PriceValue.ToString();
+    }
+
+    var schema = new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "Product",
+        ["@id"] = bvProductUrl,
+        ["name"] = Model.Name,
+        ["image"] = productImageUrl,
+        ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
+        ["sku"] = Model.Sku,
+        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)),
+        ["offers"] = offerPrice != null
+            ? new Dictionary<string, object>
+                {
+                    ["@type"] = "Offer",
+                    ["priceCurrency"] = "USD",
+                    ["price"] = offerPrice
+                }
+            : null
+    };
+
+    // Remove null-valued keys (like "offers" if offerPrice is null)
+    var schemaFiltered = schema
+        .Where(kvp => kvp.Value != null)
+        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+    var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
+}
+    <script type="application/ld+json">
+        @Html.Raw(jsonLd)
+    </script>
+    <!--BV injected code-->
+    <script>
+        // Make sure that BV.configure is defined before running this script
+        BV.configure('global', {
+            events : {
+                bvRender : function (data) {
+                // JavaScript code that executes when the Bazaarvoice application renders.
+                }
+            }
+        });
+    </script>
