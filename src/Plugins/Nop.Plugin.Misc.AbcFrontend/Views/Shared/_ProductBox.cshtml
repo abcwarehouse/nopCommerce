@@ -20,6 +20,7 @@
 @using Nop.Web.Models.Catalog
 @using Nop.Plugin.Misc.AbcCore.Nop
 @using Newtonsoft.Json
+@using Nop.Web.Framework.Mvc.Routing
 
 @inject CatalogSettings catalogSettings
 @inject IWorkContext workContext
@@ -184,7 +185,8 @@
     decimal openBoxPrice = 0.0M;
     if (isOpenBox)
     {
-        openBoxPrice = productFlag.CalculateOpenBoxPrice(Model.ProductPrice.PriceValue);
+        var value = Model.ProductPrice.PriceValue.HasValue ? Model.ProductPrice.PriceValue.Value : 0.0M;
+        openBoxPrice = productFlag.CalculateOpenBoxPrice(value);
     }
 
     var isGiftCard = Model.Sku == "GIFT CARDS - ADD VAL";
@@ -257,6 +259,63 @@
         <a href="@productUrl"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
     <div class="picture">
+        @if (Model.PictureModels.Count > 1)
+        {
+            <div class="swiper" id="swiper-@Model.Id" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())">
+                <div class="swiper-wrapper">
+                    @foreach (var picture in Model.PictureModels)
+                    {
+                        <a class="swiper-slide" href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture.Title">
+                            @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                            {
+                                @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                                {
+                                    ("src", picture.ImageUrl),
+                                    ("alt", picture.AlternateText),
+                                    ("title", picture.Title)
+                                })
+                            }
+                            else
+                            {
+                                <img class="picture-img" alt="@picture.AlternateText" src="@picture.ImageUrl" title="@picture.Title" />
+                            }
+                        </a>
+                    }
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <script asp-location="Footer">
+                new Swiper('#swiper-@(Model.Id)', {
+                    pagination: {
+                        clickable: true,
+                        el: '.swiper-pagination',
+                    },
+                });
+            </script>
+        }
+        else
+        {
+            var picture = Model.PictureModels.FirstOrDefault();
+            <a href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture?.Title">
+                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                {
+                    @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                    {
+                        ("src", picture.ImageUrl),
+                        ("alt", picture.AlternateText),
+                        ("title", picture.Title)
+                    })
+                }
+                else
+                {
+                    <img class="picture-img" alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" />
+                }
+            </a>
+        }
+    </div>
+    @* need to integrate this hover image code in the 4.80.0 style
+
+    <div class="picture">
         <div class="image-container">
             <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
                 @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
@@ -300,6 +359,7 @@
             </a>
         </div>
     </div>
+    *@
     <div class="details">
         @if (Model.ReviewOverviewModel.AllowCustomerReviews)
         {
@@ -345,6 +405,7 @@
 
             <div class="product-box-review" data-bv-show="inline_rating" data-bv-product-id="@Model.Id"></div>
 
+    @* need to integrate JSON LD for 4.80.0 style
     @{
         string offerPrice = null;
 
@@ -380,7 +441,7 @@
     }
     <script type="application/ld+json">
         @Html.Raw(jsonLd)
-    </script>
+    </script> *@
 
 
             <!-- ABC: custom - adds widget zone for reviews -->
@@ -430,7 +491,7 @@
                         //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
                         //of course, you can modify appropriate locales to include VAT info there
                         <span class="tax-shipping-info">
-                            @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                            @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteTopicUrl("shippinginfo"))
                         </span>
                     }
                     @if (!String.IsNullOrEmpty(Model.ProductPrice.BasePricePAngV))
