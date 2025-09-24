@@ -214,30 +214,24 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 var bannersByPosition = new Dictionary<string, List<string>>();
 
                 if (root.TryGetProperty("merchandising", out var merchProp) &&
-                    merchProp.TryGetProperty("content", out var contentProp) &&
-                    contentProp.ValueKind == JsonValueKind.Object)
+                    merchProp.TryGetProperty("content", out var contentProp))
                 {
-                    foreach (var position in new[] { "header", "banner", "footer", "left" })
+                    if (contentProp.ValueKind == JsonValueKind.Object)
                     {
-                        if (contentProp.TryGetProperty(position, out var bannerArray) &&
-                            bannerArray.ValueKind == JsonValueKind.Array)
+                        foreach (var property in contentProp.EnumerateObject())
                         {
-                            var banners = bannerArray.EnumerateArray()
-                                .Where(b => b.ValueKind == JsonValueKind.String)
-                                .Select(b => b.GetString())
-                                .Where(html => !string.IsNullOrEmpty(html))
-                                .Select(html =>
-                                {
-                                    var split = html.Split(new[] { "</script>" }, StringSplitOptions.RemoveEmptyEntries);
-                                    return split.Length > 1 ? split[1].Trim() : html.Trim();
-                                })
-                                .Where(cleaned => !string.IsNullOrWhiteSpace(cleaned))
-                                .ToList();
-
-
-                            if (banners.Any())
+                            if (property.Value.ValueKind == JsonValueKind.Array)
                             {
-                                bannersByPosition[position] = banners;
+                                var banners = property.Value.EnumerateArray()
+                                    .Where(b => b.ValueKind == JsonValueKind.String)
+                                    .Select(b => b.GetString())
+                                    .Where(html => !string.IsNullOrEmpty(html))
+                                    .ToList();
+
+                                if (banners.Any())
+                                {
+                                    bannersByPosition[property.Name] = banners;
+                                }
                             }
                         }
                     }
@@ -246,6 +240,30 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 {
                     await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring] No merchandising or content block found.");
                 }
+
+                if (merchProp.TryGetProperty("triggeredCampaigns", out var campaignsProp) &&
+                    campaignsProp.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var campaign in campaignsProp.EnumerateArray())
+                    {
+                        var placement = campaign.TryGetProperty("placement", out var placementProp)
+                            ? placementProp.GetString()
+                            : "header"; // fallback
+
+                        var html = campaign.TryGetProperty("html", out var htmlProp)
+                            ? htmlProp.GetString()
+                            : null;
+
+                        if (!string.IsNullOrWhiteSpace(placement) && !string.IsNullOrWhiteSpace(html))
+                        {
+                            if (!bannersByPosition.ContainsKey(placement))
+                                bannersByPosition[placement] = new List<string>();
+
+                            bannersByPosition[placement].Add(html.Trim());
+                        }
+                    }
+                }
+
 
                 return new SearchResultModel
                 {
