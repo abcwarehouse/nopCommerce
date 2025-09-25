@@ -27,7 +27,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null,
                                                          string userId = null, string siteId = "4lt84w",
                                                          int page = 1, Dictionary<string, List<string>> filters = null,
-                                                         string sort = null)
+                                                         string sort = null, double? latitude = null, double? longitude = null)
         {
             if (string.IsNullOrWhiteSpace(query))
                 throw new ArgumentException("Search query must not be null or empty.", nameof(query));
@@ -53,6 +53,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
+
+            if (latitude.HasValue && longitude.HasValue)
+            {
+                queryParams.Add($"geo.lat={latitude.Value}");
+                queryParams.Add($"geo.lng={longitude.Value}");
+            }
 
             if (filters != null)
             {

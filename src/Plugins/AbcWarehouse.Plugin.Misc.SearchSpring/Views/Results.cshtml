@@ -355,3 +355,39 @@ else
     });
 
 </script>
+<script>
+function runGeoSearch(query, page = 1, sort = null) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            fetch(`/searchspring/results?q=${encodeURIComponent(query)}&page=${page}&sort=${sort || ""}&lat=${lat}&lng=${lng}`)
+                .then(r => r.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                });
+        }, function() {
+            // fallback: no location
+            fetch(`/searchspring/results?q=${encodeURIComponent(query)}&page=${page}&sort=${sort || ""}`)
+                .then(r => r.text())
+                .then(html => {
+                    document.open();
+                    document.write(html);
+                    document.close();
+                });
+        });
+    } else {
+        // browser doesn’t support geolocation
+        fetch(`/searchspring/results?q=${encodeURIComponent(query)}&page=${page}&sort=${sort || ""}`)
+            .then(r => r.text())
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            });
+    }
+}
+</script>
