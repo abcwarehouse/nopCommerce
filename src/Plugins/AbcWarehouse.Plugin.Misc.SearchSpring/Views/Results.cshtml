@@ -362,13 +362,16 @@ function runGeoSearch(query, page = 1, sort = null) {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;
 
-            fetch(`/searchspring/results?q=${encodeURIComponent(query)}&page=${page}&sort=${sort || ""}&lat=${lat}&lng=${lng}`)
-                .then(r => r.text())
-                .then(html => {
-                    document.open();
-                    document.write(html);
-                    document.close();
-                });
+            const url = `/searchspring/results?q=${encodeURIComponent(query)}&page=${page}&sort=${sort || ""}&lat=${lat}&lng=${lng}`;
+            console.log("Geo request URL:", url);
+
+            fetch(url)
+            .then(r => r.text())
+            .then(html => {
+                document.open();
+                document.write(html);
+                document.close();
+            });
         }, function() {
             // fallback: no location
             fetch(`/searchspring/results?q=${encodeURIComponent(query)}&page=${page}&sort=${sort || ""}`)
