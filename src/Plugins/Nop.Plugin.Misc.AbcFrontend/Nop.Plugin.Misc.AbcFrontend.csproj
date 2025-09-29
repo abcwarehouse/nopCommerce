@@ -64,6 +64,7 @@
     <None Remove="Views\Shared\_ProductBox.cshtml" />
     <None Remove="Views\Shared\_Root.cshtml" />
     <None Remove="Views\Shared\_Root.Head.cshtml" />
+    <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
     <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
   </ItemGroup>
 
@@ -207,12 +208,12 @@
     <Content Include="Views\Shared\_Root.Head.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Shared\Components\Footer\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Shared\Components\OrderSummary\Default.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!--<Content Include="Views\Catalog\CategoryTemplate.ProductInGridOrLines.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>-->
   </ItemGroup>
 
   <ItemGroup>
