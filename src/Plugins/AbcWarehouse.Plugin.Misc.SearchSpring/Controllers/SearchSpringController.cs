@@ -84,7 +84,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 }
             }
 
-            await _logger.InformationAsync($"Geo received: lat={lat}, lng={lng}");
+            await _logger.InformationAsync($"Geo received: lat={lat?.ToString() ?? "null"}, lng={lng?.ToString() ?? "null"}");
+            await _logger.InformationAsync($"Full request URL: {HttpContext.Request.QueryString}");
             var results = await _searchSpringService.SearchAsync(
                 q, sessionId: sessionId, siteId: siteId, page: page, filters: filters, sort: sort, latitude: lat, longitude: lng
             );
