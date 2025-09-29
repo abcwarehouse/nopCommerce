@@ -149,7 +149,7 @@ else
         <div class="searchspring-top-bar">
             <form method="get" id="searchspring-sort-form">
                 <input type="hidden" name="q" value="@Model.Query" />
-                <select name="sort" id="searchspring-sort" onchange="this.form.submit()">
+                <select name="sort" id="searchspring-sort">
                     @foreach (var option in Model.SortOptions)
                     {
                         var sortValue = $"{option.Field}_{option.Direction}";
