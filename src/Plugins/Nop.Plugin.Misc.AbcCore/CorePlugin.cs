@@ -21,24 +21,16 @@ using Nop.Core.Infrastructure;
 using Nop.Services.Logging;
 using SevenSpikes.Nop.Plugins.HtmlWidgets.Domain;
 using Nop.Core.Caching;
-using Nop.Core.Domain.Tasks;
-using Nop.Services.Tasks;
 using Nop.Plugin.Misc.AbcCore.Tasks;
+using Nop.Services.ScheduleTasks;
+using Nop.Plugin.Misc.AbcCore.Components;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
-    public class CorePlugin : BasePlugin, IMiscPlugin, IAdminMenuPlugin, IWidgetPlugin,
+    public class CorePlugin : BasePlugin, IMiscPlugin, IWidgetPlugin,
         IConsumer<EntityDeletedEvent<ProductPicture>>,
         IConsumer<EntityUpdatedEvent<HtmlWidget>>
     {
-        private readonly string UpdateProductTagsTaskType =
-            $"{typeof(UpdateProductTagsTask).Namespace}.{typeof(UpdateProductTagsTask).Name}, " +
-            $"{typeof(UpdateProductTagsTask).Assembly.GetName().Name}";
-
-        private readonly string UpdatePopularProductsTaskType =
-            $"{typeof(UpdatePopularProductsTask).Namespace}.{typeof(UpdatePopularProductsTask).Name}, " +
-            $"{typeof(UpdatePopularProductsTask).Assembly.GetName().Name}";
-
         private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
         private readonly ILogger _logger;
@@ -114,9 +106,11 @@ namespace Nop.Plugin.Misc.AbcCore
             );
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return "AbcCore";
+            ArgumentNullException.ThrowIfNull(widgetZone);
+
+            return typeof(AbcCoreViewComponent);
         }
 
         public bool HideInWidgetList => false;
@@ -124,70 +118,6 @@ namespace Nop.Plugin.Misc.AbcCore
         public override string GetConfigurationPageUrl()
         {
             return $"{_webHelper.GetStoreLocation()}Admin/AbcCore/Configure";
-        }
-
-        public override async System.Threading.Tasks.Task InstallAsync()
-        {
-            await InstallStoredProcs();
-            await UpdateLocales();
-            await AddTasksAsync();
-
-            await base.InstallAsync();
-        }
-
-        public override async System.Threading.Tasks.Task UninstallAsync()
-        {
-            await _localizationService.DeleteLocaleResourcesAsync(CoreLocales.Base);
-            await DeleteStoredProcs();
-            await RemoveTasksAsync();
-
-            await base.UninstallAsync();
-        }
-
-        public override async System.Threading.Tasks.Task UpdateAsync(string oldVersion, string currentVersion)
-        {
-            await InstallStoredProcs();
-            await UpdateLocales();
-            await AddTasksAsync();
-        }
-
-        private async System.Threading.Tasks.Task AddTasksAsync()
-        {
-            // Clear all previous instances first
-            await RemoveTasksAsync();
-            
-            ScheduleTask task = new ScheduleTask();
-            task.Name = $"Update Product Tags with ABC Item Number";
-            task.Seconds = 14400;
-            task.Type = UpdateProductTagsTaskType;
-            task.Enabled = false;
-            task.StopOnError = false;
-
-            await _scheduleTaskService.InsertTaskAsync(task);
-
-            ScheduleTask task2 = new ScheduleTask();
-            task2.Name = $"Update Popular Products";
-            task2.Seconds = 14400;
-            task2.Type = UpdateProductTagsTaskType;
-            task2.Enabled = true;
-            task2.StopOnError = false;
-
-            await _scheduleTaskService.InsertTaskAsync(task2);
-        }
-
-        private async System.Threading.Tasks.Task RemoveTasksAsync()
-        {
-            var task = await _scheduleTaskService.GetTaskByTypeAsync(UpdateProductTagsTaskType);
-            if (task != null)
-            {
-                await _scheduleTaskService.DeleteTaskAsync(task);
-            }
-
-            var task2 = await _scheduleTaskService.GetTaskByTypeAsync(UpdatePopularProductsTaskType);
-            if (task2 != null)
-            {
-                await _scheduleTaskService.DeleteTaskAsync(task2);
-            }
         }
 
         private async System.Threading.Tasks.Task DeleteStoredProcs()
@@ -204,80 +134,52 @@ namespace Nop.Plugin.Misc.AbcCore
             await _nopDataProvider.ExecuteNonQueryAsync(updateAbcPromosStoredProcScript);
         }
 
-        private async System.Threading.Tasks.Task UpdateLocales()
-        {
-            await _localizationService.AddLocaleResourceAsync(
-                new Dictionary<string, string>
-                {
-                    ["Admin.Catalog.Products.PLPDescription"] = "PLP description",
-                    ["Admin.Catalog.Products.PLPDescriptionHint"] = "Product listing page description.",
-                    [CoreLocales.IsDebugMode] = "Debug Mode",
-                    [CoreLocales.IsDebugModeHint] = "Logs detailed information, useful for debugging issues.",
-                    [CoreLocales.AreExternalCallsSkipped] = "Skip External Calls",
-                    [CoreLocales.AreExternalCallsSkippedHint] = "Skips calls to ISAM API, useful for local development.",
-                    [CoreLocales.PLPDescription] = "PLP Description",
-                    [CoreLocales.PLPDescriptionHint] = "Description displayed for PLP (Product Box).",
-                    [CoreLocales.MobilePhoneNumber] = "Mobile Phone Header",
-                    [CoreLocales.MobilePhoneNumberHint] = "The phone number used on the mobile header.",
-                    [CoreLocales.GoogleMapsGeocodingAPIKey] = "Google Maps Geocoding API Key",
-                    [CoreLocales.GoogleMapsGeocodingAPIKeyHint] = "API key for handling geocoding services, including delivery options/pickup in store.",
-                    [CoreLocales.IsFedExMode] = "FedEx Mode",
-                    [CoreLocales.IsFedExModeHint] = "Turns on FedEx mode (products require 'FedEx' attribute for delivery, intended for Mickey)."
-                }
-            );
-        }
-
-        public System.Threading.Tasks.Task ManageSiteMapAsync(SiteMapNode rootNode)
+        public System.Threading.Tasks.Task ManageSiteMapAsync(AdminMenuItem rootNode)
         {
             return System.Threading.Tasks.Task.Run(() => 
             {
-                var rootMenuItem = new SiteMapNode()
+                var rootMenuItem = new AdminMenuItem()
                 {
                     SystemName = "ABCWarehouse",
                     Title = "ABC Warehouse",
                     Visible = true,
-                    RouteValues = new RouteValueDictionary() { { "area", "Admin" } },
-                    ChildNodes = new List<SiteMapNode>()
+                    //RouteValues = new RouteValueDictionary() { { "area", "Admin" } },
+                    ChildNodes = new List<AdminMenuItem>()
                     {
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.Promos",
                             Title = "Promos",
                             Visible = true,
-                            ControllerName = "AbcPromo",
-                            ActionName = "List"
+                            Url = "AbcPromo/List"
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.MissingImageProducts",
                             Title = "Missing Image Products",
                             Visible = true,
-                            ControllerName = "MissingImageProduct",
-                            ActionName = "List"
+                            Url = "MissingImageProducts/List",
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.NewProducts",
                             Title = "New Products",
                             Visible = true,
-                            ControllerName = "NewProduct",
-                            ActionName = "List"
+                            Url  = "NewProduct/List"
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.PageNotFound",
                             Title = "Page Not Found List",
                             Visible = true,
-                            ControllerName = "PageNotFound",
-                            ActionName = "List"
+                            Url = "PageNotFound/List"
                         },
-                        new SiteMapNode()
+                        new AdminMenuItem()
                         {
                             SystemName = "ABCWarehouse.PageNotFoundFreq",
                             Title = "Page Not Found Frequency",
                             Visible = true,
-                            ControllerName = "PageNotFound",
-                            ActionName = "Frequency"
+                            Url = "PageNotFound/Frequency"
                         }
                     }
                 };

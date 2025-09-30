@@ -40,25 +40,27 @@ using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
+using Nop.Services.Attributes;
+using Nop.Core.Domain.Security;
+using Nop.Core.Domain.Localization;
+
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcExportManager : ExportManager, IAbcExportManager
     {
-        private readonly CatalogSettings _catalogSettings;
-        private readonly ICustomerService _customerService;
-        private readonly IDateTimeHelper _dateTimeHelper;
-
         public AbcExportManager(AddressSettings addressSettings,
             CatalogSettings catalogSettings,
+            SecuritySettings securitySettings,
             CustomerSettings customerSettings,
             DateTimeSettings dateTimeSettings,
             ForumSettings forumSettings,
             IAddressService addressService,
+            IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter,
             ICategoryService categoryService,
             ICountryService countryService,
             ICurrencyService currencyService,
-            ICustomerAttributeFormatter customerAttributeFormatter,
+            ICustomerActivityService customerActivityService,
             ICustomerService customerService,
             IDateRangeService dateRangeService,
             IDateTimeHelper dateTimeHelper,
@@ -66,7 +68,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IForumService forumService,
             IGdprService gdprService,
             IGenericAttributeService genericAttributeService,
+            ILanguageService languageService,
             ILocalizationService localizationService,
+            ILocalizedEntityService localizedEntityService,
             IManufacturerService manufacturerService,
             IMeasureService measureService,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
@@ -87,17 +91,19 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IVendorService vendorService,
             IWorkContext workContext,
             OrderSettings orderSettings,
-            ProductEditorSettings productEditorSettings) :
-            base(addressSettings,
+            ProductEditorSettings productEditorSettings
+        ) : base(addressSettings,
             catalogSettings,
+            securitySettings,
             customerSettings,
             dateTimeSettings,
             forumSettings,
             addressService,
+            customerAttributeFormatter,
             categoryService,
             countryService,
             currencyService,
-            customerAttributeFormatter,
+            customerActivityService,
             customerService,
             dateRangeService,
             dateTimeHelper,
@@ -105,7 +111,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             forumService,
             gdprService,
             genericAttributeService,
+            languageService,
             localizationService,
+            localizedEntityService,
             manufacturerService,
             measureService,
             newsLetterSubscriptionService,
@@ -127,25 +135,21 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             workContext,
             orderSettings,
             productEditorSettings
-            )
-        {
-            _catalogSettings = catalogSettings;
-            _customerService = customerService;
-            _dateTimeHelper = dateTimeHelper;
-        }
+        )
+        {}
 
         public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<Log> logs)
         {
             var properties = new[]
             {
-                new PropertyByName<Log>("Slug", l => l.PageUrl),
-                new PropertyByName<Log>("Referrer", l => l.ReferrerUrl),
-                new PropertyByName<Log>("Customer", async l => (await _customerService.GetCustomerByIdAsync(l.CustomerId.Value)).Email),
-                new PropertyByName<Log>("IpAddress", l => l.IpAddress),
-                new PropertyByName<Log>("Date", async l => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
+                new PropertyByName<Log, Language>("Slug", (l, la) => l.PageUrl),
+                new PropertyByName<Log, Language>("Referrer", (l, la) => l.ReferrerUrl),
+                new PropertyByName<Log, Language>("Customer", async (l, la) => (await _customerService.GetCustomerByIdAsync(l.CustomerId.Value)).Email),
+                new PropertyByName<Log, Language>("IpAddress", (l, la) => l.IpAddress),
+                new PropertyByName<Log, Language>("Date", async (l, la) => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
             };
 
-            return await new PropertyManager<Log>(properties, _catalogSettings).ExportToXlsxAsync(logs);
+            return await new PropertyManager<Log, Language>(properties, _catalogSettings).ExportToXlsxAsync(logs);
         }
     }
 }

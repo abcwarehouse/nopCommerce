@@ -2,20 +2,22 @@
 @using Nop.Services.Stores
 
 @inject IStoreService storeService
-@inject IWorkContext workContext
 
 @{
     const string cardId = "configuration-steps-card";
+    var customer = await workContext.GetCurrentCustomerAsync();
 
     //hide value
-    var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.HideConfigurationStepsAttribute);
+    var hideCard = await genericAttributeService.GetAttributeAsync<bool>(customer, NopCustomerDefaults.HideConfigurationStepsAttribute);
 
     //close value
-    var closeCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), NopCustomerDefaults.CloseConfigurationStepsAttribute);
+    var closeCard = await genericAttributeService.GetAttributeAsync<bool>(customer, NopCustomerDefaults.CloseConfigurationStepsAttribute);
 
     var defaultStoreId = (await storeService.GetAllStoresAsync()).FirstOrDefault()?.Id ?? 0;
 }
 
+@if(await workContext.GetCurrentVendorAsync() is null)
+{
 <div class="card card-primary card-outline configuration-steps @if (hideCard){<text>collapsed-card</text>}" id="@cardId">
     <div class="card-header with-border">
         <h3 class="card-title">
@@ -39,7 +41,7 @@
         </div>
     </div>
     <script>
-        $(document).ready(function () {
+        $(function() {
             $('#@cardId').on('click', 'button[data-card-widget="collapse"]', function () {
                 var collapsed = !$('#@cardId').hasClass('collapsed-card');
                 saveUserPreferences('@(Url.Action("SavePreference", "Preferences"))', '@NopCustomerDefaults.HideConfigurationStepsAttribute', collapsed);
@@ -71,7 +73,7 @@
                             <div class="row">
                                 <div class="col-12 col-xl-3">
                                     <div class="configuration-step-icon">
-                                        <i class="fas fa-pencil-alt"></i>
+                                        <i class="fas fa-pencil"></i>
                                     </div>
                                 </div>
                                 <div class="col-12 col-xl-9">
@@ -173,7 +175,7 @@
                             <div class="row">
                                 <div class="col-12 col-xl-3">
                                     <div class="configuration-step-icon">
-                                        <i class="fas fa-shopping-cart "></i>
+                                        <i class="fas fa-cart-shopping "></i>
                                     </div>
                                 </div>
                                 <div class="col-12 col-xl-9">
@@ -253,3 +255,4 @@
         </div>
     </div>
 </div>
+}

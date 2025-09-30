@@ -3,7 +3,7 @@
   "FriendlyName": "AbcWarehouse Front End",
   "SystemName": "Misc.AbcFrontend",
   "Version": "4.40.0",
-  "SupportedVersions": [ "4.40" ],
+  "SupportedVersions": [ "4.80" ],
   "Author": "David Latva",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Misc.AbcFrontend.dll",

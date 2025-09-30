@@ -6,7 +6,7 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.Plugins.HtmlWidgets.Admin.Submenus.ManageHtmlWidgets");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.Plugins.HtmlWidgets.Admin.Submenus.ManageHtmlWidgets");
 
     var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
     var gridPageSizes = adminAreaSettings.GridPageSizes;
@@ -76,47 +76,49 @@
             </div>
             <div class="card card-default">
                 <div class="card-body">
-                    @await Html.PartialAsync("Table", new DataTablesModel
-                    {
-                        Name = "html-widgets-grid",
-                        UrlRead = new DataUrl("List", "HtmlWidgetAdmin", null),
-                        UrlDelete = new DataUrl("DeleteHtmlWidget", "HtmlWidgetAdmin", null),
-                        Length = defaultGridPageSize,
-                        LengthMenu = gridPageSizes,
-                        SearchButtonId = "search-html-widgets",
-                        Filters = new List<FilterParameter>
+                    @{
+                        await Html.RenderPartialAsync("Table", new DataTablesModel
                         {
-                            new FilterParameter(nameof(Model.SearchWidgetName)),
-                            new FilterParameter(nameof(Model.SearchWidgetContent))
-                        },
-                        ColumnCollection = new List<ColumnProperty>
-                        {
-                            new ColumnProperty(nameof(HtmlWidgetModel.Name))
+                            Name = "html-widgets-grid",
+                            UrlRead = new DataUrl("List", "HtmlWidgetAdmin", null),
+                            UrlDelete = new DataUrl("DeleteHtmlWidget", "HtmlWidgetAdmin", null),
+                            Length = defaultGridPageSize,
+                            LengthMenu = gridPageSizes,
+                            SearchButtonId = "search-html-widgets",
+                            Filters = new List<FilterParameter>
                             {
-                                Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.Name").Text
+                                new FilterParameter(nameof(Model.SearchWidgetName)),
+                                new FilterParameter(nameof(Model.SearchWidgetContent))
                             },
-                            new ColumnProperty(nameof(HtmlWidgetModel.HtmlContent))
+                            ColumnCollection = new List<ColumnProperty>
                             {
-                                Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.HtmlContent").Text
-                            },
-                            new ColumnProperty(nameof(HtmlWidgetModel.Visible))
-                            {
-                                Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.Visible").Text,
-                                Render = new RenderCustom("renderVisible"),
-                                Width = "70"
-                            },
-                            new ColumnProperty(nameof(HtmlWidgetModel.Id))
-                            {
-                                Render = new RenderCustom("renderEditButton"),
-                                Width = "100"
-                            },
-                            new ColumnProperty(nameof(HtmlWidgetModel.Id))
-                            {
-                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
-                                Width = "100"
+                                new ColumnProperty(nameof(HtmlWidgetModel.Name))
+                                {
+                                    Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.Name").Text
+                                },
+                                new ColumnProperty(nameof(HtmlWidgetModel.HtmlContent))
+                                {
+                                    Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.HtmlContent").Text
+                                },
+                                new ColumnProperty(nameof(HtmlWidgetModel.Visible))
+                                {
+                                    Title = T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.Visible").Text,
+                                    Render = new RenderCustom("renderVisible"),
+                                    Width = "70"
+                                },
+                                new ColumnProperty(nameof(HtmlWidgetModel.Id))
+                                {
+                                    Render = new RenderCustom("renderEditButton"),
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(HtmlWidgetModel.Id))
+                                {
+                                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                    Width = "100"
+                                }
                             }
-                        }
-                    })
+                        });
+                    }
                 </div>
             </div>
         </div>
@@ -133,7 +135,7 @@
         }
         else {
 
-            return '<i class="fa fa-close false-icon"></i>';
+            return '<i class="fa fa-times false-icon"></i>';
         }
     }
 

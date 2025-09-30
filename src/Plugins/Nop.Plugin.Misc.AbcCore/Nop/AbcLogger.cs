@@ -16,20 +16,18 @@ using Nop.Services.Seo;
 using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Common;
 using Nop.Services.Logging;
+using Nop.Core.Domain.Customers;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcLogger : DefaultLogger, IAbcLogger
     {
-        private readonly IRepository<Log> _logRepository;
-
         public AbcLogger(CommonSettings commonSettings,
+            CustomerSettings customerSettings,
             IRepository<Log> logRepository,
             IWebHelper webHelper) :
-            base(commonSettings, logRepository, webHelper)
-        {
-            _logRepository = logRepository;
-        }
+            base(commonSettings, customerSettings, logRepository, webHelper)
+        {}
 
         public IList<Log> GetPageNotFoundLogs()
         {

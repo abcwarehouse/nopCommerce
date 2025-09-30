@@ -67,31 +67,33 @@
                 </div>
                 <div class="card card-default">
                     <div class="card-body">
-                        @await Html.PartialAsync("Table", new DataTablesModel
-                        {
-                            Name = "blog-posts-grid",
-                            UrlRead = new DataUrl("ListPosts", "BlogPostToCategoryAdmin", new RouteValueDictionary { ["categoryId"] = Model.CategoryId }),
-                            Length = defaultGridPageSize,
-                            LengthMenu = gridPageSizes,
-                            SearchButtonId = "search-blog-posts",
-                            Filters = new List<FilterParameter>
+                        @{
+                            await Html.RenderPartialAsync("Table", new DataTablesModel
                             {
-                                new FilterParameter(nameof(Model.SearchPostTitle)),
-                                new FilterParameter(nameof(Model.SearchStoreId))
-                            },
-                            ColumnCollection = new List<ColumnProperty>
-                            {
-                                new ColumnProperty(nameof(BlogPostModel.Id))
+                                Name = "blog-posts-grid",
+                                UrlRead = new DataUrl("ListPosts", "BlogPostToCategoryAdmin", new RouteValueDictionary { ["categoryId"] = Model.CategoryId }),
+                                Length = defaultGridPageSize,
+                                LengthMenu = gridPageSizes,
+                                SearchButtonId = "search-blog-posts",
+                                Filters = new List<FilterParameter>
                                 {
-                                    Width = "25",
-                                    Render = new RenderCheckBox("SelectedPostIds")
+                                    new FilterParameter(nameof(Model.SearchPostTitle)),
+                                    new FilterParameter(nameof(Model.SearchStoreId))
                                 },
-                                new ColumnProperty(nameof(BlogPostModel.Title))
+                                ColumnCollection = new List<ColumnProperty>
                                 {
-                                    Title = T("SevenSpikes.RichBlog.Admin.BlogPost.Title").Text
+                                    new ColumnProperty(nameof(BlogPostModel.Id))
+                                    {
+                                        Width = "25",
+                                        Render = new RenderCheckBox("SelectedPostIds")
+                                    },
+                                    new ColumnProperty(nameof(BlogPostModel.Title))
+                                    {
+                                        Title = T("SevenSpikes.RichBlog.Admin.BlogPost.Title").Text
+                                    }
                                 }
-                            }
-                        })
+                            });
+                        }
                     </div>
                     <div class="card-footer">
                         <button type="submit" name="save" class="btn bg-primary">
@@ -109,7 +111,7 @@
 
     function renderCheckBox(data, type, row, meta) {
 
-        var checked = row.CustomProperties.Selected ? 'checked' : '';
+        var checked = row.CustomProperties.Selected == 'True' ? 'checked' : '';
 
         return '<input type="checkbox" id="SelectedCategoryIds" name="SelectedCategoryIds" value="' + row.Id + '" class="checkboxGroups" ' + checked + '>';
     }

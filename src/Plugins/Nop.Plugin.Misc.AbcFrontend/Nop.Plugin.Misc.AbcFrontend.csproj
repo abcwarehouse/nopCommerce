@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <!-- warns against potential bugs, updates to latest possible -->
     <AnalysisLevel>latest</AnalysisLevel>
     <Authors>Dave Farinelli</Authors>
@@ -13,6 +13,7 @@
     You need to set this parameter to true if your plugin has a nuget package 
     to ensure that the dlls copied from the NuGet cache to the output of your project-->
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -58,6 +59,15 @@
     <None Remove="Images\mobile-sprite-mic.png" />
     <None Remove="Images\SaleAdButton.png" />
     <None Remove="Images\search-button.png" />
+    <!-- Pavilion overwrites -->
+    <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
+    <None Remove="Views\Catalog\_AddToCart.cshtml" />
+    <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
+    <None Remove="Views\Shared\_ProductBox.cshtml" />
+    <None Remove="Views\Shared\_Root.cshtml" />
+    <None Remove="Views\Shared\_Root.Head.cshtml" />
+    <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
+    <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -187,6 +197,31 @@
     <Content Include="Images\search-button.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Pavilion overwrites -->
+    <Content Include="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Product\_AddToCart.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Product\ProductTemplate.Simple.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_ProductBox.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Root.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Root.Head.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\Footer\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\OrderSummary\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -203,6 +238,8 @@
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
     <ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
+    <!-- for NopHtml usage? -->
+    <ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
   </ItemGroup>
 

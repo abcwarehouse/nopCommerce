@@ -1,7 +1,6 @@
 using System.Linq;
 using Nop.Core.Domain.Catalog;
-using Nop.Services.Tasks;
-using OfficeOpenXml;
+using Nop.Services.ScheduleTasks;
 using System.IO;
 using Nop.Data;
 using Nop.Core.Infrastructure;

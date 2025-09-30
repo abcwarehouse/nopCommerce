@@ -1,34 +1,32 @@
-//------------------------------------------------------------------------------
-// Contributor(s): oskar.kjellin 
-//------------------------------------------------------------------------------
+﻿namespace Nop.Services.Shipping.Tracking;
 
-using System;
-
-namespace Nop.Services.Shipping.Tracking
+/// <summary>
+/// Represents a shipment status event
+/// </summary>
+public partial class ShipmentStatusEvent
 {
     /// <summary>
-    /// Shipment status event
+    /// Gets or sets a status
     /// </summary>
-    public partial class ShipmentStatusEvent
-    {
-        /// <summary>
-        /// Event name
-        /// </summary>
-        public string EventName { get; set; }
+    public string Status { get; set; }
 
-        /// <summary>
-        /// Location
-        /// </summary>
-        public string Location { get; set; }
+    /// <summary>
+    /// Gets or sets an event name
+    /// </summary>
+    public string EventName { get; set; }
 
-        /// <summary>
-        /// two-letter country code
-        /// </summary>
-        public string CountryCode { get; set; }
+    /// <summary>
+    /// Gets or sets a location (address)
+    /// </summary>
+    public string Location { get; set; }
 
-        /// <summary>
-        /// Date
-        /// </summary>
-        public DateTime? Date { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets a two-letter country code
+    /// </summary>
+    public string CountryCode { get; set; }
+
+    /// <summary>
+    /// Gets or sets a date
+    /// </summary>
+    public DateTime? Date { get; set; }
 }

@@ -18,36 +18,31 @@ using Nop.Services.Logging;
 using Nop.Services.Orders;
 using Nop.Services.Shipping.Pickup;
 using Nop.Services.Shipping;
+using Nop.Services.Attributes;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcShippingService : ShippingService
     {
-        private readonly ILocalizationService _localizationService;
-        private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IShippingPluginManager _shippingPluginManager;
-        private readonly ShippingSettings _shippingSettings;
-        private readonly ShoppingCartSettings _shoppingCartSettings;
-
         public AbcShippingService(IAddressService addressService,
-            ICheckoutAttributeParser checkoutAttributeParser,
-            ICountryService countryService,
-            ICustomerService customerService,
-            IGenericAttributeService genericAttributeService,
-            ILocalizationService localizationService,
-            ILogger logger,
-            IPickupPluginManager pickupPluginManager,
-            IPriceCalculationService priceCalculationService,
-            IProductAttributeParser productAttributeParser,
-            IProductService productService,
-            IRepository<ShippingMethod> shippingMethodRepository,
-            IRepository<ShippingMethodCountryMapping> shippingMethodCountryMappingRepository,
-            IRepository<Warehouse> warehouseRepository,
-            IShippingPluginManager shippingPluginManager,
-            IStateProvinceService stateProvinceService,
-            IStoreContext storeContext,
-            ShippingSettings shippingSettings,
-            ShoppingCartSettings shoppingCartSettings
+        IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser,
+        ICountryService countryService,
+        ICustomerService customerService,
+        IGenericAttributeService genericAttributeService,
+        ILocalizationService localizationService,
+        ILogger logger,
+        IPickupPluginManager pickupPluginManager,
+        IPriceCalculationService priceCalculationService,
+        IProductAttributeParser productAttributeParser,
+        IProductService productService,
+        IRepository<ShippingMethod> shippingMethodRepository,
+        IRepository<ShippingMethodCountryMapping> shippingMethodCountryMappingRepository,
+        IRepository<Warehouse> warehouseRepository,
+        IShippingPluginManager shippingPluginManager,
+        IStateProvinceService stateProvinceService,
+        IStoreContext storeContext,
+        ShippingSettings shippingSettings,
+        ShoppingCartSettings shoppingCartSettings
         ) : base(
             addressService,
             checkoutAttributeParser,
@@ -69,13 +64,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             shippingSettings,
             shoppingCartSettings
         )
-        {
-            _localizationService = localizationService;
-            _priceCalculationService = priceCalculationService;
-            _shippingPluginManager = shippingPluginManager;
-            _shippingSettings = shippingSettings;
-            _shoppingCartSettings = shoppingCartSettings;
-        }
+        { }
 
         // From Nop.Services.Shipping.ShippingService.GetShippingOptionsAsync()
         public override async Task<GetShippingOptionResponse> GetShippingOptionsAsync(IList<ShoppingCartItem> cart,
