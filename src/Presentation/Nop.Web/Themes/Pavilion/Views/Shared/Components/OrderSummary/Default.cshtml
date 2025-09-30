@@ -196,6 +196,8 @@
                                 <td class="unit-price">
                                     <span class="product-unit-price">@item.UnitPrice</span>
                                 </td>
+
+
                                 <td class="quantity">
                                     @if (Model.IsEditable)
                                     {
@@ -402,6 +404,19 @@
                     }
                 </div>
             </div>
+            
+            @* Cart action buttons moved after order summary *@
+            @if (Model.IsEditable)
+            {
+                <div class="cart-action-buttons">
+                    <div class="common-buttons">
+                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
+                        <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
+                        <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
+                    </div>
+                </div>
+            }
+            
             @if (Model.IsEditable)
             {
                 @await Component.InvokeAsync(typeof(CrossSellProductsViewComponent))

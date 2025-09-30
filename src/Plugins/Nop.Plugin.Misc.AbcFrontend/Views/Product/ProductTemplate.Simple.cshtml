@@ -22,24 +22,6 @@
 @using System.Text.RegularExpressions;          @* Regex *@
 @using Newtonsoft.Json;                         @* JsonConvert *@
 
-@* @using Nop.Core.Domain.Seo
-@using Nop.Core.Domain.Catalog
-@using Nop.Web.Models.Catalog
-@using Nop.Plugin.Misc.AbcCore.Services
-@using Nop.Core
-@using Nop.Services.Catalog
-@using Nop.Plugin.Misc.AbcCore.Domain
-@using Nop.Web.Framework.Infrastructure
-@using Nop.Plugin.Misc.AbcCore.Infrastructure
-@using Nop.Plugin.Misc.AbcFrontend.Extensions
-@using Nop.Plugin.Misc.AbcCore.Extensions
-@using Nop.Services.Configuration;
-@using Nop.Plugin.Misc.AbcCore.Nop;
-@using Microsoft.Extensions.Logging;
-@using Newtonsoft.Json
-@using System.Text.RegularExpressions
-@using System.Globalization *@
-
 @inject CatalogSettings catalogSettings
 @inject IHtmlFormatter htmlFormatter
 @inject IWebHelper webHelper
@@ -51,17 +33,6 @@
 @inject ISettingService settingService
 @inject IProductAttributeService productAttributeService
 @inject IHttpContextAccessor HttpContextAccessor
-
-
-@* @inject Nop.Core.IWebHelper webHelper
-@inject SeoSettings seoSettings
-@inject CatalogSettings catalogSettings
-
-
-@inject IStoreContext storeContext
-
-
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor *@
 
 @{
     Layout = "_ColumnsOne";
@@ -451,4 +422,20 @@
                 }
             }
         });
+    </script>
+    <!-- dynamic retargeting -->
+    <script>
+        (function(){
+          document.addEventListener("DOMContentLoaded", punt);
+          if (document.readyState != "loading") punt();
+          function punt(){
+            var a = document.createElement("script");
+            a.setAttribute("src", "https://content.adacado.com/productpixel/v1/shell.umd.js");
+            a.setAttribute("data-advertiserid", "37953");
+            a.setAttribute("id", "adavadael");
+            a.setAttribute("data-productid", "@Model.Id");
+            a.setAttribute("async", "async");
+            document.body.appendChild(a);
+          }
+        })();
     </script>
