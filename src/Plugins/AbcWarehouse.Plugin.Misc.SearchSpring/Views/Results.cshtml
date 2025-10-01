@@ -205,7 +205,7 @@ else
                                 <ul>
                                     @foreach (var banner in position.Value)
                                     {
-                                        var preview = banner.Length > 200 ? banner.Substring(0, 200) + "..." : banner;
+                                        var preview = banner.Length > 600 ? banner.Substring(0, 600) + "..." : banner;
                                         <li style="font-family: monospace; font-size: 11px;">@preview</li>
                                     }
                                 </ul>
