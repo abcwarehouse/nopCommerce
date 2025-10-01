@@ -54,28 +54,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
 
-            // ENHANCED GEOLOCATION LOGGING
-            if (latitude.HasValue && longitude.HasValue)
-            {
-                // Try multiple parameter formats - SearchSpring may use different formats
-                queryParams.Add($"shopper.location.lat={latitude.Value}");
-                queryParams.Add($"shopper.location.lng={longitude.Value}");
-                
-                // Also try the geo prefix format as backup
-                queryParams.Add($"geo.lat={latitude.Value}");
-                queryParams.Add($"geo.lng={longitude.Value}");
-                
-                await _logger.InsertLogAsync(LogLevel.Information, 
-                    $"[SearchSpring] Geolocation included in request: lat={latitude.Value}, lng={longitude.Value}");
-                await _logger.InsertLogAsync(LogLevel.Information, 
-                    $"[SearchSpring] Using both 'shopper.location' and 'geo' parameter formats");
-            }
-            else
-            {
-                await _logger.InsertLogAsync(LogLevel.Warning, 
-                    "[SearchSpring] NO GEOLOCATION DATA - Banners with geo-targeting may not appear");
-            }
-
             if (filters != null)
             {
                 foreach (var filter in filters)
