@@ -112,12 +112,6 @@ else
     </div>
 }
 
-
-
-
-
-
-
             </div>
         </div>
 
@@ -182,6 +176,68 @@ else
     
     
     <div class="products-wrapper">
+
+        @* Add this section right after your search query display and before the products grid *@
+
+        @* DIAGNOSTIC BANNER INFO - Remove after debugging *@
+        <div style="background: #f0f0f0; border: 2px solid #ff0000; padding: 15px; margin: 20px 0;">
+            <h3 style="color: #ff0000;">DIAGNOSTIC INFO (Remove after debugging)</h3>
+            
+            <div style="margin: 10px 0;">
+                <strong>Query Parameters:</strong>
+                <ul>
+                    <li>Query: @Model.Query</li>
+                    <li>Page: @Model.PageNumber</li>
+                    <li>Lat: @Context.Request.Query["lat"]</li>
+                    <li>Lng: @Context.Request.Query["lng"]</li>
+                </ul>
+            </div>
+            
+            <div style="margin: 10px 0;">
+                <strong>Banner Positions Available:</strong>
+                @if (Model.BannersByPosition != null && Model.BannersByPosition.Any())
+                {
+                    <ul>
+                        @foreach (var position in Model.BannersByPosition)
+                        {
+                            <li>
+                                <strong>@position.Key:</strong> @position.Value.Count banner(s)
+                                <ul>
+                                    @foreach (var banner in position.Value)
+                                    {
+                                        var preview = banner.Length > 200 ? banner.Substring(0, 200) + "..." : banner;
+                                        <li style="font-family: monospace; font-size: 11px;">@preview</li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p style="color: #ff0000; font-weight: bold;">NO BANNERS FOUND IN MODEL!</p>
+                }
+            </div>
+            
+            <div style="margin: 10px 0;">
+                <strong>Current Filters:</strong>
+                @if (Context.Request.Query.Keys.Any(k => k.StartsWith("filter[")))
+                {
+                    <ul>
+                        @foreach (var key in Context.Request.Query.Keys.Where(k => k.StartsWith("filter[")))
+                        {
+                            <li>@key = @Context.Request.Query[key]</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No filters applied</p>
+                }
+            </div>
+        </div>
+
+
         <div class="product-grid">
             <div class="item-grid">
                 @{

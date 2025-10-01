@@ -54,10 +54,26 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
 
+            // ENHANCED GEOLOCATION LOGGING
             if (latitude.HasValue && longitude.HasValue)
             {
+                // Try multiple parameter formats - SearchSpring may use different formats
+                queryParams.Add($"shopper.location.lat={latitude.Value}");
+                queryParams.Add($"shopper.location.lng={longitude.Value}");
+                
+                // Also try the geo prefix format as backup
                 queryParams.Add($"geo.lat={latitude.Value}");
                 queryParams.Add($"geo.lng={longitude.Value}");
+                
+                await _logger.InsertLogAsync(LogLevel.Information, 
+                    $"[SearchSpring] Geolocation included in request: lat={latitude.Value}, lng={longitude.Value}");
+                await _logger.InsertLogAsync(LogLevel.Information, 
+                    $"[SearchSpring] Using both 'shopper.location' and 'geo' parameter formats");
+            }
+            else
+            {
+                await _logger.InsertLogAsync(LogLevel.Warning, 
+                    "[SearchSpring] NO GEOLOCATION DATA - Banners with geo-targeting may not appear");
             }
 
             if (filters != null)
@@ -89,12 +105,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             }
             else
             {
-                queryParams.Add("sort.relevance=desc"); // default fallback
+                queryParams.Add("sort.relevance=desc");
             }
 
             var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
 
-            Console.WriteLine($"[SearchSpring] Final Request URL: {url}");
+            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Request URL: {url}");
 
             var response = await client.GetAsync(url);
 
@@ -103,7 +119,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 if (response.Headers.Location != null)
                 {
                     var redirectUrl = response.Headers.Location.ToString();
-                    Console.WriteLine($"[SearchSpring] Redirect detected: {redirectUrl}");
+                    await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Redirect detected: {redirectUrl}");
                     return new SearchResultModel
                     {
                         RedirectResponse = redirectUrl
@@ -112,10 +128,23 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[SearchSpring] Response ({(int)response.StatusCode}): {json}");
+
+            // LOG THE COMPLETE RAW RESPONSE
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring] ===== FULL API RESPONSE START =====");
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring] Response Status: {response.StatusCode}");
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring] Raw JSON Response: {json}");
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring] ===== FULL API RESPONSE END =====");
 
             if (!response.IsSuccessStatusCode)
+            {
+                await _logger.InsertLogAsync(LogLevel.Error, 
+                    $"[SearchSpring] API Error {response.StatusCode}: {json}");
                 throw new Exception($"Searchspring returned error {response.StatusCode}: {json}\nURL: {url}");
+            }
 
             try
             {
@@ -126,20 +155,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                // Legacy redirect parsing fallback (JSON-based)
+                // Legacy redirect parsing
                 if (root.TryGetProperty("redirect", out var redirectProp) &&
                     redirectProp.TryGetProperty("url", out var redirectUrlProp) &&
                     redirectUrlProp.ValueKind == JsonValueKind.String &&
                     !string.IsNullOrEmpty(redirectUrlProp.GetString()))
                 {
                     var redirectUrl = redirectUrlProp.GetString();
-
                     return new SearchResultModel
                     {
                         RedirectResponse = redirectUrl
                     };
                 }
 
+                // Parse results
                 if (root.TryGetProperty("results", out var resultsElement) && resultsElement.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var item in resultsElement.EnumerateArray())
@@ -161,6 +190,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
+                // Parse pagination
                 if (root.TryGetProperty("pagination", out var pagination) && pagination.ValueKind == JsonValueKind.Object)
                 {
                     currentPage = pagination.TryGetProperty("currentPage", out var pageProp) ? pageProp.GetInt32() : 1;
@@ -168,6 +198,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     totalResults = pagination.TryGetProperty("totalResults", out var totalProp) ? totalProp.GetInt32() : 0;
                 }
 
+                // Parse facets
                 if (root.TryGetProperty("facets", out var facetsProp) && facetsProp.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var facet in facetsProp.EnumerateArray())
@@ -200,8 +231,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
+                // Parse sort options
                 var sortOptions = new List<SortOption>();
-
                 if (root.TryGetProperty("sorting", out var sortingProp) &&
                     sortingProp.TryGetProperty("options", out var optionsProp) &&
                     optionsProp.ValueKind == JsonValueKind.Array)
@@ -217,59 +248,122 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
+                // ENHANCED BANNER LOGGING
                 var bannersByPosition = new Dictionary<string, List<string>>();
 
-                if (root.TryGetProperty("merchandising", out var merchProp) &&
-                    merchProp.TryGetProperty("content", out var contentProp))
-                {
-                    if (contentProp.ValueKind == JsonValueKind.Object)
-                    {
-                        foreach (var property in contentProp.EnumerateObject())
-                        {
-                            if (property.Value.ValueKind == JsonValueKind.Array)
-                            {
-                                var banners = property.Value.EnumerateArray()
-                                    .Where(b => b.ValueKind == JsonValueKind.String)
-                                    .Select(b => b.GetString())
-                                    .Where(html => !string.IsNullOrEmpty(html))
-                                    .ToList();
+                await _logger.InsertLogAsync(LogLevel.Information, 
+                    "[SearchSpring] ===== BANNER PARSING START =====");
 
-                                if (banners.Any())
+                if (root.TryGetProperty("merchandising", out var merchProp))
+                {
+                    await _logger.InsertLogAsync(LogLevel.Information, 
+                        "[SearchSpring] Merchandising block found in response");
+
+                    // Log the entire merchandising JSON for debugging
+                    var merchJson = merchProp.GetRawText();
+                    await _logger.InsertLogAsync(LogLevel.Information, 
+                        $"[SearchSpring] Full Merchandising JSON: {merchJson}");
+
+                    if (merchProp.TryGetProperty("content", out var contentProp))
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Information, 
+                            "[SearchSpring] Content property found in merchandising");
+
+                        if (contentProp.ValueKind == JsonValueKind.Object)
+                        {
+                            foreach (var property in contentProp.EnumerateObject())
+                            {
+                                await _logger.InsertLogAsync(LogLevel.Information, 
+                                    $"[SearchSpring] Processing content position: {property.Name}");
+
+                                if (property.Value.ValueKind == JsonValueKind.Array)
                                 {
-                                    bannersByPosition[property.Name] = banners;
+                                    var banners = property.Value.EnumerateArray()
+                                        .Where(b => b.ValueKind == JsonValueKind.String)
+                                        .Select(b => b.GetString())
+                                        .Where(html => !string.IsNullOrEmpty(html))
+                                        .ToList();
+
+                                    await _logger.InsertLogAsync(LogLevel.Information, 
+                                        $"[SearchSpring] Found {banners.Count} banner(s) for position '{property.Name}'");
+
+                                    if (banners.Any())
+                                    {
+                                        bannersByPosition[property.Name] = banners;
+                                        foreach (var banner in banners)
+                                        {
+                                            var preview = banner.Length > 100 ? banner.Substring(0, 100) + "..." : banner;
+                                            await _logger.InsertLogAsync(LogLevel.Information, 
+                                                $"[SearchSpring] Banner HTML preview: {preview}");
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                    else
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Warning, 
+                            "[SearchSpring] No 'content' property found in merchandising block");
+                    }
+
+                    // Parse triggered campaigns
+                    if (merchProp.TryGetProperty("triggeredCampaigns", out var campaignsProp) &&
+                        campaignsProp.ValueKind == JsonValueKind.Array)
+                    {
+                        var campaignCount = campaignsProp.GetArrayLength();
+                        await _logger.InsertLogAsync(LogLevel.Information, 
+                            $"[SearchSpring] Found {campaignCount} triggered campaign(s)");
+
+                        foreach (var campaign in campaignsProp.EnumerateArray())
+                        {
+                            var campaignJson = campaign.GetRawText();
+                            await _logger.InsertLogAsync(LogLevel.Information, 
+                                $"[SearchSpring] Campaign JSON: {campaignJson}");
+
+                            var placement = campaign.TryGetProperty("placement", out var placementProp)
+                                ? placementProp.GetString()
+                                : "header";
+
+                            var html = campaign.TryGetProperty("html", out var htmlProp)
+                                ? htmlProp.GetString()
+                                : null;
+
+                            await _logger.InsertLogAsync(LogLevel.Information, 
+                                $"[SearchSpring] Campaign placement: {placement}, Has HTML: {!string.IsNullOrWhiteSpace(html)}");
+
+                            if (!string.IsNullOrWhiteSpace(placement) && !string.IsNullOrWhiteSpace(html))
+                            {
+                                if (!bannersByPosition.ContainsKey(placement))
+                                    bannersByPosition[placement] = new List<string>();
+
+                                bannersByPosition[placement].Add(html.Trim());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Warning, 
+                            "[SearchSpring] No 'triggeredCampaigns' array found in merchandising block");
+                    }
                 }
                 else
                 {
-                    await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring] No merchandising or content block found.");
+                    await _logger.InsertLogAsync(LogLevel.Warning, 
+                        "[SearchSpring] NO merchandising block found in API response");
                 }
 
-                if (merchProp.TryGetProperty("triggeredCampaigns", out var campaignsProp) &&
-                    campaignsProp.ValueKind == JsonValueKind.Array)
+                await _logger.InsertLogAsync(LogLevel.Information, 
+                    $"[SearchSpring] Total banner positions with content: {bannersByPosition.Count}");
+                
+                foreach (var kvp in bannersByPosition)
                 {
-                    foreach (var campaign in campaignsProp.EnumerateArray())
-                    {
-                        var placement = campaign.TryGetProperty("placement", out var placementProp)
-                            ? placementProp.GetString()
-                            : "header"; // fallback
-
-                        var html = campaign.TryGetProperty("html", out var htmlProp)
-                            ? htmlProp.GetString()
-                            : null;
-
-                        if (!string.IsNullOrWhiteSpace(placement) && !string.IsNullOrWhiteSpace(html))
-                        {
-                            if (!bannersByPosition.ContainsKey(placement))
-                                bannersByPosition[placement] = new List<string>();
-
-                            bannersByPosition[placement].Add(html.Trim());
-                        }
-                    }
+                    await _logger.InsertLogAsync(LogLevel.Information, 
+                        $"[SearchSpring] Position '{kvp.Key}' has {kvp.Value.Count} banner(s)");
                 }
 
+                await _logger.InsertLogAsync(LogLevel.Information, 
+                    "[SearchSpring] ===== BANNER PARSING END =====");
 
                 return new SearchResultModel
                 {
@@ -279,12 +373,14 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     TotalResults = totalResults,
                     Facets = facets,
                     SortOptions = sortOptions,
-                    BannersByPosition = bannersByPosition
+                    BannersByPosition = bannersByPosition,
+                    Query = query
                 };
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[SearchSpring] JSON Deserialization failed: {ex.Message}");
+                await _logger.InsertLogAsync(LogLevel.Error, 
+                    $"[SearchSpring] JSON Deserialization failed: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
