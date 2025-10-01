@@ -234,18 +234,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
                 if (root.TryGetProperty("merchandising", out var merchProp))
                 {
-                    await _logger.InsertLogAsync(LogLevel.Information, 
-                        "[SearchSpring] Merchandising block found in response");
 
-                    // Log the entire merchandising JSON for debugging
                     var merchJson = merchProp.GetRawText();
-                    await _logger.InsertLogAsync(LogLevel.Information, 
-                        $"[SearchSpring] Full Merchandising JSON: {merchJson}");
 
                     if (merchProp.TryGetProperty("content", out var contentProp))
                     {
-                        await _logger.InsertLogAsync(LogLevel.Information, 
-                            "[SearchSpring] Content property found in merchandising");
 
                         if (contentProp.ValueKind == JsonValueKind.Object)
                         {
@@ -262,17 +255,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                         .Where(html => !string.IsNullOrEmpty(html))
                                         .ToList();
 
-                                    await _logger.InsertLogAsync(LogLevel.Information, 
-                                        $"[SearchSpring] Found {banners.Count} banner(s) for position '{property.Name}'");
-
                                     if (banners.Any())
                                     {
                                         bannersByPosition[property.Name] = banners;
                                         foreach (var banner in banners)
                                         {
                                             var preview = banner.Length > 100 ? banner.Substring(0, 100) + "..." : banner;
-                                            await _logger.InsertLogAsync(LogLevel.Information, 
-                                                $"[SearchSpring] Banner HTML preview: {preview}");
                                         }
                                     }
                                 }
@@ -330,18 +318,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     await _logger.InsertLogAsync(LogLevel.Warning, 
                         "[SearchSpring] NO merchandising block found in API response");
                 }
-
-                await _logger.InsertLogAsync(LogLevel.Information, 
-                    $"[SearchSpring] Total banner positions with content: {bannersByPosition.Count}");
-                
-                foreach (var kvp in bannersByPosition)
-                {
-                    await _logger.InsertLogAsync(LogLevel.Information, 
-                        $"[SearchSpring] Position '{kvp.Key}' has {kvp.Value.Count} banner(s)");
-                }
-
-                await _logger.InsertLogAsync(LogLevel.Information, 
-                    "[SearchSpring] ===== BANNER PARSING END =====");
 
                 return new SearchResultModel
                 {
