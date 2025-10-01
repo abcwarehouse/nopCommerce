@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,9 +53,22 @@ namespace Nop.Web
 
         public void Configure(IApplicationBuilder application)
         {
+            // Add the Permissions-Policy header for geolocation
+            application.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(() =>
+                {
+                    // Allow geolocation from your own site
+                    context.Response.Headers["Permissions-Policy"] = "geolocation=(self)";
+                    return Task.CompletedTask;
+                });
+
+                await next();
+            });
             application.ConfigureRequestPipeline();
             application.StartEngine();
         }
+        
 
     }
 }

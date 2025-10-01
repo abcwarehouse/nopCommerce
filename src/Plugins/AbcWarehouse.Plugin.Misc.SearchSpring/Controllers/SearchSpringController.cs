@@ -61,7 +61,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         [HttpGet]
         [Route("searchspring/results")]
         [Route("search/results")]
-        public async Task<IActionResult> Results(string q, int page = 1, string sort = null)
+        public async Task<IActionResult> Results(string q, int page = 1, string sort = null, double? lat = null, double? lng = null)
         {
             if (string.IsNullOrWhiteSpace(q))
                 return BadRequest("Search term cannot be empty.");
@@ -84,8 +84,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 }
             }
 
+            await _logger.InformationAsync($"Geo received: lat={lat?.ToString() ?? "null"}, lng={lng?.ToString() ?? "null"}");
+            await _logger.InformationAsync($"[SearchSpring Controller] Query: {q}, Page: {page}, Sort: {sort}");
+            await _logger.InformationAsync($"Full request URL: {HttpContext.Request.QueryString}");
             var results = await _searchSpringService.SearchAsync(
-                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters, sort: sort
+                q, sessionId: sessionId, siteId: siteId, page: page, filters: filters, sort: sort, latitude: lat, longitude: lng
             );
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
