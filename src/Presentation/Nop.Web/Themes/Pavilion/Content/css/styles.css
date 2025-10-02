@@ -211,16 +211,6 @@ div#autocomplete-results .item img {
 	transform: scale(1.1);
 }
 
-.search-spring-container {
-	margin-top: 5px;
-	margin-left: 25.6%;
-	display: flex;
-	flex-grow: 1;
-	max-width: calc(100% - 300px);
-	padding-right: 20px;
-	margin-right: 40px;
-}
-
 div#autocomplete-results {
 	max-height: 600px;
 }
@@ -8417,17 +8407,17 @@ img.hawthorne-logo {
 }
 
 /* @media (max-width: 1645px) {
-	
-	
+
+
 	.storeId8 .hawthorne-lower .search-cart-wrapper {
 		width: 34% !important;
 	}
 } */
 
 /* @media (max-width: 1400px) {
-	
-	
-	
+
+
+
 } */
 
 @media (min-width: 1025px) {
@@ -10320,7 +10310,7 @@ div#autocomplete-results .item img {
 	margin-left: 25.6%;
 	display: flex;
 	flex-grow: 1;
-	max-width: calc(100% - 300px);
+	/* max-width: calc(100% - 300px); */
 	padding-right: 20px;
 	margin-right: 40px;
 }
