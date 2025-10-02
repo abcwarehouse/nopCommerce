@@ -62,10 +62,15 @@
     <!-- Pavilion overwrites -->
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\_AddToCart.cshtml" />
+    <None Remove="Views\Product\_ProductPrice.cshtml" />
     <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
+    <None Remove="Views\Shared\Head.cshtml" />
+    <None Remove="Views\Shared\_AttributeInfo.cshtml" />
+    <None Remove="Views\Shared\_Header.cshtml" />
     <None Remove="Views\Shared\_ProductBox.cshtml" />
     <None Remove="Views\Shared\_Root.cshtml" />
     <None Remove="Views\Shared\_Root.Head.cshtml" />
+    <None Remove="Views\Shared\Components\FlyoutShoppingCart\Default.cshtml" />
     <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
     <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
   </ItemGroup>
@@ -204,7 +209,19 @@
     <Content Include="Views\Product\_AddToCart.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Product\_ProductPrice.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Product\ProductTemplate.Simple.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Head.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_AttributeInfo.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Header.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\_ProductBox.cshtml">
@@ -214,6 +231,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\_Root.Head.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\FlyoutShoppingCart\Default.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\Components\Footer\Default.cshtml">
