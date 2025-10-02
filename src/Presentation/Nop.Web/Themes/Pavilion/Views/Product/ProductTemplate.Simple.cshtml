@@ -158,6 +158,8 @@
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
 <div class="page product-details-page">
+    <h1>Product Recommendations</h1>
+    <div id="product-recommendations"></div>
     <div class="page-body">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
@@ -422,3 +424,8 @@
           }
         })();
     </script>
+    <script>
+    searchSpringRecs.getProductPageRecommendations('@Model.Sku')
+        .then(data => searchSpringRecs.renderRecommendations(data, 'product-recommendations'));
+    </script>
+
