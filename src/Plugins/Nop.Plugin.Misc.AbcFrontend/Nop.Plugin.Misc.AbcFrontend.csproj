@@ -60,8 +60,12 @@
     <None Remove="Images\SaleAdButton.png" />
     <None Remove="Images\search-button.png" />
     <!-- Pavilion overwrites -->
+    <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
+    <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
-    <None Remove="Views\Catalog\_AddToCart.cshtml" />
+    <None Remove="Views\Catalog\ManufacturerAll.cshtml" />
+    <None Remove="Views\Home\Index.cshtml" />
+    <None Remove="Views\Product\_AddToCart.cshtml" />
     <None Remove="Views\Product\_ProductPrice.cshtml" />
     <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
     <None Remove="Views\Shared\Head.cshtml" />
@@ -73,6 +77,7 @@
     <None Remove="Views\Shared\Components\FlyoutShoppingCart\Default.cshtml" />
     <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
     <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
+    <None Remove="Views\Topic\TopicDetails.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -203,7 +208,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <!-- Pavilion overwrites -->
+    <Content Include="Views\Catalog\_CatalogSelectors.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\_ProductsInGridOrLines.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\ManufacturerAll.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Home\Index.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Product\_AddToCart.cshtml">
@@ -240,6 +257,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\Components\OrderSummary\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Topic\TopicDetails.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
