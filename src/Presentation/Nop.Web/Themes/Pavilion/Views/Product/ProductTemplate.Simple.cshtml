@@ -181,7 +181,7 @@
                     }
                     else
                     {
-                    	@await Html.PartialAsync("_ProductDetailsPictures", Model)
+                        @await Html.PartialAsync("_ProductDetailsPictures", Model)
                     }
                     @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
                 <div class="overview">
@@ -411,17 +411,17 @@
     </script>
     <script>
         (function(){
-          document.addEventListener("DOMContentLoaded", punt);
-          if (document.readyState != "loading") punt();
-          function punt(){
-            var a = document.createElement("script");
-            a.setAttribute("src", "https://content.adacado.com/productpixel/v1/shell.umd.js");
-            a.setAttribute("data-advertiserid", "37953");
-            a.setAttribute("id", "adavadael");
-            a.setAttribute("data-productid", "@Model.Id");
-            a.setAttribute("async", "async");
-            document.body.appendChild(a);
-          }
+            document.addEventListener("DOMContentLoaded", punt);
+            if (document.readyState != "loading") punt();
+            function punt(){
+                var a = document.createElement("script");
+                a.setAttribute("src", "https://content.adacado.com/productpixel/v1/shell.umd.js");
+                a.setAttribute("data-advertiserid", "37953");
+                a.setAttribute("id", "adavadael");
+                a.setAttribute("data-productid", "@Model.Id");
+                a.setAttribute("async", "async");
+                document.body.appendChild(a);
+            }
         })();
     </script>
     <script>
