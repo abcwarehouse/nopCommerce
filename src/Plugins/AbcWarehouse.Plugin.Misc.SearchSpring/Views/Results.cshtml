@@ -604,3 +604,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log("=== RECOMMENDATIONS DEBUG END ===");
 </script>
+<script>
+    searchSpringRecs.getProductPageRecommendations('@Model.Sku')
+        .then(data => searchSpringRecs.renderRecommendations(data, 'test-recommendations'));
+</script>
