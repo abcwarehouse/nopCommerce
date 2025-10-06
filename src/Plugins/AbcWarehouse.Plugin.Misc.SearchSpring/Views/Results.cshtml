@@ -182,7 +182,6 @@ else
             <div class="item-grid">
                 @{
                     var productModels = new List<dynamic>();
-
                     foreach (var item in Model.Results)
                     {
                         var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
@@ -577,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("Testing recommendations API...");
     
     // Replace with your actual product SKU
-    const testSku = 'YOUR_PRODUCT_SKU_HERE';
+    const testSku = Model.Results.Sku.FirstOrDefault();
     
     fetch(`/searchspring/recommendations/product/${testSku}`)
         .then(response => {
