@@ -17,6 +17,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
         private readonly ILogger _logger;
+        public RecommendedProduct product = new RecommendedProduct();
 
         public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger)
         {
@@ -88,8 +89,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
 
-            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Request URL: {url}");
-
             var response = await client.GetAsync(url);
 
             if ((int)response.StatusCode >= 300 && (int)response.StatusCode < 400)
@@ -106,16 +105,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-
-            // LOG THE COMPLETE RAW RESPONSE
-            await _logger.InsertLogAsync(LogLevel.Information,
-                $"[SearchSpring] ===== FULL API RESPONSE START =====");
-            await _logger.InsertLogAsync(LogLevel.Information,
-                $"[SearchSpring] Response Status: {response.StatusCode}");
-            await _logger.InsertLogAsync(LogLevel.Information,
-                $"[SearchSpring] Raw JSON Response: {json}");
-            await _logger.InsertLogAsync(LogLevel.Information,
-                $"[SearchSpring] ===== FULL API RESPONSE END =====");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -338,10 +327,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
-        
-        // Add this method to your existing SearchSpringService class
-
-        // Add this method to your existing SearchSpringService class
 
         public async Task<RecommendationsResultModel> GetRecommendationsAsync(RecommendationsRequestModel request)
         {
@@ -429,7 +414,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         {
                             foreach (var productElement in resultsElement.EnumerateArray())
                             {
-                                var product = new RecommendedProduct
+                                product = new RecommendedProduct
                                 {
                                     Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
                                     Sku = productElement.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : "",
@@ -465,8 +450,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                await _logger.InsertLogAsync(LogLevel.Information, 
-                    $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profile(s)");
+                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring rec product variable]: {product}");
 
                 return result;
             }
