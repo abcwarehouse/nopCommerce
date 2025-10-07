@@ -338,7 +338,7 @@
 	left: -32px;
 	width: 32px;
 	height: 52px;
-	background: #f74258 url('../img/flyout-cart.png') center no-repeat;
+	background: #f74258 url(/Plugins/Misc.AbcFrontend/Content/img/flyout-cart.png) center no-repeat;
 }
 .cart-trigger .cart-qty,
 .cart-trigger .cart-label {

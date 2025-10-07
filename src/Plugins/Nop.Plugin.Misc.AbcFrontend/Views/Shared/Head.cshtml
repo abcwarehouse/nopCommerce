@@ -36,10 +36,10 @@
     NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/tooltip.css");
 
     // ProductTemplate.Simple.cshtml
-    <script src="~/Themes/Pavilion/Content/scripts/abc/mattress.js" asp-location="Footer"></script>
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/mattress.js" asp-location="Footer"></script>
     // CategoryTemplate, Promo Listing (to become just category template)
-    <script src="~/Themes/Pavilion/Content/scripts/abc/mobileFilters.js" asp-location="Footer"></script>
-    <script src="~/Themes/Pavilion/Content/scripts/abc/mobileMenu.js" asp-location="Footer"></script>
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/mobileFilters.js" asp-location="Footer"></script>
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/mobileMenu.js" asp-location="Footer"></script>
 
     @* ABC: base functionality is below, with substitutes for our own base Pavilion contents when appropriate *@
     var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
@@ -75,5 +75,5 @@
     <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
     <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.theme.ex.min.js" asp-location="Footer"></script>
 
-    <script src="~/Themes/Pavilion/Content/scripts/pavilion.js" asp-location="Footer"></script>
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/pavilion.js" asp-location="Footer"></script>
 }

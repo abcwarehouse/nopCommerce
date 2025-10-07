@@ -67,7 +67,7 @@ div.markdown-message {
 }
 
 .overview .add-to-cart-button {
-    background-image: url(/Themes/Pavilion/Content/img/flyout-cart.png);
+    background-image: url(/Plugins/Misc.AbcFrontend/Content/img/flyout-cart.png);
     background-repeat: no-repeat;
     background-position-x: 20px;
     background-position-y: center;

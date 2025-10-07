@@ -19,7 +19,6 @@
   <ItemGroup>
     <None Remove="logo.png" />
     <None Remove="plugin.json" />
-    <None Remove="scripts\jquery.jcarousel.min.js" />
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
@@ -81,6 +80,14 @@
     <None Remove="Content/css/synchrony.css" />
     <None Remove="Content/css/synchronyrespon.css" />
     <None Remove="Content/css/tooltip.css" />
+    <None Remove="Content/img/flyout-cart.png" />
+    <None Remove="Content/scripts/jquery.jcarousel.min.js" />
+    <None Remove="Content/scripts/mattress.js" />
+    <None Remove="Content/scripts/mobileFilters.js" />
+    <None Remove="Content/scripts/mobileMenu.js" />
+    <None Remove="Content/scripts/pavilion.js" />
+    <None Remove="Content/scripts/public.ajaxcart.js" />
+    <None Remove="Content/scripts/public.estimateshipping.popup.js" />
     <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
     <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
@@ -91,6 +98,7 @@
     <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
     <None Remove="Views\Shared\Head.cshtml" />
     <None Remove="Views\Shared\_AttributeInfo.cshtml" />
+    <None Remove="Views\Shared\_EstimateShippingPopup.cshtml" />
     <None Remove="Views\Shared\_Header.cshtml" />
     <None Remove="Views\Shared\_ProductBox.cshtml" />
     <None Remove="Views\Shared\_Root.cshtml" />
@@ -106,9 +114,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="plugin.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts/jquery.jcarousel.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml">
@@ -292,6 +297,30 @@
     <Content Include="Content/css/tooltip.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content/img/flyout-cart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/jquery.jcarousel.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/mattress.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/mobileFilters.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/mobileMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/pavilion.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/public.ajaxcart.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/public.estimateshipping.popup.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Catalog\_CatalogSelectors.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -320,6 +349,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\_AttributeInfo.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_EstimateShippingPopup.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\_Header.cshtml">
