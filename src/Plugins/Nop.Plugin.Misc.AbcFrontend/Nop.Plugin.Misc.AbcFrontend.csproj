@@ -65,12 +65,22 @@
     <None Remove="Content/css/1024.rtl.css" />
     <None Remove="Content/css/1280.css" />
     <None Remove="Content/css/1280.rtl.css" />
+    <None Remove="Content/css/custom_front_product.css" />
     <None Remove="Content/css/hawthorne.css" />
+    <None Remove="Content/css/mobile-categories.css" />
+    <None Remove="Content/css/mobile-header.css" />
     <None Remove="Content/css/mobile.css" />
+    <None Remove="Content/css/pavilion-styles.css" />
+    <None Remove="Content/css/product-box.css" />
+    <None Remove="Content/css/product-details-template.css" />
+    <None Remove="Content/css/product-listings.css" />
+    <None Remove="Content/css/product-price.css" />
+    <None Remove="Content/css/rebates-promos.css" />
     <None Remove="Content/css/styles.css" />
     <None Remove="Content/css/styles.rtl.css" />
     <None Remove="Content/css/synchrony.css" />
     <None Remove="Content/css/synchronyrespon.css" />
+    <None Remove="Content/css/tooltip.css" />
     <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
     <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
@@ -234,10 +244,37 @@
     <Content Include="Content/css/1280.rtl.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content/css/custom_front_product.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content/css/hawthorne.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content/css/mobile-categories.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/mobile-header.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content/css/mobile.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/pavilion-styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-box.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-details-template.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-listings.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-price.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/rebates-promos.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content/css/styles.css">
@@ -250,6 +287,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content/css/synchronyrespon.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/tooltip.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Catalog\_CatalogSelectors.cshtml">

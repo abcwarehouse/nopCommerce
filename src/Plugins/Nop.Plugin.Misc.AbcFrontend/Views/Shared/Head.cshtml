@@ -9,32 +9,31 @@
 @inject INopHtmlHelper NopHtml
 
 @{
-    @* ABC: custom, putting these on top overrides everything below *@
-    // Only needed for warranty selector, won't be needed after slideout
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/checkout-warranty-selection.css");
+    @* ABC: custom, putting these on top overrides everything below
+        there is a place to place these css files in their respective pages, but I don't want to break things during the 4.80 merge
+    *@
 
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/custom_front_product.css");
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/mobile-categories.css");
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/pavilion-styles.css");
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/mobile-header.css");
-
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/custom_front_product.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/mobile-categories.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/mobile-header.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/pavilion-styles.css");
     // Could be add this to _ProductBox.cshtml?
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/product-box.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-box.css");
 
     // Can exist in ProductTemplate.Simple.cshtml
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/product-details-template.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-details-template.css");
     
     // After promo categories are made, this only needs to be in CategoryTemplate.ProductsInGridOrLines.cshtml
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/product-listings.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-listings.css");
 
     // _ProductPrice and OrderSummary/Default.cshtml?
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/product-price.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-price.css");
 
     // Only needed for TopicDetails.cshtml
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/rebates-promos.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/rebates-promos.css");
 
     // Only needed for _ProductPrice
-    NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/abc/tooltip.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/tooltip.css");
 
     // ProductTemplate.Simple.cshtml
     <script src="~/Themes/Pavilion/Content/scripts/abc/mattress.js" asp-location="Footer"></script>
