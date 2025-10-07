@@ -343,8 +343,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
         // Add this method to your existing SearchSpringService class
 
-        // Replace the entire GetRecommendationsAsync method in SearchSpringService.cs with this:
-
         public async Task<RecommendationsResultModel> GetRecommendationsAsync(RecommendationsRequestModel request)
         {
             if (string.IsNullOrWhiteSpace(request.Tags))
@@ -419,107 +417,60 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                JsonElement profilesArray;
-                
-                // Check if the response is directly an array or wrapped in "profiles" property
-                if (root.ValueKind == JsonValueKind.Array)
-                {
-                    profilesArray = root;
-                }
-                else if (root.TryGetProperty("profiles", out var profilesProp))
-                {
-                    profilesArray = profilesProp;
-                }
-                else
-                {
-                    await _logger.InsertLogAsync(LogLevel.Warning, 
-                        "[SearchSpring Recommendations] Response does not contain profiles array");
-                    return result;
-                }
-
                 // Parse the profiles array
-                foreach (var profileElement in profilesArray.EnumerateArray())
+                if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("profiles", out var profilesElement))
                 {
-                    // Get profile metadata
-                    var profile = new RecommendationProfile();
-                    
-                    if (profileElement.TryGetProperty("profile", out var profileMetadata))
+                    foreach (var profileElement in profilesElement.EnumerateArray())
                     {
-                        profile.Tag = profileMetadata.TryGetProperty("tag", out var tagProp) ? tagProp.GetString() : "";
-                        profile.Display = profileMetadata.TryGetProperty("display", out var displayProp) ? displayProp.GetString() : "";
-                    }
-                    else
-                    {
-                        profile.Tag = profileElement.TryGetProperty("tag", out var tagProp) ? tagProp.GetString() : "";
-                        profile.Display = profileElement.TryGetProperty("display", out var displayProp) ? displayProp.GetString() : "";
-                    }
-
-                    // Parse results array
-                    if (profileElement.TryGetProperty("results", out var resultsElement))
-                    {
-                        foreach (var productElement in resultsElement.EnumerateArray())
+                        var profile = new RecommendationProfile
                         {
-                            // Check if data is nested under mappings.core
-                            JsonElement coreElement = productElement;
-                            if (productElement.TryGetProperty("mappings", out var mappingsElement) &&
-                                mappingsElement.TryGetProperty("core", out var coreData))
-                            {
-                                coreElement = coreData;
-                            }
+                            Tag = profileElement.TryGetProperty("tag", out var tagProp) ? tagProp.GetString() : "",
+                            Display = profileElement.TryGetProperty("display", out var displayProp) ? displayProp.GetString() : ""
+                        };
 
-                            var product = new RecommendedProduct
+                        // Parse results array
+                        if (profileElement.TryGetProperty("results", out var resultsElement))
+                        {
+                            foreach (var productElement in resultsElement.EnumerateArray())
                             {
-                                Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
-                                Sku = coreElement.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : "",
-                                Name = coreElement.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
-                                Url = coreElement.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
-                                ImageUrl = coreElement.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
-                                Price = coreElement.TryGetProperty("price", out var priceProp) ? priceProp.ToString() : "",
-                                RetailPrice = coreElement.TryGetProperty("msrp", out var msrpProp) ? msrpProp.ToString() : "",
-                                Brand = coreElement.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
-                                Category = coreElement.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
-                                ItemNumber = coreElement.TryGetProperty("item_number", out var itemProp) ? itemProp.GetString() : ""
-                            };
-
-                            if (coreElement.TryGetProperty("in_stock", out var stockProp))
-                            {
-                                product.InStock = stockProp.GetInt32();
-                            }
-
-                            // Check for thumbnailImageUrl as fallback
-                            if (string.IsNullOrEmpty(product.ImageUrl) && 
-                                coreElement.TryGetProperty("thumbnailImageUrl", out var thumbProp))
-                            {
-                                product.ImageUrl = thumbProp.GetString();
-                            }
-
-                            // Store any additional properties from core
-                            foreach (var prop in coreElement.EnumerateObject())
-                            {
-                                if (!IsKnownProperty(prop.Name))
+                                var product = new RecommendedProduct
                                 {
-                                    product.AdditionalData[prop.Name] = prop.Value.ToString();
-                                }
-                            }
+                                    Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
+                                    Sku = productElement.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : "",
+                                    Name = productElement.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
+                                    Url = productElement.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
+                                    ImageUrl = productElement.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
+                                    Price = productElement.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
+                                    RetailPrice = productElement.TryGetProperty("retail_price", out var retailProp) ? retailProp.GetString() : "",
+                                    Brand = productElement.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
+                                    Category = productElement.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
+                                    ItemNumber = productElement.TryGetProperty("item_number", out var itemProp) ? itemProp.GetString() : ""
+                                };
 
-                            // Also store attributes if they exist
-                            if (productElement.TryGetProperty("attributes", out var attributesElement))
-                            {
-                                foreach (var attr in attributesElement.EnumerateObject())
+                                if (productElement.TryGetProperty("in_stock", out var stockProp))
                                 {
-                                    product.AdditionalData[$"attr_{attr.Name}"] = attr.Value.ToString();
+                                    product.InStock = stockProp.GetInt32();
                                 }
-                            }
 
-                            profile.Results.Add(product);
+                                // Store any additional properties
+                                foreach (var prop in productElement.EnumerateObject())
+                                {
+                                    if (!IsKnownProperty(prop.Name))
+                                    {
+                                        product.AdditionalData[prop.Name] = prop.Value.ToString();
+                                    }
+                                }
+
+                                profile.Results.Add(product);
+                            }
                         }
-                    }
 
-                    result.Profiles.Add(profile);
+                        result.Profiles.Add(profile);
+                    }
                 }
 
                 await _logger.InsertLogAsync(LogLevel.Information, 
-                    $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profile(s) with total {result.Profiles.Sum(p => p.Results.Count)} products");
+                    $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profile(s)");
 
                 return result;
             }
@@ -535,8 +486,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         {
             var knownProps = new[] 
             { 
-                "id", "uid", "sku", "name", "url", "imageUrl", "thumbnailImageUrl", 
-                "price", "msrp", "retail_price", "brand", "category", "item_number", "in_stock" 
+                "id", "sku", "name", "url", "imageUrl", "price", 
+                "retail_price", "brand", "category", "item_number", "in_stock" 
             };
             return knownProps.Contains(propertyName.ToLower());
         }
