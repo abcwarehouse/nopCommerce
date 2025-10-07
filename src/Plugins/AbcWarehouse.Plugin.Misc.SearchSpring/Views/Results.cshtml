@@ -112,12 +112,6 @@ else
     </div>
 }
 
-
-
-
-
-
-
             </div>
         </div>
 
@@ -149,7 +143,7 @@ else
         <div class="searchspring-top-bar">
             <form method="get" id="searchspring-sort-form">
                 <input type="hidden" name="q" value="@Model.Query" />
-                <select name="sort" id="searchspring-sort" onchange="this.form.submit()">
+                <select name="sort" id="searchspring-sort">
                     @foreach (var option in Model.SortOptions)
                     {
                         var sortValue = $"{option.Field}_{option.Direction}";
@@ -354,4 +348,204 @@ else
         });
     });
 
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("=== GEOLOCATION DEBUG START ===");
+    
+    // Check if geolocation is available
+    if (!navigator.geolocation) {
+        console.error("Geolocation is NOT supported by this browser");
+        alert("Your browser doesn't support geolocation");
+    } else {
+        console.log("Geolocation IS supported");
+    }
+    
+    console.log("Testing geolocation access...");
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            console.log("✓ Geolocation SUCCESS!");
+            console.log("Latitude:", position.coords.latitude);
+            console.log("Longitude:", position.coords.longitude);
+            console.log("Accuracy:", position.coords.accuracy);
+        },
+        function(error) {
+            console.error("✗ Geolocation FAILED!");
+            console.error("Error code:", error.code);
+            console.error("Error message:", error.message);
+            }
+        },
+        {
+            enableHighAccuracy: false,
+            timeout: 10000,
+            maximumAge: 300000
+        }
+    );
+    
+    const currentQuery = "@Model.Query";
+    const currentSort = new URLSearchParams(window.location.search).get('sort') || '';
+    
+    // Check if we already have geo params
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasGeoParams = urlParams.has('lat') && urlParams.has('lng');
+    console.log("Current URL has geo params:", hasGeoParams);
+    if (hasGeoParams) {
+        console.log("Current lat:", urlParams.get('lat'));
+        console.log("Current lng:", urlParams.get('lng'));
+    }
+    
+    // Function to get current filters from URL
+    function getCurrentFilters() {
+        const params = new URLSearchParams(window.location.search);
+        const filters = [];
+        for (const [key, value] of params.entries()) {
+            if (key.startsWith('filter[')) {
+                filters.push(`${key}=${encodeURIComponent(value)}`);
+            }
+        }
+        return filters.join('&');
+    }
+    
+    function runGeoSearchWithFilters(query, page = 1, sort = null, additionalFilters = '') {
+        console.log("=== runGeoSearchWithFilters called ===");
+        console.log("Query:", query);
+        console.log("Page:", page);
+        console.log("Sort:", sort);
+        console.log("Filters:", additionalFilters);
+        
+        if (navigator.geolocation) {
+            console.log("Requesting geolocation...");
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    console.log("✓ Got coordinates!");
+                    console.log("Lat:", lat);
+                    console.log("Lng:", lng);
+                    
+                    let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}&lat=${lat}&lng=${lng}`;
+                    if (sort) url += `&sort=${encodeURIComponent(sort)}`;
+                    if (additionalFilters) url += `&${additionalFilters}`;
+                    
+                    console.log("Redirecting to:", url);
+                    window.location.href = url;
+                },
+                function(error) {
+                    console.error("✗ Geolocation failed in search");
+                    console.error("Error code:", error.code);
+                    console.error("Error message:", error.message);
+                    
+                    let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}`;
+                    if (sort) url += `&sort=${encodeURIComponent(sort)}`;
+                    if (additionalFilters) url += `&${additionalFilters}`;
+                    
+                    console.log("Fallback redirect to:", url);
+                    window.location.href = url;
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 10000, // 10 seconds
+                    maximumAge: 300000 // 5 minutes cache
+                }
+            );
+        } else {
+            console.error("Browser doesn't support geolocation");
+            // Browser doesn't support geolocation
+            let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}`;
+            if (sort) url += `&sort=${encodeURIComponent(sort)}`;
+            if (additionalFilters) url += `&${additionalFilters}`;
+            
+            console.log("No geolocation redirect to:", url);
+            window.location.href = url;
+        }
+    }
+    
+    const paginationLinks = document.querySelectorAll('.pagination a');
+    console.log("Found", paginationLinks.length, "pagination links");
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("Pagination link clicked:", this.href);
+            const url = new URL(this.href);
+            const page = url.searchParams.get('page') || 1;
+            const filters = getCurrentFilters();
+            runGeoSearchWithFilters(currentQuery, page, currentSort, filters);
+        });
+    });
+    
+    const filterLinks = document.querySelectorAll('.searchspring-facet a');
+    console.log("Found", filterLinks.length, "filter links");
+    filterLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("Filter link clicked:", this.href);
+            const url = new URL(this.href);
+            const params = new URLSearchParams(url.search);
+            
+            const filters = [];
+            for (const [key, value] of params.entries()) {
+                if (key.startsWith('filter[')) {
+                    filters.push(`${key}=${encodeURIComponent(value)}`);
+                }
+            }
+            
+            runGeoSearchWithFilters(currentQuery, 1, currentSort, filters.join('&'));
+        });
+    });
+    
+    const sortDropdown = document.getElementById('searchspring-sort');
+    if (sortDropdown) {
+        console.log("Sort dropdown found");
+        // Remove any existing onchange
+        sortDropdown.onchange = null;
+        sortDropdown.removeAttribute('onchange');
+        
+        sortDropdown.addEventListener('change', function(e) {
+            e.preventDefault();
+            console.log("Sort changed to:", this.value);
+            const sortValue = this.value;
+            const filters = getCurrentFilters();
+            runGeoSearchWithFilters(currentQuery, 1, sortValue, filters);
+        });
+    } else {
+        console.log("Sort dropdown NOT found");
+    }
+    
+    const removeLinks = document.querySelectorAll('.remove-button a');
+    console.log("Found", removeLinks.length, "remove filter links");
+    removeLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log("Remove filter clicked:", this.href);
+            const url = new URL(this.href, window.location.origin);
+            const params = new URLSearchParams(url.search);
+            
+            const filters = [];
+            for (const [key, value] of params.entries()) {
+                if (key.startsWith('filter[')) {
+                    filters.push(`${key}=${encodeURIComponent(value)}`);
+                }
+            }
+            
+            runGeoSearchWithFilters(currentQuery, 1, currentSort, filters.join('&'));
+        });
+    });
+    
+    if (!hasGeoParams) {
+        console.log("No geo params in URL, triggering initial geolocation...");
+        const currentPage = parseInt(urlParams.get('page')) || 1;
+        const filters = getCurrentFilters();
+        
+        // Give the page a moment to fully load
+        setTimeout(function() {
+            runGeoSearchWithFilters(currentQuery, currentPage, currentSort, filters);
+        }, 500);
+    } else {
+        console.log("Geo params already present, skipping auto-trigger");
+    }
+    
+    console.log("=== GEOLOCATION DEBUG END ===");
+});
 </script>

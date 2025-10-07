@@ -26,7 +26,21 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
     public class NopStartup : INopStartup
     {
-        public void Configure(IApplicationBuilder application) {}
+        public void Configure(IApplicationBuilder application)
+        {
+            // Add the Permissions-Policy header for geolocation
+            application.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(() =>
+                {
+                    // Allow geolocation from your own site
+                    context.Response.Headers["Permissions-Policy"] = "geolocation=(self)";
+                    return Task.CompletedTask;
+                });
+
+                await next();
+            });
+        }
         
         public int Order => int.MaxValue;
 
