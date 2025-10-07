@@ -393,7 +393,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var url = $"https://{siteId}.a.searchspring.io/boost/{siteId}/recommend?{string.Join("&", queryParams)}";
 
-            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring Recommendations] Request URL: {url}");
+            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring Recommendations Service] Request URL: {url}");
 
             var response = await client.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();

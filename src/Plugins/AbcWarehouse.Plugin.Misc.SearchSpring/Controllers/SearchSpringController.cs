@@ -292,7 +292,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                             WriteIndented = true,
                             PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
                         });
-                    await _logger.InformationAsync($"SearchSpring Recommendations JSON:\n{modelJson}");
+                    await _logger.InformationAsync($"SearchSpring Recommendations Controller:\n{modelJson}");
                 }
 
                 return Json(results);
