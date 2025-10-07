@@ -450,7 +450,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring rec product variable]: {product}");
+                var responseContent = await response.Content.ReadAsStringAsync();
+                await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring rec product response]", responseContent);
+
+                using var docLog = JsonDocument.Parse(responseContent);
+
+                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring parse product]: {product}");
 
                 return result;
             }
