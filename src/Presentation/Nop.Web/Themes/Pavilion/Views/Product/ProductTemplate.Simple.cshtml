@@ -188,10 +188,6 @@
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
 <div class="page product-details-page">
     <h1>Product Recommendations</h1>
-    <div class="product-recommendations-wrapper" style="margin: 60px 0; clear: both;">
-        <div id="recs-debug" style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; font-family: monospace; font-size: 12px;"></div>
-        <div id="product-recommendations-display"></div>
-    </div>
     <div class="page-body">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
@@ -541,120 +537,6 @@
         document.addEventListener('DOMContentLoaded', initRecommendations);
     } else {
         initRecommendations();
-    }
-})();
-</script>
-<script>
-    searchSpringRecs.getProductPageRecommendations('@Model.Sku')
-        .then(data => searchSpringRecs.renderRecommendations(data, 'product-recommendations'));
-</script>
-<script>
-(function() {
-    const debugEl = document.getElementById('recs-debug');
-    const displayEl = document.getElementById('product-recommendations-display');
-    
-    function log(msg) {
-        console.log(msg);
-        if (debugEl) {
-            debugEl.innerHTML += msg + '<br>';
-        }
-    }
-    
-    function loadRecs() {
-        log('=== RECOMMENDATIONS DEBUG ===');
-        log('DOM Ready: ' + document.readyState);
-        log('Container exists: ' + (displayEl ? 'YES' : 'NO'));
-        log('searchSpringRecs exists: ' + (typeof searchSpringRecs !== 'undefined' ? 'YES' : 'NO'));
-        
-        if (typeof searchSpringRecs === 'undefined') {
-            log('ERROR: searchSpringRecs not loaded, retrying in 200ms...');
-            setTimeout(loadRecs, 200);
-            return;
-        }
-        
-        const sku = '@Model.Sku';
-        log('Product SKU: ' + sku);
-        log('Fetching recommendations...');
-        
-        // Direct fetch to test API
-        fetch('/searchspring/recommendations?tags=similar&products=' + encodeURIComponent(sku))
-            .then(response => {
-                log('API Status: ' + response.status);
-                return response.json();
-            })
-            .then(data => {
-                log('API Response received');
-                log('Profiles count: ' + (data.profiles ? data.profiles.length : 'N/A'));
-                
-                if (!data.profiles || data.profiles.length === 0) {
-                    log('ERROR: No profiles in response');
-                    displayEl.innerHTML = '<p style="color: red;">No recommendations available</p>';
-                    return;
-                }
-                
-                let totalProducts = 0;
-                data.profiles.forEach(p => totalProducts += (p.results ? p.results.length : 0));
-                log('Total products: ' + totalProducts);
-                
-                // Now render
-                let html = '';
-                data.profiles.forEach(function(profile) {
-                    if (!profile.results || profile.results.length === 0) return;
-                    
-                    log('Rendering profile: ' + profile.tag);
-                    
-                    html += '<div style="margin: 40px 0;">';
-                    html += '<h2 style="font-size: 28px; margin-bottom: 25px; border-bottom: 2px solid #446588; padding-bottom: 10px;">';
-                    html += (profile.display || 'Recommended Products');
-                    html += '</h2>';
-                    
-                    html += '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">';
-                    
-                    profile.results.slice(0, 12).forEach(function(product) {
-                        html += '<div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: white; transition: all 0.3s;">';
-                        html += '<a href="' + product.url + '" style="text-decoration: none; color: inherit; display: block;">';
-                        
-                        if (product.imageUrl) {
-                            html += '<img src="' + product.imageUrl + '" alt="' + product.name.replace(/"/g, '&quot;') + '" style="width: 100%; height: auto; margin-bottom: 15px; border-radius: 4px;">';
-                        }
-                        
-                        html += '<h3 style="font-size: 16px; margin: 10px 0; min-height: 48px; color: #333;">' + product.name + '</h3>';
-                        
-                        if (product.brand) {
-                            html += '<p style="color: #666; font-size: 14px; margin: 8px 0;">' + product.brand + '</p>';
-                        }
-                        
-                        if (product.price) {
-                            html += '<p style="font-size: 20px; font-weight: bold; color: #446588; margin: 12px 0;">$' + product.price + '</p>';
-                        }
-                        
-                        html += '</a></div>';
-                    });
-                    
-                    html += '</div></div>';
-                });
-                
-                displayEl.innerHTML = html;
-                log('✓ Rendering complete!');
-                
-                // Hide debug after success
-                setTimeout(function() {
-                    if (debugEl) debugEl.style.display = 'none';
-                }, 3000);
-            })
-            .catch(function(err) {
-                log('ERROR: ' + err.message);
-                displayEl.innerHTML = '<p style="color: red;">Error loading recommendations: ' + err.message + '</p>';
-            });
-    }
-    
-    // Wait for everything to load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadRecs, 500);
-        });
-    } else {
-        setTimeout(loadRecs, 500);
     }
 })();
 </script>
