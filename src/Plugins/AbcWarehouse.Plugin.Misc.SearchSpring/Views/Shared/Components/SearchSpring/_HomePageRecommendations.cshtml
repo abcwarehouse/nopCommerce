@@ -1,0 +1,87 @@
+@inject AbcWarehouse.Plugin.Misc.SearchSpring.Services.ISearchSpringService searchSpringService
+@inject Nop.Services.Catalog.IProductService productService
+@inject Nop.Web.Factories.IProductModelFactory productModelFactory
+@inject Nop.Core.IWorkContext workContext
+@using AbcWarehouse.Plugin.Misc.SearchSpring.Models
+@using Nop.Web.Models.Catalog
+
+@{
+    // Get customer info for personalization
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var shopperId = customer?.Id.ToString();
+
+    // You can customize these profile tags based on what you've configured in SearchSpring
+    var recsRequest = new RecommendationsRequestModel
+    {
+        Tags = "trending,bestsellers",  // Change these to match your SearchSpring profiles
+        Shopper = shopperId,
+        Limits = "12,8",  // 12 trending, 8 bestsellers
+        SiteId = "4lt84w"
+    };
+
+    RecommendationsResultModel recommendations = null;
+    try
+    {
+        recommendations = await searchSpringService.GetRecommendationsAsync(recsRequest);
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Homepage Recommendations error: {ex.Message}");
+    }
+}
+
+@if (recommendations != null && recommendations.Profiles.Any())
+{
+    <div class="homepage-recommendations-section" style="margin: 60px 0;">
+        @foreach (var profile in recommendations.Profiles)
+        {
+            if (profile.Results.Any())
+            {
+                <div class="recommendation-profile" style="margin-bottom: 60px;">
+                    <h2 style="font-size: 32px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 3px solid #446588; text-align: center;">
+                        @(profile.Display ?? "Recommended For You")
+                    </h2>
+                    
+                    <div class="product-grid">
+                        <div class="item-grid">
+                            @{
+                                var productModels = new List<ProductOverviewModel>();
+
+                                // Limit to 12 products per profile for homepage
+                                foreach (var item in profile.Results.Take(12))
+                                {
+                                    var product = await productService.GetProductBySkuAsync(item.Sku);
+                                    if (product == null)
+                                    {
+                                        product = await productService.GetProductBySkuAsync("+" + item.Sku);
+                                    }
+
+                                    if (product != null)
+                                    {
+                                        var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                            new[] { product },
+                                            true,
+                                            true);
+
+                                        var model = productOverviewModels.FirstOrDefault();
+                                        if (model != null)
+                                        {
+                                            productModels.Add(model);
+                                        }
+                                    }
+                                }
+
+                                foreach (var productModel in productModels)
+                                {
+                                    <div class="item-box">
+                                        @await Html.PartialAsync("_ProductBox", productModel)
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
