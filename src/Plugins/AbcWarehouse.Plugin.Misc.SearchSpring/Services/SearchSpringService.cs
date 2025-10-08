@@ -414,19 +414,30 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         {
                             foreach (var productElement in resultsElement.EnumerateArray())
                             {
-                                product = new RecommendedProduct
+                                product = new RecommendedProduct();
+
+                                if (productElement.TryGetProperty("id", out var idProp))
+                                    product.Id = idProp.GetString();
+
+                                // Dive into mappings.core
+                                if (productElement.TryGetProperty("mappings", out var mappingsProp) &&
+                                    mappingsProp.TryGetProperty("core", out var coreProp))
                                 {
-                                    Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : "",
-                                    Sku = productElement.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : "",
-                                    Name = productElement.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "",
-                                    Url = productElement.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "",
-                                    ImageUrl = productElement.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "",
-                                    Price = productElement.TryGetProperty("price", out var priceProp) ? priceProp.GetString() : "",
-                                    RetailPrice = productElement.TryGetProperty("retail_price", out var retailProp) ? retailProp.GetString() : "",
-                                    Brand = productElement.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "",
-                                    Category = productElement.TryGetProperty("category", out var catProp) ? catProp.GetString() : "",
-                                    ItemNumber = productElement.TryGetProperty("item_number", out var itemProp) ? itemProp.GetString() : ""
-                                };
+                                    product.Sku = coreProp.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : "";
+                                    product.Name = coreProp.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "";
+                                    product.Url = coreProp.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "";
+                                    product.ImageUrl = coreProp.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "";
+                                    product.Price = coreProp.TryGetProperty("price", out var priceProp) ? priceProp.GetDecimal().ToString("0.##") : "";
+                                    product.RetailPrice = coreProp.TryGetProperty("msrp", out var retailProp) ? retailProp.GetDecimal().ToString("0.##") : "";
+                                    product.Brand = coreProp.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "";
+                                }
+
+                                // Optional: handle attributes if needed
+                                if (productElement.TryGetProperty("attributes", out var attrProp) &&
+                                    attrProp.TryGetProperty("category", out var catProp))
+                                {
+                                    product.Category = catProp.GetString();
+                                }
 
                                 if (productElement.TryGetProperty("in_stock", out var stockProp))
                                 {
