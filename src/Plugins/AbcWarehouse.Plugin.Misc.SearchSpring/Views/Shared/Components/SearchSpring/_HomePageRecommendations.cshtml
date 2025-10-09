@@ -2,36 +2,64 @@
 @inject Nop.Services.Catalog.IProductService productService
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Nop.Core.IWorkContext workContext
+@inject Nop.Services.Logging.ILogger logger
 @using AbcWarehouse.Plugin.Misc.SearchSpring.Models
 @using Nop.Web.Models.Catalog
+@using Nop.Core.Domain.Logging
 
 @{
+    await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Starting recommendations fetch...");
+    
     // Get customer info for personalization
     var customer = await workContext.GetCurrentCustomerAsync();
     var shopperId = customer?.Id.ToString();
+    
+    await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Customer ID: {shopperId ?? "Anonymous"}");
 
     // You can customize these profile tags based on what you've configured in SearchSpring
     var recsRequest = new RecommendationsRequestModel
     {
-        Tags = "home",  // Change these to match your SearchSpring profiles
+        Tags = "trending,bestsellers",  // Change these to match your SearchSpring profiles
         Shopper = shopperId,
         Limits = "12,8",  // 12 trending, 8 bestsellers
         SiteId = "4lt84w"
     };
+    
+    await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Request Tags: {recsRequest.Tags}");
 
     RecommendationsResultModel recommendations = null;
     try
     {
         recommendations = await searchSpringService.GetRecommendationsAsync(recsRequest);
+        
+        if (recommendations == null)
+        {
+            await logger.InsertLogAsync(LogLevel.Warning, "[Homepage Recommendations] Service returned NULL");
+        }
+        else
+        {
+            await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Profiles count: {recommendations.Profiles.Count}");
+            
+            foreach (var profile in recommendations.Profiles)
+            {
+                await logger.InsertLogAsync(LogLevel.Information, 
+                    $"[Homepage Recommendations] Profile '{profile.Tag}': {profile.Results.Count} products");
+            }
+        }
     }
     catch (Exception ex)
     {
+        await logger.InsertLogAsync(LogLevel.Error, 
+            $"[Homepage Recommendations] ERROR: {ex.Message}", 
+            exception: ex);
         System.Diagnostics.Debug.WriteLine($"Homepage Recommendations error: {ex.Message}");
     }
 }
 
 @if (recommendations != null && recommendations.Profiles.Any())
 {
+    await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Rendering recommendations...");
+    
     <div class="homepage-recommendations-section" style="margin: 60px 0;">
         @foreach (var profile in recommendations.Profiles)
         {
@@ -46,6 +74,8 @@
                         <div class="item-grid">
                             @{
                                 var productModels = new List<ProductOverviewModel>();
+                                var foundCount = 0;
+                                var notFoundCount = 0;
 
                                 // Limit to 12 products per profile for homepage
                                 foreach (var item in profile.Results.Take(12))
@@ -58,6 +88,7 @@
 
                                     if (product != null)
                                     {
+                                        foundCount++;
                                         var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
                                             new[] { product },
                                             true,
@@ -69,7 +100,16 @@
                                             productModels.Add(model);
                                         }
                                     }
+                                    else
+                                    {
+                                        notFoundCount++;
+                                        await logger.InsertLogAsync(LogLevel.Warning, 
+                                            $"[Homepage Recommendations] Product not found for SKU: {item.Sku}");
+                                    }
                                 }
+                                
+                                await logger.InsertLogAsync(LogLevel.Information, 
+                                    $"[Homepage Recommendations] Profile '{profile.Tag}': Found {foundCount}, Not Found {notFoundCount}, Rendering {productModels.Count}");
 
                                 foreach (var productModel in productModels)
                                 {
@@ -84,4 +124,10 @@
             }
         }
     </div>
+    
+    await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Rendering complete!");
+}
+else
+{
+    await logger.InsertLogAsync(LogLevel.Warning, "[Homepage Recommendations] No recommendations to display");
 }
