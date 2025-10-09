@@ -50,8 +50,7 @@
     catch (Exception ex)
     {
         await logger.InsertLogAsync(LogLevel.Error, 
-            $"[Homepage Recommendations] ERROR: {ex.Message}", 
-            exception: ex);
+            $"[Homepage Recommendations] ERROR: {ex.Message}\nStackTrace: {ex.StackTrace}");
         System.Diagnostics.Debug.WriteLine($"Homepage Recommendations error: {ex.Message}");
     }
 }
