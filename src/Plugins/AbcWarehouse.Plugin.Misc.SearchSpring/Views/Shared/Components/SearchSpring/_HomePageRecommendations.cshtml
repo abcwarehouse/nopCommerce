@@ -38,7 +38,8 @@
         }
         else
         {
-            await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Profiles count: {recommendations.Profiles.Count}");
+            var serialized = JsonConvert.SerializeObject(recommendations, Formatting.Indented);
+            await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Homepage Full Response: {serialized}");
             
             foreach (var profile in recommendations.Profiles)
             {
