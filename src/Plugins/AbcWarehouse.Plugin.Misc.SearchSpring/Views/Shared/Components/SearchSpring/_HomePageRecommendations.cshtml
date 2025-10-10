@@ -45,7 +45,6 @@
             await logger.InsertLogAsync(LogLevel.Information, 
                 $"[Homepage Recommendations] Raw API Response: {json}");
 
-            // Then deserialize as usual
             var recommendations = JsonConvert.DeserializeObject<RecommendationsResponseModel>(json);
 
             
