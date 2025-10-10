@@ -38,16 +38,7 @@
             await logger.InsertLogAsync(LogLevel.Warning, "[Homepage Recommendations] Service returned NULL");
         }
         else
-        {
-            var response = await httpClient.GetAsync(url);
-            var json = await response.Content.ReadAsStringAsync();
-
-            await logger.InsertLogAsync(LogLevel.Information, 
-                $"[Homepage Recommendations] Raw API Response: {json}");
-
-            var recommendations = JsonConvert.DeserializeObject<RecommendationsResponseModel>(json);
-
-            
+        {            
             foreach (var profile in recommendations.Profiles)
             {
                 await logger.InsertLogAsync(LogLevel.Information, 
