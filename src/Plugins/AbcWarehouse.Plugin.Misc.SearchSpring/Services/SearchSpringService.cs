@@ -55,6 +55,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (!string.IsNullOrEmpty(userId))
                 queryParams.Add($"ss-userId={HttpUtility.UrlEncode(sessionId)}");
 
+            Console.WriteLine($"[SearchSpringService] UserId: {userId}");
+
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
 
