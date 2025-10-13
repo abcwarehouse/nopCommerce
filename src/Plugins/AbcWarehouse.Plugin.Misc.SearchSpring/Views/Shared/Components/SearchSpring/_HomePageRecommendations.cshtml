@@ -3,24 +3,80 @@
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Nop.Core.IWorkContext workContext
 @inject Nop.Services.Logging.ILogger logger
+@inject Nop.Services.Orders.IShoppingCartService shoppingCartService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @using AbcWarehouse.Plugin.Misc.SearchSpring.Models
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Logging
+@using Nop.Core.Domain.Orders
 @using Newtonsoft.Json
 
 @{    
+    var httpContext = httpContextAccessor.HttpContext;
+    
     // Get customer info for personalization
     var customer = await workContext.GetCurrentCustomerAsync();
     var shopperId = customer?.Id.ToString();
     
-    await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Customer ID: {shopperId ?? "Anonymous"}");
+    // Get session ID from cookie
+    string sessionId = null;
+    if (httpContext.Request.Cookies.TryGetValue("ss-sessionId", out var cookieSessionId))
+    {
+        sessionId = cookieSessionId;
+    }
+    else if (httpContext.Request.Cookies.TryGetValue("_ss_s", out var altSessionId))
+    {
+        sessionId = altSessionId;
+    }
+    
+    // Get recently viewed products from cookie
+    string lastViewed = null;
+    if (httpContext.Request.Cookies.TryGetValue("ss-recently-viewed", out var viewedProducts))
+    {
+        lastViewed = viewedProducts;
+    }
+    
+    // Get cart items
+    string cartItems = null;
+    try
+    {
+        if (customer != null)
+        {
+            var cart = await shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart);
+            if (cart != null && cart.Any())
+            {
+                var skus = new List<string>();
+                foreach (var item in cart)
+                {
+                    var product = await productService.GetProductByIdAsync(item.ProductId);
+                    if (product != null && !string.IsNullOrWhiteSpace(product.Sku))
+                    {
+                        skus.Add(product.Sku);
+                    }
+                }
+                if (skus.Any())
+                {
+                    cartItems = string.Join(",", skus);
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        await logger.InsertLogAsync(LogLevel.Error, $"[Homepage Recommendations] Error getting cart: {ex.Message}");
+    }
+    
+    await logger.InsertLogAsync(LogLevel.Information, 
+        $"[Homepage Recommendations] Customer ID: {shopperId ?? "Anonymous"}, Session: {sessionId ?? "None"}, LastViewed: {lastViewed ?? "None"}, Cart: {cartItems ?? "None"}");
 
-    // You can customize these profile tags based on what you've configured in SearchSpring
     var recsRequest = new RecommendationsRequestModel
     {
-        Tags = "home",  // Change these to match your SearchSpring profiles
+        Tags = "home",
         Shopper = shopperId,
-        Limits = "12,8",  // 12 trending, 8 bestsellers
+        SessionId = sessionId,
+        LastViewed = lastViewed,
+        Cart = cartItems,
+        Limits = "12,8",
         SiteId = "4lt84w"
     };
 
