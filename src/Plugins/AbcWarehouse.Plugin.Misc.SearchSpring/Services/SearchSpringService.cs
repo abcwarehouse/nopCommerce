@@ -359,6 +359,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (!string.IsNullOrWhiteSpace(request.Shopper))
                 queryParams.Add($"shopper={HttpUtility.UrlEncode(request.Shopper)}");
             
+            // Add session ID for personalization
+            if (!string.IsNullOrWhiteSpace(request.SessionId))
+                queryParams.Add($"sessionId={HttpUtility.UrlEncode(request.SessionId)}");
+            
             if (!string.IsNullOrWhiteSpace(request.Cart))
                 queryParams.Add($"cart={HttpUtility.UrlEncode(request.Cart)}");
             
@@ -378,6 +382,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             }
 
             var url = $"https://{siteId}.a.searchspring.io/boost/{siteId}/recommend?{string.Join("&", queryParams)}";
+
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring Recommendations] Request URL: {url}");
 
             var response = await client.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
@@ -399,7 +406,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                // ✅ Root is an array, not an object
                 if (root.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var profileElement in root.EnumerateArray())
@@ -419,7 +425,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                     Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : ""
                                 };
 
-                                // ✅ Dive into mappings.core
                                 if (productElement.TryGetProperty("mappings", out var mappingsProp) &&
                                     mappingsProp.TryGetProperty("core", out var coreProp))
                                 {
@@ -463,7 +468,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     $"[SearchSpring Recommendations] JSON Parsing failed: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 throw new Exception("Failed to parse SearchSpring Recommendations response.", ex);
             }
-
         }
 
         private bool IsKnownProperty(string propertyName)
