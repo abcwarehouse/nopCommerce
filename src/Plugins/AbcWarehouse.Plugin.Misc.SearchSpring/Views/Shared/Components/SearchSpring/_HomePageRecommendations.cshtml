@@ -50,14 +50,9 @@
     }
 }
 
-@await logger.InsertLogAsync(LogLevel.Information, 
-    $"[Homepage Recommendations] Profiles Count: {(recommendations?.Profiles?.Count ?? 0)}");
-
 @if (recommendations != null && recommendations.Profiles.Any())
-{
-    await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Rendering recommendations...");
-    
-    <div class="homepage-recommendations-section" style="margin: 60px 0;">
+{    
+    <div class="homepage-recommendations-section">
         @foreach (var profile in recommendations.Profiles)
         {
             if (profile.Results.Any())
@@ -75,7 +70,7 @@
                                 var notFoundCount = 0;
 
                                 // Limit to 12 products per profile for homepage
-                                foreach (var item in profile.Results.Take(4))
+                                foreach (var item in profile.Results.Take(5))
                                 {
                                     var product = await productService.GetProductBySkuAsync(item.Sku);
                                     if (product == null)
