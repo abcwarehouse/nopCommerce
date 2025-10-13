@@ -215,11 +215,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                // ENHANCED BANNER LOGGING
                 var bannersByPosition = new Dictionary<string, List<string>>();
-
-                await _logger.InsertLogAsync(LogLevel.Information,
-                    "[SearchSpring] ===== BANNER PARSING START =====");
 
                 if (root.TryGetProperty("merchandising", out var merchProp))
                 {

@@ -8,9 +8,7 @@
 @using Nop.Core.Domain.Logging
 @using Newtonsoft.Json
 
-@{
-    await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Starting recommendations fetch...");
-    
+@{    
     // Get customer info for personalization
     var customer = await workContext.GetCurrentCustomerAsync();
     var shopperId = customer?.Id.ToString();
@@ -25,8 +23,6 @@
         Limits = "12,8",  // 12 trending, 8 bestsellers
         SiteId = "4lt84w"
     };
-    
-    await logger.InsertLogAsync(LogLevel.Information, $"[Homepage Recommendations] Request Tags: {recsRequest.Tags}");
 
     RecommendationsResultModel recommendations = null;
     try
@@ -53,7 +49,6 @@
         System.Diagnostics.Debug.WriteLine($"Homepage Recommendations error: {ex.Message}");
     }
 }
-test test test test test test test test test test test test test test test test test test
 
 @await logger.InsertLogAsync(LogLevel.Information, 
     $"[Homepage Recommendations] Profiles Count: {(recommendations?.Profiles?.Count ?? 0)}");
@@ -80,7 +75,7 @@ test test test test test test test test test test test test test test test test 
                                 var notFoundCount = 0;
 
                                 // Limit to 12 products per profile for homepage
-                                foreach (var item in profile.Results.Take(12))
+                                foreach (var item in profile.Results.Take(4))
                                 {
                                     var product = await productService.GetProductBySkuAsync(item.Sku);
                                     if (product == null)
@@ -126,8 +121,6 @@ test test test test test test test test test test test test test test test test 
             }
         }
     </div>
-    
-    await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Rendering complete!");
 }
 else
 {
