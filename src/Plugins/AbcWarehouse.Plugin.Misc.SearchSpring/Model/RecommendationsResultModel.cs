@@ -42,6 +42,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Models
         public string Shopper { get; set; }
 
         /// <summary>
+        /// Session ID for tracking user behavior
+        /// Used for personalization for anonymous users
+        /// </summary>
+        public string SessionId { get; set; }
+
+        /// <summary>
         /// Comma-separated list of product IDs or SKUs in the shopper's cart
         /// Required for cart cross-sell
         /// </summary>
