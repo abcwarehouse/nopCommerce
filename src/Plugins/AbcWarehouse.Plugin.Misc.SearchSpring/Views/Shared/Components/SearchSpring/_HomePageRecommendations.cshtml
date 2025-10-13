@@ -54,6 +54,10 @@
     }
 }
 test test test test test test test test test test test test test test test test test test
+
+@await logger.InsertLogAsync(LogLevel.Information, 
+    $"[Homepage Recommendations] Profiles Count: {(recommendations?.Profiles?.Count ?? 0)}");
+
 @if (recommendations != null && recommendations.Profiles.Any())
 {
     await logger.InsertLogAsync(LogLevel.Information, "[Homepage Recommendations] Rendering recommendations...");

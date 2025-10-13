@@ -398,10 +398,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
 
-                // Parse the profiles array
-                if (root.ValueKind == JsonValueKind.Object && root.TryGetProperty("profiles", out var profilesElement))
+                // ✅ Root is an array, not an object
+                if (root.ValueKind == JsonValueKind.Array)
                 {
-                    foreach (var profileElement in profilesElement.EnumerateArray())
+                    foreach (var profileElement in root.EnumerateArray())
                     {
                         var profile = new RecommendationProfile
                         {
@@ -409,17 +409,16 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                             Display = profileElement.TryGetProperty("display", out var displayProp) ? displayProp.GetString() : ""
                         };
 
-                        // Parse results array
                         if (profileElement.TryGetProperty("results", out var resultsElement))
                         {
                             foreach (var productElement in resultsElement.EnumerateArray())
                             {
-                                product = new RecommendedProduct();
+                                var product = new RecommendedProduct
+                                {
+                                    Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : ""
+                                };
 
-                                if (productElement.TryGetProperty("id", out var idProp))
-                                    product.Id = idProp.GetString();
-
-                                // Dive into mappings.core
+                                // ✅ Dive into mappings.core
                                 if (productElement.TryGetProperty("mappings", out var mappingsProp) &&
                                     mappingsProp.TryGetProperty("core", out var coreProp))
                                 {
@@ -432,7 +431,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                     product.Brand = coreProp.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "";
                                 }
 
-                                // Optional: handle attributes if needed
+                                // Optional attributes
                                 if (productElement.TryGetProperty("attributes", out var attrProp) &&
                                     attrProp.TryGetProperty("category", out var catProp))
                                 {
@@ -444,15 +443,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                     product.InStock = stockProp.GetInt32();
                                 }
 
-                                // Store any additional properties
-                                foreach (var prop in productElement.EnumerateObject())
-                                {
-                                    if (!IsKnownProperty(prop.Name))
-                                    {
-                                        product.AdditionalData[prop.Name] = prop.Value.ToString();
-                                    }
-                                }
-
                                 profile.Results.Add(product);
                             }
                         }
@@ -461,21 +451,18 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                var responseContent = await response.Content.ReadAsStringAsync();
-                await _logger.InsertLogAsync(LogLevel.Information, "[SearchSpring rec product response]", responseContent);
-
-                using var docLog = JsonDocument.Parse(responseContent);
-
-                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring parse product]: {product}");
+                await _logger.InsertLogAsync(LogLevel.Information,
+                    $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profiles successfully.");
 
                 return result;
             }
             catch (Exception ex)
             {
-                await _logger.InsertLogAsync(LogLevel.Error, 
+                await _logger.InsertLogAsync(LogLevel.Error,
                     $"[SearchSpring Recommendations] JSON Parsing failed: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 throw new Exception("Failed to parse SearchSpring Recommendations response.", ex);
             }
+
         }
 
         private bool IsKnownProperty(string propertyName)
