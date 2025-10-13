@@ -53,9 +53,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 queryParams.Add($"ss-sessionId={HttpUtility.UrlEncode(sessionId)}");
 
             if (!string.IsNullOrEmpty(userId))
-                queryParams.Add($"ss-userId={HttpUtility.UrlEncode(sessionId)}");
+                queryParams.Add($"ss-shopperId={HttpUtility.UrlEncode(userId)}");
 
-            Console.WriteLine($"[SearchSpringService] UserId: {userId}");
+            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Shopper Id Check: {userId}");
 
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
