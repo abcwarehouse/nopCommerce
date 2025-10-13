@@ -1,0 +1,23 @@
+﻿@model AbcWarehouse.Plugin.Payments.UniFi.Models.PaymentInfoModel
+
+@{
+    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Payments.UniFi/scripts/unifi.js");
+}
+
+<input type="hidden" id="transactionToken" name="transactionToken" value="@Model.TransactionToken"/>
+<input type="hidden" id="tokenId" name="tokenId" value="@Model.TokenId" />
+<input type="hidden" id="syfPartnerId" name="syfPartnerId" value="@Model.PartnerId" />
+<input type="hidden" id="clientTransId" name="clientTransId" value="@Model.ClientTransactionId" />
+<input type="hidden" id="processInd" name="processInd" value="3" />
+<input type="hidden" id="custAddress1" name="custAddress1" value="@Model.Address1"/>
+<input type="hidden" id="custAddress2" name="custAddress2" value="@Model.Address2"/>
+<input type="hidden" id="custCity" name="custCity" value="@Model.City" />
+<input type="hidden" id="custState" name="custState" value="@Model.State" />
+<input type="hidden" id="custZipCode" name="custZipCode" value="@Model.Zip" />
+<input type="hidden" id="transAmount1" name="transAmount1" value="@Model.TransactionAmount" />
+<input type="hidden" id="productCategoryNames" name="productCategoryNames" value="@Model.Tags" />
+
+<input type="hidden" id="nextstep" name="nextstep" value="confirm" />
+
+<button class="button-1" type="button" id="checkouthtml" onclick="syfMPP.calldBuyProcess(document.querySelector('form[action=\'/checkout/paymentinfo\']'), null)">Pay Now with ABC Warehouse Card</button>
+<button style="display: none" class="button-1" type="button" id="synchrony-error-button" onclick="window.location.href = '/checkout/paymentmethod'">Back</button>

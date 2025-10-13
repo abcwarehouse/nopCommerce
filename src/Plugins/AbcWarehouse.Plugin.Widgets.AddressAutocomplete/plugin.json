@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Widget",
+  "FriendlyName": "Address Autocomplete",
+  "SystemName": "Widgets.AddressAutocomplete",
+  "Version": "4.40.0",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "Dave Farinelli",
+  "DisplayOrder": 1,
+  "FileName": "AbcWarehouse.Plugin.Widgets.AddressAutocomplete.dll",
+  "Description": "Adds address autocomplete to checkout process."
+}

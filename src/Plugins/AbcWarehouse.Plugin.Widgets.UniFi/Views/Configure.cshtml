@@ -1,0 +1,53 @@
+@model ConfigModel
+
+@using AbcWarehouse.Plugin.Widgets.UniFi.Models
+
+@{
+    Layout = "_ConfigurePlugin";
+}
+
+@await Component.InvokeAsync("StoreScopeConfiguration")
+
+<form asp-controller="UniFi" asp-action="Configure" method="post">
+	<div class="cards-group">
+		<div class="card card-default">
+			<div class="card-body">
+					<div class="form-group row">
+						<div class="col-md-3">
+							<nop-override-store-checkbox asp-for="IsEnabled_OverrideForStore" asp-input="IsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+							<nop-label asp-for="IsEnabled" />
+						</div>
+						<div class="col-md-9">
+							<nop-editor asp-for="IsEnabled" />
+							<span asp-validation-for="IsEnabled"></span>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-md-3">
+							<nop-override-store-checkbox asp-for="PartnerId_OverrideForStore" asp-input="PartnerId" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+							<nop-label asp-for="PartnerId" />
+						</div>
+						<div class="col-md-9">
+							<nop-editor asp-for="PartnerId" />
+							<span asp-validation-for="PartnerId"></span>
+						</div>
+					</div>
+					<div class="form-group row">
+						<div class="col-md-3">
+							<nop-override-store-checkbox asp-for="UseIntegration_OverrideForStore" asp-input="UseIntegration" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+							<nop-label asp-for="UseIntegration" />
+						</div>
+						<div class="col-md-9">
+							<nop-editor asp-for="UseIntegration" />
+							<span asp-validation-for="UseIntegration"></span>
+						</div>
+					</div>
+					<div class="form-group row">
+                        <div class="col-md-9 offset-md-3">
+                            <button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
+                        </div>
+					</div>
+				</div>
+			</div>			
+		</div>
+</form>
