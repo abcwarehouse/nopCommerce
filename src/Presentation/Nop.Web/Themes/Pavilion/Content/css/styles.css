@@ -10676,3 +10676,10 @@ body.storeId3 .header-lower {
 .storeId3 .header-links-wrapper label {
 	color: #fff !important;
 }
+
+@media screen and (max-width: 1024px) {
+    .storeId3 .header#header {
+        margin-top: -32px;
+        padding: 10px 0;
+    }
+}
