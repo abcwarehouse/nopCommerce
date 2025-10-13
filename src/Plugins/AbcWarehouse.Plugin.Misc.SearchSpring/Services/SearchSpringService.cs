@@ -52,6 +52,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (!string.IsNullOrEmpty(sessionId))
                 queryParams.Add($"ss-sessionId={HttpUtility.UrlEncode(sessionId)}");
 
+            if (!string.IsNullOrEmpty(userId))
+                queryParams.Add($"ss-userId={HttpUtility.UrlEncode(sessionId)}");
+
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
 
