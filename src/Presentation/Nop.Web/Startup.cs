@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Web.Framework.Infrastructure.Extensions;
-using LinqToDB.Data;
+
 
 namespace Nop.Web
 {
@@ -48,17 +48,11 @@ namespace Nop.Web
         /// Configure the application HTTP request pipeline
         /// </summary>
         /// <param name="application">Builder for configuring an application's request pipeline</param>
-
+      
 
 
         public void Configure(IApplicationBuilder application)
         {
-
-            // Set global LinqToDB command timeout (seconds).
-            // Temporary workaround for long-running queries in the admin
-            DataConnection.DefaultCommandTimeout = 120;
-
-
             // Add the Permissions-Policy header for geolocation
             application.Use(async (context, next) =>
             {
@@ -74,7 +68,7 @@ namespace Nop.Web
             application.ConfigureRequestPipeline();
             application.StartEngine();
         }
-
+        
 
     }
 }
