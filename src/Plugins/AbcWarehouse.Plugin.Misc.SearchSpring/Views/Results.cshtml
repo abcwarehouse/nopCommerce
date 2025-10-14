@@ -374,17 +374,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("✗ Geolocation FAILED!");
             console.error("Error code:", error.code);
             console.error("Error message:", error.message);
-            
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("Location permission denied. Please enable location access in your browser settings.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Location information unavailable.");
-                    break;
-                case error.TIMEOUT:
-                    alert("Location request timed out.");
-                    break;
             }
         },
         {
