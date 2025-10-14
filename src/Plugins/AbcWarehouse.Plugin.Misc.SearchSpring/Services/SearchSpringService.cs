@@ -17,7 +17,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
         private readonly ILogger _logger;
-        public RecommendedProduct product = new RecommendedProduct();
+        public RecommendedProduct Product = new RecommendedProduct();
 
         public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger)
         {

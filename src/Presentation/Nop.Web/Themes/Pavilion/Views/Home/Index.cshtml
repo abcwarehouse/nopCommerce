@@ -65,11 +65,12 @@
             <!-- ABC Homepage  -->
             <div class="page home-page">
                 <div class="page-body">
+                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
+                    @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })
+                    
                     <h2 class="">Personalized Reccomendations</h2>
                     @await Component.InvokeAsync("SearchSpringHomepageRecommendations")
 
-                    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
-                    @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })
                     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageBeforeCategories })
                     <div class="widget-min">@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomepageBeforeCategoriesBelow480px })</div>
                     <div class="widget-480">@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.HomepageBeforeCategoriesMin480px })</div>
