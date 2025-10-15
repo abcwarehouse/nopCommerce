@@ -8,7 +8,8 @@
     Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.autocomplete.min.js");
 }
 
-<div class="block blog-search-box">
+
+@* <div class="block blog-search-box">
     <div class="title">
         <strong>@T("SevenSpikes.RichBlog.Public.Search.BlockTitle")</strong>
     </div>
@@ -18,7 +19,7 @@
             <button class="search-box-button" type="submit">@T("SevenSpikes.RichBlog.Public.Search.SearchButton")</button>
         </form>
     </div>
-</div>
+</div> *@
 
 <script asp-location="Footer">
     $(document).ready(function () {
