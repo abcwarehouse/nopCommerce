@@ -9954,7 +9954,11 @@ body .search-spring-container {
 	top: -13px !important;
 }
 
-
+@media screen and (max-width: 1024px) {
+	body.storeId3 .master-wrapper-page .mobile-header-content-row {
+		height: 51px !important;
+	}
+}
 
 li.mega-menu-categories.abc-merch-button {
 	display: none;
@@ -10016,7 +10020,11 @@ li.mega-menu-categories.abc-merch-button {
 	}
 }
 
-
+@media screen and (max-width: 1024px) {
+	body.storeId3 .master-wrapper-page .mobile-header-content-row {
+		height: 71px;
+	}
+}
 
 @media screen and (max-width: 1024px) {
 	.storeId3 .elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
@@ -10596,7 +10604,9 @@ div#header {
 	}
 }
 
-
+.two-columns-area {
+	margin: 175px 0 0 0 !important;
+}
 
 body.storeId3 .header-lower {
 	background-color: #fff;
@@ -10675,6 +10685,10 @@ body.storeId3 .header-lower {
 
 .storeId3 .header-links-wrapper label {
 	color: #fff !important;
+}
+
+.storeId3 .block.blog-search-box {
+    display: none;
 }
 
 @media screen and (max-width: 1024px) {
