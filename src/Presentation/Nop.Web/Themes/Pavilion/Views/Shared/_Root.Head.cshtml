@@ -423,13 +423,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // --- 3. Track checkout/purchase (fires on order completed page) ---
+            // --- 3. Track checkout/purchase ---
             if (window.location.href.toLowerCase().includes("/checkout/completed")) {
                 const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
                 sendBeacon("purchase", { orderNumber });
             }
         })();
     </script>
+
 
 </head>
 
