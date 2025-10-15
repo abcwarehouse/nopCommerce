@@ -14,12 +14,6 @@
 
     const string quickTabsBlockAttributeName = "ProductPage.SS.QuickTabs";
     var hideQuickTabsBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), quickTabsBlockAttributeName, defaultValue: true);
-
-    // Explicitly add Kendo.All as we use Kendo Grid and it is not present in Kendo.CoreUI
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Scripts/lib/kendo/2020.1.406/js/kendo.all.min.js");
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Scripts/admin.core.min.js");
-
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Core/Areas/Admin/Content/Styles/adminstyles.css");
 }
 
 <nop-card asp-name="product-quick-tabs" asp-icon="fa fa-link" asp-title="@T("SevenSpikes.NopQuickTabs.Admin.NopProductsTabTitle")" asp-hide-block-attribute-name="@quickTabsBlockAttributeName" asp-hide="@hideQuickTabsBlock" asp-advanced="false">
@@ -53,47 +47,49 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-										@await Html.PartialAsync("Table", new DataTablesModel
-										{
-											Name = "product-specific-tabs-grid",
-											UrlRead = new DataUrl("ListProductSpecificTabs", "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
-											UrlDelete = new DataUrl("DeleteProductSpecificTabs", "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
-											UrlUpdate = new DataUrl("UpdateTabs",  "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
-											Length = defaultGridPageSize,
-											LengthMenu = gridPageSizes,
-											ColumnCollection = new List<ColumnProperty>
+										@{
+											await Html.RenderPartialAsync("Table", new DataTablesModel
 											{
-												new ColumnProperty(nameof(TabModel.SystemName))
+												Name = "product-specific-tabs-grid",
+												UrlRead = new DataUrl("ListProductSpecificTabs", "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
+												UrlDelete = new DataUrl("DeleteProductSpecificTabs", "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
+												UrlUpdate = new DataUrl("UpdateTabs",  "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
+												Length = defaultGridPageSize,
+												LengthMenu = gridPageSizes,
+												ColumnCollection = new List<ColumnProperty>
 												{
-													Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.SystemName").Text
-												},
-												new ColumnProperty(nameof(TabModel.DisplayName))
-												{
-													Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.DisplayName").Text
-												},
-												new ColumnProperty(nameof(TabModel.DisplayOrder))
-												{
-													Title = T("SevenSpikes.NopQuickTabs.Admin.ProductTabs.Fields.DisplayOrder").Text,
-													Editable = true,
-													EditType = EditType.Number
-												},
-												new ColumnProperty(nameof(TabModel.Id))
-												{
-													Width = "200",
-													Render = new RenderCustom("renderEditButton")
-												},
-												new ColumnProperty(nameof(TabModel.Id))
-												{
-													Width = "200",
-													Render = new RenderButtonsInlineEdit()
-												},
-												new ColumnProperty(nameof(TabModel.Id))
-												{
-													Width = "200",
-													Render = new RenderButtonRemove(T("Admin.Common.Delete").Text)
+													new ColumnProperty(nameof(TabModel.SystemName))
+													{
+														Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.SystemName").Text
+													},
+													new ColumnProperty(nameof(TabModel.DisplayName))
+													{
+														Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.DisplayName").Text
+													},
+													new ColumnProperty(nameof(TabModel.DisplayOrder))
+													{
+														Title = T("SevenSpikes.NopQuickTabs.Admin.ProductTabs.Fields.DisplayOrder").Text,
+														Editable = true,
+														EditType = EditType.Number
+													},
+													new ColumnProperty(nameof(TabModel.Id))
+													{
+														Width = "200",
+														Render = new RenderCustom("renderEditButton")
+													},
+													new ColumnProperty(nameof(TabModel.Id))
+													{
+														Width = "200",
+														Render = new RenderButtonsInlineEdit()
+													},
+													new ColumnProperty(nameof(TabModel.Id))
+													{
+														Width = "200",
+														Render = new RenderButtonRemove(T("Admin.Common.Delete").Text)
+													}
 												}
-											}
-										})
+											});
+										}
                                     </div>
                                 </div>
                             </div>
@@ -105,41 +101,43 @@
                                         </div>
                                     </div>
                                     <div class="card-body">
-										@await Html.PartialAsync("Table", new DataTablesModel
-										{
-											Name = "shared-tabs-grid",
-											UrlRead = new DataUrl("ListSharedTabs", "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
-											UrlUpdate = new DataUrl("UpdateSharedTabs",  "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
-											Length = defaultGridPageSize,
-											LengthMenu = gridPageSizes,
-											ColumnCollection = new List<ColumnProperty>
+										@{
+											await Html.RenderPartialAsync("Table", new DataTablesModel
 											{
-												new ColumnProperty(nameof(TabModel.SystemName))
+												Name = "shared-tabs-grid",
+												UrlRead = new DataUrl("ListSharedTabs", "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
+												UrlUpdate = new DataUrl("UpdateSharedTabs",  "ProductTabAdmin", new RouteValueDictionary { ["productId"] = productId }),
+												Length = defaultGridPageSize,
+												LengthMenu = gridPageSizes,
+												ColumnCollection = new List<ColumnProperty>
 												{
-													Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.SystemName").Text
-												},
-												new ColumnProperty(nameof(TabModel.DisplayName))
-												{
-													Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.DisplayName").Text
-												},
-												new ColumnProperty(nameof(TabModel.DisplayOrder))
-												{
-													Title = T("SevenSpikes.NopQuickTabs.Admin.ProductTabs.Fields.DisplayOrder").Text,
-													Editable = true,
-													EditType = EditType.Number
-												},
-												new ColumnProperty(nameof(TabModel.Id))
-												{
-													Width = "200",
-													Render = new RenderCustom("renderEditButton")
-												},
-												new ColumnProperty(nameof(TabModel.Id))
-												{
-													Width = "200",
-													Render = new RenderButtonsInlineEdit()
-												},
-											}
-										})
+													new ColumnProperty(nameof(TabModel.SystemName))
+													{
+														Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.SystemName").Text
+													},
+													new ColumnProperty(nameof(TabModel.DisplayName))
+													{
+														Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.DisplayName").Text
+													},
+													new ColumnProperty(nameof(TabModel.DisplayOrder))
+													{
+														Title = T("SevenSpikes.NopQuickTabs.Admin.ProductTabs.Fields.DisplayOrder").Text,
+														Editable = true,
+														EditType = EditType.Number
+													},
+													new ColumnProperty(nameof(TabModel.Id))
+													{
+														Width = "200",
+														Render = new RenderCustom("renderEditButton")
+													},
+													new ColumnProperty(nameof(TabModel.Id))
+													{
+														Width = "200",
+														Render = new RenderButtonsInlineEdit()
+													},
+												}
+											});
+										}
                                     </div>
                                 </div>
                             </div>

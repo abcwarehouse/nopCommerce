@@ -5,15 +5,16 @@
 }
 
 @{
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.ProductRibbons/Areas/Admin/Content/Styles/adminstyles.css");
-
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Nop.Plugins.ProductRibbons/Areas/Admin/Content/Scripts/ProductRibbonsAdmin.min.js");
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js");
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Scripts/jquery.livequery.min.js");
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
-
-    Html.SetActiveMenuItemSystemName("SevenSpikes.ProductRibbons.Admin.Submenus.ProductRibbons");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.ProductRibbons.Admin.Submenus.ProductRibbons");
 }
+
+<link rel="stylesheet" href="~/Plugins/SevenSpikes.Nop.Plugins.ProductRibbons/Areas/Admin/Content/Styles/adminstyles.css" />
+
+<script src="~/js/admin.table.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.ProductRibbons/Areas/Admin/Content/Scripts/ProductRibbonsAdmin.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Core/Scripts/jquery.livequery.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
 
 <form method="post" id="ribbon-form">
     <nop-antiforgery-token />
@@ -33,7 +34,7 @@
             </button>
         </div>
     </div>
-    @await Html.PartialAsync("_CreateOrUpdate", Model)
+    @{ await Html.RenderPartialAsync("_CreateOrUpdate", Model); }
 </form>
 
 <div id="ribbon-data" data-setRibbonPictureUrl="@Url.Action("SelectRibbonPicture", "ProductRibbonsAdmin")" data-noPictureLabelText="@T("SevenSpikes.ProductRibbons.Admin.RibbonPicture.NoPicture")"></div>

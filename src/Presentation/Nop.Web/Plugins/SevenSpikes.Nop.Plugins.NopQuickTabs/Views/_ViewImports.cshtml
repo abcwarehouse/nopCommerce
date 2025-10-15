@@ -1,4 +1,7 @@
 ﻿@inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>
+
+@inject INopHtmlHelper NopHtml
+
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Nop.Web.Framework
 
@@ -6,6 +9,7 @@
 @using Microsoft.AspNetCore.Html
 @using System.Text.Encodings.Web
 
+@using Nop.Core.Domain.Security
 @using Nop.Web.Framework.UI
 @using Nop.Web.Framework.Extensions
 @using Nop.Web.Models.Catalog;

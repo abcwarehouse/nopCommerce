@@ -1,7 +1,7 @@
 ﻿using EllaSoftware.Plugin.Misc.CronTasks.Services;
 using Nop.Services.Events;
 using Nop.Services.Localization;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Web.Areas.Admin.Models.Tasks;
 using Nop.Web.Framework.Events;
 using Nop.Web.Framework.Models;

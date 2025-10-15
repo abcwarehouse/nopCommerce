@@ -4,7 +4,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Configuration.Languages.EditLanguageDetails").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Languages");
+    NopHtml.SetActiveMenuItemSystemName("Languages");
 }
 
 
@@ -19,11 +19,11 @@
         </h1>
         <div class="float-right">
             <button type="submit" name="save" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.Save")
             </button>
             <button type="submit" name="save-continue" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
             <a asp-action="ExportXml" asp-route-id="@Model.Id" class="btn btn-success">
@@ -35,10 +35,10 @@
                 @T("Admin.Configuration.Languages.Import")
             </button>
             <span id="language-delete" class="btn btn-danger">
-                <i class="far fa-trash-alt"></i>
+                <i class="far fa-trash-can"></i>
                 @T("Admin.Common.Delete")
             </span>
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.LanguageDetailsButtons, additionalData = Model })
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.LanguageDetailsButtons, additionalData = Model })
         </div>
     </div>
     @await Html.PartialAsync("_CreateOrUpdate", Model)

@@ -1,7 +1,7 @@
 // Calls clearance stock backend to determine which clearance items are
 // associated to which stores for PLP filter
 using Nop.Plugin.Misc.AbcCore;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using System.Data;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Plugin.Misc.AbcCore.Services;

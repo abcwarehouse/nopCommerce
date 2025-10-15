@@ -1,12 +1,4 @@
-﻿@{
-    var kendoVersion = "2020.1.406";
-
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.core.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.data.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.popup.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.list.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.autocomplete.min.js");
-}
+﻿<script src="~/Plugins/SevenSpikes.Core/Scripts/lib/kendo/2024.1.130/js/kendo.public.min.js" asp-location="Footer"></script>
 
 <div class="block blog-search-box">
     <div class="title">
@@ -20,7 +12,7 @@
     </div>
 </div>
 
-<script asp-location="Footer">
+<script type="text/javascript" asp-location="Footer">
     $(document).ready(function () {
         $("#rich-blog-searchterms").kendoAutoComplete({
             highlightFirst: false,
@@ -45,9 +37,6 @@
                 requestStart: function (e) {
                     $("#rich-blog-searchterms").addClass("rich-blog-search-busy");
                 },
-                requestEnd: function (e) {
-                    e.response.push({ Title: '@T("SevenSpikes.RichBlog.Public.Search.AdvancedSearchFor") "' + $('#rich-blog-searchterms').val() + '"', Id: 0 });
-                },
                 change: function (e) {
                     $("#rich-blog-searchterms").removeClass("rich-blog-search-busy");
                 },
@@ -58,6 +47,7 @@
                     }
                 }
             }),
+            noDataTemplate: "@T("SevenSpikes.RichBlog.Public.Search.NoResults")",
             change: function () {
                 var selected = $(".k-list").find(".k-state-selected");
                 var url = selected.find('.rich-blog-search-item').attr('data-url');

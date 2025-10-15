@@ -86,6 +86,9 @@
 /* GLOBAL FORMS */
 /* GLOBAL TABLES */
 
+.cart .product-picture img {
+	max-width: none;
+}
 .cart .subtotal {
     white-space: nowrap;
 }
@@ -383,6 +386,10 @@
 }
 .home-page-body .category-navigation-title {
 	cursor: auto;
+}
+.home-page-body:has(.slider-fullwidth)
+.category-navigation-title {
+	cursor: pointer;
 }
 .category-navigation-list-wrapper {
 	position: absolute;
@@ -955,7 +962,7 @@
 /* PRODUCT PAGE */
 
 .product-essential {
-	padding: 30px;
+	padding: 35px;
 }
 .gallery {
 	width: 44%;
@@ -963,7 +970,6 @@
 .gallery .thumb-item {
 	width: 23%;
 	height: 80px;
-	margin: 0 1% 10px;
 }
 .overview {
 	width: 54%;
@@ -1291,6 +1297,9 @@
 	width: 40%;
 	margin-right: auto;
 }
+#opc-confirm_order .captcha-box {
+	justify-content: flex-end;
+}
 #opc-confirm_order div.buttons {
 	text-align: left;
 }
@@ -1330,6 +1339,10 @@
 .new-comment textarea {
 	display: block;
 	margin: auto;
+}
+.new-comment textarea ~.required {
+	position: absolute;
+	top: 0; left: 0;
 }
 
 /* FORUM & PROFILE */

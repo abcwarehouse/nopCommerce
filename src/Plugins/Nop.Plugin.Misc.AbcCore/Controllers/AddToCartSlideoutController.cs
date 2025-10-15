@@ -81,7 +81,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId.Value);
                 
             // get 5 closest based on zip code
-            var coords = _geocodeService.GeocodeZip(zip);
+            var coords = await _geocodeService.GeocodeZipAsync(zip);
             if (stockResponse == null)
             {
                 stockResponse = new StockResponse();
@@ -95,14 +95,16 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                     .Take(5).ToList();
             }
             
-            return Json(new {
+            return Json(new
+            {
                 isDeliveryAvailable = await _deliveryService.CheckZipcodeAsync(zip),
                 isFedExAvailable = await HasFedExProductAttributeAsync(productId.Value),
-                pickupInStoreHtml = await RenderViewComponentToStringAsync(
-                    "CartSlideoutPickupInStore",
-                    new {
-                        productStock = stockResponse.ProductStocks
-                    })
+                // commented out since we have circular dependency issues with view component
+                // pickupInStoreHtml = await RenderViewComponentToStringAsync(
+                //     "CartSlideoutPickupInStore",
+                //     new {
+                //         productStock = stockResponse.ProductStocks
+                //     })
             });
         }
 
@@ -118,7 +120,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             var shoppingCartItem = shoppingCart.FirstOrDefault(sci => sci.Id == shoppingCartItemId);
             var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
-            var slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M);
+            CartSlideoutInfo slideoutInfo = new CartSlideoutInfo();//await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M);
 
             return Json(new
             {
@@ -151,7 +153,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                 }
             }
 
-            var slideoutInfo = await GetSlideoutInfoAsync(product, sci, customerEnteredPrice);
+            CartSlideoutInfo slideoutInfo = new CartSlideoutInfo(); // await GetSlideoutInfoAsync(product, sci, customerEnteredPrice);
 
             return Json(new
             {
@@ -167,35 +169,35 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             return Math.Pow(Math.Pow(lat1 - lat2, 2) + Math.Pow(lng1 - lng2, 2), 0.5);
         }
 
-        private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(
-            Product product,
-            ShoppingCartItem sci,
-            decimal customerEnteredPrice)
-        {
-            var productId = product.Id;
+        // private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(
+        //     Product product,
+        //     ShoppingCartItem sci,
+        //     decimal customerEnteredPrice)
+        // {
+        //     var productId = product.Id;
 
-            return new CartSlideoutInfo() {
-                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId, customerEnteredPrice = customerEnteredPrice } ),
-                DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
-                    "CartSlideoutProductAttributes",
-                    new {
-                        product = product,
-                        includedAttributeNames = new string[]
-                        {
-                            AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
-                            AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
-                            AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
-                            "Warranty",
-                            AbcDeliveryConsts.DeliveryAccessoriesProductAttributeName,
-                            AbcDeliveryConsts.DeliveryInstallAccessoriesProductAttributeName,
-                            AbcDeliveryConsts.PickupAccessoriesProductAttributeName,
-                        },
-                        updateCartItem = sci
-                    }),
-                ShoppingCartItemId = sci.Id,
-                ProductId = productId
-            };
-        }
+        //     return new CartSlideoutInfo() {
+        //         ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId, customerEnteredPrice = customerEnteredPrice } ),
+        //         DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
+        //             "CartSlideoutProductAttributes",
+        //             new {
+        //                 product = product,
+        //                 includedAttributeNames = new string[]
+        //                 {
+        //                     AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
+        //                     AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
+        //                     AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
+        //                     "Warranty",
+        //                     AbcDeliveryConsts.DeliveryAccessoriesProductAttributeName,
+        //                     AbcDeliveryConsts.DeliveryInstallAccessoriesProductAttributeName,
+        //                     AbcDeliveryConsts.PickupAccessoriesProductAttributeName,
+        //                 },
+        //                 updateCartItem = sci
+        //             }),
+        //         ShoppingCartItemId = sci.Id,
+        //         ProductId = productId
+        //     };
+        // }
 
         private async Task<bool> HasFedExProductAttributeAsync(int productId)
         {
