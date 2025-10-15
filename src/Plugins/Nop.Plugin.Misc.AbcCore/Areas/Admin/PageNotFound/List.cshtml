@@ -8,6 +8,7 @@
 @using Nop.Services.Common
 @using Nop.Core
 
+@inject INopHtmlHelper NopHtml
 @inject IGenericAttributeService genericAttributeService
 @inject IWorkContext workContext
 
@@ -18,7 +19,7 @@
     //page title
     ViewBag.PageTitle = "Page Not Found List";
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("AbcWarehouse.PageNotFound");
+    NopHtml.SetActiveMenuItemSystemName("AbcWarehouse.PageNotFound");
 
     Layout = "_AdminLayout";
 }

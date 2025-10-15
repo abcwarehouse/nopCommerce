@@ -1,35 +1,38 @@
-﻿using System.Collections.Generic;
-using Nop.Core;
-using Nop.Data;
-using Nop.Services.Common;
-using Nop.Services.Localization;
-using Nop.Services.Plugins;
-using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using Nop.Web.Framework.Menu;
-using Microsoft.AspNetCore.Routing;
 using System.Linq;
 using System.Threading.Tasks;
-using Nop.Services.Cms;
-using Nop.Web.Framework.Infrastructure;
-using Nop.Services.Events;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
+using Nop.Core;
+using Nop.Core.Caching;
 using Nop.Core.Events;
 using Nop.Core.Domain.Catalog;
-using Nop.Services.Media;
-using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Core.Infrastructure;
-using Nop.Services.Logging;
-using SevenSpikes.Nop.Plugins.HtmlWidgets.Domain;
-using Nop.Core.Caching;
-using Nop.Plugin.Misc.AbcCore.Tasks;
-using Nop.Services.ScheduleTasks;
+using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Components;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Plugin.Misc.AbcCore.Tasks;
+using Nop.Services.Cms;
+using Nop.Services.Common;
+using Nop.Services.Events;
+using Nop.Services.Localization;
+using Nop.Services.Logging;
+using Nop.Services.Media;
+using Nop.Services.Plugins;
+using Nop.Services.ScheduleTasks;
+using Nop.Web.Framework.Events;
+using Nop.Web.Framework.Infrastructure;
+using Nop.Web.Framework.Menu;
+using SevenSpikes.Nop.Plugins.HtmlWidgets.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore
 {
     public class CorePlugin : BasePlugin, IMiscPlugin, IWidgetPlugin,
         IConsumer<EntityDeletedEvent<ProductPicture>>,
-        IConsumer<EntityUpdatedEvent<HtmlWidget>>
+        IConsumer<EntityUpdatedEvent<HtmlWidget>>,
+        IConsumer<AdminMenuCreatedEvent>
     {
         private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
@@ -134,58 +137,63 @@ namespace Nop.Plugin.Misc.AbcCore
             await _nopDataProvider.ExecuteNonQueryAsync(updateAbcPromosStoredProcScript);
         }
 
-        public System.Threading.Tasks.Task ManageSiteMapAsync(AdminMenuItem rootNode)
+        // https://docs.nopcommerce.com/en/developer/plugins/menu-item.html
+        public Task HandleEventAsync(AdminMenuCreatedEvent eventMessage)
         {
-            return System.Threading.Tasks.Task.Run(() => 
-            {
-                var rootMenuItem = new AdminMenuItem()
+            eventMessage.RootMenuItem.InsertBefore("All plugins and themes",
+                new AdminMenuItem
                 {
                     SystemName = "ABCWarehouse",
                     Title = "ABC Warehouse",
+                    IconClass = "far fa-dot-circle",
                     Visible = true,
-                    //RouteValues = new RouteValueDictionary() { { "area", "Admin" } },
-                    ChildNodes = new List<AdminMenuItem>()
+                    ChildNodes = new List<AdminMenuItem>
                     {
-                        new AdminMenuItem()
+                        new()
                         {
                             SystemName = "ABCWarehouse.Promos",
                             Title = "Promos",
-                            Visible = true,
-                            Url = "AbcPromo/List"
+                            Url = eventMessage.GetMenuItemUrl("AbcPromo", "List"),
+                            IconClass = "far fa-dot-circle",
+                            Visible = true
                         },
-                        new AdminMenuItem()
+                        new()
                         {
                             SystemName = "ABCWarehouse.MissingImageProducts",
                             Title = "Missing Image Products",
-                            Visible = true,
-                            Url = "MissingImageProducts/List",
+                            Url = eventMessage.GetMenuItemUrl("MissingImageProducts", "List"),
+                            IconClass = "far fa-dot-circle",
+                            Visible = true
                         },
-                        new AdminMenuItem()
+                        new()
                         {
                             SystemName = "ABCWarehouse.NewProducts",
                             Title = "New Products",
-                            Visible = true,
-                            Url  = "NewProduct/List"
+                            Url = eventMessage.GetMenuItemUrl("NewProduct", "List"),
+                            IconClass = "far fa-dot-circle",
+                            Visible = true
                         },
-                        new AdminMenuItem()
+                        new()
                         {
                             SystemName = "ABCWarehouse.PageNotFound",
                             Title = "Page Not Found List",
-                            Visible = true,
-                            Url = "PageNotFound/List"
+                            Url = eventMessage.GetMenuItemUrl("PageNotFound", "List"),
+                            IconClass = "far fa-dot-circle",
+                            Visible = true
                         },
-                        new AdminMenuItem()
+                        new()
                         {
                             SystemName = "ABCWarehouse.PageNotFoundFreq",
                             Title = "Page Not Found Frequency",
-                            Visible = true,
-                            Url = "PageNotFound/Frequency"
+                            Url = eventMessage.GetMenuItemUrl("PageNotFound", "Frequency"),
+                            IconClass = "far fa-dot-circle",
+                            Visible = true
                         }
                     }
-                };
+                }
+            );
 
-                rootNode.ChildNodes.Add(rootMenuItem);
-            });
+            return Task.CompletedTask;
         }
     }
 }

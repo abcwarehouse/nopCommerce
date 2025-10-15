@@ -17,7 +17,7 @@ using Nop.Web.Framework.Menu;
 
 namespace EllaSoftware.Plugin.Misc.CronTasks
 {
-    public class CronTasksPlugin : BasePlugin, IWidgetPlugin
+    public class CronTasksPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
     {
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
