@@ -1,26 +1,26 @@
-﻿using Nop.Core.Infrastructure.DependencyManagement;
-using System;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
-using Autofac;
 using Nop.Plugin.Misc.AbcExportOrder.Services;
 using Nop.Services.Orders;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Nop.Plugin.Misc.AbcExportOrder
 {
-    class NopStartup : INopStartup
+    public class NopStartup : INopStartup
     {
-        public int Order { get { return 1; } }
+        public int Order => 1;
 
-        public void Register(
-               IServiceCollection services,
-               ITypeFinder typeFinder,
-               AppSettings appSettings
-        ) {
+        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
             services.AddScoped<IIsamOrderService, IsamOrderService>();
-            services.AddScoped<ICustomOrderService, CustomOrderService>();
             services.AddScoped<IYahooService, YahooService>();
+        }
+
+        public void Configure(IApplicationBuilder application)
+        {
+            // No middleware configuration needed for this plugin
         }
     }
 }

@@ -1,48 +1,37 @@
-﻿using Autofac;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Plugin.Misc.AbcCore.Delivery;
-using Nop.Plugin.Misc.AbcCore.HomeDelivery;
-using Nop.Plugin.Misc.AbcCore.Services;
-using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using Nop.Plugin.Misc.AbcCore.Factories;
+using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Nop;
-using Nop.Web.Factories;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Plugin.Misc.AbcCore.Services.Custom;
+using Nop.Services.Catalog;
+using Nop.Services.Logging;
 using Nop.Services.Media.RoxyFileman;
 using Nop.Services.Orders;
 using Nop.Services.Shipping;
-using Nop.Services.Logging;
-using SevenSpikes.Nop.Services.Catalog;
-using Nop.Services.Catalog;
-using ICategoryModelFactory = Nop.Web.Areas.Admin.Factories.ICategoryModelFactory;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Nop.Services.Messages;
+using Nop.Web.Factories;
 using Nop.Web.Framework.Infrastructure.Extensions;
+using SevenSpikes.Nop.Services.Catalog;
+using ICategoryModelFactory = Nop.Web.Areas.Admin.Factories.ICategoryModelFactory;
+using Task = System.Threading.Tasks.Task;
 
 namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
     public class NopStartup : INopStartup
     {
+        public int Order => int.MaxValue;
+
         public void Configure(IApplicationBuilder application)
         {
-            // Add the Permissions-Policy header for geolocation
-            application.Use(async (context, next) =>
-            {
-                context.Response.OnStarting(() =>
-                {
-                    // Allow geolocation from your own site
-                    context.Response.Headers["Permissions-Policy"] = "geolocation=(self)";
-                    return Task.CompletedTask;
-                });
-
-                await next();
-            });
+            application.UseMiddleware<PermissionsPolicyMiddleware>();
         }
         
-        public int Order => int.MaxValue;
 
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
@@ -90,6 +79,8 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             services.AddScoped<IAbcExportManager, AbcExportManager>();
             // Overrides AJAX filter functionality
             services.AddScoped<IManufacturerService7Spikes, AbcManufacturerService7Spikes>();
+
+            services.AddScoped<IAbcOrderService, AbcOrderService>();
         }
     }
 }

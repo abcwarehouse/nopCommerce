@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nop.Plugin.Misc.AbcExportOrder.Services
+namespace Nop.Plugin.Misc.AbcCore.Services.Custom
 {
     public interface IAbcOrderService : IOrderService
     {
