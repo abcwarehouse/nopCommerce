@@ -10643,17 +10643,9 @@ body.storeId3 .header-lower {
 		margin: 175px 0;
 	}
 
-	body.storeId3.catalog-category .header-lower {
-		padding-top: 70px;
-	}
-
 	.search-query {
 		display: flex !important;
 		justify-content: center;
-	}
-
-	.storeId3 .master-wrapper-content {
-		margin-top: 115px !important;
 	}
 
 	.storeId3.home-index .master-wrapper-content {
