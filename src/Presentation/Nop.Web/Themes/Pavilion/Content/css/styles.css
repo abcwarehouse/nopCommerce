@@ -10694,13 +10694,8 @@ padding: 40px 10px;
 }
 
 
-@media screen and (max-width: 1024px) {
-body.storeId3 .search-spring-container {
-    top: -33px !important;
-}
-    body.storeId3 .master-wrapper-page .mobile-header-content-row {
-        height: 71px !important;
-    }
+
+
 body .autocomplete-list {
         border-color: #35699a;
         margin-top: 0px;
