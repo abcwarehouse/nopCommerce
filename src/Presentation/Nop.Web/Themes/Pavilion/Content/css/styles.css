@@ -437,6 +437,7 @@ div#header {
 		position: absolute;
 		top: 0;
 		height: auto;
+		z-index: 999999;
 	}
 
 	.mobile-sidebar-title {

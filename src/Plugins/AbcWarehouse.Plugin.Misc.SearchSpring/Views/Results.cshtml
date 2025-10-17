@@ -176,8 +176,6 @@ else
     
     
     <div class="products-wrapper">
-        <h1>Test Recommendations</h1>
-        <div id="test-recommendations"></div>
         <div class="product-grid">
             <div class="item-grid">
                 @{
@@ -336,12 +334,16 @@ else
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const toggleBtn = document.getElementById("filterToggle");
+        // Use querySelectorAll to get ALL filter toggle buttons
+        const toggleBtns = document.querySelectorAll(".mobile-filter-btn");
         const closeBtn = document.getElementById("closeSidebar");
         const sidebar = document.querySelector(".mobile-filter-wrapper");
 
-        toggleBtn.addEventListener("click", function () {
-            sidebar.classList.toggle("active");
+        // Attach click event to ALL toggle buttons
+        toggleBtns.forEach(function(toggleBtn) {
+            toggleBtn.addEventListener("click", function () {
+                sidebar.classList.toggle("active");
+            });
         });
 
         closeBtn.addEventListener("click", function () {
