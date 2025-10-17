@@ -9828,16 +9828,6 @@ a.us-ap-button {
 }
 
 @media screen and (max-width: 1024px) {
-
-	.product-productdetails.storeId3 .hours-desktop,
-	.catalog7spikes-ajaxfilterssearch.storeId3 .hours-desktop,
-	.shoppingcart-cart.storeId3 .hours-desktop,
-	.catalog-manufacturer.storeId3 .hours-desktop {
-		margin-bottom: 70px !important;
-	}
-}
-
-@media screen and (max-width: 1024px) {
 	.storeId3 .hours-desktop {
 		margin-left: 40%;
 	}
@@ -9919,14 +9909,6 @@ body .autocomplete-list {
 	}
 }
 
-@media screen and (max-width: 1024px) {
-	.storeId3 .hours-desktop {
-		margin-top: 0px;
-		margin-bottom: 15px;
-	}
-
-
-}
 
 @media screen and (min-width: 1025px) {
 	.storeId3 .two-columns-area {
