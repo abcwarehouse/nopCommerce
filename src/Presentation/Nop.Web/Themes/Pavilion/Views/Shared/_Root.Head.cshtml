@@ -413,36 +413,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 console.log('📡 Sending beacon:', eventType, payload);
 
-                // Send directly to SearchSpring beacon API
+                const jsonPayload = JSON.stringify(payload);
+                
+                // Try using native sendBeacon first (bypasses CORS for analytics)
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([jsonPayload], { type: 'application/json' });
+                    const success = navigator.sendBeacon(BEACON_URL, blob);
+                    
+                    if (success) {
+                        console.log('✅ Beacon sent via navigator.sendBeacon');
+                        return;
+                    } else {
+                        console.warn('⚠️ navigator.sendBeacon failed, trying fetch with no-cors...');
+                    }
+                }
+
+                // Fallback: Use fetch with no-cors mode
+                // Note: no-cors means we won't see the response, but the request will go through
                 fetch(BEACON_URL, {
                     method: "POST",
                     headers: { 
-                        "Content-Type": "application/json"
+                        "Content-Type": "text/plain" // Changed to avoid CORS preflight
                     },
-                    body: JSON.stringify(payload),
-                    mode: 'cors', // Important for CORS
-                    credentials: 'omit' // Don't send cookies to external domain
+                    body: jsonPayload,
+                    mode: 'no-cors', // This bypasses CORS but you won't see the response
+                    keepalive: true // Keep request alive even if page unloads
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            console.error("❌ Beacon error:", response.status, data);
-                            throw new Error(`Beacon failed: ${response.status}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log("✅ Beacon sent successfully:", data);
+                .then(() => {
+                    console.log("✅ Beacon sent via fetch (no-cors mode)");
                 })
                 .catch(err => {
-                    console.error("❌ Beacon network error:", err);
+                    console.error("❌ Beacon error:", err);
                 });
             }
 
             // --- Page view ---
             document.addEventListener("DOMContentLoaded", function() {
-                sendBeacon("profile.render", { action: "page.view" });
+                setTimeout(() => {
+                    sendBeacon("profile.render", { action: "page.view" });
+                }, 500); // Small delay to ensure page is fully loaded
             });
 
             // --- Product click (Add to cart) ---
@@ -467,17 +476,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // --- Order completion ---
             if (window.location.pathname.toLowerCase().includes("/checkout/completed")) {
                 document.addEventListener("DOMContentLoaded", function() {
-                    const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
-                    const orderTotal = document.querySelector(".order-total strong")?.textContent?.trim() || null;
-                    
-                    sendBeacon("profile.order.purchase", { 
-                        orderNumber,
-                        orderTotal
-                    });
+                    setTimeout(() => {
+                        const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
+                        const orderTotal = document.querySelector(".order-total strong")?.textContent?.trim() || null;
+                        
+                        sendBeacon("profile.order.purchase", { 
+                            orderNumber,
+                            orderTotal
+                        });
+                    }, 500);
                 });
             }
 
-            // Make sendBeacon available globally if needed for other events
+            // Make sendBeacon available globally
             window.searchSpringBeacon = sendBeacon;
         })();
     </script>
