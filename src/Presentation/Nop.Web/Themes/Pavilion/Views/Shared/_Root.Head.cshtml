@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <script>
         (function() {
             const SITE_ID = "4lt84w";
-            const API_URL = "/searchspring/beacon/event";
+            const BEACON_URL = "https://beacon.searchspring.io/api/recommendations/beacon";
             const CATEGORY = "searchspring.recommendations.user-interactions";
 
             function uuidv4() {
@@ -372,17 +372,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            function getOrCreateId(key) {
-                let id = localStorage.getItem(key);
+            function getCookie(name) {
+                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return match ? match[2] : null;
+            }
+
+            function setCookie(name, value, days) {
+                const expires = new Date(Date.now() + days * 864e5).toUTCString();
+                document.cookie = name + '=' + value + '; expires=' + expires + '; path=/; SameSite=Lax';
+            }
+
+            function getOrCreateId(cookieName) {
+                let id = getCookie(cookieName);
                 if (!id) {
                     id = Math.random().toString(36).substring(2) + Date.now();
-                    localStorage.setItem(key, id);
+                    setCookie(cookieName, id, 365);
                 }
                 return id;
             }
 
             const ssShopperId = getOrCreateId("ssShopperId");
-            const ssSessionId = getOrCreateId("ssSessionId");
+            const ssSessionId = getCookie("ssSessionIdNamespace") || getOrCreateId("ssSessionId");
 
             function sendBeacon(eventType, eventData = {}) {
                 const payload = {
@@ -401,11 +411,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 };
 
-                fetch(API_URL, {
+                console.log('📡 Sending beacon:', eventType, payload);
+
+                // Send directly to SearchSpring beacon API
+                fetch(BEACON_URL, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }).catch(err => console.error("Beacon error:", err));
+                    headers: { 
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload),
+                    mode: 'cors', // Important for CORS
+                    credentials: 'omit' // Don't send cookies to external domain
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            console.error("❌ Beacon error:", response.status, data);
+                            throw new Error(`Beacon failed: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("✅ Beacon sent successfully:", data);
+                })
+                .catch(err => {
+                    console.error("❌ Beacon network error:", err);
+                });
             }
 
             // --- Page view ---
@@ -413,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 sendBeacon("profile.render", { action: "page.view" });
             });
 
-            // --- Add to cart ---
+            // --- Product click (Add to cart) ---
             document.addEventListener("click", function(e) {
                 const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
                 if (!btn) return;
@@ -422,14 +454,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 const productId = productElement ? productElement.getAttribute("data-productid") : null;
                 const sku = productElement?.querySelector(".sku, .product-sku")?.textContent.trim() || "";
                 const name = productElement?.querySelector(".product-title, h2, h3")?.textContent.trim() || "";
+                const price = productElement?.querySelector(".actual-price, .price")?.textContent.trim() || "";
 
-                sendBeacon("profile.product.click", { productId, sku, name });
+                sendBeacon("profile.product.click", { 
+                    productId, 
+                    sku, 
+                    name,
+                    price
+                });
             });
 
-            if (window.location.href.toLowerCase().includes("/checkout/completed")) {
-                const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
-                sendBeacon("profile.product.render", { orderNumber });
+            // --- Order completion ---
+            if (window.location.pathname.toLowerCase().includes("/checkout/completed")) {
+                document.addEventListener("DOMContentLoaded", function() {
+                    const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
+                    const orderTotal = document.querySelector(".order-total strong")?.textContent?.trim() || null;
+                    
+                    sendBeacon("profile.order.purchase", { 
+                        orderNumber,
+                        orderTotal
+                    });
+                });
             }
+
+            // Make sendBeacon available globally if needed for other events
+            window.searchSpringBeacon = sendBeacon;
         })();
     </script>
 
