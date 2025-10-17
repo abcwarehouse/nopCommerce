@@ -4,6 +4,7 @@ using Nop.Services.Logging;
 using System;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
@@ -12,14 +13,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
     public class SearchSpringBeaconController : Controller
     {
         private readonly ILogger _logger;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private const string BeaconApiUrl = "https://beacon.searchspring.io/api/recommendations/beacon";
-
 
         public SearchSpringBeaconController(ILogger logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpPost("event")]
@@ -30,24 +30,71 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             try
             {
-                // Ensure the data is posted to Searchspring exactly as JSON
-                var content = new StringContent(eventData.ToString(), Encoding.UTF8, "application/json");
+                // Create a fresh HttpClient for each request (from factory)
+                var httpClient = _httpClientFactory.CreateClient();
 
-                // Keep referrer/origin headers intact
-                _httpClient.DefaultRequestHeaders.Referrer = Request.GetTypedHeaders().Referer;
-                _httpClient.DefaultRequestHeaders.Add("Origin", Request.Headers["Origin"].ToString());
+                // Properly serialize the JSON
+                var jsonPayload = JsonSerializer.Serialize(eventData);
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync(BeaconApiUrl, content);
+                // Log the payload for debugging
+                await _logger.InsertLogAsync(
+                    Nop.Core.Domain.Logging.LogLevel.Information,
+                    "[Searchspring Beacon] Request",
+                    $"Sending payload: {jsonPayload}"
+                );
+
+                // Set headers on the request message instead of the client
+                var request = new HttpRequestMessage(HttpMethod.Post, BeaconApiUrl)
+                {
+                    Content = content
+                };
+
+                // Add referrer if available
+                var referer = Request.GetTypedHeaders().Referer;
+                if (referer != null)
+                {
+                    request.Headers.Referrer = referer;
+                }
+
+                // Add origin if available
+                if (Request.Headers.ContainsKey("Origin"))
+                {
+                    var origin = Request.Headers["Origin"].ToString();
+                    if (!string.IsNullOrEmpty(origin))
+                    {
+                        request.Headers.TryAddWithoutValidation("Origin", origin);
+                    }
+                }
+
+                // Add User-Agent
+                if (Request.Headers.ContainsKey("User-Agent"))
+                {
+                    var userAgent = Request.Headers["User-Agent"].ToString();
+                    if (!string.IsNullOrEmpty(userAgent))
+                    {
+                        request.Headers.TryAddWithoutValidation("User-Agent", userAgent);
+                    }
+                }
+
+                var response = await httpClient.SendAsync(request);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 await _logger.InsertLogAsync(
                     Nop.Core.Domain.Logging.LogLevel.Information,
-                    "[Searchspring Beacon]",
-                    $"Payload: {eventData}, Response: {responseBody}"
+                    "[Searchspring Beacon] Response",
+                    $"Status: {response.StatusCode}, Body: {responseBody}"
                 );
 
                 if (!response.IsSuccessStatusCode)
+                {
+                    await _logger.InsertLogAsync(
+                        Nop.Core.Domain.Logging.LogLevel.Warning,
+                        "[Searchspring Beacon] Failed",
+                        $"Status: {response.StatusCode}, Response: {responseBody}"
+                    );
                     return StatusCode((int)response.StatusCode, responseBody);
+                }
 
                 return Ok(new { success = true });
             }
@@ -56,11 +103,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 await _logger.InsertLogAsync(
                     Nop.Core.Domain.Logging.LogLevel.Error,
                     "[Searchspring Beacon Error]",
-                    ex.ToString()
+                    $"Exception: {ex.Message}\nStack: {ex.StackTrace}"
                 );
                 return StatusCode(500, ex.Message);
             }
         }
     }
-
 }
