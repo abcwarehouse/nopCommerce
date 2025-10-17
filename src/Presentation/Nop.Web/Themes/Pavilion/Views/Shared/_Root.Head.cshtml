@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // --- Utility to send beacon event ---
             function sendBeacon(eventType, data = {}) {
-                const payload = {
+                const eventPayload = {
                     type: eventType,
                     siteId: SITE_ID,
                     shopperId: ssShopperId,
@@ -387,6 +387,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     timestamp: new Date().toISOString(),
                     ...data
                 };
+
+                // Wrap inside { beacon: { ... } } to match Searchspring format
+                const payload = { beacon: eventPayload };
 
                 fetch(API_URL, {
                     method: "POST",
@@ -430,6 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })();
     </script>
+
 
 
 </head>
