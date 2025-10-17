@@ -13,7 +13,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
     {
         private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
-        private const string BeaconApiUrl = "https://beacon.searchspring.io/api/beacon";
+        private const string BeaconApiUrl = "https://beacon.searchspring.io/api/recommendations/beacon";
+
 
         public SearchSpringBeaconController(ILogger logger, IHttpClientFactory httpClientFactory)
         {

@@ -363,8 +363,15 @@ document.addEventListener('DOMContentLoaded', function() {
         (function() {
             const SITE_ID = "4lt84w";
             const API_URL = "/searchspring/beacon/event";
+            const CATEGORY = "searchspring.recommendations.user-interactions";
 
-            // --- Shopper/session management ---
+            function uuidv4() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
             function getOrCreateId(key) {
                 let id = localStorage.getItem(key);
                 if (!id) {
@@ -377,19 +384,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const ssShopperId = getOrCreateId("ssShopperId");
             const ssSessionId = getOrCreateId("ssSessionId");
 
-            // --- Utility to send beacon event ---
-            function sendBeacon(eventType, data = {}) {
-                const eventPayload = {
+            function sendBeacon(eventType, eventData = {}) {
+                const payload = {
                     type: eventType,
-                    siteId: SITE_ID,
-                    shopperId: ssShopperId,
-                    sessionId: ssSessionId,
-                    timestamp: new Date().toISOString(),
-                    ...data
+                    category: CATEGORY,
+                    id: uuidv4(),
+                    event: eventData,
+                    context: {
+                        siteId: SITE_ID,
+                        shopperId: ssShopperId,
+                        sessionId: ssSessionId,
+                        page: window.location.href,
+                        referrer: document.referrer || null,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    }
                 };
-
-                // Wrap inside { beacon: { ... } } to match Searchspring format
-                const payload = { beacon: eventPayload };
 
                 fetch(API_URL, {
                     method: "POST",
@@ -398,43 +408,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 }).catch(err => console.error("Beacon error:", err));
             }
 
-            // --- 1. Track page views ---
+            // --- Page view ---
             document.addEventListener("DOMContentLoaded", function() {
-                sendBeacon("page.view", {
-                    page: window.location.href,
-                    referrer: document.referrer || null,
-                    userAgent: navigator.userAgent
-                });
+                sendBeacon("profile.render", { action: "page.view" });
             });
 
-            // --- 2. Track add to cart ---
+            // --- Add to cart ---
             document.addEventListener("click", function(e) {
                 const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
                 if (!btn) return;
 
                 const productElement = btn.closest("[data-productid]");
                 const productId = productElement ? productElement.getAttribute("data-productid") : null;
-                const skuElement = productElement ? productElement.querySelector(".sku, .product-sku") : null;
-                const nameElement = productElement ? productElement.querySelector(".product-title, h2, h3") : null;
+                const sku = productElement?.querySelector(".sku, .product-sku")?.textContent.trim() || "";
+                const name = productElement?.querySelector(".product-title, h2, h3")?.textContent.trim() || "";
 
-                sendBeacon("cart.add", {
-                    product: {
-                        id: productId,
-                        sku: skuElement ? skuElement.textContent.trim() : "",
-                        name: nameElement ? nameElement.textContent.trim() : ""
-                    }
-                });
+                sendBeacon("profile.product.click", { productId, sku, name });
             });
 
-            // --- 3. Track checkout/purchase ---
             if (window.location.href.toLowerCase().includes("/checkout/completed")) {
                 const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
-                sendBeacon("purchase", { orderNumber });
+                sendBeacon("profile.product.render", { orderNumber });
             }
         })();
     </script>
-
-
 
 </head>
 
