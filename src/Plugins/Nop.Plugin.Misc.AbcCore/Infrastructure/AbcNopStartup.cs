@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
-using Nop.Web.Framework.Infrastructure.Extensions;
+using Nop.Plugin.Misc.AbcCore.Infrastructure.Extensions;
 
-namespace Nop.Web.Framework.Infrastructure
+namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
     /// <summary>
     /// Represents object for the configuring exceptions and errors handling on application startup
     /// </summary>
-    public class ErrorHandlerStartup : INopStartup
+    public class AbcNopStartup : INopStartup
     {
         /// <summary>
         /// Add and configure any of the middleware
@@ -26,20 +26,12 @@ namespace Nop.Web.Framework.Infrastructure
         /// <param name="application">Builder for configuring an application's request pipeline</param>
         public void Configure(IApplicationBuilder application)
         {
-            //exception handling
-            application.UseNopExceptionHandler();
-
-            //handle 400 errors (bad request)
-            application.UseBadRequestResult();
-
-            //handle 404 errors (not found)
-            // ABC: need to disable default 404 handler to use our custom one
-            // application.UsePageNotFound();
+            application.UseAbcPageNotFound();
         }
 
         /// <summary>
         /// Gets order of this startup configuration implementation
         /// </summary>
-        public int Order => 0; //error handlers should be loaded first
+        public int Order => 1; //error handlers should be loaded first
     }
 }

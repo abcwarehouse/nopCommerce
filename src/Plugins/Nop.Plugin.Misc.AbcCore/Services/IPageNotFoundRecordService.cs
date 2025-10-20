@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Common;
+using Nop.Plugin.Misc.AbcCore.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore.Services
 {
