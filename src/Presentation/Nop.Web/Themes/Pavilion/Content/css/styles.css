@@ -9861,19 +9861,11 @@ body .autocomplete-list {
 }
 
 @media screen and (max-width: 1024px) {
-	.blog-list.storeId3 .header#header {
-		margin-bottom: -143px !important;
-	}
 
 	body .autocomplete-list {
 		border: 1px solid #b22234;
 		top: 105%;
 	}
-
-	.blog-list.storeId3 .header-lower.secondary-bar {
-		margin: 13px;
-	}
-
 	.blog-blogpost.storeId3 .header#header {
 		margin-bottom: -143px !important;
 	}
@@ -9881,8 +9873,6 @@ body .autocomplete-list {
 	.blog-blogpost.storeId3 .header-lower.secondary-bar {
 		margin: 19px;
 	}
-
-
 }
 
 
