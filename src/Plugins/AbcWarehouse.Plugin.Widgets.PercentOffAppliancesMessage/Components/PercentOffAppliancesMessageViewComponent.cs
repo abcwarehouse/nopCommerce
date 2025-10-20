@@ -81,6 +81,9 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 "GE CAFE",
                 "GE MONOGRAM",
                 "GE PROFILE",
+                "MONOGRAM",
+                "MIELE",
+                "DACOR","JENN-AIR","MIELE","MONOGRAM", "SUBZERO","THERMADOR","VIKING","WOLF","FULGOR","SIGNATURE KITCHEN SUITE","COVE","BLUE STAR","BOSCH","SUBZERO",
             };
             var pms = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
             foreach (var pm in pms)
