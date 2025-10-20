@@ -10592,10 +10592,6 @@ body.storeId3 .header-lower {
 }
 
 @media screen and (max-width: 1024px) {
-	body.topic-topicdetails.storeId3 .master-column-wrapper {
-		margin-top: 170px !important;
-	}
-
 	.storeId3 .master-wrapper-content {
 		padding: 0px 20px !important;
 		margin-top: 0px !important;
