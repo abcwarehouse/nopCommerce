@@ -22,6 +22,7 @@ using Nop.Core.Domain.Logging;
 using Nop.Services.ExportImport;
 using Nop.Services.Messages;
 using System.Text;
+using Nop.Plugin.Misc.AbcCore.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
 {
@@ -74,23 +75,11 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
         [HttpPost]
         public virtual async Task<IActionResult> List(PageNotFoundSearchModel searchModel)
         {
-            var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync();
-            // if (!string.IsNullOrWhiteSpace(searchModel.Slug))
-            // {
-            //     logs = logs.Where(log => log.PageUrl.Contains(searchModel.Slug)).ToList();
-            // }
-            // if (!string.IsNullOrWhiteSpace(searchModel.CustomerEmail))
-            // {
-            //     var customerId = (await _customerService.GetCustomerByEmailAsync(searchModel.CustomerEmail))?.Id;
-            //     if (customerId.HasValue)
-            //     {
-            //         logs = logs.Where(log => log.CustomerId == customerId.Value).ToList();
-            //     }
-            //     else
-            //     {
-            //         logs = new List<Log>();
-            //     }
-            // }
+            var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync(
+                pageIndex: searchModel.Page - 1,
+                pageSize: searchModel.PageSize,
+                slug: searchModel.Slug,
+                customerEmail: searchModel.CustomerEmail);
             // var createdOnFromValue = searchModel.CreatedOnFrom.HasValue
             //     ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.CreatedOnFrom.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()) : null;
             // var createdToFromValue = searchModel.CreatedOnTo.HasValue
@@ -98,16 +87,16 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
 
             // if (createdOnFromValue != null)
             // {
-            //     logs = logs.Where(log => log.CreatedOnUtc >= createdOnFromValue).ToList();
+            //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.CreatedOnUtc >= createdOnFromValue);
             // }
             // if (createdToFromValue != null)
             // {
-            //     logs = logs.Where(log => log.CreatedOnUtc <= createdToFromValue).ToList();
+            //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.CreatedOnUtc <= createdToFromValue);
             // }
 
             // if (!string.IsNullOrWhiteSpace(searchModel.IpAddress))
             // {
-            //     logs = logs.Where(log => log.IpAddress == searchModel.IpAddress).ToList();
+            //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.IpAddress == searchModel.IpAddress);
             // }
 
             var pagedList = pageNotFoundRecords.ToPagedList(searchModel);
