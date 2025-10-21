@@ -49,21 +49,18 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
 
         public virtual async Task<IActionResult> ExportXlsx()
         {
-            // try
-            // {
-            //     var logs = _logger.GetPageNotFoundLogs();
-            //     var bytes = await _exportManager
-            //         .ExportPageNotFoundRecordsToXlsxAsync(logs);
+            try
+            {
+                var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync();
+                var bytes = await _exportManager.ExportPageNotFoundRecordsToXlsxAsync(pageNotFoundRecords);
 
-            //     return File(bytes, MimeTypes.TextXlsx, "page-not-found-records.xlsx");
-            // }
-            // catch (Exception exc)
-            // {
-            //     await _notificationService.ErrorNotificationAsync(exc);
-            //     return RedirectToAction("List");
-            // }
-
-            return RedirectToAction("List");
+                return File(bytes, MimeTypes.TextXlsx, "page-not-found-records.xlsx");
+            }
+            catch (Exception exc)
+            {
+                await _notificationService.ErrorNotificationAsync(exc);
+                return RedirectToAction("List");
+            }
         }
 
         public IActionResult List()
@@ -145,36 +142,35 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
         }
 
         [HttpPost]
-        public virtual IActionResult Frequency(PageNotFoundFreqSearchModel searchModel)
+        public virtual async Task<IActionResult> Frequency(PageNotFoundFreqSearchModel searchModel)
         {
-            // var logs = _logger.GetPageNotFoundLogs();
-            // var groupedLogs = logs.GroupBy(l => l.PageUrl)
-            //                       .Select(group => new
-            //                       {
-            //                           Slug = group.Key,
-            //                           Count = group.Count()
-            //                       })
-            //                       .OrderByDescending(g => g.Count)
-            //                       .ToList();
+            var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync();
+            var groupedRecords = pageNotFoundRecords.GroupBy(l => l.Slug)
+                                  .Select(group => new
+                                  {
+                                      Slug = group.Key,
+                                      Count = group.Count()
+                                  })
+                                  .OrderByDescending(g => g.Count)
+                                  .ToList();
 
-            // var pagedList = groupedLogs.ToPagedList(searchModel);
-            // var model = new PageNotFoundFreqListModel().PrepareToGrid(searchModel, pagedList, () =>
-            // {
-            //     //fill in model values from the entity
-            //     return pagedList.Select(group =>
-            //     {
-            //         var pageNotFoundFreqModel = new PageNotFoundFreqModel()
-            //         {
-            //             Slug = group.Slug,
-            //             Count = group.Count
-            //         };
+            var pagedList = groupedRecords.ToPagedList(searchModel);
+            var model = new PageNotFoundFreqListModel().PrepareToGrid(searchModel, pagedList, () =>
+            {
+                //fill in model values from the entity
+                return pagedList.Select(group =>
+                {
+                    var pageNotFoundFreqModel = new PageNotFoundFreqModel()
+                    {
+                        Slug = group.Slug,
+                        Count = group.Count
+                    };
 
-            //         return pageNotFoundFreqModel;
-            //     });
-            // });
+                    return pageNotFoundFreqModel;
+                });
+            });
 
-            // return Json(model);
-            return null;
+            return Json(model);
         }
     }
 }
