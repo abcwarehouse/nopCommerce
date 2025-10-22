@@ -16,7 +16,7 @@ namespace Nop.Plugin.Misc.AbcCore.Tasks
         private readonly ILogger _logger;
 
         // Retention in days. You can replace this with a setting if needed.
-        private const int DefaultRetentionDays = 7;
+        private const int DefaultRetentionDays = 30;
 
         public PageNotFoundRecordCleanTask(
             INopDataProvider dataProvider,
