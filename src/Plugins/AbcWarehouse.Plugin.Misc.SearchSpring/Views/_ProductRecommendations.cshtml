@@ -1,0 +1,81 @@
+@model string
+@inject AbcWarehouse.Plugin.Misc.SearchSpring.Services.ISearchSpringService searchSpringService
+@inject Nop.Services.Catalog.IProductService productService
+@inject Nop.Web.Factories.IProductModelFactory productModelFactory
+@using AbcWarehouse.Plugin.Misc.SearchSpring.Models
+@using Nop.Web.Models.Catalog
+
+@{
+    var recsRequest = new RecommendationsRequestModel
+    {
+        Tags = "similar",
+        Products = Model,
+        Limits = "12",
+        SiteId = "4lt84w"
+    };
+
+    RecommendationsResultModel recommendations = null;
+    try
+    {
+        recommendations = await searchSpringService.GetRecommendationsAsync(recsRequest);
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Recommendations error: {ex.Message}");
+    }
+}
+
+@if (recommendations != null && recommendations.Profiles.Any())
+{
+    <div class="product-recommendations-section" style="margin: 60px 0;">
+        @foreach (var profile in recommendations.Profiles)
+        {
+            if (profile.Results.Any())
+            {
+                <div class="recommendation-profile">
+                    <h2 style="font-size: 28px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #446588;">
+                        @(profile.Display ?? "Recommended Products")
+                    </h2>
+                    
+                    <div class="product-grid">
+                        <div class="item-grid">
+                            @{
+                                var productModels = new List<ProductOverviewModel>();
+
+                                foreach (var item in profile.Results.Take(12))
+                                {
+                                    var product = await productService.GetProductBySkuAsync(item.Sku);
+                                    if (product == null)
+                                    {
+                                        product = await productService.GetProductBySkuAsync("+" + item.Sku);
+                                    }
+
+                                    if (product != null)
+                                    {
+                                        var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                            new[] { product },
+                                            true,
+                                            true);
+
+                                        var model = productOverviewModels.FirstOrDefault();
+                                        if (model != null)
+                                        {
+                                            productModels.Add(model);
+                                        }
+                                    }
+                                }
+
+                                foreach (var productModel in productModels)
+                                {
+                                    <div class="item-box">
+                                        @await Html.PartialAsync("_ProductBox", productModel)
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}

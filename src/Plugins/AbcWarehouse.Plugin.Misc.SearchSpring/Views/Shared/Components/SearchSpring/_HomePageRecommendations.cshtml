@@ -1,0 +1,179 @@
+@inject AbcWarehouse.Plugin.Misc.SearchSpring.Services.ISearchSpringService searchSpringService
+@inject Nop.Services.Catalog.IProductService productService
+@inject Nop.Web.Factories.IProductModelFactory productModelFactory
+@inject Nop.Core.IWorkContext workContext
+@inject Nop.Services.Logging.ILogger logger
+@inject Nop.Services.Orders.IShoppingCartService shoppingCartService
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+@using AbcWarehouse.Plugin.Misc.SearchSpring.Models
+@using Nop.Web.Models.Catalog
+@using Nop.Core.Domain.Logging
+@using Nop.Core.Domain.Orders
+@using Newtonsoft.Json
+
+@{    
+    var httpContext = httpContextAccessor.HttpContext;
+    
+    // Get customer info for personalization
+    var customer = await workContext.GetCurrentCustomerAsync();
+    var shopperId = customer?.Id.ToString();
+    
+    // Get session ID from cookie
+    string sessionId = null;
+    if (httpContext.Request.Cookies.TryGetValue("ss-sessionId", out var cookieSessionId))
+    {
+        sessionId = cookieSessionId;
+    }
+    else if (httpContext.Request.Cookies.TryGetValue("_ss_s", out var altSessionId))
+    {
+        sessionId = altSessionId;
+    }
+    
+    // Get recently viewed products from cookie
+    string lastViewed = null;
+    if (httpContext.Request.Cookies.TryGetValue("ss-recently-viewed", out var viewedProducts))
+    {
+        lastViewed = viewedProducts;
+    }
+    
+    // Get cart items
+    string cartItems = null;
+    try
+    {
+        if (customer != null)
+        {
+            var cart = await shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart);
+            if (cart != null && cart.Any())
+            {
+                var skus = new List<string>();
+                foreach (var item in cart)
+                {
+                    var product = await productService.GetProductByIdAsync(item.ProductId);
+                    if (product != null && !string.IsNullOrWhiteSpace(product.Sku))
+                    {
+                        skus.Add(product.Sku);
+                    }
+                }
+                if (skus.Any())
+                {
+                    cartItems = string.Join(",", skus);
+                }
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        await logger.InsertLogAsync(LogLevel.Error, $"[Homepage Recommendations] Error getting cart: {ex.Message}");
+    }
+    
+    await logger.InsertLogAsync(LogLevel.Information, 
+        $"[Homepage Recommendations] Customer ID: {shopperId ?? "Anonymous"}, Session: {sessionId ?? "None"}, LastViewed: {lastViewed ?? "None"}, Cart: {cartItems ?? "None"}");
+
+    var recsRequest = new RecommendationsRequestModel
+    {
+        Tags = "home",
+        Shopper = shopperId,
+        SessionId = sessionId,
+        LastViewed = lastViewed,
+        Cart = cartItems,
+        Limits = "12,8",
+        SiteId = "4lt84w"
+    };
+
+    RecommendationsResultModel recommendations = null;
+    try
+    {
+        recommendations = await searchSpringService.GetRecommendationsAsync(recsRequest);
+        
+        if (recommendations == null)
+        {
+            await logger.InsertLogAsync(LogLevel.Warning, "[Homepage Recommendations] Service returned NULL");
+        }
+        else
+        {            
+            foreach (var profile in recommendations.Profiles)
+            {
+                await logger.InsertLogAsync(LogLevel.Information, 
+                    $"[Homepage Recommendations] Profile '{profile.Tag}': {profile.Results.Count} products");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        await logger.InsertLogAsync(LogLevel.Error, 
+            $"[Homepage Recommendations] ERROR: {ex.Message}\nStackTrace: {ex.StackTrace}");
+        System.Diagnostics.Debug.WriteLine($"Homepage Recommendations error: {ex.Message}");
+    }
+}
+
+@if (recommendations != null && recommendations.Profiles.Any())
+{    
+    <div class="homepage-recommendations-section">
+        @foreach (var profile in recommendations.Profiles)
+        {
+            if (profile.Results.Any())
+            {
+                <div class="recommendation-profile" style="margin-bottom: 60px;">
+                    <h2 style="font-size: 32px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 3px solid #446588; text-align: center;">
+                        @(profile.Display ?? "Recommended For You")
+                    </h2>
+                    
+                    <div class="product-grid">
+                        <div class="item-grid">
+                            @{
+                                var productModels = new List<ProductOverviewModel>();
+                                var foundCount = 0;
+                                var notFoundCount = 0;
+
+                                // Limit to 12 products per profile for homepage
+                                foreach (var item in profile.Results.Take(5))
+                                {
+                                    var product = await productService.GetProductBySkuAsync(item.Sku);
+                                    if (product == null)
+                                    {
+                                        product = await productService.GetProductBySkuAsync("+" + item.Sku);
+                                    }
+
+                                    if (product != null)
+                                    {
+                                        foundCount++;
+                                        var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                            new[] { product },
+                                            true,
+                                            true);
+
+                                        var model = productOverviewModels.FirstOrDefault();
+                                        if (model != null)
+                                        {
+                                            productModels.Add(model);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        notFoundCount++;
+                                        await logger.InsertLogAsync(LogLevel.Warning, 
+                                            $"[Homepage Recommendations] Product not found for SKU: {item.Sku}");
+                                    }
+                                }
+                                
+                                await logger.InsertLogAsync(LogLevel.Information, 
+                                    $"[Homepage Recommendations] Profile '{profile.Tag}': Found {foundCount}, Not Found {notFoundCount}, Rendering {productModels.Count}");
+
+                                foreach (var productModel in productModels)
+                                {
+                                    <div class="item-box">
+                                        @await Html.PartialAsync("_ProductBox", productModel)
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    await logger.InsertLogAsync(LogLevel.Warning, "[Homepage Recommendations] No recommendations to display");
+}
