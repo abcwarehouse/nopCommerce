@@ -99,11 +99,10 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
             //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.IpAddress == searchModel.IpAddress);
             // }
 
-            var pagedList = pageNotFoundRecords.ToPagedList(searchModel);
-            var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pagedList, () =>
+            var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pageNotFoundRecords, () =>
             {
                 //fill in model values from the entity
-                return pagedList.SelectAwait(async pageNotFoundRecord =>
+                return pageNotFoundRecords.SelectAwait(async pageNotFoundRecord =>
                 {
                     var PageNotFoundModel = new PageNotFoundModel()
                     {
