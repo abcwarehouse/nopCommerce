@@ -79,25 +79,11 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
                 pageIndex: searchModel.Page - 1,
                 pageSize: searchModel.PageSize,
                 slug: searchModel.Slug,
-                customerEmail: searchModel.CustomerEmail);
-            // var createdOnFromValue = searchModel.CreatedOnFrom.HasValue
-            //     ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.CreatedOnFrom.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()) : null;
-            // var createdToFromValue = searchModel.CreatedOnTo.HasValue
-            //     ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.CreatedOnTo.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1) : null;
-
-            // if (createdOnFromValue != null)
-            // {
-            //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.CreatedOnUtc >= createdOnFromValue);
-            // }
-            // if (createdToFromValue != null)
-            // {
-            //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.CreatedOnUtc <= createdToFromValue);
-            // }
-
-            // if (!string.IsNullOrWhiteSpace(searchModel.IpAddress))
-            // {
-            //     pageNotFoundRecords = pageNotFoundRecords.Where(log => log.IpAddress == searchModel.IpAddress);
-            // }
+                customerEmail: searchModel.CustomerEmail,
+                createdOnFrom: searchModel.CreatedOnFrom,
+                createdOnTo: searchModel.CreatedOnTo,
+                ipAddress: searchModel.IpAddress
+                );
 
             var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pageNotFoundRecords, () =>
             {

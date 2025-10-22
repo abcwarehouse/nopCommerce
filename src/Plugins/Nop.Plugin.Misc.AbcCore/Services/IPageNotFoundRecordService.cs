@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Nop.Core;
 using Nop.Core.Domain.Common;
@@ -23,7 +24,10 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             int pageIndex = 0,
             int pageSize = int.MaxValue,
             string slug = null,
-            string customerEmail = null);
+            string customerEmail = null,
+            DateTime? createdOnFrom = null,
+            DateTime? createdOnTo = null,
+            string ipAddress = null);
 
         /// <summary>
         /// Inserts a page not found record

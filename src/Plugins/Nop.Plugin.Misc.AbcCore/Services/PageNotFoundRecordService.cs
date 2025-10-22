@@ -6,6 +6,7 @@ using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using System.Linq;
 using Nop.Services.Customers;
+using Nop.Services.Helpers;
 
 namespace Nop.Plugin.Misc.AbcCore.Services
 {
@@ -16,8 +17,9 @@ namespace Nop.Plugin.Misc.AbcCore.Services
     {
         #region Fields
 
-        private readonly IRepository<PageNotFoundRecord> _pageNotFoundRecordRepository;
-        private readonly ICustomerService _customerService;
+    private readonly IRepository<PageNotFoundRecord> _pageNotFoundRecordRepository;
+    private readonly ICustomerService _customerService;
+    private readonly IDateTimeHelper _dateTimeHelper;
 
         #endregion
 
@@ -25,10 +27,12 @@ namespace Nop.Plugin.Misc.AbcCore.Services
 
         public PageNotFoundRecordService(
             IRepository<PageNotFoundRecord> pageNotFoundRecordRepository,
-            ICustomerService customerService)
+            ICustomerService customerService,
+            IDateTimeHelper dateTimeHelper)
         {
             _pageNotFoundRecordRepository = pageNotFoundRecordRepository;
             _customerService = customerService;
+            _dateTimeHelper = dateTimeHelper;
         }
 
         #endregion
@@ -48,7 +52,11 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             int pageIndex = 0,
             int pageSize = int.MaxValue,
             string slug = null,
-            string customerEmail = null)
+            string customerEmail = null,
+            DateTime? createdOnFrom = null,
+            DateTime? createdOnTo = null,
+            string ipAddress = null
+            )
         {
             var query = _pageNotFoundRecordRepository.Table;
 
@@ -69,6 +77,25 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 {
                     query = Enumerable.Empty<PageNotFoundRecord>().AsQueryable();
                 }
+            }
+
+            var createdOnFromValue = createdOnFrom.HasValue
+                ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(createdOnFrom.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()) : null;
+            var createdToFromValue = createdOnTo.HasValue
+                ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(createdOnTo.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1) : null;
+
+            if (createdOnFromValue != null)
+            {
+                query = query.Where(p => p.CreatedOnUtc >= createdOnFromValue);
+            }
+            if (createdToFromValue != null)
+            {
+                query = query.Where(p => p.CreatedOnUtc <= createdToFromValue);
+            }
+
+            if (!string.IsNullOrWhiteSpace(ipAddress))
+            {
+                query = query.Where(p => p.IpAddress == ipAddress);
             }
 
             query = query.OrderByDescending(r => r.CreatedOnUtc);
