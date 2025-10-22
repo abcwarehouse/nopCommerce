@@ -180,7 +180,6 @@ else
             <div class="item-grid">
                 @{
                     var productModels = new List<dynamic>();
-
                     foreach (var item in Model.Results)
                     {
                         var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
@@ -335,12 +334,16 @@ else
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const toggleBtn = document.getElementById("filterToggle");
+        // Use querySelectorAll to get ALL filter toggle buttons
+        const toggleBtns = document.querySelectorAll(".mobile-filter-btn");
         const closeBtn = document.getElementById("closeSidebar");
         const sidebar = document.querySelector(".mobile-filter-wrapper");
 
-        toggleBtn.addEventListener("click", function () {
-            sidebar.classList.toggle("active");
+        // Attach click event to ALL toggle buttons
+        toggleBtns.forEach(function(toggleBtn) {
+            toggleBtn.addEventListener("click", function () {
+                sidebar.classList.toggle("active");
+            });
         });
 
         closeBtn.addEventListener("click", function () {
@@ -548,4 +551,47 @@ document.addEventListener("DOMContentLoaded", function () {
     
     console.log("=== GEOLOCATION DEBUG END ===");
 });
+</script>
+<script>
+console.log("=== RECOMMENDATIONS DEBUG START ===");
+
+// Check if client exists
+if (typeof searchSpringRecs !== 'undefined') {
+    console.log("✓ searchSpringRecs client is loaded");
+} else {
+    console.error("✗ searchSpringRecs client NOT found - check if JS file is loaded");
+}
+
+// Test API call
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Testing recommendations API...");
+    
+    // Replace with your actual product SKU
+    const testSku = Model.Results.Sku.FirstOrDefault();
+    
+    fetch(`/searchspring/recommendations/product/${testSku}`)
+        .then(response => {
+            console.log("API Response Status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("API Response Data:", data);
+            
+            if (data.error) {
+                console.error("API Error:", data.error);
+            } else if (data.profiles && data.profiles.length > 0) {
+                console.log(`✓ Found ${data.profiles.length} profile(s)`);
+                data.profiles.forEach(profile => {
+                    console.log(`  - Profile: ${profile.tag}, Display: ${profile.display}, Products: ${profile.results.length}`);
+                });
+            } else {
+                console.warn("API returned no profiles");
+            }
+        })
+        .catch(err => {
+            console.error("API Call Failed:", err);
+        });
+});
+
+console.log("=== RECOMMENDATIONS DEBUG END ===");
 </script>

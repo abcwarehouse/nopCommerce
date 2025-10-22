@@ -16,6 +16,7 @@ using Nop.Services.Localization;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Text;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
@@ -30,12 +31,12 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         private readonly SearchSpringSettings _settings;
 
         public SearchSpringController(ISearchSpringService searchSpringService,
-                                      IHttpClientFactory httpClientFactory,
-                                      ILogger logger,
-                                      ISettingService settingService,
-                                      ILocalizationService localizationService,
-                                      INotificationService notificationService,
-                                      SearchSpringSettings settings)
+                                        IHttpClientFactory httpClientFactory,
+                                        ILogger logger,
+                                        ISettingService settingService,
+                                        ILocalizationService localizationService,
+                                        INotificationService notificationService,
+                                        SearchSpringSettings settings)
         {
             _searchSpringService = searchSpringService;
             _httpClientFactory = httpClientFactory;
@@ -233,6 +234,210 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { error = "An internal server error occurred while fetching autocomplete results. Message: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("searchspring/recommendations")]
+        public async Task<IActionResult> Recommendations(
+            string tags,
+            string products = null,
+            string blockedItems = null,
+            string categories = null,
+            string brands = null,
+            string shopper = null,
+            string cart = null,
+            string lastViewed = null,
+            string limits = null)
+        {
+            if (string.IsNullOrWhiteSpace(tags))
+                return BadRequest("Tags parameter is required");
+
+            try
+            {
+                var filters = new Dictionary<string, string>();
+                
+                // Extract filter.* query parameters
+                foreach (var key in HttpContext.Request.Query.Keys)
+                {
+                    if (key.StartsWith("filter."))
+                    {
+                        var field = key.Substring(7); // Remove "filter." prefix
+                        var value = HttpContext.Request.Query[key].ToString();
+                        filters[field] = value;
+                    }
+                }
+
+                var request = new RecommendationsRequestModel
+                {
+                    Tags = tags,
+                    Products = products,
+                    BlockedItems = blockedItems,
+                    Categories = categories,
+                    Brands = brands,
+                    Shopper = shopper,
+                    Cart = cart,
+                    LastViewed = lastViewed,
+                    Limits = limits,
+                    Filters = filters.Any() ? filters : null,
+                    SiteId = "4lt84w"
+                };
+
+                var results = await _searchSpringService.GetRecommendationsAsync(request);
+
+                if (_settings.IsDebugMode)
+                {
+                    var modelJson = System.Text.Json.JsonSerializer.Serialize(results, 
+                        new System.Text.Json.JsonSerializerOptions
+                        {
+                            WriteIndented = true,
+                            PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                        });
+                    await _logger.InformationAsync($"SearchSpring Recommendations Controller:\n{modelJson}");
+                }
+
+                return Json(results);
+            }
+            catch (Exception ex)
+            {
+                await _logger.ErrorAsync($"Error fetching recommendations: {ex.Message}", ex);
+                return StatusCode(500, new { error = "An error occurred while fetching recommendations", message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("searchspring/recommendations/product/{productSku}")]
+        public async Task<IActionResult> ProductPageRecommendations(string productSku, string profileTags = null)
+        {
+            if (string.IsNullOrWhiteSpace(productSku))
+                return BadRequest("Product SKU is required");
+
+            try
+            {
+                // Default profile tags for product page - adjust based on your SearchSpring setup
+                var tags = profileTags ?? "similar,crosssell";
+                
+                // Get shopper ID if logged in
+                var shopper = await GetCurrentShopperId();
+                
+                // Get recently viewed products from cookies
+                var lastViewed = GetRecentlyViewedProducts();
+                
+                // Get cart items
+                var cart = await GetCartItems();
+
+                var request = new RecommendationsRequestModel
+                {
+                    Tags = tags,
+                    Products = productSku,
+                    Shopper = shopper,
+                    LastViewed = lastViewed,
+                    Cart = cart,
+                    SiteId = "4lt84w"
+                };
+
+                var results = await _searchSpringService.GetRecommendationsAsync(request);
+                return Json(results);
+            }
+            catch (Exception ex)
+            {
+                await _logger.ErrorAsync($"Error fetching product page recommendations: {ex.Message}", ex);
+                return StatusCode(500, new { error = "An error occurred while fetching recommendations" });
+            }
+        }
+
+        [HttpGet]
+        [Route("searchspring/recommendations/homepage")]
+        public async Task<IActionResult> HomepageRecommendations(string profileTags = null)
+        {
+            try
+            {
+                var tags = profileTags ?? "trending,bestsellers";
+
+                var shopper = await GetCurrentShopperId();
+                var lastViewed = GetRecentlyViewedProducts();
+                var cart = await GetCartItems();
+
+                var request = new RecommendationsRequestModel
+                {
+                    Tags = tags,
+                    Shopper = shopper,
+                    LastViewed = lastViewed,
+                    Cart = cart,
+                    SiteId = "4lt84w"
+                };
+
+                var results = await _searchSpringService.GetRecommendationsAsync(request);
+                return Json(results);
+            }
+            catch (Exception ex)
+            {
+                await _logger.ErrorAsync($"Error fetching homepage recommendations: {ex.Message}", ex);
+                return StatusCode(500, new { error = "An error occurred while fetching recommendations" });
+            }
+        }
+
+        private async Task<string> GetCurrentShopperId()
+        {
+            try
+            {
+                var workContext = HttpContext.RequestServices.GetService(typeof(Nop.Core.IWorkContext)) as Nop.Core.IWorkContext;
+                var customer = await workContext?.GetCurrentCustomerAsync();
+                return customer?.Id.ToString();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string GetRecentlyViewedProducts()
+        {
+            // Get recently viewed products from cookie
+            if (Request.Cookies.TryGetValue("ss-recently-viewed", out var viewedProducts))
+                return viewedProducts;
+            
+            return null;
+        }
+
+        private async Task<string> GetCartItems()
+        {
+            // Get cart items from NopCommerce
+            try
+            {
+                var workContext = HttpContext.RequestServices.GetService(typeof(Nop.Core.IWorkContext)) as Nop.Core.IWorkContext;
+                var customer = await workContext?.GetCurrentCustomerAsync();
+                
+                if (customer == null)
+                    return null;
+
+                var shoppingCartService = HttpContext.RequestServices.GetService(typeof(Nop.Services.Orders.IShoppingCartService)) 
+                    as Nop.Services.Orders.IShoppingCartService;
+                
+                var productService = HttpContext.RequestServices.GetService(typeof(Nop.Services.Catalog.IProductService))
+                    as Nop.Services.Catalog.IProductService;
+                
+                var cart = await shoppingCartService?.GetShoppingCartAsync(customer, Nop.Core.Domain.Orders.ShoppingCartType.ShoppingCart);
+                
+                if (cart == null || !cart.Any())
+                    return null;
+
+                var skus = new List<string>();
+                foreach (var item in cart)
+                {
+                    var product = await productService.GetProductByIdAsync(item.ProductId);
+                    if (product != null && !string.IsNullOrWhiteSpace(product.Sku))
+                    {
+                        skus.Add(product.Sku);
+                    }
+                }
+                
+                return skus.Any() ? string.Join(",", skus) : null;
+            }
+            catch (Exception ex)
+            {
+                await _logger.ErrorAsync($"Error getting cart items: {ex.Message}", ex);
+                return null;
             }
         }
         

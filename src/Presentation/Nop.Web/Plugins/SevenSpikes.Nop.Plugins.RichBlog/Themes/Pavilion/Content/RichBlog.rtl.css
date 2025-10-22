@@ -87,7 +87,7 @@
 
 
 @media all and (min-width: 769px) {
-	
+
 .rich-blog-homepage .post-picture {
 	float: right;
 }
@@ -112,7 +112,7 @@
 }
 
 @media all and (min-width: 1025px) {
-	
+
 .rich-blog-homepage .slick-prev {
 	left: 37px;
 	right: auto;
@@ -169,7 +169,7 @@
 }
 
 @media all and (min-width: 1281px) {
-	
+
 .blogpost-page-body .side-2 {
 	left: 150px;
 	right: auto;

@@ -437,6 +437,7 @@ div#header {
 		position: absolute;
 		top: 0;
 		height: auto;
+		z-index: 999999;
 	}
 
 	.mobile-sidebar-title {
@@ -9828,16 +9829,6 @@ a.us-ap-button {
 }
 
 @media screen and (max-width: 1024px) {
-
-	.product-productdetails.storeId3 .hours-desktop,
-	.catalog7spikes-ajaxfilterssearch.storeId3 .hours-desktop,
-	.shoppingcart-cart.storeId3 .hours-desktop,
-	.catalog-manufacturer.storeId3 .hours-desktop {
-		margin-bottom: 70px !important;
-	}
-}
-
-@media screen and (max-width: 1024px) {
 	.storeId3 .hours-desktop {
 		margin-left: 40%;
 	}
@@ -9853,7 +9844,7 @@ a.us-ap-button {
 
 @media screen and (max-width: 480px) {
 	.storeId3 .hours-desktop {
-		margin-left: 23%;
+		margin-left: 9%;
 	}
 }
 
@@ -9871,19 +9862,11 @@ body .autocomplete-list {
 }
 
 @media screen and (max-width: 1024px) {
-	.blog-list.storeId3 .header#header {
-		margin-bottom: -143px !important;
-	}
 
 	body .autocomplete-list {
 		border: 1px solid #b22234;
 		top: 105%;
 	}
-
-	.blog-list.storeId3 .header-lower.secondary-bar {
-		margin: 13px;
-	}
-
 	.blog-blogpost.storeId3 .header#header {
 		margin-bottom: -143px !important;
 	}
@@ -9891,8 +9874,6 @@ body .autocomplete-list {
 	.blog-blogpost.storeId3 .header-lower.secondary-bar {
 		margin: 19px;
 	}
-
-
 }
 
 
@@ -9919,14 +9900,6 @@ body .autocomplete-list {
 	}
 }
 
-@media screen and (max-width: 1024px) {
-	.storeId3 .hours-desktop {
-		margin-top: 0px;
-		margin-bottom: 15px;
-	}
-
-
-}
 
 @media screen and (min-width: 1025px) {
 	.storeId3 .two-columns-area {
@@ -9935,12 +9908,6 @@ body .autocomplete-list {
 
 
 }
-
-
-.storeId3 .master-wrapper-content {
-	padding: 0px !important;
-}
-
 
 .catalog-category.storeId3 img.hawthorne-logo {
 	margin-left: -8px;
@@ -10604,20 +10571,12 @@ div#header {
 	}
 }
 
-.two-columns-area {
-	margin: 175px 0 0 0 !important;
-}
-
 body.storeId3 .header-lower {
 	background-color: #fff;
 	height: 0;
 }
 
 @media screen and (max-width: 1024px) {
-	body.topic-topicdetails.storeId3 .master-column-wrapper {
-		margin-top: 170px !important;
-	}
-
 	.storeId3 .master-wrapper-content {
 		padding: 0px 20px !important;
 		margin-top: 0px !important;
@@ -10643,17 +10602,9 @@ body.storeId3 .header-lower {
 		margin: 175px 0;
 	}
 
-	body.storeId3.catalog-category .header-lower {
-		padding-top: 70px;
-	}
-
 	.search-query {
 		display: flex !important;
 		justify-content: center;
-	}
-
-	.storeId3 .master-wrapper-content {
-		margin-top: 115px !important;
 	}
 
 	.storeId3.home-index .master-wrapper-content {
@@ -10685,4 +10636,37 @@ body.storeId3 .header-lower {
 
 .storeId3 .header-links-wrapper label {
 	color: #fff !important;
+}
+
+
+
+@media screen and (max-width: 1024px) {
+    .storeId3 .header#header {
+        margin-top: -32px;
+        padding: 10px 0;
+    }
+}
+
+/* Temp Css 10/16 */
+.storeId8 .header-menu > ul.mega-menu > li > a {
+padding: 40px 10px;
+}
+
+
+body .autocomplete-list {
+        border-color: #35699a;
+        margin-top: 0px;
+    }
+
+@media screen and (max-width: 570px) {
+    .elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
+        width: 60% !important;
+}
+}
+
+@media screen and (max-width: 1024px) {
+.categories-details-top .mattress-container img {
+	width: auto !important;
+	max-width: 100%;
+  }
 }
