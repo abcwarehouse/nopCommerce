@@ -1,5 +1,5 @@
 @media all and (max-width: 1024px) {
-	
+
 .admin-header-links {
 	position: fixed;
 	top: 0;
@@ -154,7 +154,7 @@
     -webkit-transform: translate(320px);
     -ms-transform: translate(320px);
     transform: translate(320px);
-}       
+}
 .header-menu.open {
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
     -webkit-transform: translate(0);
@@ -192,10 +192,10 @@
 	font-size: 15px;
 	font-weight: bold;
 	text-transform: uppercase;
-} 
+}
 .header-menu > ul li > .with-subcategories {
 	width: 270px;
-	float: right;   
+	float: right;
 }
 .plus-button {
 	position:relative;
@@ -219,7 +219,7 @@
     -webkit-transform: translate(320px);
     -ms-transform: translate(320px);
     transform: translate(320px);
-}        
+}
 .header-menu .sublist-wrap.active {
     -webkit-transform: translate(0);
     -ms-transform: translate(0);
@@ -396,7 +396,7 @@
 }
 
 @media all and (min-width: 769px) and (max-width: 1024px) {
-	
+
 .mini-shopping-cart .items {
 	overflow: hidden;
 }
@@ -404,5 +404,5 @@
 	float: right;
 	width: 50%;
 }
-	
+
 }
