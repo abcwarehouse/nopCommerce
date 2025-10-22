@@ -3,10 +3,12 @@
 @using Nop.Services.Orders
 @using Nop.Services.Directory
 @using Nop.Core.Domain.Common
+@using Nop.Services.Catalog
 @inject ICustomerService _customerService
 @inject IOrderService _orderService
-@inject ICountryService _countryService
+@inject ICountryService _country_service
 @inject IStateProvinceService _stateProvinceService
+@inject IProductService _productService
 
 @{
     Layout = "_ColumnsOne";
@@ -137,7 +139,6 @@
                         }
 
                             var billingStateProvince = billingAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(billingAddress.StateProvinceId.Value) : null;
-                            var billingCountry = billingAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(billingAddress.CountryId.Value) : null;
                         
                         @if (!string.IsNullOrEmpty(billingAddress.City) || 
                             billingStateProvince != null || 
@@ -164,12 +165,6 @@
                                 {
                                     @billingAddress.ZipPostalCode
                                 }
-                            </li>
-                        }
-                        @if (billingCountry != null)
-                        {
-                            <li class="country">
-                                @billingCountry.Name
                             </li>
                         }
                     }
@@ -237,7 +232,6 @@
                             }
 
                                 var shippingStateProvince = shippingAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(shippingAddress.StateProvinceId.Value) : null;
-                                var shippingCountry = shippingAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(shippingAddress.CountryId.Value) : null;
 
                             @if (!string.IsNullOrEmpty(shippingAddress.City) || 
                                 shippingStateProvince != null || 
@@ -266,12 +260,6 @@
                                     }
                                 </li>
                             }
-                            @if (shippingCountry != null)
-                            {
-                                <li class="country">
-                                    @shippingCountry.Name
-                                </li>
-                            }
                         }
                         else if (order.PickupInStore && pickupAddress != null)
                         {
@@ -283,7 +271,6 @@
                             }
 
                                 var pickupStateProvince = pickupAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(pickupAddress.StateProvinceId.Value) : null;
-                                var pickupCountry = pickupAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(pickupAddress.CountryId.Value) : null;
                             
                             @if (!string.IsNullOrEmpty(pickupAddress.City) || 
                                 pickupStateProvince != null || 
@@ -310,12 +297,6 @@
                                     {
                                         @pickupAddress.ZipPostalCode
                                     }
-                                </li>
-                            }
-                            @if (pickupCountry != null)
-                            {
-                                <li class="country">
-                                    @pickupCountry.Name
                                 </li>
                             }
                         }
@@ -364,11 +345,13 @@
                                 @{var counter = 0;}
                                 @foreach (var item in orderItems)
                                 {
-                                    counter++;
                                     <tr>
-                                        <td><span class="item-count">@counter</span></td>
+                                    counter++;
                                         <td class="product">
-                                            <a href="@Url.RouteUrl("ProductName", new { SeName = item.Product.GetSeName() })">@item.ProductName</a>
+                                            @{
+                                                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                                            }
+                                            <a href="@Url.Action("Product", "Catalog", new { productId = item.ProductId })">@product?.Name ?? ("Product #" + item.ProductId)</a>
                                         </td>
                                         <td class="unit-price">@item.UnitPriceInclTax.ToString("C")</td>
                                         <td class="quantity">@item.Quantity</td>
