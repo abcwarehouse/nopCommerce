@@ -10668,15 +10668,4 @@ body .autocomplete-list {
 	width: auto !important;
 	max-width: 100%;
   }
-
-
-.customcatalog-promolistingpage.storeId3 .master-wrapper-content
- {
-       margin-top: 180px !important;
-    }
-}
-
-
-.page.product-details-page .product-item {
-    display: none;
 }
