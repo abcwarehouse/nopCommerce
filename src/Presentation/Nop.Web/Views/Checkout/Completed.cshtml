@@ -135,10 +135,10 @@
                                 @billingAddress.Address2
                             </li>
                         }
-                        @{
+
                             var billingStateProvince = billingAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(billingAddress.StateProvinceId.Value) : null;
                             var billingCountry = billingAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(billingAddress.CountryId.Value) : null;
-                        }
+                        
                         @if (!string.IsNullOrEmpty(billingAddress.City) || 
                             billingStateProvince != null || 
                             !string.IsNullOrEmpty(billingAddress.ZipPostalCode))
@@ -235,10 +235,10 @@
                                     @shippingAddress.Address2
                                 </li>
                             }
-                            @{
+
                                 var shippingStateProvince = shippingAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(shippingAddress.StateProvinceId.Value) : null;
                                 var shippingCountry = shippingAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(shippingAddress.CountryId.Value) : null;
-                            }
+
                             @if (!string.IsNullOrEmpty(shippingAddress.City) || 
                                 shippingStateProvince != null || 
                                 !string.IsNullOrEmpty(shippingAddress.ZipPostalCode))
@@ -281,10 +281,10 @@
                                     @pickupAddress.Address1
                                 </li>
                             }
-                            @{
+
                                 var pickupStateProvince = pickupAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(pickupAddress.StateProvinceId.Value) : null;
                                 var pickupCountry = pickupAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(pickupAddress.CountryId.Value) : null;
-                            }
+                            
                             @if (!string.IsNullOrEmpty(pickupAddress.City) || 
                                 pickupStateProvince != null || 
                                 !string.IsNullOrEmpty(pickupAddress.ZipPostalCode))
@@ -368,7 +368,7 @@
                                     <tr>
                                         <td><span class="item-count">@counter</span></td>
                                         <td class="product">
-                                            <a href="@Url.RouteUrl("Product", new { SeName = item.Product.GetSeName() })">@item.Product.Name</a>
+                                            <a href="@Url.RouteUrl("ProductName", new { SeName = item.Product.GetSeName() })">@item.ProductName</a>
                                         </td>
                                         <td class="unit-price">@item.UnitPriceInclTax.ToString("C")</td>
                                         <td class="quantity">@item.Quantity</td>
