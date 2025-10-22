@@ -1,8 +1,12 @@
 ﻿@model CheckoutCompletedModel
 @using Nop.Services.Customers
 @using Nop.Services.Orders
+@using Nop.Services.Directory
+@using Nop.Core.Domain.Common
 @inject ICustomerService _customerService
 @inject IOrderService _orderService
+@inject ICountryService _countryService
+@inject IStateProvinceService _stateProvinceService
 
 @{
     Layout = "_ColumnsOne";
@@ -18,12 +22,27 @@
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
     decimal orderDiscount = 0;
     var customerEmail = "Unknown";
+    
+    Address billingAddress = null;
+    Address shippingAddress = null;
+    Address pickupAddress = null;
 
     if (order != null)
     {
         var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
         customerEmail = customer?.Email ?? "Unknown";
         orderDiscount = order.OrderSubTotalDiscountInclTax;
+        
+        // Load addresses
+        billingAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.BillingAddressId);
+        if (order.ShippingAddressId.HasValue)
+        {
+            shippingAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.ShippingAddressId.Value);
+        }
+        if (order.PickupAddressId.HasValue)
+        {
+            pickupAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.PickupAddressId.Value);
+        }
     }
     else
     {
@@ -40,22 +59,6 @@
         return;
     }
 }
-
-<script>
-  console.log("Debug: orderTotal = @orderTotal");
-  console.log("Debug: order.OrderSubTotalDiscountInclTax = @order?.OrderSubTotalDiscountInclTax");
-  console.log("Debug: Calculated orderDiscount = @orderDiscount");
-
-  @if (order == null)
-  {
-      @:console.warn("Debug: Order object is null.");
-  }
-  else
-  {
-      @:console.log("Debug: Order found with ID = @order.Id");
-      @:console.log("Debug: OrderSubTotalDiscountInclTax = @order.OrderSubTotalDiscountInclTax");
-  }
-</script>
 
 <div class="page checkout-page order-completed-page">
     @if (!Model.OnePageCheckoutEnabled)
@@ -78,36 +81,389 @@
                 <div class="details-link">
                     <a href="@Url.RouteUrl("OrderDetails", new { orderID = Model.OrderId })">@T("Checkout.PlacedOrderDetails")</a>
                 </div>
-                <div class="order-total">
-                    @T("Checkout.OrderTotal"): <strong>@(Convert.ToDecimal(orderTotal).ToString("0.00"))";</strong>
-                </div>
-                <div class="ordered-products">
-                    <h3>Ordered Products</h3>
-                    <ul>
-                        @foreach (var item in orderItems)
-                        {
-                            <li>
-                                <span class="product-id"><strong>Product ID:</strong> @item.ProductId</span><br />
-                                <span class="price"><strong>Price:</strong> @item.UnitPriceInclTax.ToString("0.00")</span><br />
-                                <span class="quantity"><strong>Quantity:</strong> @item.Quantity</span>
-                            </li>
-                        }
+            </div>
+        </div>
 
-                        @if (order != null && order.OrderShippingInclTax > 0)
+        @if (order != null)
+        {
+            <!-- Order Overview Section -->
+            <div class="order-overview">
+                <div class="order-info">
+                    <span class="order-date">@T("Order.OrderDate"): @order.CreatedOnUtc.ToLocalTime().ToString("D")</span>
+                    <span class="order-status">@T("Order.OrderStatus"): @order.OrderStatus.ToString()</span>
+                </div>
+                <div class="order-total">
+                    @T("Order.OrderTotal"): <strong>@order.OrderTotal.ToString("C")</strong>
+                </div>
+            </div>
+
+            <!-- Billing and Shipping Details -->
+            <div class="order-details-area">
+                <ul class="billing-info">
+                    <li class="title">
+                        @T("Order.BillingAddress")
+                    </li>
+                    @if (billingAddress != null)
+                    {
+                        <li class="name">
+                            @billingAddress.FirstName @billingAddress.LastName
+                        </li>
+                        <li class="email">
+                            @T("Order.Email"): @billingAddress.Email
+                        </li>
+                        @if (!string.IsNullOrEmpty(billingAddress.PhoneNumber))
                         {
-                            <li class="shipping-item">
-                                <span class="product-id"><strong>Product ID:</strong> SHIPPING</span><br />
-                                <span class="price"><strong>Price:</strong> @order.OrderShippingInclTax.ToString("0.00")</span><br />
-                                <span class="quantity"><strong>Quantity:</strong> 1</span>
+                            <li class="phone">
+                                @T("Order.Phone"): @billingAddress.PhoneNumber
                             </li>
                         }
+                        @if (!string.IsNullOrEmpty(billingAddress.Company))
+                        {
+                            <li class="company">
+                                @billingAddress.Company
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(billingAddress.Address1))
+                        {
+                            <li class="address1">
+                                @billingAddress.Address1
+                            </li>
+                        }
+                        @if (!string.IsNullOrEmpty(billingAddress.Address2))
+                        {
+                            <li class="address2">
+                                @billingAddress.Address2
+                            </li>
+                        }
+                        @{
+                            var billingStateProvince = billingAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(billingAddress.StateProvinceId.Value) : null;
+                            var billingCountry = billingAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(billingAddress.CountryId.Value) : null;
+                        }
+                        @if (!string.IsNullOrEmpty(billingAddress.City) || 
+                            billingStateProvince != null || 
+                            !string.IsNullOrEmpty(billingAddress.ZipPostalCode))
+                        {
+                            <li class="city-state-zip">
+                                @if (!string.IsNullOrEmpty(billingAddress.City))
+                                {
+                                    @billingAddress.City
+                                    @if (billingStateProvince != null || !string.IsNullOrEmpty(billingAddress.ZipPostalCode))
+                                    {
+                                        <text>,</text>
+                                    }
+                                }
+                                @if (billingStateProvince != null)
+                                {
+                                    @billingStateProvince.Name
+                                    @if (!string.IsNullOrEmpty(billingAddress.ZipPostalCode))
+                                    {
+                                        <text>,</text>
+                                    }
+                                }
+                                @if (!string.IsNullOrEmpty(billingAddress.ZipPostalCode))
+                                {
+                                    @billingAddress.ZipPostalCode
+                                }
+                            </li>
+                        }
+                        @if (billingCountry != null)
+                        {
+                            <li class="country">
+                                @billingCountry.Name
+                            </li>
+                        }
+                    }
+                    @if (!string.IsNullOrEmpty(order.PaymentMethodSystemName))
+                    {
+                        <li class="title">
+                            @T("Order.Payment")
+                        </li>
+                        <li class="payment-method">
+                            <span class="label">
+                                @T("Order.Payment.Method"):
+                            </span>
+                            <span class="value">
+                                @order.PaymentMethodSystemName
+                            </span>
+                        </li>
+                        <li class="payment-method-status">
+                            <span class="label">
+                                @T("Order.Payment.Status"):
+                            </span>
+                            <span class="value">
+                                @order.PaymentStatus.ToString()
+                            </span>
+                        </li>
+                    }
+                </ul>
+
+                @if (order.ShippingStatus != Nop.Core.Domain.Shipping.ShippingStatus.ShippingNotRequired)
+                {
+                    <ul class="shipping-info">
+                        <li class="title">
+                            @(order.PickupInStore ? T("Order.PickupAddress") : T("Order.ShippingAddress"))
+                        </li>
+                        @if (!order.PickupInStore && shippingAddress != null)
+                        {
+                            <li class="name">
+                                @shippingAddress.FirstName @shippingAddress.LastName
+                            </li>
+                            <li class="email">
+                                @T("Order.Email"): @shippingAddress.Email
+                            </li>
+                            @if (!string.IsNullOrEmpty(shippingAddress.PhoneNumber))
+                            {
+                                <li class="phone">
+                                    @T("Order.Phone"): @shippingAddress.PhoneNumber
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(shippingAddress.Company))
+                            {
+                                <li class="company">
+                                    @shippingAddress.Company
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(shippingAddress.Address1))
+                            {
+                                <li class="address1">
+                                    @shippingAddress.Address1
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(shippingAddress.Address2))
+                            {
+                                <li class="address2">
+                                    @shippingAddress.Address2
+                                </li>
+                            }
+                            @{
+                                var shippingStateProvince = shippingAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(shippingAddress.StateProvinceId.Value) : null;
+                                var shippingCountry = shippingAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(shippingAddress.CountryId.Value) : null;
+                            }
+                            @if (!string.IsNullOrEmpty(shippingAddress.City) || 
+                                shippingStateProvince != null || 
+                                !string.IsNullOrEmpty(shippingAddress.ZipPostalCode))
+                            {
+                                <li class="city-state-zip">
+                                    @if (!string.IsNullOrEmpty(shippingAddress.City))
+                                    {
+                                        @shippingAddress.City
+                                        @if (shippingStateProvince != null || !string.IsNullOrEmpty(shippingAddress.ZipPostalCode))
+                                        {
+                                            <text>,</text>
+                                        }
+                                    }
+                                    @if (shippingStateProvince != null)
+                                    {
+                                        @shippingStateProvince.Name
+                                        @if (!string.IsNullOrEmpty(shippingAddress.ZipPostalCode))
+                                        {
+                                            <text>,</text>
+                                        }
+                                    }
+                                    @if (!string.IsNullOrEmpty(shippingAddress.ZipPostalCode))
+                                    {
+                                        @shippingAddress.ZipPostalCode
+                                    }
+                                </li>
+                            }
+                            @if (shippingCountry != null)
+                            {
+                                <li class="country">
+                                    @shippingCountry.Name
+                                </li>
+                            }
+                        }
+                        else if (order.PickupInStore && pickupAddress != null)
+                        {
+                            @if (!string.IsNullOrEmpty(pickupAddress.Address1))
+                            {
+                                <li class="address1">
+                                    @pickupAddress.Address1
+                                </li>
+                            }
+                            @{
+                                var pickupStateProvince = pickupAddress.StateProvinceId.HasValue ? await _stateProvinceService.GetStateProvinceByIdAsync(pickupAddress.StateProvinceId.Value) : null;
+                                var pickupCountry = pickupAddress.CountryId.HasValue ? await _countryService.GetCountryByIdAsync(pickupAddress.CountryId.Value) : null;
+                            }
+                            @if (!string.IsNullOrEmpty(pickupAddress.City) || 
+                                pickupStateProvince != null || 
+                                !string.IsNullOrEmpty(pickupAddress.ZipPostalCode))
+                            {
+                                <li class="city-state-zip">
+                                    @if (!string.IsNullOrEmpty(pickupAddress.City))
+                                    {
+                                        @pickupAddress.City
+                                        @if (pickupStateProvince != null || !string.IsNullOrEmpty(pickupAddress.ZipPostalCode))
+                                        {
+                                            <text>,</text>
+                                        }
+                                    }
+                                    @if (pickupStateProvince != null)
+                                    {
+                                        @pickupStateProvince.Name
+                                        @if (!string.IsNullOrEmpty(pickupAddress.ZipPostalCode))
+                                        {
+                                            <text>,</text>
+                                        }
+                                    }
+                                    @if (!string.IsNullOrEmpty(pickupAddress.ZipPostalCode))
+                                    {
+                                        @pickupAddress.ZipPostalCode
+                                    }
+                                </li>
+                            }
+                            @if (pickupCountry != null)
+                            {
+                                <li class="country">
+                                    @pickupCountry.Name
+                                </li>
+                            }
+                        }
+                        <li class="title">
+                            @T("Order.Shipping")
+                        </li>
+                        <li class="shipping-method">
+                            <span class="label">
+                                @T("Order.Shipping.Name"):
+                            </span>
+                            <span class="value">
+                                @order.ShippingMethod
+                            </span>
+                        </li>
+                        <li class="shipping-status">
+                            <span class="label">
+                                @T("Order.Shipping.Status"):
+                            </span>
+                            <span class="value">
+                                @order.ShippingStatus.ToString()
+                            </span>
+                        </li>
                     </ul>
+                }
+            </div>
+
+            <!-- Order Items Table -->
+            @if (orderItems != null && orderItems.Count > 0)
+            {
+                <div class="section products">
+                    <div class="title">
+                        <strong>@T("Order.Product(s)")</strong>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><span class="item-count">#</span></th>
+                                    <th class="name">@T("Order.Product(s).Name")</th>
+                                    <th class="price">@T("Order.Product(s).Price")</th>
+                                    <th class="quantity">@T("Order.Product(s).Quantity")</th>
+                                    <th class="total">@T("Order.Product(s).Total")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{var counter = 0;}
+                                @foreach (var item in orderItems)
+                                {
+                                    counter++;
+                                    <tr>
+                                        <td><span class="item-count">@counter</span></td>
+                                        <td class="product">
+                                            <a href="@Url.RouteUrl("Product", new { SeName = item.Product.GetSeName() })">@item.Product.Name</a>
+                                        </td>
+                                        <td class="unit-price">@item.UnitPriceInclTax.ToString("C")</td>
+                                        <td class="quantity">@item.Quantity</td>
+                                        <td class="total">@item.PriceInclTax.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+                <!-- Order Totals -->
+                <div class="section totals">
+                    <div class="total-info">
+                        <table class="cart-total">
+                            <tbody>
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@T("Order.SubTotal"):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span>@order.OrderSubtotalInclTax.ToString("C")</span>
+                                    </td>
+                                </tr>
+                                @if (order.OrderSubTotalDiscountInclTax > 0)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.SubTotalDiscount"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>-@order.OrderSubTotalDiscountInclTax.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (order.ShippingStatus != Nop.Core.Domain.Shipping.ShippingStatus.ShippingNotRequired)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.Shipping"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>@order.OrderShippingInclTax.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (order.PaymentMethodAdditionalFeeInclTax > 0)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.PaymentMethodAdditionalFee"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>@order.PaymentMethodAdditionalFeeInclTax.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@T("Order.Tax"):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span>@order.OrderTax.ToString("C")</span>
+                                    </td>
+                                </tr>
+                                @if (order.OrderDiscount > 0)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.TotalDiscount"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>-@order.OrderDiscount.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@T("Order.OrderTotal"):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span><strong>@order.OrderTotal.ToString("C")</strong></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
 
             <div class="buttons">
                 <button type="button" class="button-1 order-completed-continue-button" onclick="setLocation('@Url.RouteUrl("Homepage")')">@T("Checkout.ThankYou.Continue")</button>
             </div>
-        </div>
+        }
+
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedBottom, additionalData = Model })
     </div>
 </div>
@@ -132,7 +488,6 @@ window.bvCallback = function (BV) {
           @:   "productId": "@item.ProductId"
           @: }@(i < orderItems.Count - 1 || (order != null && order.OrderShippingInclTax > 0) ? "," : "")
       }
-      @* Add shipping as a separate item if it exists *@
       @if (order != null && order.OrderShippingInclTax > 0)
       {
           @: {
