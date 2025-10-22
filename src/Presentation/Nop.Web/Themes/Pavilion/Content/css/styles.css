@@ -10662,3 +10662,21 @@ body .autocomplete-list {
         width: 60% !important;
 }
 }
+
+@media screen and (max-width: 1024px) {
+.categories-details-top .mattress-container img {
+	width: auto !important;
+	max-width: 100%;
+  }
+
+
+.customcatalog-promolistingpage.storeId3 .master-wrapper-content
+ {
+       margin-top: 180px !important;
+    }
+}
+
+
+.page.product-details-page .product-item {
+    display: none;
+}
