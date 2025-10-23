@@ -88,16 +88,6 @@
 
         @if (order != null)
         {
-            <!-- Order Overview Section -->
-            <div class="order-overview order-details-area">
-                <div class="order-info">
-                    <span class="order-date">@T("Order.OrderDate"): @order.CreatedOnUtc.ToLocalTime().ToString("D")</span>
-                    <span class="order-status">@T("Order.OrderStatus"): @order.OrderStatus.ToString()</span>
-                </div>
-                <div class="order-total">
-                    @T("Order.OrderTotal"): <strong>@order.OrderTotal.ToString("C")</strong>
-                </div>
-            </div>
 
             <!-- Order Items Table -->
             @if (orderItems != null && orderItems.Count > 0)
