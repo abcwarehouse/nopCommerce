@@ -10665,7 +10665,7 @@ body .autocomplete-list {
 @media screen and (max-width: 1024px) {
     .storeId3 .header
  {
-        margin-bottom: 0;
+        margin-bottom: 0px;
     }
 }
 
