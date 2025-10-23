@@ -10598,9 +10598,6 @@ body.storeId3 .header-lower {
 }
 
 @media (max-width: 1024px) {
-	.storeId3.searchspring-results .master-column-wrapper {
-		margin: 175px 0;
-	}
 
 	.search-query {
 		display: flex !important;
@@ -10636,7 +10633,7 @@ body.storeId3 .header-lower {
 @media screen and (max-width: 1024px) {
     .storeId3 .header#header {
         margin-top: -32px;
-        padding: 10px 0;
+        padding: 1px 0;
     }
 }
 
@@ -10662,4 +10659,31 @@ body .autocomplete-list {
 	width: auto !important;
 	max-width: 100%;
   }
+}
+
+
+@media screen and (max-width: 1024px) {
+    .storeId3 .header
+ {
+        margin-bottom: 0px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .storeId3 .hours-desktop {
+        margin-left: 10%;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .storeId3 .hours-desktop {
+        margin-left: 10%;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .storeId3 .hours-desktop {
+        margin-left: -11%;
+    }
 }
