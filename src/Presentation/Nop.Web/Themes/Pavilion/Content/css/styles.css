@@ -10621,13 +10621,6 @@ body.storeId3 .header-lower {
 
 }
 
-
-@media screen and (max-width: 570px) {
-	.storeId8 .elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
-		width: 77% !important;
-	}
-}
-
 @media screen and (max-width: 1024px) {
 	body.storeId3 .master-wrapper-page .mobile-header-content-row {
 		background-color: #35699a !important;
