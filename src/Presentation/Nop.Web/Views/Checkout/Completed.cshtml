@@ -122,12 +122,14 @@
                                 @foreach (var item in orderItems)
                                 {
                                     <tr>
-                                    @counter++;
+                                        <td>
+                                            @{counter++;}
+                                        </td>
                                         <td class="product">
                                             @{
                                                 var product = await _productService.GetProductByIdAsync(item.ProductId);
                                             }
-                                            <a href="@Url.Action("Product", "Catalog", new { productId = item.ProductId })">@product?.Name ?? ("Product #" @item.ProductId)</a>
+                                            <a href="@Url.Action("Product", "Catalog", new { productId = item.ProductId })">@product?.Name (Product #: @item.ProductId)</a>
                                         </td>
                                         <td class="unit-price">@item.UnitPriceInclTax.ToString("C")</td>
                                         <td class="quantity">@item.Quantity</td>
