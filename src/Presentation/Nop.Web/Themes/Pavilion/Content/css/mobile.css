@@ -1,5 +1,5 @@
 @media all and (max-width: 1024px) {
-	
+
 .admin-header-links {
 	position: fixed;
 	top: 0;
@@ -33,8 +33,6 @@
 
 .storeId3 .responsive-nav-wrapper-parent {
         position: relative;
-		/* position: fixed; */
-        /* top: 42px !important; */
         z-index: 1020;
         width: 100%;
         height: 53px !important;
@@ -47,9 +45,7 @@
 .admin-header-links ~ .header .header-logo {
 	top: 95px;
 }
-.admin-header-links ~ .responsive-nav-wrapper-parent {
-	top: 42px;
-}
+
 
 .mobile-sticky-logo .header .header-logo {
 	position: fixed;
@@ -98,24 +94,24 @@
 	clear: both;
 }
 .storeId8 .responsive-nav-wrapper > div {
-	
-	
+
+
 	background-color: #02463b !important;
-	background-image: url('https://www.abcwarehouse.com/images/gold_cart.png');  
+	background-image: url('https://www.abcwarehouse.com/images/gold_cart.png');
 	background-repeat: no-repeat;
 	background-size: 43%;
 	background-position: center;
 }
 
 .storeId3 .responsive-nav-wrapper > div {
-	
-	
+
+
 	background-color: white !important;
-	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');  
+	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');
 	background-position: 215px;
-	
-	
-	
+
+
+
 }
 
 
@@ -126,12 +122,12 @@
 	background-position: 0 center;
 }
 .storeId3 .responsive-nav-wrapper div.shopping-cart-link {
-	
+
 	background-position: -55px center;
-	
+
 }
 .responsive-nav-wrapper div.personal-button {
-	
+
 }
 .responsive-nav-wrapper div.preferences-button {
 	background-position: -162px center;
@@ -211,10 +207,10 @@
     transform: translate(-320px);
 }
 
-.storeId8 .header-menu.categories-in-side-panel {  
+.storeId8 .header-menu.categories-in-side-panel {
 	  left: 0px;
 }
-.storeId8 .header-menu.categories-in-side-panel.open {  
+.storeId8 .header-menu.categories-in-side-panel.open {
 	  left: auto;
 }
 
@@ -236,7 +232,7 @@
 .storeId8 .header-menu .close-menu,
 .header-menu .back-button {
 	background-color: #02463b;
-	
+
 }
 .header-menu .close-menu span,
 .header-menu .back-button span {
@@ -264,10 +260,10 @@
 	font-size: 15px;
 	font-weight: bold;
 	text-transform: uppercase;
-} 
+}
 .header-menu > ul li > .with-subcategories {
 	width: 270px;
-	float: left;   
+	float: left;
 }
 .plus-button {
 	position:relative;
@@ -291,7 +287,7 @@
     -webkit-transform: translate(-320px);
     -ms-transform: translate(-320px);
     transform: translate(-320px);
-}      
+}
 .header-menu .sublist-wrap.active {
     -webkit-transform: translate(0);
     -ms-transform: translate(0);
@@ -468,7 +464,7 @@
 }
 
 @media all and (min-width: 769px) and (max-width: 1024px) {
-	
+
 .mini-shopping-cart .items {
 	overflow: hidden;
 }
@@ -476,7 +472,7 @@
 	float: left;
 	width: 50%;
 }
-	
+
 }
 
 

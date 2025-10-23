@@ -38,6 +38,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                AppSettings appSettings
         ) {
             services.AddScoped<IAbcMattressProductService, AbcMattressProductService>();
+            services.AddScoped<IPageNotFoundRecordService, PageNotFoundRecordService>();
             services.AddScoped<IAbcMattressModelService, AbcMattressModelService>();
             services.AddScoped<IAbcMattressEntryService, AbcMattressEntryService>();
             services.AddScoped<IAbcMattressPackageService, AbcMattressPackageService>();

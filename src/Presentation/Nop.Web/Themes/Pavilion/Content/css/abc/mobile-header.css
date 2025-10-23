@@ -2,9 +2,7 @@
 .admin-header-links {
     position: relative;
 }
-.admin-header-links ~ .responsive-nav-wrapper-parent {
-    top: 0;
-}
+
 
 /* sets up flex for centering */
 .responsive-nav-wrapper {
@@ -179,7 +177,7 @@ input.search-box-text::placeholder {
 
 .storeId3 form#small-search-box-form {
     width: 100%;
-    
+
 }
 .search-box-button {
     background: url(/Plugins/Misc.AbcFrontend/Images/search-button.png) center no-repeat !important;
