@@ -10691,7 +10691,7 @@ body.storeId3 .header-lower {
 /********************* Black Friday Code ********************* */
 
 .master-wrapper-page {
-    background-image: url(images/black-friday-back.jpg) !important;
+    background-image: url(/images/black-friday-back.jpg) !important;
     background-size: contain;
 }
 
