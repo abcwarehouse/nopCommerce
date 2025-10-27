@@ -9864,7 +9864,7 @@ a.us-ap-button {
 }
 
 body .autocomplete-list {
-	border: 3px solid #35699a;
+	border: 3px solid #ec232a;
 }
 
 .page.account-page.customer-info-page .page-title {
@@ -9904,11 +9904,11 @@ body .autocomplete-list {
 	}
 
 	body.storeId3 .header-lower {
-		border-bottom: solid #35699a 2px;
+		border-bottom: solid #ec232a 2px;
 	}
 
 	body.storeId3 .header-lower {
-		background-color: #35699a !important;
+		background-color: #ec232a !important;
 		height: auto !important;
 	}
 
@@ -10680,10 +10680,19 @@ body.storeId3 .header-lower {
 
 @media screen and (max-width: 1024px) {
 	body.storeId3 .master-wrapper-page .mobile-header-content-row {
-		background-color: #35699a !important;
+		background-color: #ec232a !important;
 	}
 }
 
 .storeId3 .header-links-wrapper label {
 	color: #fff !important;
 }
+
+/********************* Black Friday Code ********************* */
+
+
+.master-wrapper-page {
+    background-image: url(images/black-friday-back.jpg) !important;
+    background-size: contain;
+}
+
