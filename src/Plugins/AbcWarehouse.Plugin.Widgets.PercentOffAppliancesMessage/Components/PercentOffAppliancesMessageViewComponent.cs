@@ -81,8 +81,8 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 "GE MONOGRAM",
                 "GE PROFILE",
             };
-            var pms = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
-            foreach (var pm in pms)
+            var bmsm = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
+            foreach (var pm in bmsm)
             {
                 var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
                 if (manufacturer.Published && buyMoreBrands.Contains(manufacturer.Name))
