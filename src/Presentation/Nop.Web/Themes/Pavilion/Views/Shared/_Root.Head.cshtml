@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div id="introVideoContainer" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:9999;">
     <video id="introVideo" autoplay muted playsinline style="width:100%; height:100%; object-fit:cover;">
-        <source src="/videos/BlackFriday_Popup-graphic.mp4" type="video/mp4">
+        <source id="introVideoSource" src="" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
@@ -449,6 +449,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!hasSeenIntro) {
             var videoContainer = document.getElementById('introVideoContainer');
             var video = document.getElementById('introVideo');
+            var videoSource = document.getElementById('introVideoSource');
+
+            if (window.innerWidth <= 600) {
+                videoSource.src = '/videos/BlackFriday_Popup-graphic-MOBILE.mp4';
+            } else {
+                videoSource.src = '/videos/intro.mp4';
+            }
+
+            video.load();
 
             videoContainer.style.display = 'block';
 
@@ -456,12 +465,15 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(closeIntro, 3000);
 
             function closeIntro() {
-                videoContainer.style.transition = 'opacity 0.5s';
-                videoContainer.style.opacity = '0';
-                setTimeout(function () {
-                    videoContainer.style.display = 'none';
-                }, 500);
-                localStorage.setItem('hasSeenIntroVideo', 'true');
+                if (!videoContainer.classList.contains('closing')) {
+                    videoContainer.classList.add('closing');
+                    videoContainer.style.transition = 'opacity 0.5s';
+                    videoContainer.style.opacity = '0';
+                    setTimeout(function () {
+                        videoContainer.style.display = 'none';
+                    }, 500);
+                    localStorage.setItem('hasSeenIntroVideo', 'true');
+                }
             }
         }
     })();
