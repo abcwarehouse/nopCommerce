@@ -4,11 +4,10 @@ using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Services.Catalog;
 using Nop.Services.Logging;
 using Nop.Web.Framework.Components;
-using Nop.Web.Models.Catalog;
-using System.Threading.Tasks;
-using Nop.Plugin.Misc.AbcCore.Nop;
 using System.Linq;
+using System.Threading.Tasks;
 using Nop.Core;
+using Nop.Plugin.Misc.AbcCore.Nop;
 
 namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.Components
 {
@@ -16,12 +15,20 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
     public class PercentOffAppliancesMessageViewComponent : NopViewComponent
     {
         private readonly ILogger _logger;
-        private readonly IAbcCategoryService  _abcCategoryService;
+        private readonly IAbcCategoryService _abcCategoryService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
         private readonly IProductService _productService;
         private readonly IStoreContext _storeContext;
+
+        private static readonly string[] LGBuyMoreBrands = { "LG SIGNATURE", "LG STUDIO", "LG XBOOM" };
+        private static readonly string[] BuyMoreBrands = { "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery", "Electrolux", "Electrolux ICON", "Electrolux Professional" };
+        private static readonly string[] ExcludedBrands = {
+            "LG SIGNATURE", "LG STUDIO", "LG XBOOM", "\"C\" BY GE", "GE CAFE", "GE MONOGRAM",
+            "GE PROFILE", "MONOGRAM", "MIELE", "DACOR", "JENN-AIR", "SUBZERO", "THERMADOR",
+            "VIKING", "WOLF", "FULGOR", "SIGNATURE KITCHEN SUITE", "COVE", "BLUE STAR", "BOSCH"
+        };
 
         public PercentOffAppliancesMessageViewComponent(
             ILogger logger,
@@ -30,8 +37,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
             IProductService productService,
-            IStoreContext storeContext
-        )
+            IStoreContext storeContext)
         {
             _logger = logger;
             _abcCategoryService = abcCategoryService;
@@ -44,112 +50,82 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, int additionalData)
         {
-            // Don't display for Hawthorne
-            var isHawthorne = (await _storeContext.GetCurrentStoreAsync()).Id == 8;
-            if (isHawthorne)
-            {
+            // Don't display for Hawthorne store
+            if ((await _storeContext.GetCurrentStoreAsync()).Id == 8)
                 return Content("");
-            }
 
-            int productId = additionalData;
-            Product product = await _productService.GetProductByIdAsync(productId);
+            var productId = additionalData;
+            var product = await _productService.GetProductByIdAsync(productId);
+
             if (product == null)
             {
-                await _logger.WarningAsync($"Percent Off Appliances Message Widget: Unable to find product with ID '{productId}', was the product ID passed in?");
+                await _logger.WarningAsync($"Percent Off Appliances Message Widget: Unable to find product with ID '{productId}'.");
                 return Content("");
             }
 
-            // Don't display for call for pricing products
-            if (product.CallForPrice)
-            {
+            if (product.CallForPrice || await product.IsAddToCartToSeePriceAsync())
                 return Content("");
-            }
 
-            // Don't display for Add to cart to see price
-            if (await product.IsAddToCartToSeePriceAsync())
-            {
+            // Check if product belongs to an appliance category
+            bool isAppliance = await HasApplianceCategoryAsync(productId);
+            if (!isAppliance)
                 return Content("");
-            }
 
-            // exclude specific brands
-            var LGBuyMoreBrands = new string[] {
-                "LG SIGNATURE",
-                "LG STUDIO",
-                "LG XBOOM",
-                "LG",
-            };
-            var lgbmsm = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
-            foreach (var pm in lgbmsm)
+            // Determine manufacturer
+            var manufacturer = await GetPrimaryManufacturerAsync(productId);
+            if (manufacturer == null || !manufacturer.Published)
+                return Content("");
+
+            // Brand-based message logic
+            var formattedDiscount = await GetFormattedDiscountedPriceAsync(product.Price);
+
+            if (LGBuyMoreBrands.Contains(manufacturer.Name))
+                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", formattedDiscount);
+
+            if (BuyMoreBrands.Contains(manufacturer.Name))
+                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", formattedDiscount);
+
+            if (ExcludedBrands.Contains(manufacturer.Name))
+                return Content("");
+
+            // Default message
+            return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/Message.cshtml", formattedDiscount);
+        }
+
+        /// <summary>
+        /// Checks if the product is under an appliance category.
+        /// </summary>
+        private async Task<bool> HasApplianceCategoryAsync(int productId)
+        {
+            var categories = await _abcCategoryService.GetProductCategoriesByProductIdAsync(productId);
+            foreach (var category in categories)
             {
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
-                if (manufacturer.Published && LGBuyMoreBrands.Contains(manufacturer.Name))
-                {
-                    return Content("LG Only Buy More & Save More!");
-                }
+                if (await _abcCategoryService.HasApplianceTopLevelCategoryAsync(category.CategoryId))
+                    return true;
             }
+            return false;
+        }
 
-            // exclude specific brands
-            var buyMoreBrands = new string[] {
-                "\"C\" BY GE",
-                "GE CAFE",
-                "GE MONOGRAM",
-                "GE PROFILE",
-                "Samsung",
-                "FRIGIDAIRE",
-                "Frigidaire Gallery",
-                "Electrolux",
-                "Electrolux ICON",
-                "Electrolux Professional",
-            };
-            var bmsm = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
-            foreach (var pm in bmsm)
-            {
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
-                if (manufacturer.Published && buyMoreBrands.Contains(manufacturer.Name))
-                {
-                    return Content("Buy More & Save More!");
-                }
-            }
+        /// <summary>
+        /// Gets the first manufacturer associated with a product.
+        /// </summary>
+        private async Task<Manufacturer> GetPrimaryManufacturerAsync(int productId)
+        {
+            var productManufacturers = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
+            if (!productManufacturers.Any())
+                return null;
 
-            // exclude specific brands
-            var exceptionBrands = new string[] {
-                "LG SIGNATURE",
-                "LG STUDIO",
-                "LG XBOOM",
-                "\"C\" BY GE",
-                "GE CAFE",
-                "GE MONOGRAM",
-                "GE PROFILE",
-                "MONOGRAM",
-                "MIELE",
-                "DACOR","JENN-AIR","MIELE","MONOGRAM", "SUBZERO","THERMADOR","VIKING","WOLF","FULGOR","SIGNATURE KITCHEN SUITE","COVE","BLUE STAR","BOSCH","SUBZERO",
-            };
-            var pms = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
-            foreach (var pm in pms)
-            {
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
-                if (manufacturer.Published && exceptionBrands.Contains(manufacturer.Name))
-                {
-                    return Content("");
-                }
-            }
+            var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(productManufacturers.First().ManufacturerId);
+            return manufacturer;
+        }
 
-            var pcs = await _abcCategoryService.GetProductCategoriesByProductIdAsync(productId);
-            var showMessage = false;
-            foreach (var pc in pcs)
-            {
-                if (!showMessage)
-                {
-                    showMessage = await _abcCategoryService.HasApplianceTopLevelCategoryAsync(pc.CategoryId);
-                }
-            }
-
-            var discountedPrice = await _priceCalculationService.RoundPriceAsync(product.Price - (product.Price * 0.10M));
-            var formattedDiscountPrice = await _priceFormatter.FormatPriceAsync(discountedPrice);
-
-            return showMessage ?
-                View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/Message.cshtml", formattedDiscountPrice) :
-                Content("");
+        /// <summary>
+        /// Calculates and formats the discounted price (10% off).
+        /// </summary>
+        private async Task<string> GetFormattedDiscountedPriceAsync(decimal originalPrice)
+        {
+            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice * 0.9M);
+            return await _priceFormatter.FormatPriceAsync(discounted);
         }
     }
 }
