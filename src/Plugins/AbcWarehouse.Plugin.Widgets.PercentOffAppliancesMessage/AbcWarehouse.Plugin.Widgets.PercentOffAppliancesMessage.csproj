@@ -30,9 +30,7 @@
     <Content Include="styles\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Message.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Views\**\*.cshtml" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <ItemGroup>
