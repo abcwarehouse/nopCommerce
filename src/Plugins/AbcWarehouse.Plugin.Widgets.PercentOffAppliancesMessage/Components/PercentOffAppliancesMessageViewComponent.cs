@@ -80,10 +80,10 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             var formattedDiscount = await GetFormattedDiscountedPriceAsync(product.Price);
 
             if (LGBuyMoreBrands.Contains(manufacturer.Name))
-                return View("/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", formattedDiscount);
+                return View("LGBMSMMessage", formattedDiscount);
 
             if (BuyMoreBrands.Contains(manufacturer.Name))
-                return View("/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", formattedDiscount);
+                return View("BMSMMessage", formattedDiscount);
 
             if (ExcludedBrands.Contains(manufacturer.Name))
                 return Content("");
