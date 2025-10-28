@@ -78,12 +78,13 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
 
             // Brand-based message logic
             var formattedDiscount = await GetFormattedDiscountedPriceAsync(product.Price);
+            var discountedPrice = await _priceCalculationService.RoundPriceAsync(product.Price * 0.95M);
 
             if (LGBuyMoreBrands.Contains(manufacturer.Name))
-                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", formattedDiscount);
+                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", discountedPrice);
 
             if (BuyMoreBrands.Contains(manufacturer.Name))
-                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", formattedDiscount);
+                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", discountedPrice);
 
             if (ExcludedBrands.Contains(manufacturer.Name))
                 return Content("");
