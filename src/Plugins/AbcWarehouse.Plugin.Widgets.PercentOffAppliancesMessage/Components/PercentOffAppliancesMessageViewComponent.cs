@@ -72,14 +72,34 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             }
 
             // exclude specific brands
-            var buyMoreBrands = new string[] {
+            var LGBuyMoreBrands = new string[] {
                 "LG SIGNATURE",
                 "LG STUDIO",
                 "LG XBOOM",
+                "LG",
+            };
+            var lgbmsm = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
+            foreach (var pm in lgbmsm)
+            {
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
+                if (manufacturer.Published && LGBuyMoreBrands.Contains(manufacturer.Name))
+                {
+                    return Content("LG Only Buy More & Save More!");
+                }
+            }
+
+            // exclude specific brands
+            var buyMoreBrands = new string[] {
                 "\"C\" BY GE",
                 "GE CAFE",
                 "GE MONOGRAM",
                 "GE PROFILE",
+                "Samsung",
+                "FRIGIDAIRE",
+                "Frigidaire Gallery",
+                "Electrolux",
+                "Electrolux ICON",
+                "Electrolux Professional",
             };
             var bmsm = await _manufacturerService.GetProductManufacturersByProductIdAsync(productId);
             foreach (var pm in bmsm)
