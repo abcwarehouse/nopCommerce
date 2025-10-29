@@ -163,9 +163,14 @@ function updateCartSlideoutHtml(response) {
         productId = response.slideoutInfo.ProductId;
         cartSlideoutShoppingCartItemId = response.slideoutInfo.ShoppingCartItemId;
     } else {
-        addToCartButton.style.display = "none";
-        title.style.display = "block";
-        goToCartButton.style.display = "block";
+        // No delivery options (e.g., gift cards) — allow direct add to cart
+        deliveryInput.style.display = "none";
+        productId = response.slideoutInfo.ProductId;
+        cartSlideoutShoppingCartItemId = response.slideoutInfo.ShoppingCartItemId;
+        addToCartButton.style.display = "block";
+        addToCartButton.disabled = false;
+        title.style.display = "none";
+        goToCartButton.style.display = "none";
     }
 }
 

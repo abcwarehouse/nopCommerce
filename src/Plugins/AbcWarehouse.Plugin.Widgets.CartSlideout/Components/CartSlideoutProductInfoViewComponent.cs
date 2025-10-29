@@ -46,17 +46,34 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
             var shouldShowPrice = !await product.IsAddToCartToSeePriceAsync() &&
                                   !product.IsMattress();
 
+            string formattedOldPrice = string.Empty;
+            string formattedPrice = string.Empty;
+
+            if (shouldShowPrice)
+            {
+                if (product.CustomerEntersPrice)
+                {
+                    // For customer-entered price (e.g., gift cards), show the entered amount only
+                    formattedPrice = await _priceFormatter.FormatPriceAsync(customerEnteredPrice);
+                }
+                else
+                {
+                    // For normal products, show base price/old price
+                    if (product.OldPrice != product.Price)
+                    {
+                        formattedOldPrice = await _priceFormatter.FormatPriceAsync(product.OldPrice);
+                    }
+                    formattedPrice = await _priceFormatter.FormatPriceAsync(product.Price);
+                }
+            }
+
             var model = new ProductInfoModel()
             {
                 ImageUrl = pictureUrl,
                 Name = productName,
                 Description = await GetProductDescriptionAsync(product),
-                OldPrice = shouldShowPrice && product.OldPrice != product.Price ?
-                    await _priceFormatter.FormatPriceAsync(product.OldPrice + customerEnteredPrice) :
-                    string.Empty,
-                Price = shouldShowPrice ?
-                    await _priceFormatter.FormatPriceAsync(product.Price + customerEnteredPrice) :
-                    string.Empty,
+                OldPrice = formattedOldPrice,
+                Price = formattedPrice,
             };
 
             return View("~/Plugins/Widgets.CartSlideout/Views/_ProductInfo.cshtml", model);
