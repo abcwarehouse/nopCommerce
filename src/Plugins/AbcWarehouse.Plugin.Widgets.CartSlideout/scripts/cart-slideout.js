@@ -88,9 +88,9 @@ function openDeliveryOptions(response) {
 
 function updateCheckDeliveryAvailabilityButton() {
     if (zipCodeInput === undefined) { return; }
-  
+
     const isNumber = /^\d+$/.test(zipCodeInput.value);
-  
+
     zipCodeInput.disabled = false;
     checkButton.disabled = !isNumber || zipCodeInput.value.length !== 5;
     checkButton.innerText = "Check Delivery/Shipping Availability";
@@ -163,14 +163,9 @@ function updateCartSlideoutHtml(response) {
         productId = response.slideoutInfo.ProductId;
         cartSlideoutShoppingCartItemId = response.slideoutInfo.ShoppingCartItemId;
     } else {
-        // No delivery options (e.g., gift cards) — allow direct add to cart
-        deliveryInput.style.display = "none";
-        productId = response.slideoutInfo.ProductId;
-        cartSlideoutShoppingCartItemId = response.slideoutInfo.ShoppingCartItemId;
-        addToCartButton.style.display = "block";
-        addToCartButton.disabled = false;
-        title.style.display = "none";
-        goToCartButton.style.display = "none";
+        addToCartButton.style.display = "none";
+        title.style.display = "block";
+        goToCartButton.style.display = "block";
     }
 }
 
@@ -361,7 +356,7 @@ function getCookie(cookieName) {
     })
     return cookie[cookieName] ?? '';
 }
- 
+
 function AddToCart() {
     cartSlideoutBackButton.style.display = "none";
     deliveryOptions.style.display = "none";
