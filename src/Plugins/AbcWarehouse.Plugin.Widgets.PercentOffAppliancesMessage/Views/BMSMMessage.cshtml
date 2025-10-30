@@ -5,7 +5,7 @@
 }
 
 <div id="percent-off-appliances-message" style="font-weight: bold;">
-    Save an additional 5% and pay only @Model
+    Save an additional 5% and save an extra $50 <span class="discounted-price">$@(Model - 50)</span> on eligible in-store purchases.
         
         @{
             if(Model >= 596.00M)
@@ -13,7 +13,7 @@
                 <text>
                     <br />
                     <span style="font-weight: normal; font-size: 0.9em;">
-                        Save an additional $50. <span class="discounted-price">@(Model - 50)</span> on eligible in-store purchases.
+                        Save an additional $50. <span class="discounted-price">$@(Model - 50)</span> on eligible in-store purchases.
                     </span>
                 </text>;
             }
