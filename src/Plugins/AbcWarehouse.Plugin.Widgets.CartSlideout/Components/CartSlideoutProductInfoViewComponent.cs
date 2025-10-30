@@ -34,7 +34,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
             _productService = productService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string widgetZone, int productId, decimal customerEnteredPrice)
+        public async Task<IViewComponentResult> InvokeAsync(string widgetZone, int productId, decimal customerEnteredPrice, string formattedPrice = null)
         {
             var product = await _productService.GetProductByIdAsync(productId);
             var productName = product.Name;
@@ -55,7 +55,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
                     await _priceFormatter.FormatPriceAsync(product.OldPrice + customerEnteredPrice) :
                     string.Empty,
                 Price = shouldShowPrice ?
-                    await _priceFormatter.FormatPriceAsync(product.Price + customerEnteredPrice) :
+                    (formattedPrice ?? await _priceFormatter.FormatPriceAsync(product.Price + customerEnteredPrice)) :
                     string.Empty,
             };
 

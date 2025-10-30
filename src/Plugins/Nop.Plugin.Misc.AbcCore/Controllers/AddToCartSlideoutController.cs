@@ -118,7 +118,11 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             var shoppingCartItem = shoppingCart.FirstOrDefault(sci => sci.Id == shoppingCartItemId);
             var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
-            var slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M);
+            // compute formatted price including attributes for existing cart item
+            var (unitPriceInclTax, _, _) = await _shoppingCartService.GetUnitPriceAsync(shoppingCartItem, true);
+            var formattedPrice = unitPriceInclTax.ToString("C");
+
+            var slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M, formattedPrice);
 
             return Json(new
             {
@@ -151,7 +155,17 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                 }
             }
 
-            var slideoutInfo = await GetSlideoutInfoAsync(product, sci, customerEnteredPrice);
+            // include selected attributes in the temp cart item for accurate price
+            var errors = new System.Collections.Generic.List<string>();
+            var attributesXml = await _productAttributeParser.ParseProductAttributesAsync(product, form, errors);
+            sci.AttributesXml = attributesXml;
+            sci.CustomerEnteredPrice = customerEnteredPrice;
+            sci.Quantity = 1;
+
+            var (unitPriceInclTax, _, _) = await _shoppingCartService.GetUnitPriceAsync(sci, true);
+            var formattedPrice = unitPriceInclTax.ToString("C");
+
+            var slideoutInfo = await GetSlideoutInfoAsync(product, sci, customerEnteredPrice, formattedPrice);
 
             return Json(new
             {
@@ -170,12 +184,13 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
         private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(
             Product product,
             ShoppingCartItem sci,
-            decimal customerEnteredPrice)
+            decimal customerEnteredPrice,
+            string formattedPrice)
         {
             var productId = product.Id;
 
             return new CartSlideoutInfo() {
-                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId, customerEnteredPrice = customerEnteredPrice } ),
+                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId, customerEnteredPrice = customerEnteredPrice, formattedPrice = formattedPrice } ),
                 DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
                     "CartSlideoutProductAttributes",
                     new {
