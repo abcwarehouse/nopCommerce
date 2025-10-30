@@ -213,27 +213,19 @@
         }
 
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedBottom, additionalData = Model })
-
-
     </div>
 </div>
-
-     <p style="color:red;">
-    DEBUG — OrderTotal: @order?.OrderTotal |
-    SubTotal: @order?.OrderSubtotalInclTax
-</p>
 
 <!-- Load Transaction Event and Parameters -->
 <script>
 window.bvCallback = function (BV) {
-console.log("bvCallback triggered");
-console.log("bvCallback: orderDiscount = @orderDiscount");
-var totalAmount = "@(order?.OrderTotal.ToString("0.00") ?? "0.00")";
+  console.log("bvCallback triggered");
+  console.log("bvCallback: orderDiscount = @orderDiscount");
 
-BV.pixel.trackTransaction({
+  BV.pixel.trackTransaction({
     currency: "USD",
     orderId: "@Model.CustomOrderNumber",
-    total: totalAmount,
+    total: "@(Convert.ToDecimal(orderTotal).ToString("0.00"))",
     items: [
       @for (int i = 0; i < orderItems.Count; i++)
       {
