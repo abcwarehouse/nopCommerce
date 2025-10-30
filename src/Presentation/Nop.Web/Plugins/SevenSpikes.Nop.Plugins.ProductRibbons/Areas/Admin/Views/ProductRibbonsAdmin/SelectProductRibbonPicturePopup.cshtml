@@ -1,6 +1,8 @@
 ﻿@inject AdminAreaSettings _adminAreaSettings
 
 @{
+	Layout = "_AdminPopupLayout";
+
 	var defaultGridPageSize = _adminAreaSettings.DefaultGridPageSize;
 	var gridPageSizes = _adminAreaSettings.GridPageSizes;
 }
@@ -30,7 +32,7 @@
 })
 
 
-<script>
+<script asp-location="Footer">
     function renderPicture(data, type, row, meta) {
 
         if (row.PictureId > 0) {

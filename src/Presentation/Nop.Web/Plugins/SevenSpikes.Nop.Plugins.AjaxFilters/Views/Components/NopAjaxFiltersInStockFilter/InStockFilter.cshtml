@@ -7,7 +7,7 @@
 @inject NopAjaxFiltersSettings nopAjaxFiltersSettings
 
 @{
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/InStockFilter.min.js");
+   <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/InStockFilter.min.js" asp-location="Footer"></script>
 
     bool isUiModeUseCheckboxes = nopAjaxFiltersSettings.FiltersUIMode == FiltersUIMode.UseCheckboxes;
     string filtersPanelClass = isUiModeUseCheckboxes ? "filtersCheckboxPanel" : "filtersDropDownPanel";

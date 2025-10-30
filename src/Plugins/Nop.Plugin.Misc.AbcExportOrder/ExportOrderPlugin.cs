@@ -1,19 +1,21 @@
-﻿using Nop.Core.Domain.Orders;
-using Nop.Services.Common;
-using Nop.Services.Events;
-using Nop.Plugin.Misc.AbcExportOrder.Tasks;
-using Nop.Services.Logging;
-using System;
-using Nop.Core.Domain.Tasks;
-using Nop.Services.Tasks;
-using Nop.Services.Configuration;
-using Nop.Plugin.Misc.AbcExportOrder.Extensions;
-using Nop.Services.Plugins;
-using Nop.Core;
+﻿using System;
 using System.Collections.Generic;
-using Nop.Services.Localization;
-using Nop.Services.Messages;
+using System.Threading.Tasks;
+using Nop.Core;
+using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Messages;
+using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.ScheduleTasks;
+using Nop.Plugin.Misc.AbcExportOrder.Extensions;
+using Nop.Plugin.Misc.AbcExportOrder.Tasks;
+using Nop.Services.Common;
+using Nop.Services.Configuration;
+using Nop.Services.Events;
+using Nop.Services.Localization;
+using Nop.Services.Logging;
+using Nop.Services.Messages;
+using Nop.Services.Plugins;
+using Nop.Services.ScheduleTasks;
 
 namespace Nop.Plugin.Misc.AbcExportOrder
 {
@@ -29,7 +31,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder
         private readonly EmailAccountSettings _emailAccountSettings;
         private readonly IWebHelper _webHelper;
 
-        private readonly string TaskType = $"{typeof(ResubmitOrdersTask).FullName}, {typeof(ExportOrderPlugin).Namespace}";
+        private readonly string _taskType = $"{typeof(ResubmitOrdersTask).FullName}, {typeof(ExportOrderPlugin).Namespace}";
 
 
         public ExportOrderPlugin(
@@ -60,7 +62,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder
             return $"{_webHelper.GetStoreLocation()}Admin/AbcExportOrder/Configure";
         }
 
-        public async System.Threading.Tasks.Task HandleEventAsync(OrderPlacedEvent eventMessage)
+        public async Task HandleEventAsync(OrderPlacedEvent eventMessage)
         {
             if (!_settings.IsValid)
             {
@@ -68,7 +70,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder
                 return;
             }
 
-            Order order = eventMessage.Order;
+            var order = eventMessage.Order;
 
             try
             {
@@ -81,7 +83,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder
             }
         }
 
-        public override async System.Threading.Tasks.Task InstallAsync()
+        public override async Task InstallAsync()
         {
             await RemoveTaskAsync();
             await AddTaskAsync();
@@ -90,20 +92,20 @@ namespace Nop.Plugin.Misc.AbcExportOrder
             await base.InstallAsync();
         }
 
-        private async System.Threading.Tasks.Task UpdateLocalizationsAsync()
+        private async Task UpdateLocalizationsAsync()
         {
-            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 [ExportOrderLocaleKeys.OrderIdPrefix] = "Order ID Prefix",
                 [ExportOrderLocaleKeys.OrderIdPrefixHint] = "The order ID prefix to use when sending orders to ISAM.",
                 [ExportOrderLocaleKeys.TablePrefix] = "Table Prefix",
                 [ExportOrderLocaleKeys.TablePrefixHint] = "The ISAM table prefix to send to.",
                 [ExportOrderLocaleKeys.FailureAlertEmail] = "Failure Alert Email",
-                [ExportOrderLocaleKeys.FailureAlertEmailHint] = "Email to send failure notifications to.",
+                [ExportOrderLocaleKeys.FailureAlertEmailHint] = "Email to send failure notifications to."
             });
         }
 
-        public override async System.Threading.Tasks.Task UninstallAsync()
+        public override async Task UninstallAsync()
         {
             await RemoveTaskAsync();
 
@@ -114,13 +116,13 @@ namespace Nop.Plugin.Misc.AbcExportOrder
             await base.UninstallAsync();
         }
 
-        private async System.Threading.Tasks.Task AddTaskAsync()
+        private async Task AddTaskAsync()
         {
-            ScheduleTask task = new ScheduleTask
+            var task = new ScheduleTask
             {
-                Name = $"Resubmit Failed ISAM Order Exports",
+                Name = "Resubmit Failed ISAM Order Exports",
                 Seconds = 14400,
-                Type = TaskType,
+                Type = _taskType,
                 Enabled = true,
                 StopOnError = false
             };
@@ -128,16 +130,16 @@ namespace Nop.Plugin.Misc.AbcExportOrder
             await _scheduleTaskService.InsertTaskAsync(task);
         }
 
-        private async System.Threading.Tasks.Task RemoveTaskAsync()
+        private async Task RemoveTaskAsync()
         {
-            var task = await _scheduleTaskService.GetTaskByTypeAsync(TaskType);
+            var task = await _scheduleTaskService.GetTaskByTypeAsync(_taskType);
             if (task != null)
             {
                 await _scheduleTaskService.DeleteTaskAsync(task);
             }
         }
 
-        private async System.Threading.Tasks.Task SendAlertEmailAsync(int orderId, string exceptionMessage)
+        private async Task SendAlertEmailAsync(int orderId, string exceptionMessage)
         {
             var failureEmail = _settings.FailureAlertEmail;
             if (!string.IsNullOrEmpty(failureEmail))

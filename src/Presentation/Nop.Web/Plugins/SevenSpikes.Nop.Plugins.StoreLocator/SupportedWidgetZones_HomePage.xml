@@ -7,6 +7,7 @@
   <WidgetZone>home_page_before_products</WidgetZone>
   <WidgetZone>home_page_bottom</WidgetZone>
   <WidgetZone>home_page_top</WidgetZone>
+  <!-- ABC custom -->
   <WidgetZone>AboutUs</WidgetZone>
   <WidgetZone>AboutUsBottom</WidgetZone>
 </SupportedWidgetZones>

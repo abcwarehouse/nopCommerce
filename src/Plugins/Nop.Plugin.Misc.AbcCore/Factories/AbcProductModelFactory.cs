@@ -29,16 +29,15 @@ using System.Linq;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Services.Orders;
+using Nop.Services.Stores;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
     public partial class AbcProductModelFactory : ProductModelFactory, IAbcProductModelFactory
     {
-        private readonly IWebHelper _webHelper;
         private readonly IAbcMattressListingPriceService _abcMattressListingPriceService;
-        private readonly IPriceFormatter _priceFormatter;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
-        private readonly IProductAttributeParser _productAttributeParser;
 
         public AbcProductModelFactory(
             CaptchaSettings captchaSettings,
@@ -51,6 +50,7 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             IDateTimeHelper dateTimeHelper,
             IDownloadService downloadService,
             IGenericAttributeService genericAttributeService,
+            IJsonLdModelFactory jsonLdModelFactory,
             ILocalizationService localizationService,
             IManufacturerService manufacturerService,
             IPermissionService permissionService,
@@ -63,13 +63,16 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             IProductTagService productTagService,
             IProductTemplateService productTemplateService,
             IReviewTypeService reviewTypeService,
+            IShoppingCartService shoppingCartService,
             ISpecificationAttributeService specificationAttributeService,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
+            IStoreService storeService,
             IShoppingCartModelFactory shoppingCartModelFactory,
             ITaxService taxService,
             IUrlRecordService urlRecordService,
             IVendorService vendorService,
+            IVideoService videoService,
             IWebHelper webHelper,
             IWorkContext workContext,
             MediaSettings mediaSettings,
@@ -77,42 +80,59 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             SeoSettings seoSettings,
             ShippingSettings shippingSettings,
             VendorSettings vendorSettings,
+            // ABC: custom services
             IAbcMattressListingPriceService abcMattressListingPriceService,
             IProductAbcDescriptionService productAbcDescriptionService)
-            : base(captchaSettings, catalogSettings, customerSettings,
-                categoryService, currencyService, customerService, dateRangeService,
-                dateTimeHelper, downloadService, genericAttributeService, localizationService,
-                manufacturerService, permissionService, pictureService, priceCalculationService,
-                priceFormatter, productAttributeParser, productAttributeService, productService,
-                productTagService, productTemplateService, reviewTypeService, specificationAttributeService,
-                staticCacheManager, storeContext, shoppingCartModelFactory, taxService, urlRecordService,
-                vendorService, webHelper, workContext, mediaSettings, orderSettings, seoSettings,
-                shippingSettings, vendorSettings
+            : base(captchaSettings,
+                  catalogSettings,
+                  customerSettings,
+                  categoryService,
+                  currencyService,
+                  customerService,
+                  dateRangeService,
+                  dateTimeHelper,
+                  downloadService,
+                  genericAttributeService,
+                  jsonLdModelFactory,
+                  localizationService,
+                  manufacturerService,
+                  permissionService,
+                  pictureService,
+                  priceCalculationService,
+                  priceFormatter,
+                  productAttributeParser,
+                  productAttributeService,
+                  productService,
+                  productTagService,
+                  productTemplateService,
+                  reviewTypeService,
+                  shoppingCartService,
+                  specificationAttributeService,
+                  staticCacheManager,
+                  storeContext,
+                  storeService,
+                  shoppingCartModelFactory,
+                  taxService,
+                  urlRecordService,
+                  vendorService,
+                  videoService,
+                  webHelper,
+                  workContext,
+                  mediaSettings,
+                  orderSettings,
+                  seoSettings,
+                  shippingSettings,
+                  vendorSettings
             )
         {
-            _webHelper = webHelper;
             _abcMattressListingPriceService = abcMattressListingPriceService;
-            _priceFormatter = priceFormatter;
             _productAbcDescriptionService = productAbcDescriptionService;
-            _productAttributeParser = productAttributeParser;
         }
 
-        protected override async Task<ProductOverviewModel.ProductPriceModel>
-            PrepareProductOverviewPriceModelAsync(
-                Product product,
-                bool forceRedirectionAfterAddingToCart = false
-        )
+        protected override async Task<ProductPriceModel>
+            PrepareProductPriceModelAsync(Product product, bool addPriceRangeFrom = false, bool forceRedirectionAfterAddingToCart = false)
         {
-            var model = await base.PrepareProductOverviewPriceModelAsync(product, forceRedirectionAfterAddingToCart);
-            model.Price = await AdjustMattressPriceAsync(product.Id) ?? model.Price;
-
-            return model;
-        }
-
-        protected override async Task<ProductDetailsModel.ProductPriceModel>
-            PrepareProductPriceModelAsync(Product product)
-        {
-            var model = await base.PrepareProductPriceModelAsync(product);
+            var model = await base.PrepareProductPriceModelAsync(product, addPriceRangeFrom, forceRedirectionAfterAddingToCart);
             model.Price = await AdjustMattressPriceAsync(product.Id) ?? model.Price;
 
             return model;

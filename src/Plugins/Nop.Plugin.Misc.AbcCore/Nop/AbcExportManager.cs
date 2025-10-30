@@ -46,20 +46,18 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcExportManager : ExportManager, IAbcExportManager
     {
-        private readonly CatalogSettings _catalogSettings;
-        private readonly ICustomerService _customerService;
-        private readonly IDateTimeHelper _dateTimeHelper;
-
         public AbcExportManager(AddressSettings addressSettings,
             CatalogSettings catalogSettings,
+            SecuritySettings securitySettings,
             CustomerSettings customerSettings,
             DateTimeSettings dateTimeSettings,
             ForumSettings forumSettings,
             IAddressService addressService,
+            IAttributeFormatter<CustomerAttribute, CustomerAttributeValue> customerAttributeFormatter,
             ICategoryService categoryService,
             ICountryService countryService,
             ICurrencyService currencyService,
-            ICustomerAttributeFormatter customerAttributeFormatter,
+            ICustomerActivityService customerActivityService,
             ICustomerService customerService,
             IDateRangeService dateRangeService,
             IDateTimeHelper dateTimeHelper,
@@ -67,7 +65,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IForumService forumService,
             IGdprService gdprService,
             IGenericAttributeService genericAttributeService,
+            ILanguageService languageService,
             ILocalizationService localizationService,
+            ILocalizedEntityService localizedEntityService,
             IManufacturerService manufacturerService,
             IMeasureService measureService,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
@@ -88,17 +88,19 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             IVendorService vendorService,
             IWorkContext workContext,
             OrderSettings orderSettings,
-            ProductEditorSettings productEditorSettings) :
-            base(addressSettings,
+            ProductEditorSettings productEditorSettings
+        ) : base(addressSettings,
             catalogSettings,
+            securitySettings,
             customerSettings,
             dateTimeSettings,
             forumSettings,
             addressService,
+            customerAttributeFormatter,
             categoryService,
             countryService,
             currencyService,
-            customerAttributeFormatter,
+            customerActivityService,
             customerService,
             dateRangeService,
             dateTimeHelper,
@@ -106,7 +108,9 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             forumService,
             gdprService,
             genericAttributeService,
+            languageService,
             localizationService,
+            localizedEntityService,
             manufacturerService,
             measureService,
             newsLetterSubscriptionService,
@@ -128,12 +132,8 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             workContext,
             orderSettings,
             productEditorSettings
-            )
-        {
-            _catalogSettings = catalogSettings;
-            _customerService = customerService;
-            _dateTimeHelper = dateTimeHelper;
-        }
+        )
+        {}
 
         public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<PageNotFoundRecord> pageNotFoundRecords)
         {

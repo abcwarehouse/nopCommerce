@@ -40,9 +40,6 @@
 
 /* GLOBAL TABLES */
 
-.cart .product-picture img {
-	max-width: none;
-}
 .forums-table-section th,
 .forums-table-section td {
 	padding: 20px 30px;
@@ -65,34 +62,7 @@
 	width: 390px;
 }
 .ui-autocomplete {
-	position: absolute;
-	z-index: 1070;
-	width: 390px; /*default = txtfield + button*/
-	max-width: 100%;
-	box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
-	overflow: hidden;
-	background-color: #fff;
-	text-align: left;
-}
-.ui-autocomplete li {
-	border-top: 1px solid #f6f6f6;
-}
-.ui-autocomplete li:first-child {
-	border-top: none;
-}
-.ui-autocomplete a {
-	display: block;
-	padding: 15px;
-	font-size: 14px;
-	color: #333;
-}
-.ui-autocomplete a.ui-state-focus {
-	background: #f9f9f9;
-}
-.ui-autocomplete img {
-	display: none;
-	margin-right: 5px;
-	vertical-align: middle;
+	width: 390px;
 }
 
 /* FOOTER */
@@ -257,6 +227,10 @@
 }
 .avatar-page input[type="file"] {
 	max-width: none;
+}
+.account-page .instruction:not(ul),
+.configure-provider .inputs {
+	padding: 30px 45px;
 }
 
 /* SHOPPING CART & CHECKOUT */

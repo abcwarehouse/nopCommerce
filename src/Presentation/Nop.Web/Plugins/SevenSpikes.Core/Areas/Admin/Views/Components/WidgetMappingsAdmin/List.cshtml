@@ -2,19 +2,18 @@
 @inject AdminAreaSettings adminAreaSettings
 
 @{
-    Html.AddScriptParts("~/Plugins/SevenSpikes.Core/Scripts/jquery.livequery.min.js");
-
     var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
     var gridPageSizes = adminAreaSettings.GridPageSizes;
 
     var widgetZones = (from SelectListItem item in Model.SupportedWidgetZones select item.Text).ToList();
     var totalWidgetZones = widgetZones.Count;
 }
+<script asp-exclude-from-bundle="true" src="~/Plugins/SevenSpikes.Core/Scripts/jquery.livequery.min.js" asp-location="Footer"></script>
 
 <div class="card-body">
     <div id="widgets-grid"></div>
 
-    <script type="text/javascript">
+    <script type="text/javascript" asp-location="Footer">
         (function($) {
 
             // local datasource

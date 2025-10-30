@@ -29,7 +29,7 @@
     ViewBag.PageTitle = T("Admin.Vendors").Text;
 
     var entityType = Model.CustomProperties.ContainsKey("EntityType") ? Model.CustomProperties["EntityType"] : null;
-    var entityId = Model.CustomProperties.ContainsKey("EntityId") ? Model.CustomProperties["EntityId"] : 0;
+    var entityId = Model.CustomProperties.ContainsKey("EntityId") ? int.Parse(Model.CustomProperties["EntityId"]) : 0;
 }
 
 <form method="post">
@@ -116,7 +116,7 @@
                                 }
                                 else {
 
-                                    return '<i class="fa fa-close false-icon"></i>';
+                                    return '<i class="fa fa-times false-icon"></i>';
                                 }
                             }
 
@@ -124,7 +124,7 @@
 
                                 console.log(row.CustomProperties.Selected)
 
-                                var checked = row.CustomProperties.Selected ? 'checked' : '';
+                                var checked = row.CustomProperties.Selected == 'True' ? 'checked' : '';
 
                                 return '<input type="checkbox" id="SelectedVendorIds" name="SelectedVendorIds" value="' + row.Id + '" class="checkboxGroups" ' + checked + '>';
                             }
