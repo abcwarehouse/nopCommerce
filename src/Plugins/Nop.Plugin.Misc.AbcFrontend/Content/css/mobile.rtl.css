@@ -20,32 +20,22 @@
 	background-color: #fff;
 	line-height: 110px;
 }
-.storeId8 .responsive-nav-wrapper-parent {
+.responsive-nav-wrapper-parent {
 	position: fixed;
 	top: 0;
 	z-index: 1020;
 	width: 100%;
 	height: 53px !important; /*override inline height*/
-	border-top: 3px solid #02463b;
-	background-color: #02463b;
+	border-top: 3px solid #00a1b1;
+	box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+	background-color: #fff;
 }
-
-
-.storeId3 .responsive-nav-wrapper-parent {
-        position: relative;
-        z-index: 1020;
-        width: 100%;
-        height: 53px !important;
-        border-top: 3px solid white;
-        box-shadow: 0 3px 5px rgba(0, 0, 0, .1);
-        background-color: #fff;
-    }
-
-
 .admin-header-links ~ .header .header-logo {
 	top: 95px;
 }
-
+.admin-header-links ~ .responsive-nav-wrapper-parent {
+	top: 42px;
+}
 
 .mobile-sticky-logo .header .header-logo {
 	position: fixed;
@@ -78,9 +68,6 @@
 	margin-top: 0 !important; /*important because of demo-strip*/
 }
 
-
-
-
 /* RESPONSIVE NAV WRAPPER */
 
 .responsive-nav-wrapper {
@@ -93,41 +80,25 @@
 	display: block;
 	clear: both;
 }
-.storeId8 .responsive-nav-wrapper > div {
-
-
-	background-color: #02463b !important;
-	background-image: url('https://www.abcwarehouse.com/images/gold_cart.png');
-	background-repeat: no-repeat;
-	background-size: 43%;
-	background-position: center;
-}
-
-.storeId3 .responsive-nav-wrapper > div {
-
-
-	background-color: white !important;
-	background-image: url('https://www.abcwarehouse.com/Plugins/Misc.AbcFrontend/Images/mobile-sprite.png');
-	background-position: 215px;
-
-
-
-}
-
-
-.responsive-nav-wrapper > div:first-child {
+.responsive-nav-wrapper > div {
+	display: inline-block;
 	border-left: 1px solid #eee;
+	background-color: #f74258;
+	background-image: url('../img/mobile-sprite.png');
+	background-repeat: no-repeat;
+	vertical-align: middle;
+}
+.responsive-nav-wrapper > div:first-child {
+	border-right: 1px solid #eee;
 }
 .responsive-nav-wrapper div.menu-title {
 	background-position: 0 center;
 }
-.storeId3 .responsive-nav-wrapper div.shopping-cart-link {
-
+.responsive-nav-wrapper div.shopping-cart-link {
 	background-position: -55px center;
-
 }
 .responsive-nav-wrapper div.personal-button {
-
+	background-position: -108px center;
 }
 .responsive-nav-wrapper div.preferences-button {
 	background-position: -162px center;
@@ -147,11 +118,6 @@
 	font-size: 0;
 }
 
-.storeId8 div#header-links-opener {
-    background-image: url('https://www.abcwarehouse.com/images/gold_account.png');
-	background-position: center;
-}
-
 /* RESPONSIVE MENU */
 
 .ps-container > .ps-scrollbar-y-rail {
@@ -166,7 +132,7 @@
     display: none;
     position: fixed;
     top: 0;
-	right: 0;
+    right: 0;
     bottom: 0;
 	left: 0;
     background: rgba(0,0,0,0);
@@ -175,47 +141,19 @@
 .overlayOffCanvas.show {
 	background: rgba(0,0,0,0.6);
 }
-.storeId3 .header-menu {
+.header-menu {
     position: fixed;
-    top: 0;
-	left: 0;
-    width: 313px;
+    top: 0; right: 0;
+    width: 320px;
     height: 100%;
-    text-align: left;
+    text-align: right;
     background-color: #f6f6f6;
     overflow: hidden;
 	z-index: 1070;
     transition: all 0.5s ease;
-    -webkit-transform: translate(-320px);
-    -ms-transform: translate(-320px);
-    transform: translate(-320px);
-}
-
-.storeId8 .header-menu {
-    position: fixed;
-    top: 0;
-	right: 0;
-    width: 313px;
-    height: 100%;
-    text-align: left;
-    background-color: #f6f6f6;
-    overflow: hidden;
-	z-index: 1070;
-    /* transition: all 0.5s ease; */
-    -webkit-transform: translate(-320px);
-    -ms-transform: translate(-320px);
-    transform: translate(-320px);
-}
-
-.storeId8 .header-menu.categories-in-side-panel {
-	  left: 0px;
-}
-.storeId8 .header-menu.categories-in-side-panel.open {
-	  left: auto;
-}
-
-.storeId8 .sublist-wrap.active {
-	    border-top: solid 42px #02463b;
+    -webkit-transform: translate(320px);
+    -ms-transform: translate(320px);
+    transform: translate(320px);
 }
 .header-menu.open {
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
@@ -223,22 +161,16 @@
     -ms-transform: translate(0);
     transform: translate(0);
 }
-.storeId8 .header-menu .close-menu,
+.header-menu .close-menu,
 .header-menu .back-button {
-	background-color: #02463b;
+	background-color: #f6f6f6;
 	cursor: pointer;
-}
-
-.storeId8 .header-menu .close-menu,
-.header-menu .back-button {
-	background-color: #02463b;
-
 }
 .header-menu .close-menu span,
 .header-menu .back-button span {
 	display: block;
 	height: 50px;
-	background: url('../img/close.png') right center no-repeat;
+	background: url('../img/close.png') left center no-repeat;
 	font-size: 0;
 }
 .header-menu > ul li {
@@ -263,30 +195,30 @@
 }
 .header-menu > ul li > .with-subcategories {
 	width: 270px;
-	float: left;
+	float: right;
 }
 .plus-button {
 	position:relative;
 	z-index: 1;
-	float: right;
+	float: left;
 	width: 50px;
 	height: 60px;
-	background: #f74258 url('../img/pointer-color.png') center no-repeat;
+	background: #f74258 url('../img/pointer-color.rtl.png') center no-repeat;
 	cursor: pointer;
 }
 .header-menu .sublist-wrap {
     position: fixed;
 	z-index: 2;
-    top: 0; left: 0;
+    top: 0; right: 0;
     width: 320px;
     height: 100%;
     background-color: #f6f6f6;
     box-shadow: 1px 0 5px rgba(0,0,0,0.5);
     overflow: hidden;
     transition: all 0.5s ease;
-    -webkit-transform: translate(-320px);
-    -ms-transform: translate(-320px);
-    transform: translate(-320px);
+    -webkit-transform: translate(320px);
+    -ms-transform: translate(320px);
+    transform: translate(320px);
 }
 .header-menu .sublist-wrap.active {
     -webkit-transform: translate(0);
@@ -313,7 +245,7 @@
 	display: none;
 	position: fixed;
 	top: 53px;
-	left: 0;
+	right: 0;
 	z-index: 1070;
 	width: 100%;
 	border-top: 1px solid #ececec;
@@ -343,7 +275,7 @@
 	display: none;
 	position: fixed;
 	top: 53px;
-	left: 0;
+	right: 0;
 	z-index: 1070;
 	width: 100%;
 	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
@@ -370,20 +302,20 @@
 	padding: 15px 25px;
 }
 .header-links .ico-account {
-	background-position: left 0;
+	background-position: right 0;
 }
 .header-links .ico-register {
-	background-position: left -48px;
+	background-position: right -48px;
 }
 .header-links .ico-login,
 .header-links .ico-logout {
-	background-position: left -96px;
+	background-position: right -96px;
 }
 .header-links .ico-inbox {
-	background-position: left -144px;
+	background-position: right -144px;
 }
 .header-links .ico-wishlist {
-	background-position: left -192px;
+	background-position: right -192px;
 }
 .header-selectors > div {
 	display: block;
@@ -397,7 +329,7 @@
 	display: none;
 	position: fixed;
 	top: 53px;
-	left: 0;
+	right: 0;
 	z-index: 1070;
 	width: 100%;
 	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
@@ -450,7 +382,7 @@
 .product-specs-box .data-table td a:only-child {
 	position: absolute;
 	top: 50%;
-	left: 15px;
+	right: 15px;
 	max-width: 100%;
 	margin: -10px 0 0;
 	overflow: hidden;
@@ -469,15 +401,8 @@
 	overflow: hidden;
 }
 .mini-shopping-cart .item {
-	float: left;
+	float: right;
 	width: 50%;
 }
 
-}
-
-
-@media (max-width: 1025px) {
-.storeId3 .ABC-Merch {
-    display: none !important;
-}
 }

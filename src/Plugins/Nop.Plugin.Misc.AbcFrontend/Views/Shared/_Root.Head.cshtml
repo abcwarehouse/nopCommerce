@@ -336,6 +336,84 @@ document.addEventListener('DOMContentLoaded', function() {
     // Run the function when the page loads
     window.addEventListener("load", initializeSessionIdNamespace);
     </script>
+
+    <script>
+        (function() {
+            const SITE_ID = "4lt84w";
+            const API_URL = "/searchspring/beacon/event";
+
+            // --- Shopper/session management ---
+            function getOrCreateId(key) {
+                let id = localStorage.getItem(key);
+                if (!id) {
+                    id = Math.random().toString(36).substring(2) + Date.now();
+                    localStorage.setItem(key, id);
+                }
+                return id;
+            }
+
+            const ssShopperId = getOrCreateId("ssShopperId");
+            const ssSessionId = getOrCreateId("ssSessionId");
+
+            // --- Utility to send beacon event ---
+            function sendBeacon(eventType, data = {}) {
+                const eventPayload = {
+                    type: eventType,
+                    siteId: SITE_ID,
+                    shopperId: ssShopperId,
+                    sessionId: ssSessionId,
+                    timestamp: new Date().toISOString(),
+                    ...data
+                };
+
+                // Wrap inside { beacon: { ... } } to match Searchspring format
+                const payload = { beacon: eventPayload };
+
+                fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.error("Beacon error:", err));
+            }
+
+            // --- 1. Track page views ---
+            document.addEventListener("DOMContentLoaded", function() {
+                sendBeacon("page.view", {
+                    page: window.location.href,
+                    referrer: document.referrer || null,
+                    userAgent: navigator.userAgent
+                });
+            });
+
+            // --- 2. Track add to cart ---
+            document.addEventListener("click", function(e) {
+                const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
+                if (!btn) return;
+
+                const productElement = btn.closest("[data-productid]");
+                const productId = productElement ? productElement.getAttribute("data-productid") : null;
+                const skuElement = productElement ? productElement.querySelector(".sku, .product-sku") : null;
+                const nameElement = productElement ? productElement.querySelector(".product-title, h2, h3") : null;
+
+                sendBeacon("cart.add", {
+                    product: {
+                        id: productId,
+                        sku: skuElement ? skuElement.textContent.trim() : "",
+                        name: nameElement ? nameElement.textContent.trim() : ""
+                    }
+                });
+            });
+
+            // --- 3. Track checkout/purchase ---
+            if (window.location.href.toLowerCase().includes("/checkout/completed")) {
+                const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
+                sendBeacon("purchase", { orderNumber });
+            }
+        })();
+    </script>
+
+
+
 </head>
 <body class="@currentPageClass @if (supportRtl){<text>rtl</text>}">
     <!-- Google Tag Manager (noscript) -->

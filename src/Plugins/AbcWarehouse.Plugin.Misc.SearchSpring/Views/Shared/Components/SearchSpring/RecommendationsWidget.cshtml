@@ -1,0 +1,166 @@
+@model AbcWarehouse.Plugin.Misc.SearchSpring.Models.RecommendationsResultModel
+@inject Nop.Services.Catalog.IProductService productService
+@inject Nop.Services.Seo.IUrlRecordService urlRecordService
+@inject Nop.Web.Factories.IProductModelFactory productModelFactory
+@using Nop.Web.Models.Catalog
+
+@if (Model != null && Model.Profiles.Any())
+{
+    <div class="searchspring-recommendations-container">
+        @foreach (var profile in Model.Profiles)
+        {
+            if (profile.Results.Any())
+            {
+                <div class="recommendation-profile" data-profile-tag="@profile.Tag">
+                    @if (!string.IsNullOrEmpty(profile.Display))
+                    {
+                        <h2 class="profile-title">@profile.Display</h2>
+                    }
+                    
+                    <div class="recommendation-products">
+                        <div class="product-carousel">
+                            @foreach (var item in profile.Results)
+                            {
+                                var product = await productService.GetProductBySkuAsync(item.Sku);
+                                if (product == null)
+                                {
+                                    product = await productService.GetProductBySkuAsync("+" + item.Sku);
+                                }
+
+                                if (product != null)
+                                {
+                                    var productOverviewModels = await productModelFactory.PrepareProductOverviewModelsAsync(
+                                        new[] { product },
+                                        true,
+                                        true);
+
+                                    var model = productOverviewModels.FirstOrDefault();
+
+                                    if (model != null)
+                                    {
+                                        <div class="recommendation-item">
+                                            @await Html.PartialAsync("_ProductBox", (ProductOverviewModel)model)
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+<style>
+    .searchspring-recommendations-container {
+        margin: 40px 0;
+    }
+
+    .recommendation-profile {
+        margin-bottom: 50px;
+    }
+
+    .profile-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .recommendation-products {
+        position: relative;
+    }
+
+    .product-carousel {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        padding: 10px 0;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .product-carousel::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .product-carousel::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .product-carousel::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .product-carousel::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .recommendation-item {
+        flex: 0 0 auto;
+        width: 250px;
+    }
+
+    @media (max-width: 768px) {
+        .recommendation-item {
+            width: 200px;
+        }
+
+        .profile-title {
+            font-size: 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .recommendation-item {
+            width: 160px;
+        }
+
+        .profile-title {
+            font-size: 18px;
+        }
+    }
+</style>
+
+<script>
+    // Track recently viewed products
+    function addToRecentlyViewed(sku) {
+        let viewed = getCookie('ss-recently-viewed');
+        let viewedArray = viewed ? viewed.split(',') : [];
+        
+        // Remove if already exists
+        viewedArray = viewedArray.filter(s => s !== sku);
+        
+        // Add to beginning
+        viewedArray.unshift(sku);
+        
+        // Keep only last 20
+        viewedArray = viewedArray.slice(0, 20);
+        
+        // Save cookie
+        setCookie('ss-recently-viewed', viewedArray.join(','), 30);
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function setCookie(name, value, days) {
+        const expires = new Date(Date.now() + days * 864e5).toUTCString();
+        document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
+    }
+
+    // Add current product to recently viewed if on product page
+    document.addEventListener('DOMContentLoaded', function() {
+        const productSku = document.querySelector('[data-product-sku]')?.dataset.productSku;
+        if (productSku) {
+            addToRecentlyViewed(productSku);
+        }
+    });
+</script>

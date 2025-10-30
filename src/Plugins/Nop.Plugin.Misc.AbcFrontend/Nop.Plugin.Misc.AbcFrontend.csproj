@@ -69,6 +69,7 @@
     <None Remove="Content/css/mobile-categories.css" />
     <None Remove="Content/css/mobile-header.css" />
     <None Remove="Content/css/mobile.css" />
+    <None Remove="Content/css/mobile.rtl.css" />
     <None Remove="Content/css/pavilion-styles.css" />
     <None Remove="Content/css/product-box.css" />
     <None Remove="Content/css/product-details-template.css" />
@@ -92,6 +93,7 @@
     <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\ManufacturerAll.cshtml" />
+    <None Remove="Views\Checkout\Completed.cshtml" />
     <None Remove="Views\Home\Index.cshtml" />
     <None Remove="Views\Product\_AddToCart.cshtml" />
     <None Remove="Views\Product\_ProductPrice.cshtml" />
@@ -264,6 +266,9 @@
     <Content Include="Content/css/mobile.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content/css/mobile.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content/css/pavilion-styles.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -331,6 +336,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Catalog\ManufacturerAll.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Checkout\Completed.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Home\Index.cshtml">

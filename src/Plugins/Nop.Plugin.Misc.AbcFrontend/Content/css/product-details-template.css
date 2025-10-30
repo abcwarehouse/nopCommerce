@@ -9,17 +9,11 @@
     margin-bottom: 10px;
 }
 
-@media screen and (max-width: 1024px) {
-    .storeId3 .header#header {
-        margin-bottom: -195px;
-        margin-top: -32px;
-        padding: 10px 0;
-    }
-}
+
 
 @media screen and (max-width: 1024px) {
 .storeId3 #flyout-cart {
-    
+
     display: none !important;
 }
 }

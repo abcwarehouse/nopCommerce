@@ -160,10 +160,38 @@
         .clearance-msg-block.clearance-msg-block.clearance-msg-block {
             display: block;
         }
+
+        .products-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .products-carousel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .products-carousel::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        .products-carousel::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        .recommendation-item {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .recommendation-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
 	</style>
 }
 
 <div class="page product-details-page">
+    <h1>Product Recommendations</h1>
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
@@ -365,6 +393,7 @@
         </div>
         @await Component.InvokeAsync(typeof(ProductsAlsoPurchasedViewComponent), new { productId = Model.Id })
         @await Component.InvokeAsync(typeof(RelatedProductsViewComponent), new { productId = Model.Id })
+        @await Html.PartialAsync("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/_ProductRecommendations.cshtml", Model.Sku)
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
     </div>
 </div>
@@ -423,19 +452,105 @@
             }
         });
     </script>
-    <!-- dynamic retargeting -->
     <script>
         (function(){
-          document.addEventListener("DOMContentLoaded", punt);
-          if (document.readyState != "loading") punt();
-          function punt(){
-            var a = document.createElement("script");
-            a.setAttribute("src", "https://content.adacado.com/productpixel/v1/shell.umd.js");
-            a.setAttribute("data-advertiserid", "37953");
-            a.setAttribute("id", "adavadael");
-            a.setAttribute("data-productid", "@Model.Id");
-            a.setAttribute("async", "async");
-            document.body.appendChild(a);
-          }
+            document.addEventListener("DOMContentLoaded", punt);
+            if (document.readyState != "loading") punt();
+            function punt(){
+                var a = document.createElement("script");
+                a.setAttribute("src", "https://content.adacado.com/productpixel/v1/shell.umd.js");
+                a.setAttribute("data-advertiserid", "37953");
+                a.setAttribute("id", "adavadael");
+                a.setAttribute("data-productid", "@Model.Id");
+                a.setAttribute("async", "async");
+                document.body.appendChild(a);
+            }
         })();
     </script>
+<script>
+(function() {
+    // Wait for DOM and searchSpringRecs to be ready
+    function initRecommendations() {
+        if (typeof searchSpringRecs === 'undefined') {
+            console.log('searchSpringRecs not loaded yet, retrying...');
+            setTimeout(initRecommendations, 100);
+            return;
+        }
+
+        console.log('Loading recommendations for SKU: @Model.Sku');
+        
+        const container = document.getElementById('product-recommendations-container');
+        if (!container) {
+            console.error('Container not found');
+            return;
+        }
+
+        // Show loading state
+        container.innerHTML = '<p style="text-align: center; padding: 20px;">Loading recommendations...</p>';
+
+        // Fetch recommendations
+        searchSpringRecs.getProductPageRecommendations('@Model.Sku')
+            .then(data => {
+                console.log('Recommendations received:', data);
+                
+                if (!data || !data.profiles || data.profiles.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                // Render each profile
+                let html = '<div class="searchspring-recommendations">';
+                
+                data.profiles.forEach(profile => {
+                    if (!profile.results || profile.results.length === 0) {
+                        return;
+                    }
+
+                    html += '<div class="recommendation-profile" style="margin-bottom: 50px;">';
+                    
+                    // Profile title
+                    const title = profile.display || 'Recommended Products';
+                    html += `<h2 style="font-size: 24px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0;">${title}</h2>`;
+                    
+                    // Products carousel
+                    html += '<div class="products-carousel" style="display: flex; gap: 20px; overflow-x: auto; padding: 10px 0;">';
+                    
+                    profile.results.forEach(product => {
+                        html += `
+                            <div class="recommendation-item" style="flex: 0 0 auto; width: 250px; border: 1px solid #ddd; border-radius: 5px; padding: 15px;">
+                                <a href="${product.url}" style="text-decoration: none; color: inherit;">
+                                    ${product.imageUrl ? `<img src="${product.imageUrl}" alt="${escapeHtml(product.name)}" style="width: 100%; height: auto; margin-bottom: 10px;">` : ''}
+                                    <h3 style="font-size: 16px; margin: 10px 0; min-height: 40px;">${escapeHtml(product.name)}</h3>
+                                    ${product.brand ? `<p style="color: #666; font-size: 14px; margin: 5px 0;">${escapeHtml(product.brand)}</p>` : ''}
+                                    ${product.price ? `<p style="font-size: 18px; font-weight: bold; color: #446588; margin: 10px 0;">$${product.price}</p>` : ''}
+                                </a>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div></div>';
+                });
+                
+                html += '</div>';
+                container.innerHTML = html;
+            })
+            .catch(err => {
+                console.error('Error loading recommendations:', err);
+                container.innerHTML = '';
+            });
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Start initialization when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initRecommendations);
+    } else {
+        initRecommendations();
+    }
+})();
+</script>

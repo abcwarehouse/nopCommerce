@@ -33,7 +33,8 @@ public partial class ErrorHandlerStartup : INopStartup
         application.UseBadRequestResult();
 
         //handle 404 errors (not found)
-        application.UsePageNotFound();
+        // ABC: need to disable default 404 handler to use our custom one
+        // application.UsePageNotFound();
     }
 
     /// <summary>

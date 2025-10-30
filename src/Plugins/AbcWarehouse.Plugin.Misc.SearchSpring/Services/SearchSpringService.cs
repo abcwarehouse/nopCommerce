@@ -17,6 +17,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
         private readonly ILogger _logger;
+        public RecommendedProduct Product = new RecommendedProduct();
 
         public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger)
         {
@@ -50,6 +51,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             if (!string.IsNullOrEmpty(sessionId))
                 queryParams.Add($"ss-sessionId={HttpUtility.UrlEncode(sessionId)}");
+
+            if (!string.IsNullOrEmpty(userId))
+                queryParams.Add($"ss-shopperId={HttpUtility.UrlEncode(userId)}");
+
+            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Shopper Id Check: {userId}");
 
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
@@ -88,8 +94,6 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var url = $"{_baseUrl}/api/search/search.json?{string.Join("&", queryParams)}";
 
-            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Request URL: {url}");
-
             var response = await client.GetAsync(url);
 
             if ((int)response.StatusCode >= 300 && (int)response.StatusCode < 400)
@@ -107,19 +111,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var json = await response.Content.ReadAsStringAsync();
 
-            // LOG THE COMPLETE RAW RESPONSE
-            await _logger.InsertLogAsync(LogLevel.Information, 
-                $"[SearchSpring] ===== FULL API RESPONSE START =====");
-            await _logger.InsertLogAsync(LogLevel.Information, 
-                $"[SearchSpring] Response Status: {response.StatusCode}");
-            await _logger.InsertLogAsync(LogLevel.Information, 
-                $"[SearchSpring] Raw JSON Response: {json}");
-            await _logger.InsertLogAsync(LogLevel.Information, 
-                $"[SearchSpring] ===== FULL API RESPONSE END =====");
-
             if (!response.IsSuccessStatusCode)
             {
-                await _logger.InsertLogAsync(LogLevel.Error, 
+                await _logger.InsertLogAsync(LogLevel.Error,
                     $"[SearchSpring] API Error {response.StatusCode}: {json}");
                 throw new Exception($"Searchspring returned error {response.StatusCode}: {json}\nURL: {url}");
             }
@@ -226,11 +220,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                // ENHANCED BANNER LOGGING
                 var bannersByPosition = new Dictionary<string, List<string>>();
-
-                await _logger.InsertLogAsync(LogLevel.Information, 
-                    "[SearchSpring] ===== BANNER PARSING START =====");
 
                 if (root.TryGetProperty("merchandising", out var merchProp))
                 {
@@ -244,7 +234,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         {
                             foreach (var property in contentProp.EnumerateObject())
                             {
-                                await _logger.InsertLogAsync(LogLevel.Information, 
+                                await _logger.InsertLogAsync(LogLevel.Information,
                                     $"[SearchSpring] Processing content position: {property.Name}");
 
                                 if (property.Value.ValueKind == JsonValueKind.Array)
@@ -269,7 +259,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                     else
                     {
-                        await _logger.InsertLogAsync(LogLevel.Warning, 
+                        await _logger.InsertLogAsync(LogLevel.Warning,
                             "[SearchSpring] No 'content' property found in merchandising block");
                     }
 
@@ -278,13 +268,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         campaignsProp.ValueKind == JsonValueKind.Array)
                     {
                         var campaignCount = campaignsProp.GetArrayLength();
-                        await _logger.InsertLogAsync(LogLevel.Information, 
+                        await _logger.InsertLogAsync(LogLevel.Information,
                             $"[SearchSpring] Found {campaignCount} triggered campaign(s)");
 
                         foreach (var campaign in campaignsProp.EnumerateArray())
                         {
                             var campaignJson = campaign.GetRawText();
-                            await _logger.InsertLogAsync(LogLevel.Information, 
+                            await _logger.InsertLogAsync(LogLevel.Information,
                                 $"[SearchSpring] Campaign JSON: {campaignJson}");
 
                             var placement = campaign.TryGetProperty("placement", out var placementProp)
@@ -295,7 +285,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                 ? htmlProp.GetString()
                                 : null;
 
-                            await _logger.InsertLogAsync(LogLevel.Information, 
+                            await _logger.InsertLogAsync(LogLevel.Information,
                                 $"[SearchSpring] Campaign placement: {placement}, Has HTML: {!string.IsNullOrWhiteSpace(html)}");
 
                             if (!string.IsNullOrWhiteSpace(placement) && !string.IsNullOrWhiteSpace(html))
@@ -309,13 +299,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                     else
                     {
-                        await _logger.InsertLogAsync(LogLevel.Warning, 
+                        await _logger.InsertLogAsync(LogLevel.Warning,
                             "[SearchSpring] No 'triggeredCampaigns' array found in merchandising block");
                     }
                 }
                 else
                 {
-                    await _logger.InsertLogAsync(LogLevel.Warning, 
+                    await _logger.InsertLogAsync(LogLevel.Warning,
                         "[SearchSpring] NO merchandising block found in API response");
                 }
 
@@ -333,10 +323,162 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             }
             catch (Exception ex)
             {
-                await _logger.InsertLogAsync(LogLevel.Error, 
+                await _logger.InsertLogAsync(LogLevel.Error,
                     $"[SearchSpring] JSON Deserialization failed: {ex.Message}\nStackTrace: {ex.StackTrace}");
                 throw new Exception("Failed to parse Searchspring response.", ex);
             }
         }
+
+        public async Task<RecommendationsResultModel> GetRecommendationsAsync(RecommendationsRequestModel request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Tags))
+                throw new ArgumentException("Tags parameter is required for recommendations", nameof(request.Tags));
+
+            var client = _httpClientFactory.CreateClient();
+            
+            // Build the URL
+            var siteId = request.SiteId ?? "4lt84w";
+            var queryParams = new List<string>
+            {
+                $"tags={HttpUtility.UrlEncode(request.Tags)}"
+            };
+
+            // Add optional parameters
+            if (!string.IsNullOrWhiteSpace(request.Products))
+                queryParams.Add($"products={HttpUtility.UrlEncode(request.Products)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.BlockedItems))
+                queryParams.Add($"blockedItems={HttpUtility.UrlEncode(request.BlockedItems)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.Categories))
+                queryParams.Add($"categories={HttpUtility.UrlEncode(request.Categories)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.Brands))
+                queryParams.Add($"brands={HttpUtility.UrlEncode(request.Brands)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.Shopper))
+                queryParams.Add($"shopper={HttpUtility.UrlEncode(request.Shopper)}");
+            
+            // Add session ID for personalization
+            if (!string.IsNullOrWhiteSpace(request.SessionId))
+                queryParams.Add($"sessionId={HttpUtility.UrlEncode(request.SessionId)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.Cart))
+                queryParams.Add($"cart={HttpUtility.UrlEncode(request.Cart)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.LastViewed))
+                queryParams.Add($"lastViewed={HttpUtility.UrlEncode(request.LastViewed)}");
+            
+            if (!string.IsNullOrWhiteSpace(request.Limits))
+                queryParams.Add($"limits={HttpUtility.UrlEncode(request.Limits)}");
+
+            // Add filters
+            if (request.Filters != null)
+            {
+                foreach (var filter in request.Filters)
+                {
+                    queryParams.Add($"filter.{HttpUtility.UrlEncode(filter.Key)}={HttpUtility.UrlEncode(filter.Value)}");
+                }
+            }
+
+            var url = $"https://{siteId}.a.searchspring.io/boost/{siteId}/recommend?{string.Join("&", queryParams)}";
+
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring Recommendations] Request URL: {url}");
+
+            var response = await client.GetAsync(url);
+            var json = await response.Content.ReadAsStringAsync();
+
+            await _logger.InsertLogAsync(LogLevel.Information, 
+                $"[SearchSpring Recommendations Service] Raw JSON Response: {json}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await _logger.InsertLogAsync(LogLevel.Error, 
+                    $"[SearchSpring Recommendations] API Error {response.StatusCode}: {json}");
+                throw new Exception($"SearchSpring Recommendations API returned error {response.StatusCode}: {json}");
+            }
+
+            try
+            {
+                var result = new RecommendationsResultModel();
+
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                if (root.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var profileElement in root.EnumerateArray())
+                    {
+                        var profile = new RecommendationProfile
+                        {
+                            Tag = profileElement.TryGetProperty("tag", out var tagProp) ? tagProp.GetString() : "",
+                            Display = profileElement.TryGetProperty("display", out var displayProp) ? displayProp.GetString() : ""
+                        };
+
+                        if (profileElement.TryGetProperty("results", out var resultsElement))
+                        {
+                            foreach (var productElement in resultsElement.EnumerateArray())
+                            {
+                                var product = new RecommendedProduct
+                                {
+                                    Id = productElement.TryGetProperty("id", out var idProp) ? idProp.GetString() : ""
+                                };
+
+                                if (productElement.TryGetProperty("mappings", out var mappingsProp) &&
+                                    mappingsProp.TryGetProperty("core", out var coreProp))
+                                {
+                                    product.Sku = coreProp.TryGetProperty("sku", out var skuProp) ? skuProp.GetString() : "";
+                                    product.Name = coreProp.TryGetProperty("name", out var nameProp) ? nameProp.GetString() : "";
+                                    product.Url = coreProp.TryGetProperty("url", out var urlProp) ? urlProp.GetString() : "";
+                                    product.ImageUrl = coreProp.TryGetProperty("imageUrl", out var imgProp) ? imgProp.GetString() : "";
+                                    product.Price = coreProp.TryGetProperty("price", out var priceProp) ? priceProp.GetDecimal().ToString("0.##") : "";
+                                    product.RetailPrice = coreProp.TryGetProperty("msrp", out var retailProp) ? retailProp.GetDecimal().ToString("0.##") : "";
+                                    product.Brand = coreProp.TryGetProperty("brand", out var brandProp) ? brandProp.GetString() : "";
+                                }
+
+                                // Optional attributes
+                                if (productElement.TryGetProperty("attributes", out var attrProp) &&
+                                    attrProp.TryGetProperty("category", out var catProp))
+                                {
+                                    product.Category = catProp.GetString();
+                                }
+
+                                if (productElement.TryGetProperty("in_stock", out var stockProp))
+                                {
+                                    product.InStock = stockProp.GetInt32();
+                                }
+
+                                profile.Results.Add(product);
+                            }
+                        }
+
+                        result.Profiles.Add(profile);
+                    }
+                }
+
+                await _logger.InsertLogAsync(LogLevel.Information,
+                    $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profiles successfully.");
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logger.InsertLogAsync(LogLevel.Error,
+                    $"[SearchSpring Recommendations] JSON Parsing failed: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                throw new Exception("Failed to parse SearchSpring Recommendations response.", ex);
+            }
+        }
+
+        private bool IsKnownProperty(string propertyName)
+        {
+            var knownProps = new[] 
+            { 
+                "id", "sku", "name", "url", "imageUrl", "price", 
+                "retail_price", "brand", "category", "item_number", "in_stock" 
+            };
+            return knownProps.Contains(propertyName.ToLower());
+        }
+
     }
 }
