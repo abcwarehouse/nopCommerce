@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // --- Page view ---
             document.addEventListener("DOMContentLoaded", function() {
                 setTimeout(() => {
-                    sendBeacon(profile.render, { action: page.view });
+                    sendBeacon("profile.render", { action: "page.view" });
                 }, 500); // Small delay to ensure page is fully loaded
             });
 
