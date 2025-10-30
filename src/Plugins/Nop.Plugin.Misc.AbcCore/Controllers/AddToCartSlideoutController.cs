@@ -144,7 +144,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             decimal customerEnteredPrice = 0.0M;
             foreach (var formKey in form.Keys)
             {
-                if (formKey.Equals($"addtocart_{productId}.CustomerEnteredPrice", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"addtocart_{productId}.AddToCart.CustomerEnteredPrice", StringComparison.InvariantCultureIgnoreCase))
                 {
                     decimal.TryParse(form[formKey], out customerEnteredPrice);
                     break;
