@@ -24,7 +24,7 @@
     var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
     decimal orderDiscount = 0;
     var customerEmail = "Unknown";
-    
+
     Address billingAddress = null;
     Address shippingAddress = null;
     Address pickupAddress = null;
@@ -34,7 +34,7 @@
         var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
         customerEmail = customer?.Email ?? "Unknown";
         orderDiscount = order.OrderSubTotalDiscountInclTax;
-        
+
         // Load addresses
         billingAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.BillingAddressId);
         if (order.ShippingAddressId.HasValue)
@@ -219,13 +219,14 @@
 <!-- Load Transaction Event and Parameters -->
 <script>
 window.bvCallback = function (BV) {
-  console.log("bvCallback triggered");
-  console.log("bvCallback: orderDiscount = @orderDiscount");
+console.log("bvCallback triggered");
+console.log("bvCallback: orderDiscount = @orderDiscount");
+var totalAmount = "@(order?.OrderTotal.ToString("0.00") ?? "0.00")";
 
-  BV.pixel.trackTransaction({
+BV.pixel.trackTransaction({
     currency: "USD",
     orderId: "@Model.CustomOrderNumber",
-    total: "@(Convert.ToDecimal(orderTotal).ToString("0.00"))",
+    total: totalAmount,
     items: [
       @for (int i = 0; i < orderItems.Count; i++)
       {
