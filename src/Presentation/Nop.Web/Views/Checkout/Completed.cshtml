@@ -214,15 +214,14 @@
 
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedBottom, additionalData = Model })
 
-        <p style="color:red;">
-    DEBUG — OrderTotal: @order?.OrderTotal |
-    GiftCardTotal: @order?.OrderTotalDiscount |
-    SubTotal: @order?.OrderSubtotalInclTax
-</p>
+
     </div>
 </div>
 
-
+     <p style="color:red;">
+    DEBUG — OrderTotal: @order?.OrderTotal |
+    SubTotal: @order?.OrderSubtotalInclTax
+</p>
 
 <!-- Load Transaction Event and Parameters -->
 <script>
