@@ -1,9 +1,45 @@
-# to disallow category/manufacturer AJAX calls from being crawled
-Disallow: /category/products
-Disallow: /manufacturer/products
+# ======================================================
+# ABC Warehouse – Custom robots additions
+# Purpose: Prevent Google and other bots from crawling
+# duplicate, parameterized, and low-value URLs
+# ======================================================
+
 User-agent: *
+
+# --- 1. Block faceted / search result pages ---
 Disallow: /search/results?
 Disallow: /search/results
 Disallow: /*?filter
 Disallow: /*&filter
+
+# --- 2. Block tracking / marketing parameters ---
+Disallow: /*?utm_
+Disallow: /*&utm_
+Disallow: /*?msclkid=
+Disallow: /*&msclkid=
+
+# --- 3. Block review pagination and Bazaarvoice parameters ---
+Disallow: /*?pr_rd_page=
+Disallow: /*&pr_rd_page=
+Disallow: /*?bvstate=
+Disallow: /*&bvstate=
+
+# --- 4. Block product spec PDFs ---
 Disallow: /product_specs/
+
+# --- 5. Block AJAX endpoints ---
+Disallow: /category/products
+Disallow: /manufacturer/products
+
+
+# --- 6. Optional: block checkout and account pages from indexing ---
+Disallow: /cart
+Disallow: /checkout
+Disallow: /login
+Disallow: /register
+Disallow: /passwordrecovery
+Disallow: /customer
+Disallow: /order
+Disallow: /wishlist
+Disallow: /compareproducts
+Disallow: /recentlyviewedproducts
