@@ -17,12 +17,15 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl = "https://4lt84w.a.searchspring.io";
         private readonly ILogger _logger;
+        private readonly SearchSpringSettings _settings;
+
         public RecommendedProduct Product = new RecommendedProduct();
 
-        public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger)
+        public SearchSpringService(IHttpClientFactory httpClientFactory, ILogger logger, SearchSpringSettings settings)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _settings = settings;
         }
 
         public async Task<SearchResultModel> SearchAsync(string query, string sessionId = null,
@@ -55,7 +58,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
             if (!string.IsNullOrEmpty(userId))
                 queryParams.Add($"ss-shopperId={HttpUtility.UrlEncode(userId)}");
 
-            await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Shopper Id Check: {userId}");
+            if (_settings.IsDebugMode)
+            {
+                await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Shopper Id Check: {userId}");
+            }
 
             if (!string.IsNullOrEmpty(siteId))
                 queryParams.Add($"siteId={HttpUtility.UrlEncode(siteId)}");
@@ -101,7 +107,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                 if (response.Headers.Location != null)
                 {
                     var redirectUrl = response.Headers.Location.ToString();
-                    await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Redirect detected: {redirectUrl}");
+                    if (_settings.IsDebugMode)
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Information, $"[SearchSpring] Redirect detected: {redirectUrl}");
+                    }
                     return new SearchResultModel
                     {
                         RedirectResponse = redirectUrl
@@ -234,8 +243,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         {
                             foreach (var property in contentProp.EnumerateObject())
                             {
-                                await _logger.InsertLogAsync(LogLevel.Information,
-                                    $"[SearchSpring] Processing content position: {property.Name}");
+                                if (_settings.IsDebugMode)
+                                {
+                                    await _logger.InsertLogAsync(LogLevel.Information,
+                                        $"[SearchSpring] Processing content position: {property.Name}");
+                                }
 
                                 if (property.Value.ValueKind == JsonValueKind.Array)
                                 {
@@ -259,8 +271,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                     else
                     {
-                        await _logger.InsertLogAsync(LogLevel.Warning,
-                            "[SearchSpring] No 'content' property found in merchandising block");
+                        if (_settings.IsDebugMode)
+                        {
+                            await _logger.InsertLogAsync(LogLevel.Warning,
+                                "[SearchSpring] No 'content' property found in merchandising block");
+                        }
                     }
 
                     // Parse triggered campaigns
@@ -268,14 +283,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                         campaignsProp.ValueKind == JsonValueKind.Array)
                     {
                         var campaignCount = campaignsProp.GetArrayLength();
-                        await _logger.InsertLogAsync(LogLevel.Information,
-                            $"[SearchSpring] Found {campaignCount} triggered campaign(s)");
+                        if (_settings.IsDebugMode)
+                        {
+                            await _logger.InsertLogAsync(LogLevel.Information,
+                                $"[SearchSpring] Found {campaignCount} triggered campaign(s)");
+                        }
 
                         foreach (var campaign in campaignsProp.EnumerateArray())
                         {
                             var campaignJson = campaign.GetRawText();
-                            await _logger.InsertLogAsync(LogLevel.Information,
-                                $"[SearchSpring] Campaign JSON: {campaignJson}");
+                            if (_settings.IsDebugMode)
+                            {
+                                await _logger.InsertLogAsync(LogLevel.Information,
+                                    $"[SearchSpring] Campaign JSON: {campaignJson}");
+                            }
 
                             var placement = campaign.TryGetProperty("placement", out var placementProp)
                                 ? placementProp.GetString()
@@ -285,8 +306,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                                 ? htmlProp.GetString()
                                 : null;
 
-                            await _logger.InsertLogAsync(LogLevel.Information,
-                                $"[SearchSpring] Campaign placement: {placement}, Has HTML: {!string.IsNullOrWhiteSpace(html)}");
+                            if (_settings.IsDebugMode)
+                            {
+                                await _logger.InsertLogAsync(LogLevel.Information,
+                                    $"[SearchSpring] Campaign placement: {placement}, Has HTML: {!string.IsNullOrWhiteSpace(html)}");
+                            }
 
                             if (!string.IsNullOrWhiteSpace(placement) && !string.IsNullOrWhiteSpace(html))
                             {
@@ -299,14 +323,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                     else
                     {
-                        await _logger.InsertLogAsync(LogLevel.Warning,
-                            "[SearchSpring] No 'triggeredCampaigns' array found in merchandising block");
+                        if (_settings.IsDebugMode)
+                        {
+                            await _logger.InsertLogAsync(LogLevel.Warning,
+                                "[SearchSpring] No 'triggeredCampaigns' array found in merchandising block");
+                        }
                     }
                 }
                 else
                 {
-                    await _logger.InsertLogAsync(LogLevel.Warning,
-                        "[SearchSpring] NO merchandising block found in API response");
+                    if (_settings.IsDebugMode)
+                    {
+                        await _logger.InsertLogAsync(LogLevel.Information,
+                            "[SearchSpring] NO merchandising block found in API response");
+                    }
                 }
 
                 return new SearchResultModel
@@ -383,14 +413,20 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
 
             var url = $"https://{siteId}.a.searchspring.io/boost/{siteId}/recommend?{string.Join("&", queryParams)}";
 
-            await _logger.InsertLogAsync(LogLevel.Information, 
-                $"[SearchSpring Recommendations] Request URL: {url}");
+            if (_settings.IsDebugMode)
+            {
+                await _logger.InsertLogAsync(LogLevel.Information,
+                    $"[SearchSpring Recommendations] Request URL: {url}");
+            }
 
             var response = await client.GetAsync(url);
             var json = await response.Content.ReadAsStringAsync();
 
-            await _logger.InsertLogAsync(LogLevel.Information, 
-                $"[SearchSpring Recommendations Service] Raw JSON Response: {json}");
+            if (_settings.IsDebugMode)
+            {
+                await _logger.InsertLogAsync(LogLevel.Information,
+                    $"[SearchSpring Recommendations Service] Raw JSON Response: {json}");
+            }
 
             if (!response.IsSuccessStatusCode)
             {
@@ -457,8 +493,11 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Services
                     }
                 }
 
-                await _logger.InsertLogAsync(LogLevel.Information,
-                    $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profiles successfully.");
+                if (_settings.IsDebugMode)
+                {
+                    await _logger.InsertLogAsync(LogLevel.Information,
+                        $"[SearchSpring Recommendations] Parsed {result.Profiles.Count} profiles successfully.");
+                }
 
                 return result;
             }
