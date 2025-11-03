@@ -1,3 +1,9 @@
 # to disallow category/manufacturer AJAX calls from being crawled
 Disallow: /category/products
 Disallow: /manufacturer/products
+User-agent: *
+Disallow: /search/results?
+Disallow: /search/results
+Disallow: /*?filter
+Disallow: /*&filter
+Disallow: /product_specs/
