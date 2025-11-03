@@ -144,16 +144,6 @@
                         {
                             @await Component.InvokeAsync("TopMenu")
                         }
-                        @if (storeId == 3)
-{
-    <ul class="extra-hawthorne">
-        <li style="background-color:#02463b; width: auto; height: 46px;" class="mega-menu-categories hawthorne-link">
-            <a href="https://hawthorne.abcwarehouse.com/">
-                <img class="hawthorne-logo" src="https://www.abcwarehouse.com/images/hawthorne/Hawthorne-Logo-Gold-email.png" alt="hawthorne logo">
-            </a>
-        </li>
-    </ul>
-}
                     </div>
                 </div>
 
@@ -303,6 +293,22 @@
                         <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}">
                         </ul>
                     </div>
+                    @if (storeId == 3)
+{
+    <ul class="hawthorne-sidebar-link">
+        <li style="background-color:#02463b; width:auto; height:46px;"
+            class="mega-menu-categories hawthorne-link">
+            <a href="https://hawthorne.abcwarehouse.com/">
+                <img class="hawthorne-logo"
+                     src="https://www.abcwarehouse.com/images/hawthorne/Hawthorne-Logo-Gold-email.png"
+                     alt="hawthorne logo">
+            </a>
+        </li>
+    </ul>
+}
+
+
+
                 }
                 @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_sidebar_after" })
             </div>
