@@ -247,8 +247,10 @@
                     {
                         <div class="category-navigation-list-wrapper">
                             <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}">
+                           </ul> </div>
+                    }
 
-                            @if(storeId == 3)
+                     @if(storeId == 3)
                             {
                                <li style="background-color:#02463b; width: auto; height: 46px;" class="mega-menu-categories hawthorne-link">
                                 <a href="https://hawthorne.abcwarehouse.com/">
@@ -256,13 +258,6 @@
                                  </a>
                                </li>
                             }
-                            </ul>
-
-
-
-
-                        </div>
-                    }
                 }
                 <div class="search-spring-container">
                     @await Component.InvokeAsync("SearchSpring")
