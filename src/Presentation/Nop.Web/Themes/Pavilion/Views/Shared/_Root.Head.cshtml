@@ -130,7 +130,6 @@
     @await Component.InvokeAsync("Favicon")
     @if (displayMiniProfiler)
     {
-    
         <mini-profiler />
     }
     @Html.NopInlineScripts(ResourceLocation.Head)
@@ -142,15 +141,14 @@
     <!-- SearchSpring Scripts -->
     <script src="https://cdn.searchspring.io/script.js"></script>
     <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
-    <script>
-        window.intellisuggest = window.intellisuggest || [];
-        intellisuggest.push(['setSiteId', '4lt84w']);
-    </script>
+    
+    <!-- Include the uuid library -->
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
 
-    <!-- End SearchSpring Scripts -->
-
+    <!-- Consolidated Cookie & Session Management -->
     <script>
         (function() {
+            // Utility functions
             function getCookie(name) {
                 var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
                 return match ? match[2] : null;
@@ -173,18 +171,50 @@
                 });
             }
 
+            function getOrCreateId(cookieName, days) {
+                let id = getCookie(cookieName);
+                if (!id) {
+                    id = Math.random().toString(36).substring(2) + Date.now();
+                    setCookie(cookieName, id, days || 365);
+                }
+                return id;
+            }
+
+            // Initialize ssShopperId
             var ssShopperId = getCookie("ssShopperId");
             if (!ssShopperId) {
                 ssShopperId = generateUUID();
                 setCookie("ssShopperId", ssShopperId, 365);
             }
+            console.log("ssShopperId set to:", ssShopperId);
 
+            // Initialize ssSessionIdNamespace
+            var sessionKey = "ssSessionIdNamespace";
+            if (!sessionStorage.getItem(sessionKey)) {
+                console.log("ssSessionIdNamespace not found, creating a new one...");
+                var uuid = uuidv4();
+                sessionStorage.setItem(sessionKey, uuid);
+                setCookie(sessionKey, uuid, 1); // Session cookie
+            }
+            var sessionId = sessionStorage.getItem(sessionKey);
+            console.log("Session ID for this tab:", sessionId);
+
+            // Set intellisuggest configuration
             window.intellisuggest = window.intellisuggest || [];
+            intellisuggest.push(['setSiteId', '4lt84w']);
             intellisuggest.push(["setShopperId", ssShopperId]);
 
-            console.log("ssShopperId set to:", ssShopperId);
+            // Make utilities globally available
+            window.ssUtils = {
+                getCookie: getCookie,
+                setCookie: setCookie,
+                generateUUID: generateUUID,
+                getOrCreateId: getOrCreateId
+            };
         })();
     </script>
+
+    <!-- SearchSpring Suggest Integration -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchBox = document.querySelector('#small-searchterms')
@@ -213,8 +243,8 @@
                     return;
                 }
 
-                const userId = getCookie('ssShopperId');
-                const sessionId = getCookie('ssSessionIdNamespace');
+                const userId = window.ssUtils.getCookie('ssShopperId');
+                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
 
                 console.log('🔍 Suggest Input Triggered');
                 console.log('Query:', query);
@@ -237,12 +267,241 @@
                     console.error('❗ Suggest fetch error:', e);
                 }
             }, 300));
-
-            function getCookie(name) {
-                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
         });
+    </script>
+
+    <!-- SearchSpring Beacon Tracking -->
+    <script>
+        (function() {
+            const SITE_ID = "4lt84w";
+            const BEACON_URL = "/searchspring/beacon";
+            const CATEGORY = "searchspring.recommendations.user-interactions";
+
+            function uuidv4() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            const ssShopperId = window.ssUtils.getCookie("ssShopperId") || window.ssUtils.getOrCreateId("ssShopperId", 365);
+            const ssSessionId = window.ssUtils.getCookie("ssSessionIdNamespace") || window.ssUtils.getOrCreateId("ssSessionIdNamespace", 1);
+            
+            // Listen for SearchSpring to set tracking code
+            let cachedTrackingCode = null;
+            
+            // Method 1: Listen for SearchSpring events
+            document.addEventListener('searchspring-loaded', function(e) {
+                console.log("🎉 SearchSpring loaded event:", e);
+                if (e.detail && e.detail.trackingCode) {
+                    cachedTrackingCode = e.detail.trackingCode;
+                    console.log("✅ Captured trackingCode from event:", cachedTrackingCode);
+                }
+            });
+            
+            // Method 2: Poll for SearchSpring tracking code after load
+            window.addEventListener('load', function() {
+                let attempts = 0;
+                const maxAttempts = 20; // 10 seconds max
+                const checkInterval = setInterval(function() {
+                    attempts++;
+                    
+                    if (window.searchspring && window.searchspring.tracking && window.searchspring.tracking.trackingCode) {
+                        cachedTrackingCode = window.searchspring.tracking.trackingCode;
+                        console.log("✅ Found trackingCode via polling:", cachedTrackingCode);
+                        clearInterval(checkInterval);
+                    } else if (attempts >= maxAttempts) {
+                        console.warn("⚠️ Could not find trackingCode after", attempts, "attempts");
+                        clearInterval(checkInterval);
+                    }
+                }, 500);
+            });
+            
+            function getTrackingCode() {
+                // Use cached value if available
+                if (cachedTrackingCode) {
+                    return cachedTrackingCode;
+                }
+                
+                // SearchSpring may set tracking code in multiple ways
+                // Check cookie first, then window object, then localStorage
+                let trackingCode = null;
+                
+                // Method 1: Check cookie
+                trackingCode = window.ssUtils.getCookie("trackingCode") || 
+                               window.ssUtils.getCookie("ssTrackingCode");
+                
+                // Method 2: Check SearchSpring global object
+                if (!trackingCode && window.searchspring && window.searchspring.tracking) {
+                    trackingCode = window.searchspring.tracking.trackingCode || 
+                                   window.searchspring.tracking.code;
+                }
+                
+                // Method 3: Check localStorage
+                if (!trackingCode) {
+                    try {
+                        trackingCode = localStorage.getItem('trackingCode') || 
+                                      localStorage.getItem('ssTrackingCode');
+                    } catch (e) {
+                        console.log("Could not access localStorage:", e);
+                    }
+                }
+                
+                // Method 4: Check sessionStorage
+                if (!trackingCode) {
+                    try {
+                        trackingCode = sessionStorage.getItem('trackingCode') || 
+                                      sessionStorage.getItem('ssTrackingCode');
+                    } catch (e) {
+                        console.log("Could not access sessionStorage:", e);
+                    }
+                }
+                
+                console.log("🔍 Current trackingCode:", trackingCode);
+                return trackingCode;
+            }
+
+            function sendBeacon(eventType, eventData = {}) {
+                console.log("⚙️ sendBeacon called for:", eventType);
+
+                const trackingCode = getTrackingCode();
+                console.log("✅ Final trackingCode:", trackingCode);
+
+                // Build payload matching SearchSpring's expected format
+                const payload = {
+                    type: eventType,
+                    category: CATEGORY,
+                    id: uuidv4(),
+                    event: eventData,
+                    context: {
+                        siteId: SITE_ID,
+                        shopperId: ssShopperId,
+                        sessionId: ssSessionId,
+                        userId: ssShopperId, // SearchSpring may expect userId
+                        page: window.location.href,
+                        pageLoadId: uuidv4(), // Unique ID for this page load
+                        referrer: document.referrer || undefined,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    }
+                };
+
+                // Only add trackingCode if it exists
+                if (trackingCode) {
+                    payload.context.trackingCode = trackingCode;
+                }
+
+                console.log('📡 Sending beacon:', eventType, payload);
+
+                // Use fetch with proper error handling
+                fetch(BEACON_URL, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify(payload),
+                    credentials: 'same-origin',
+                    keepalive: true
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            console.error("❌ Beacon failed with status:", response.status);
+                            console.error("Response:", text);
+                            throw new Error(`HTTP ${response.status}: ${text}`);
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log("✅ Beacon sent successfully:", data);
+                })
+                .catch(err => {
+                    console.error("❌ Beacon error:", err);
+                    console.error("Payload that failed:", payload);
+                });
+            }
+
+            // --- Page view ---
+            document.addEventListener("DOMContentLoaded", function() {
+                setTimeout(() => {
+                    sendBeacon("profile.render", { action: "page.view" });
+                }, 500);
+            });
+
+            // --- Product click (Add to cart) ---
+            document.addEventListener("click", function(e) {
+                const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
+                if (!btn) return;
+
+                const productElement = btn.closest("[data-productid]");
+                const productId = productElement ? productElement.getAttribute("data-productid") : null;
+                const sku = productElement?.querySelector(".sku, .product-sku")?.textContent.trim() || "";
+                const name = productElement?.querySelector(".product-title, h2, h3")?.textContent.trim() || "";
+                const price = productElement?.querySelector(".actual-price, .price")?.textContent.trim() || "";
+
+                sendBeacon("profile.product.click", { 
+                    productId, 
+                    sku, 
+                    name,
+                    price
+                });
+            });
+
+            // --- Order completion ---
+            if (window.location.pathname.toLowerCase().includes("/checkout/completed")) {
+                document.addEventListener("DOMContentLoaded", function() {
+                    setTimeout(() => {
+                        const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
+                        const orderTotal = document.querySelector(".order-total strong")?.textContent?.trim() || null;
+                        
+                        sendBeacon("profile.order.purchase", { 
+                            orderNumber,
+                            orderTotal
+                        });
+                    }, 500);
+                });
+            }
+
+            // Make sendBeacon available globally
+            window.searchSpringBeacon = sendBeacon;
+            
+            // Intercept SearchSpring API calls to capture tracking code
+            (function() {
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    const url = args[0];
+                    
+                    return originalFetch.apply(this, args).then(response => {
+                        // Clone response so we can read it
+                        const clonedResponse = response.clone();
+                        
+                        // Check if this is a SearchSpring API call
+                        if (typeof url === 'string' && url.includes('searchspring')) {
+                            clonedResponse.json().then(data => {
+                                // Look for tracking code in response
+                                if (data && data.tracking && data.tracking.trackingCode) {
+                                    cachedTrackingCode = data.tracking.trackingCode;
+                                    console.log("✅ Captured trackingCode from API response:", cachedTrackingCode);
+                                    
+                                    // Also store in cookie for persistence
+                                    window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
+                                } else if (data && data.merchandising && data.merchandising.trackingCode) {
+                                    cachedTrackingCode = data.merchandising.trackingCode;
+                                    console.log("✅ Captured trackingCode from merchandising:", cachedTrackingCode);
+                                    window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
+                                }
+                            }).catch(e => {
+                                // Not JSON or error parsing, ignore
+                            });
+                        }
+                        
+                        return response;
+                    });
+                };
+            })();
+        })();
     </script>
 
     <!-- Microsoft Clarity Script -->
@@ -256,185 +515,66 @@
 
     <!-- Meta Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window,document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '279056429645080'); 
-    fbq('track', 'PageView');
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '279056429645080'); 
+        fbq('track', 'PageView');
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Check if .storeId8 exists
-  if (document.querySelector('.storeId8')) {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if .storeId8 exists (Hawthorne store)
+            if (document.querySelector('.storeId8')) {
+                // Load Adtaxi Container Tag asynchronously
+                (function(a,b,c,d){
+                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
+                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+                })();
 
-<!-- Begin Adtaxi Container Tag - Loading asynchronously -->
-    (function(a,b,c,d){
-        a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-        b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/java"+c;d.async=true;
-        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-    })();
-    <!-- End Adtaxi Container Tag -->
-
-
-
-
-
-    // Update Instagram link only if .storeId8 is present
-    const instagramLink = document.querySelector('li.instagram a');
-    if (instagramLink) {
-      instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
-    }
-  }
-
-  
-});    
-   
-
-    </script>
-
-    <script>
-
-        @* Brand Filter Search *@
-document.addEventListener('DOMContentLoaded', function() {
-    const brandSearchInput = document.getElementById('brandSearchInput');
-    
-    if (brandSearchInput) {
-        // Trigger search on input
-        brandSearchInput.addEventListener('input', function() {
-            const searchTerm = this.value.trim().toLowerCase();
-            const brandItems = document.querySelectorAll('.brand-list li');
-            
-            brandItems.forEach(item => {
-                const brandName = item.getAttribute('data-brand-name');
-                if (brandName.includes(searchTerm)) {
-                    item.style.display = 'block'; // Show matching items
-                } else {
-                    item.style.display = 'none';  // Hide non-matching items
+                // Update Instagram link only if .storeId8 is present
+                const instagramLink = document.querySelector('li.instagram a');
+                if (instagramLink) {
+                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
                 }
-            });
-        });
-    }
-});
+            }
+        });    
     </script>
-
-
 
     <noscript>
-    <img height="1" width="1" 
-    src="https://www.facebook.com/tr?id=279056429645080&ev=PageView
-    &noscript=1"/>
+        <img height="1" width="1" 
+        src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
     </noscript>
     <!-- End Meta Pixel Code -->
 
     <script src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
 
-    <!-- Include the uuid library -->
-    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
+    <!-- Brand Filter Search -->
     <script>
-    function initializeSessionIdNamespace() {
-        var sessionKey = "ssSessionIdNamespace";
-
-        // Log current sessionStorage for debugging purposes
-        console.log("Current sessionStorage value:", sessionStorage.getItem(sessionKey));
-
-        // Check if the ssSessionIdNamespace is already set in sessionStorage
-        if (!sessionStorage.getItem(sessionKey)) {
-        console.log("ssSessionIdNamespace not found, creating a new one...");
-        // Generate a new UUID (ensure uuidv4 is properly loaded in your environment)
-        var uuid = uuidv4();
-        sessionStorage.setItem(sessionKey, uuid);
-        document.cookie = sessionKey + "=" + uuid + "; path=/; SameSite=Lax";
-        }
-
-        // Log the sessionId after ensuring it has been set
-        var sessionId = sessionStorage.getItem(sessionKey);
-        console.log("Session ID for this tab:", sessionId);
-    }
-
-    // Run the function when the page loads
-    window.addEventListener("load", initializeSessionIdNamespace);
-    </script>
-
-    <script>
-        (function() {
-            const SITE_ID = "4lt84w";
-            const API_URL = "/searchspring/beacon/event";
-
-            // --- Shopper/session management ---
-            function getOrCreateId(key) {
-                let id = localStorage.getItem(key);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    localStorage.setItem(key, id);
-                }
-                return id;
-            }
-
-            const ssShopperId = getOrCreateId("ssShopperId");
-            const ssSessionId = getOrCreateId("ssSessionId");
-
-            // --- Utility to send beacon event ---
-            function sendBeacon(eventType, data = {}) {
-                const eventPayload = {
-                    type: eventType,
-                    siteId: SITE_ID,
-                    shopperId: ssShopperId,
-                    sessionId: ssSessionId,
-                    timestamp: new Date().toISOString(),
-                    ...data
-                };
-
-                // Wrap inside { beacon: { ... } } to match Searchspring format
-                const payload = { beacon: eventPayload };
-
-                fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }).catch(err => console.error("Beacon error:", err));
-            }
-
-            // --- 1. Track page views ---
-            document.addEventListener("DOMContentLoaded", function() {
-                sendBeacon("page.view", {
-                    page: window.location.href,
-                    referrer: document.referrer || null,
-                    userAgent: navigator.userAgent
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSearchInput = document.getElementById('brandSearchInput');
+            
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+                    const brandItems = document.querySelectorAll('.brand-list li');
+                    
+                    brandItems.forEach(item => {
+                        const brandName = item.getAttribute('data-brand-name');
+                        if (brandName.includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
                 });
-            });
-
-            // --- 2. Track add to cart ---
-            document.addEventListener("click", function(e) {
-                const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
-                if (!btn) return;
-
-                const productElement = btn.closest("[data-productid]");
-                const productId = productElement ? productElement.getAttribute("data-productid") : null;
-                const skuElement = productElement ? productElement.querySelector(".sku, .product-sku") : null;
-                const nameElement = productElement ? productElement.querySelector(".product-title, h2, h3") : null;
-
-                sendBeacon("cart.add", {
-                    product: {
-                        id: productId,
-                        sku: skuElement ? skuElement.textContent.trim() : "",
-                        name: nameElement ? nameElement.textContent.trim() : ""
-                    }
-                });
-            });
-
-            // --- 3. Track checkout/purchase ---
-            if (window.location.href.toLowerCase().includes("/checkout/completed")) {
-                const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
-                sendBeacon("purchase", { orderNumber });
             }
-        })();
+        });
     </script>
-
-
 
 </head>
 
@@ -445,7 +585,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var controller = routeData.Values["controller"]?.ToString() ?? "home";
         var action = routeData.Values["action"]?.ToString() ?? "index";
         
-        // Combine controller and action to create a unique class
         return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
     }
 }
@@ -478,17 +617,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         /* The Modal (background) */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1050; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            padding-top: 100px;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
         }
         /* Modal Content */
         .modal-content {
