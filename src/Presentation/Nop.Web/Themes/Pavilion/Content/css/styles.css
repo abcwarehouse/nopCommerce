@@ -10637,7 +10637,7 @@ body.storeId3 .header-lower {
     }
 }
 
-.storeId3 li.mega-menu-categories.hawthorne-link {
+.catalog-category.storeId3 li.mega-menu-categories.hawthorne-link {
     list-style-type: none;
     position: absolute;
     bottom: -40px;
