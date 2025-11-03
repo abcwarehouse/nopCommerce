@@ -21,7 +21,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpPost("event")]
+        [HttpPost]
         public async Task<IActionResult> SendEvent([FromBody] JsonElement eventData)
         {
             if (eventData.ValueKind == JsonValueKind.Undefined || eventData.ValueKind == JsonValueKind.Null)
