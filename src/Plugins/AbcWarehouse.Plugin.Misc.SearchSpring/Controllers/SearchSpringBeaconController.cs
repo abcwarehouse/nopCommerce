@@ -38,7 +38,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 var httpClient = _httpClientFactory.CreateClient();
 
                 // Properly serialize the JSON
-                var jsonPayload = JsonSerializer.Serialize(eventData);
+                var jsonPayload = eventData.ToString();
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
                 // Log the payload for debugging
