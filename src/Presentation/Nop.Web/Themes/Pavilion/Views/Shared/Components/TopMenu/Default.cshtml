@@ -1,9 +1,13 @@
 ﻿@using Nop.Web.Models.Catalog
+@using Nop.Core
 
 @model TopMenuModel
+@inject IStoreContext storeContext
 
 @{
     var isRtl = await this.ShouldUseRtlThemeAsync();
+    var currentStore = await storeContext.GetCurrentStoreAsync();
+    var storeId = currentStore.Id;
 }
 
 <input type="hidden" value="@isRtl.ToString().ToLowerInvariant()" id="isRtlEnabled" />
@@ -53,6 +57,16 @@
     @if (Model.DisplayContactUsMenuItem)
     {
         <li><a href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
+    }
+
+    @* Hawthorne button for store 3 - show on all pages *@
+    @if (storeId == 3)
+    {
+        <li class="mega-menu-categories hawthorne-link" style="background-color:#02463b; width: auto; height: 46px;">
+            <a href="https://hawthorne.abcwarehouse.com/">
+                <img class="hawthorne-logo" src="https://www.abcwarehouse.com/images/hawthorne/Hawthorne-Logo-Gold-email.png" alt="hawthorne logo">
+            </a>
+        </li>
     }
 
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeaderMenuAfter })
