@@ -393,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const ssShopperId = getOrCreateId("ssShopperId");
             const ssSessionId = getCookie("ssSessionIdNamespace") || getOrCreateId("ssSessionId");
+            const trackingCode = getCookie('ssTrackingCode') || getCookie('trackingCode');
 
             function sendBeacon(eventType, eventData = {}) {
                 const payload = {
@@ -408,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         referrer: document.referrer || null,
                         timestamp: new Date().toISOString(),
                         userAgent: navigator.userAgent,
-                        trackingCode: SITE_ID
+                        trackingCode: trackingCode
                     }
                 };
 
