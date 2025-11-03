@@ -382,7 +382,8 @@
                         pageLoadId: uuidv4(), // Unique ID for this page load
                         referrer: document.referrer || undefined,
                         timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
+                        userAgent: navigator.userAgent,
+                        trackingCode: trackingCode
                     }
                 };
 
