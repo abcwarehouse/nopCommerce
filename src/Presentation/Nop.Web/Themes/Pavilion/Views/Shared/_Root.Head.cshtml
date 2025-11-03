@@ -276,6 +276,8 @@
             const SITE_ID = "4lt84w";
             const BEACON_URL = "/searchspring/beacon";
             const CATEGORY = "searchspring.recommendations.user-interactions";
+            
+            console.log("📍 Beacon URL configured as:", BEACON_URL);
 
             function uuidv4() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -367,32 +369,38 @@
                 const trackingCode = getTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
+                // Build context object, only including non-null values
+                const context = {
+                    siteId: SITE_ID,
+                    shopperId: ssShopperId,
+                    sessionId: ssSessionId,
+                    userId: ssShopperId,
+                    page: window.location.href,
+                    pageLoadId: uuidv4(),
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                };
+
+                // Add optional fields only if they have values
+                if (document.referrer) {
+                    context.referrer = document.referrer;
+                }
+                
+                if (trackingCode) {
+                    context.trackingCode = trackingCode;
+                }
+
                 // Build payload matching SearchSpring's expected format
                 const payload = {
                     type: eventType,
                     category: CATEGORY,
                     id: uuidv4(),
                     event: eventData,
-                    context: {
-                        siteId: SITE_ID,
-                        shopperId: ssShopperId,
-                        sessionId: ssSessionId,
-                        userId: ssShopperId, // SearchSpring may expect userId
-                        page: window.location.href,
-                        pageLoadId: uuidv4(), // Unique ID for this page load
-                        referrer: document.referrer || undefined,
-                        timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent,
-                        trackingCode: trackingCode
-                    }
+                    context: context
                 };
 
-                // Only add trackingCode if it exists
-                if (trackingCode) {
-                    payload.context.trackingCode = trackingCode;
-                }
-
-                console.log('📡 Sending beacon:', eventType, payload);
+                console.log('📡 Sending beacon to:', BEACON_URL);
+                console.log('📦 Payload:', payload);
 
                 // Use fetch with proper error handling
                 fetch(BEACON_URL, {
@@ -406,10 +414,11 @@
                     keepalive: true
                 })
                 .then(response => {
+                    console.log("📬 Response status:", response.status, response.statusText);
                     if (!response.ok) {
                         return response.text().then(text => {
                             console.error("❌ Beacon failed with status:", response.status);
-                            console.error("Response:", text);
+                            console.error("❌ Response:", text);
                             throw new Error(`HTTP ${response.status}: ${text}`);
                         });
                     }
@@ -420,7 +429,7 @@
                 })
                 .catch(err => {
                     console.error("❌ Beacon error:", err);
-                    console.error("Payload that failed:", payload);
+                    console.error("❌ Payload that failed:", JSON.stringify(payload, null, 2));
                 });
             }
 
