@@ -274,7 +274,7 @@
     <script>
         (function() {
             const SITE_ID = "4lt84w";
-            const BEACON_URL = "/searchspring/beacon/";
+            const BEACON_URL = "/searchspring/beacon";
             const CATEGORY = "searchspring.recommendations.user-interactions";
 
             function uuidv4() {
@@ -367,6 +367,7 @@
                 const trackingCode = getTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
+                // Build payload matching SearchSpring's expected format
                 const payload = {
                     type: eventType,
                     category: CATEGORY,
@@ -376,46 +377,49 @@
                         siteId: SITE_ID,
                         shopperId: ssShopperId,
                         sessionId: ssSessionId,
+                        userId: ssShopperId, // SearchSpring may expect userId
                         page: window.location.href,
-                        referrer: document.referrer || null,
+                        pageLoadId: uuidv4(), // Unique ID for this page load
+                        referrer: document.referrer || undefined,
                         timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent,
-                        trackingCode: trackingCode
+                        userAgent: navigator.userAgent
                     }
                 };
 
-                console.log('📡 Sending beacon:', eventType, payload);
-
-                const jsonPayload = JSON.stringify(payload);
-                
-                // Try using native sendBeacon first (bypasses CORS for analytics)
-                if (navigator.sendBeacon) {
-                    const blob = new Blob([jsonPayload], { type: 'application/json' });
-                    const success = navigator.sendBeacon(BEACON_URL, blob);
-                    
-                    if (success) {
-                        console.log('✅ Beacon sent via navigator.sendBeacon');
-                        return;
-                    } else {
-                        console.warn('⚠️ navigator.sendBeacon failed, trying fetch with no-cors...');
-                    }
+                // Only add trackingCode if it exists
+                if (trackingCode) {
+                    payload.context.trackingCode = trackingCode;
                 }
 
-                // Fallback: Use fetch with no-cors mode
+                console.log('📡 Sending beacon:', eventType, payload);
+
+                // Use fetch with proper error handling
                 fetch(BEACON_URL, {
                     method: "POST",
                     headers: { 
-                        "Content-Type": "text/plain"
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
                     },
-                    body: jsonPayload,
-                    mode: 'no-cors',
+                    body: JSON.stringify(payload),
+                    credentials: 'same-origin',
                     keepalive: true
                 })
-                .then(() => {
-                    console.log("✅ Beacon sent via fetch (no-cors mode)");
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            console.error("❌ Beacon failed with status:", response.status);
+                            console.error("Response:", text);
+                            throw new Error(`HTTP ${response.status}: ${text}`);
+                        });
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log("✅ Beacon sent successfully:", data);
                 })
                 .catch(err => {
                     console.error("❌ Beacon error:", err);
+                    console.error("Payload that failed:", payload);
                 });
             }
 
