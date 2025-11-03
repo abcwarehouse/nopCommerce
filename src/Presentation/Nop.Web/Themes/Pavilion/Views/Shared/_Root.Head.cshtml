@@ -287,27 +287,84 @@
             const ssShopperId = window.ssUtils.getCookie("ssShopperId") || window.ssUtils.getOrCreateId("ssShopperId", 365);
             const ssSessionId = window.ssUtils.getCookie("ssSessionIdNamespace") || window.ssUtils.getOrCreateId("ssSessionIdNamespace", 1);
             
-            async function waitForTrackingCode(maxWaitMs = 3000, intervalMs = 200) {
-                return new Promise(resolve => {
-                    const start = Date.now();
-                    const check = () => {
-                        // Check for trackingCode cookie (set by SearchSpring)
-                        const code = window.ssUtils.getCookie("trackingCode");
-                        console.log("🕓 Checking trackingCode:", code);
-                        if (code || Date.now() - start > maxWaitMs) {
-                            resolve(code || null);
-                        } else {
-                            setTimeout(check, intervalMs);
-                        }
-                    };
-                    check();
-                });
+            // Listen for SearchSpring to set tracking code
+            let cachedTrackingCode = null;
+            
+            // Method 1: Listen for SearchSpring events
+            document.addEventListener('searchspring-loaded', function(e) {
+                console.log("🎉 SearchSpring loaded event:", e);
+                if (e.detail && e.detail.trackingCode) {
+                    cachedTrackingCode = e.detail.trackingCode;
+                    console.log("✅ Captured trackingCode from event:", cachedTrackingCode);
+                }
+            });
+            
+            // Method 2: Poll for SearchSpring tracking code after load
+            window.addEventListener('load', function() {
+                let attempts = 0;
+                const maxAttempts = 20; // 10 seconds max
+                const checkInterval = setInterval(function() {
+                    attempts++;
+                    
+                    if (window.searchspring && window.searchspring.tracking && window.searchspring.tracking.trackingCode) {
+                        cachedTrackingCode = window.searchspring.tracking.trackingCode;
+                        console.log("✅ Found trackingCode via polling:", cachedTrackingCode);
+                        clearInterval(checkInterval);
+                    } else if (attempts >= maxAttempts) {
+                        console.warn("⚠️ Could not find trackingCode after", attempts, "attempts");
+                        clearInterval(checkInterval);
+                    }
+                }, 500);
+            });
+            
+            function getTrackingCode() {
+                // Use cached value if available
+                if (cachedTrackingCode) {
+                    return cachedTrackingCode;
+                }
+                
+                // SearchSpring may set tracking code in multiple ways
+                // Check cookie first, then window object, then localStorage
+                let trackingCode = null;
+                
+                // Method 1: Check cookie
+                trackingCode = window.ssUtils.getCookie("trackingCode") || 
+                               window.ssUtils.getCookie("ssTrackingCode");
+                
+                // Method 2: Check SearchSpring global object
+                if (!trackingCode && window.searchspring && window.searchspring.tracking) {
+                    trackingCode = window.searchspring.tracking.trackingCode || 
+                                   window.searchspring.tracking.code;
+                }
+                
+                // Method 3: Check localStorage
+                if (!trackingCode) {
+                    try {
+                        trackingCode = localStorage.getItem('trackingCode') || 
+                                      localStorage.getItem('ssTrackingCode');
+                    } catch (e) {
+                        console.log("Could not access localStorage:", e);
+                    }
+                }
+                
+                // Method 4: Check sessionStorage
+                if (!trackingCode) {
+                    try {
+                        trackingCode = sessionStorage.getItem('trackingCode') || 
+                                      sessionStorage.getItem('ssTrackingCode');
+                    } catch (e) {
+                        console.log("Could not access sessionStorage:", e);
+                    }
+                }
+                
+                console.log("🔍 Current trackingCode:", trackingCode);
+                return trackingCode;
             }
 
-            async function sendBeacon(eventType, eventData = {}) {
+            function sendBeacon(eventType, eventData = {}) {
                 console.log("⚙️ sendBeacon called for:", eventType);
 
-                const trackingCode = await waitForTrackingCode();
+                const trackingCode = getTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
                 const payload = {
@@ -405,6 +462,41 @@
 
             // Make sendBeacon available globally
             window.searchSpringBeacon = sendBeacon;
+            
+            // Intercept SearchSpring API calls to capture tracking code
+            (function() {
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    const url = args[0];
+                    
+                    return originalFetch.apply(this, args).then(response => {
+                        // Clone response so we can read it
+                        const clonedResponse = response.clone();
+                        
+                        // Check if this is a SearchSpring API call
+                        if (typeof url === 'string' && url.includes('searchspring')) {
+                            clonedResponse.json().then(data => {
+                                // Look for tracking code in response
+                                if (data && data.tracking && data.tracking.trackingCode) {
+                                    cachedTrackingCode = data.tracking.trackingCode;
+                                    console.log("✅ Captured trackingCode from API response:", cachedTrackingCode);
+                                    
+                                    // Also store in cookie for persistence
+                                    window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
+                                } else if (data && data.merchandising && data.merchandising.trackingCode) {
+                                    cachedTrackingCode = data.merchandising.trackingCode;
+                                    console.log("✅ Captured trackingCode from merchandising:", cachedTrackingCode);
+                                    window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
+                                }
+                            }).catch(e => {
+                                // Not JSON or error parsing, ignore
+                            });
+                        }
+                        
+                        return response;
+                    });
+                };
+            })();
         })();
     </script>
 
