@@ -394,12 +394,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const ssShopperId = getOrCreateId("ssShopperId");
             const ssSessionId = getCookie("ssSessionIdNamespace") || getOrCreateId("ssSessionId");
             
-            // Wait until IntelliSuggest tracking code exists
-            function waitForTrackingCode(maxWaitMs = 3000, intervalMs = 200) {
+            async function waitForTrackingCode(maxWaitMs = 3000, intervalMs = 200) {
                 return new Promise(resolve => {
                     const start = Date.now();
                     const check = () => {
                         const code = getCookie("ssTrackingCode") || getCookie("trackingCode");
+                        console.log("🕓 Checking trackingCode:", code);
                         if (code || Date.now() - start > maxWaitMs) {
                             resolve(code || null);
                         } else {
@@ -411,7 +411,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             async function sendBeacon(eventType, eventData = {}) {
-            const trackingCode = await waitForTrackingCode(); 
+                console.log("⚙️ sendBeacon called");
+
+                const trackingCode = await waitForTrackingCode();
+                console.log("✅ Final trackingCode:", trackingCode);
 
             function sendBeacon(eventType, eventData = {}) {
                 const payload = {
