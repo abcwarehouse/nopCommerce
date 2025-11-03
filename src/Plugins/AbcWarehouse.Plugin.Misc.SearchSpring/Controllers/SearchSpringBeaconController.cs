@@ -15,11 +15,15 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         private readonly ILogger _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private const string BeaconApiUrl = "https://beacon.searchspring.io/beacon";
+        private readonly HttpClient _httpClient;
+        private readonly SearchSpringSettings _searchSpringSettings;
 
-        public SearchSpringBeaconController(ILogger logger, IHttpClientFactory httpClientFactory)
+        public SearchSpringBeaconController(ILogger logger, IHttpClientFactory httpClientFactory, SearchSpringSettings searchSpringSettings)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
+            _httpClient = httpClientFactory.CreateClient();
+            _searchSpringSettings = searchSpringSettings;
         }
 
         [HttpPost("event")]
@@ -80,11 +84,14 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                 var response = await httpClient.SendAsync(request);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
-                await _logger.InsertLogAsync(
-                    Nop.Core.Domain.Logging.LogLevel.Information,
-                    "[Searchspring Beacon] Response",
-                    $"Status: {response.StatusCode}, Body: {responseBody}"
-                );
+                if (_searchSpringSettings.IsDebugMode)
+                {
+                    await _logger.InsertLogAsync(
+                        Nop.Core.Domain.Logging.LogLevel.Information,
+                        "[Searchspring Beacon]",
+                        $"Payload: {eventData}, Response: {responseBody}"
+                    );
+                }
 
                 if (!response.IsSuccessStatusCode)
                 {
