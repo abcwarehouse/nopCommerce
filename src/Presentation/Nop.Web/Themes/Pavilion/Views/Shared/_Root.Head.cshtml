@@ -130,7 +130,6 @@
     @await Component.InvokeAsync("Favicon")
     @if (displayMiniProfiler)
     {
-    
         <mini-profiler />
     }
     @Html.NopInlineScripts(ResourceLocation.Head)
@@ -142,15 +141,14 @@
     <!-- SearchSpring Scripts -->
     <script src="https://cdn.searchspring.io/script.js"></script>
     <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
-    <script>
-        window.intellisuggest = window.intellisuggest || [];
-        intellisuggest.push(['setSiteId', '4lt84w']);
-    </script>
+    
+    <!-- Include the uuid library -->
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
 
-    <!-- End SearchSpring Scripts -->
-
+    <!-- Consolidated Cookie & Session Management -->
     <script>
         (function() {
+            // Utility functions
             function getCookie(name) {
                 var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
                 return match ? match[2] : null;
@@ -173,18 +171,50 @@
                 });
             }
 
+            function getOrCreateId(cookieName, days) {
+                let id = getCookie(cookieName);
+                if (!id) {
+                    id = Math.random().toString(36).substring(2) + Date.now();
+                    setCookie(cookieName, id, days || 365);
+                }
+                return id;
+            }
+
+            // Initialize ssShopperId
             var ssShopperId = getCookie("ssShopperId");
             if (!ssShopperId) {
                 ssShopperId = generateUUID();
                 setCookie("ssShopperId", ssShopperId, 365);
             }
+            console.log("ssShopperId set to:", ssShopperId);
 
+            // Initialize ssSessionIdNamespace
+            var sessionKey = "ssSessionIdNamespace";
+            if (!sessionStorage.getItem(sessionKey)) {
+                console.log("ssSessionIdNamespace not found, creating a new one...");
+                var uuid = uuidv4();
+                sessionStorage.setItem(sessionKey, uuid);
+                setCookie(sessionKey, uuid, 1); // Session cookie
+            }
+            var sessionId = sessionStorage.getItem(sessionKey);
+            console.log("Session ID for this tab:", sessionId);
+
+            // Set intellisuggest configuration
             window.intellisuggest = window.intellisuggest || [];
+            intellisuggest.push(['setSiteId', '4lt84w']);
             intellisuggest.push(["setShopperId", ssShopperId]);
 
-            console.log("ssShopperId set to:", ssShopperId);
+            // Make utilities globally available
+            window.ssUtils = {
+                getCookie: getCookie,
+                setCookie: setCookie,
+                generateUUID: generateUUID,
+                getOrCreateId: getOrCreateId
+            };
         })();
     </script>
+
+    <!-- SearchSpring Suggest Integration -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchBox = document.querySelector('#small-searchterms')
@@ -213,8 +243,8 @@
                     return;
                 }
 
-                const userId = getCookie('ssShopperId');
-                const sessionId = getCookie('ssSessionIdNamespace');
+                const userId = window.ssUtils.getCookie('ssShopperId');
+                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
 
                 console.log('🔍 Suggest Input Triggered');
                 console.log('Query:', query);
@@ -237,128 +267,10 @@
                     console.error('❗ Suggest fetch error:', e);
                 }
             }, 300));
-
-            function getCookie(name) {
-                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
         });
     </script>
 
-    <!-- Microsoft Clarity Script -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "sewgt4p9qm");
-    </script>
-
-    <!-- Meta Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window,document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '279056429645080'); 
-    fbq('track', 'PageView');
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Check if .storeId8 exists
-  if (document.querySelector('.storeId8')) {
-
-<!-- Begin Adtaxi Container Tag - Loading asynchronously -->
-    (function(a,b,c,d){
-        a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-        b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/java"+c;d.async=true;
-        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-    })();
-    <!-- End Adtaxi Container Tag -->
-
-
-
-
-
-    // Update Instagram link only if .storeId8 is present
-    const instagramLink = document.querySelector('li.instagram a');
-    if (instagramLink) {
-      instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
-    }
-  }
-
-  
-});    
-   
-
-    </script>
-
-    <script>
-
-        @* Brand Filter Search *@
-document.addEventListener('DOMContentLoaded', function() {
-    const brandSearchInput = document.getElementById('brandSearchInput');
-    
-    if (brandSearchInput) {
-        // Trigger search on input
-        brandSearchInput.addEventListener('input', function() {
-            const searchTerm = this.value.trim().toLowerCase();
-            const brandItems = document.querySelectorAll('.brand-list li');
-            
-            brandItems.forEach(item => {
-                const brandName = item.getAttribute('data-brand-name');
-                if (brandName.includes(searchTerm)) {
-                    item.style.display = 'block'; // Show matching items
-                } else {
-                    item.style.display = 'none';  // Hide non-matching items
-                }
-            });
-        });
-    }
-});
-    </script>
-
-
-
-    <noscript>
-    <img height="1" width="1" 
-    src="https://www.facebook.com/tr?id=279056429645080&ev=PageView
-    &noscript=1"/>
-    </noscript>
-    <!-- End Meta Pixel Code -->
-
-    <script src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
-
-    <!-- Include the uuid library -->
-    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
-    <script>
-    function initializeSessionIdNamespace() {
-        var sessionKey = "ssSessionIdNamespace";
-
-        // Log current sessionStorage for debugging purposes
-        console.log("Current sessionStorage value:", sessionStorage.getItem(sessionKey));
-
-        // Check if the ssSessionIdNamespace is already set in sessionStorage
-        if (!sessionStorage.getItem(sessionKey)) {
-        console.log("ssSessionIdNamespace not found, creating a new one...");
-        // Generate a new UUID (ensure uuidv4 is properly loaded in your environment)
-        var uuid = uuidv4();
-        sessionStorage.setItem(sessionKey, uuid);
-        document.cookie = sessionKey + "=" + uuid + "; path=/; SameSite=Lax";
-        }
-
-        // Log the sessionId after ensuring it has been set
-        var sessionId = sessionStorage.getItem(sessionKey);
-        console.log("Session ID for this tab:", sessionId);
-    }
-
-    // Run the function when the page loads
-    window.addEventListener("load", initializeSessionIdNamespace);
-    </script>
-
+    <!-- SearchSpring Beacon Tracking -->
     <script>
         (function() {
             const SITE_ID = "4lt84w";
@@ -372,33 +284,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            function getCookie(name) {
-                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
-
-            function setCookie(name, value, days) {
-                const expires = new Date(Date.now() + days * 864e5).toUTCString();
-                document.cookie = name + '=' + value + '; expires=' + expires + '; path=/; SameSite=Lax';
-            }
-
-            function getOrCreateId(cookieName) {
-                let id = getCookie(cookieName);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    setCookie(cookieName, id, 365);
-                }
-                return id;
-            }
-
-            const ssShopperId = getOrCreateId("ssShopperId");
-            const ssSessionId = getCookie("ssSessionIdNamespace") || getOrCreateId("ssSessionId");
+            const ssShopperId = window.ssUtils.getCookie("ssShopperId") || window.ssUtils.getOrCreateId("ssShopperId", 365);
+            const ssSessionId = window.ssUtils.getCookie("ssSessionIdNamespace") || window.ssUtils.getOrCreateId("ssSessionIdNamespace", 1);
             
             async function waitForTrackingCode(maxWaitMs = 3000, intervalMs = 200) {
                 return new Promise(resolve => {
                     const start = Date.now();
                     const check = () => {
-                        const code = getCookie("ssTrackingCode") || getCookie("trackingCode");
+                        // Check for trackingCode cookie (set by SearchSpring)
+                        const code = window.ssUtils.getCookie("trackingCode");
                         console.log("🕓 Checking trackingCode:", code);
                         if (code || Date.now() - start > maxWaitMs) {
                             resolve(code || null);
@@ -411,12 +305,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             async function sendBeacon(eventType, eventData = {}) {
-                console.log("⚙️ sendBeacon called");
+                console.log("⚙️ sendBeacon called for:", eventType);
 
                 const trackingCode = await waitForTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
-            function sendBeacon(eventType, eventData = {}) {
                 const payload = {
                     type: eventType,
                     category: CATEGORY,
@@ -452,15 +345,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Fallback: Use fetch with no-cors mode
-                // Note: no-cors means we won't see the response, but the request will go through
                 fetch(BEACON_URL, {
                     method: "POST",
                     headers: { 
-                        "Content-Type": "text/plain" // Changed to avoid CORS preflight
+                        "Content-Type": "text/plain"
                     },
                     body: jsonPayload,
-                    mode: 'no-cors', // This bypasses CORS but you won't see the response
-                    keepalive: true // Keep request alive even if page unloads
+                    mode: 'no-cors',
+                    keepalive: true
                 })
                 .then(() => {
                     console.log("✅ Beacon sent via fetch (no-cors mode)");
@@ -474,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener("DOMContentLoaded", function() {
                 setTimeout(() => {
                     sendBeacon("profile.render", { action: "page.view" });
-                }, 500); // Small delay to ensure page is fully loaded
+                }, 500);
             });
 
             // --- Product click (Add to cart) ---
@@ -516,6 +408,78 @@ document.addEventListener('DOMContentLoaded', function() {
         })();
     </script>
 
+    <!-- Microsoft Clarity Script -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "sewgt4p9qm");
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '279056429645080'); 
+        fbq('track', 'PageView');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if .storeId8 exists (Hawthorne store)
+            if (document.querySelector('.storeId8')) {
+                // Load Adtaxi Container Tag asynchronously
+                (function(a,b,c,d){
+                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
+                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+                })();
+
+                // Update Instagram link only if .storeId8 is present
+                const instagramLink = document.querySelector('li.instagram a');
+                if (instagramLink) {
+                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+                }
+            }
+        });    
+    </script>
+
+    <noscript>
+        <img height="1" width="1" 
+        src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
+    </noscript>
+    <!-- End Meta Pixel Code -->
+
+    <script src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
+
+    <!-- Brand Filter Search -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSearchInput = document.getElementById('brandSearchInput');
+            
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+                    const brandItems = document.querySelectorAll('.brand-list li');
+                    
+                    brandItems.forEach(item => {
+                        const brandName = item.getAttribute('data-brand-name');
+                        if (brandName.includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
 </head>
 
 @functions {
@@ -525,7 +489,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var controller = routeData.Values["controller"]?.ToString() ?? "home";
         var action = routeData.Values["action"]?.ToString() ?? "index";
         
-        // Combine controller and action to create a unique class
         return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
     }
 }
@@ -558,17 +521,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         /* The Modal (background) */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1050; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            padding-top: 100px;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
         }
         /* Modal Content */
         .modal-content {
