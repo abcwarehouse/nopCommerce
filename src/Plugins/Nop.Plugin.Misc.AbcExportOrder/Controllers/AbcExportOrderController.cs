@@ -12,7 +12,7 @@ using Nop.Core;
 namespace Nop.Plugin.Misc.AbcExportOrder.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class AbcExportOrderController : BasePluginController
     {

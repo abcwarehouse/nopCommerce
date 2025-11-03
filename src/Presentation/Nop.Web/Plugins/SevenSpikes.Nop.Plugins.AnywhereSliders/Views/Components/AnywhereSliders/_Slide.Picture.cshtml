@@ -7,29 +7,29 @@
     var MobileBreakpoint = ViewBag.MobileBreakpoint;
 }
 
-<div class="picture-slide @if (Model.IsFirstSlide) { <text>first-slide</text>}">
+<div class="anywhereslider-slide picture-slide @if (Model.IsFirstSlide) {<text>first-slide</text>}">
     @if (!string.IsNullOrEmpty(Model.Url))
     {
-        <text><a href="@Model.Url"></text>
-    }
+    <text><a href="@Model.Url"></text>
+        }
 
-    @if (Model.IsFirstSlide && PreLoadFirstImage)
-    {
-        <picture>
-            <source media="(max-width: @(MobileBreakpoint)px)" srcset="@Model.MobilePicturePath">
+        @if (Model.IsFirstSlide && PreLoadFirstImage)
+        {
+            <picture>
+                <source media="(max-width: @(MobileBreakpoint)px)" srcset="@Model.MobilePicturePath">
 
-            <img src="@Model.PicturePath" alt="@Model.Alt" />
-        </picture>
-    }
-    else
-    {
-        <img alt="@Model.Alt" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABAQMAAADD8p2OAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
-             data-lazy="@Model.PicturePath" data-mobilePictureSrc="@Model.MobilePicturePath"
-             data-desktopPictureSrc="@Model.PicturePath" />
-    }
+                <img src="@Model.PicturePath" alt="@Model.Alt" />
+            </picture>
+        }
+        else
+        {
+            <img alt="@Model.Alt" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABAQMAAADD8p2OAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
+                 data-lazy="@Model.PicturePath" data-mobilePictureSrc="@Model.MobilePicturePath"
+                 data-desktopPictureSrc="@Model.PicturePath" />
+        }
 
-    @if (!string.IsNullOrEmpty(Model.Url))
-    {
+        @if (!string.IsNullOrEmpty(Model.Url))
+        {
         @:</a>
     }
 

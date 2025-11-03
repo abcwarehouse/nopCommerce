@@ -7,14 +7,12 @@ using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Services.Catalog;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Core.Domain.Media;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcProductAttributeService : ProductAttributeService, IAbcProductAttributeService
     {
-        private readonly IRepository<ProductAttribute> _productAttributeRepository;
-        private readonly IRepository<ProductAttributeMapping> _productAttributeMappingRepository;
-
         // We need to exclude Warranty, Home Delivery, and Pickup until we've fully deployed
         // the Delivery Options functionality
         private string[] excludedProductAttributes = new string[]
@@ -24,19 +22,30 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             "Warranty"
         };
 
-        public AbcProductAttributeService(
+        public AbcProductAttributeService(IRepository<Picture> pictureRepository,
             IRepository<PredefinedProductAttributeValue> predefinedProductAttributeValueRepository,
+            IRepository<Product> productRepository,
             IRepository<ProductAttribute> productAttributeRepository,
             IRepository<ProductAttributeCombination> productAttributeCombinationRepository,
+            IRepository<ProductAttributeCombinationPicture> productAttributeCombinationPictureRepository,
             IRepository<ProductAttributeMapping> productAttributeMappingRepository,
             IRepository<ProductAttributeValue> productAttributeValueRepository,
-            IStaticCacheManager staticCacheManager)
-        : base(predefinedProductAttributeValueRepository, productAttributeRepository, productAttributeCombinationRepository,
-               productAttributeMappingRepository, productAttributeValueRepository, staticCacheManager)
-        {
-            _productAttributeRepository = productAttributeRepository;
-            _productAttributeMappingRepository = productAttributeMappingRepository;
-        }
+            IRepository<ProductAttributeValuePicture> productAttributeValuePictureRepository,
+            IRepository<ProductPicture> productPictureRepository,
+            IStaticCacheManager staticCacheManager
+        )
+        : base( pictureRepository,
+            predefinedProductAttributeValueRepository,
+            productRepository,
+            productAttributeRepository,
+            productAttributeCombinationRepository,
+            productAttributeCombinationPictureRepository,
+            productAttributeMappingRepository,
+            productAttributeValueRepository,
+            productAttributeValuePictureRepository,
+            productPictureRepository,
+            staticCacheManager)
+        { }
 
         public async Task<ProductAttribute> GetProductAttributeByNameAsync(string name)
         {

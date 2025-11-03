@@ -1,11 +1,14 @@
 ﻿@model BlogPostListModel
+
+@using Nop.Core.Domain.Blogs
+
 @{
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Blog").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Blog").Text);
     //page class
-    Html.AppendPageCssClassParts("html-blog-page");
+    NopHtml.AppendPageCssClassParts("html-blog-page");
 
     var isFirstPage = Model.PagingFilteringContext.PageNumber == 1;
     var firstPostList = new List<BlogPostModel>();
@@ -23,11 +26,11 @@
 }
 
 @section left {
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBlogBefore })
-    @await Component.InvokeAsync("BlogMonths")
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnAfterBlogArchive })
-    @await Component.InvokeAsync("BlogTags")
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.LeftSideColumnBlogAfter })
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LeftSideColumnBlogBefore, additionalData = Model })
+    @await Component.InvokeAsync(typeof(BlogMonthsViewComponent))
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LeftSideColumnAfterBlogArchive, additionalData = Model })
+    @await Component.InvokeAsync(typeof(BlogTagsViewComponent))
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LeftSideColumnBlogAfter, additionalData = Model })
 }
 <div class="page blog-page">
     <div class="page-title">
@@ -46,13 +49,13 @@
             }
             else
             {
-                @*@String.Format(T("Blog.TaggedWith").Text, Model.PagingFilteringContext.Tag)*@
+                @*@string.Format(T("Blog.TaggedWith").Text, Model.PagingFilteringContext.Tag)*@
                 @T("Blog")
             }
         </h1>
     </div>
     <div class="page-body">
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BlogListPageBeforePosts })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.BlogListPageBeforePosts, additionalData = Model })
         <div class="blog-posts">
             @if (isFirstPage)
             {
@@ -73,6 +76,6 @@
                 @pager
             </div>
         }
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BlogListPageAfterPosts })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.BlogListPageAfterPosts, additionalData = Model })
     </div>
 </div>

@@ -1,0 +1,79 @@
+@* ABC: using custom CSS/JS *@
+
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+
+@inject CatalogSettings catalogSettings
+@inject IWorkContext workContext
+@* ABC: custom *@
+@inject INopHtmlHelper NopHtml
+
+@{
+    @* ABC: custom, putting these on top overrides everything below
+        there is a place to place these css files in their respective pages, but I don't want to break things during the 4.80 merge
+    *@
+
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/custom_front_product.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/mobile-categories.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/mobile-header.css");
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/pavilion-styles.css");
+    // Could be add this to _ProductBox.cshtml?
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-box.css");
+
+    // Can exist in ProductTemplate.Simple.cshtml
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-details-template.css");
+    
+    // After promo categories are made, this only needs to be in CategoryTemplate.ProductsInGridOrLines.cshtml
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-listings.css");
+
+    // _ProductPrice and OrderSummary/Default.cshtml?
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/product-price.css");
+
+    // Only needed for TopicDetails.cshtml
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/rebates-promos.css");
+
+    // Only needed for _ProductPrice
+    NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/tooltip.css");
+
+    // ProductTemplate.Simple.cshtml
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/mattress.js" asp-location="Footer"></script>
+    // CategoryTemplate, Promo Listing (to become just category template)
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/mobileFilters.js" asp-location="Footer"></script>
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/mobileMenu.js" asp-location="Footer"></script>
+
+    @* ABC: base functionality is below, with substitutes for our own base Pavilion contents when appropriate *@
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
+
+    if (supportRtl)
+    {
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/1280.rtl.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/1024.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/768.rtl.css");
+        NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/480.rtl.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/mobile.rtl.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/styles.rtl.css");
+    }
+    else
+    {
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/1280.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/1024.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/768.css");
+        NopHtml.AppendCssFileParts("~/Themes/Pavilion/Content/css/480.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/mobile.css");
+        NopHtml.AppendCssFileParts("~/Plugins/Misc.AbcFrontend/Content/css/styles.css");
+    }
+
+    if (catalogSettings.DisplayAllPicturesOnCatalogPages)
+    {
+        NopHtml.AppendCssFileParts("~/lib_npm/swiper/swiper-bundle.min.css");
+    }
+
+    NopHtml.AppendCssFileParts("~/Plugins/SevenSpikes.Core/Styles/perfect-scrollbar.min.css");
+
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/footable.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/perfect-scrollbar.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.theme.ex.min.js" asp-location="Footer"></script>
+
+    <script src="~/Plugins/Misc.AbcFrontend/Content/scripts/pavilion.js" asp-location="Footer"></script>
+}

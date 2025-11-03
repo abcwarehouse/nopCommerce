@@ -1,7 +1,7 @@
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using Nop.Services.Catalog;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Data;
 
 namespace Nop.Plugin.Misc.AbcCore.Tasks

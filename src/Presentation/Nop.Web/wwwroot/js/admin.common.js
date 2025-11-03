@@ -30,7 +30,7 @@ function showThrobber(message) {
     }, 1000);
 }
 
-$(document).ready(function () {
+$(function() {
     $('.multi-store-override-option').each(function (k, v) {
         checkOverriddenStoreValue(v, $(v).attr('data-for-input-selector'));
     });
@@ -38,7 +38,7 @@ $(document).ready(function () {
     //we must intercept all events of pressing the Enter button in the search bar to be sure that the input focus remains in the context of the search
     $("div.card-search").keypress(function (event) {
         if (event.which == 13 || event.keyCode == 13) {
-            $("button.btn-search").click();
+          $("button.btn-search").trigger("click");
             return false;
         }
     });
@@ -69,23 +69,9 @@ function checkOverriddenStoreValue(obj, selector) {
 
     if (!$(obj).is(':checked')) {
         $(selector).attr('disabled', true);
-        //Kendo UI elements are enabled/disabled some other way
-        $.each(elementsArray, function (key, value) {
-            var kenoduiElement = $(value).data("kendoNumericTextBox") || $(value).data("kendoMultiSelect");
-            if (kenoduiElement !== undefined && kenoduiElement !== null) {
-                kenoduiElement.enable(false);
-            }
-        });
     }
     else {
         $(selector).removeAttr('disabled');
-        //Kendo UI elements are enabled/disabled some other way
-        $.each(elementsArray, function (key, value) {
-            var kenoduiElement = $(value).data("kendoNumericTextBox") || $(value).data("kendoMultiSelect");
-            if (kenoduiElement !== undefined && kenoduiElement !== null) {
-                kenoduiElement.enable();
-            }
-        });
     }
 }
 
@@ -251,7 +237,7 @@ $(document).ajaxStart(function () {
     });
 
 //no-tabs solution
-$(document).ready(function () {
+$(function() {
   $(".card.card-secondary >.card-header").click(CardToggle);
 
   //expanded
@@ -282,7 +268,7 @@ function WrapAndSaveBlockData(card, collapsed) {
 }
 
 //collapse search block
-$(document).ready(function () {
+$(function() {
   $(".row.search-row").click(ToggleSearchBlockAndSavePreferences);
 });
 
@@ -319,9 +305,19 @@ function reloadAllDataTables(itemCount) {
   });
 }
 
+/**
+ * @param {string} alertId Unique identifier of alert
+ * @param {any} text Message text
+ */
+function showAlert(alertId, text)
+{
+    $('#' + alertId + '-info').text(text);
+    $('#' + alertId).trigger("click");
+}
+
 //scrolling and hidden DataTables issue workaround
 //More info - https://datatables.net/examples/api/tabs_and_scrolling.html
-$(document).ready(function () {
+$(function() {
   $('button[data-card-widget="collapse"]').on('click', function (e) {
     //hack with waiting animation. 
     //when page is loaded, a box that should be collapsed have style 'display: none;'.that's why a table is not updated
@@ -350,3 +346,22 @@ $(document).ready(function () {
     reloadAllDataTables();
   });
 });
+
+/**
+ * @param {string} masterCheckbox Master checkbox selector
+ * @param {string} childCheckbox Child checkbox selector
+ */
+function prepareTableCheckboxes(masterCheckbox, childCheckbox) {
+  //Handling the event of clicking on the master checkbox
+  $(masterCheckbox).click(function () {
+    $(childCheckbox).prop('checked', $(this).prop('checked'));
+  });
+
+  //Handling the event of clicking on a child checkbox
+  $(childCheckbox).change(function () {
+    $(masterCheckbox).prop('checked', $(childCheckbox + ':not(:checked)').length === 0 ? true : false);
+  });
+
+  //Determining the state of the master checkbox by the state of its children
+  $(masterCheckbox).prop('checked', $(childCheckbox).length == $(childCheckbox + ':checked').length && $(childCheckbox).length > 0);
+}

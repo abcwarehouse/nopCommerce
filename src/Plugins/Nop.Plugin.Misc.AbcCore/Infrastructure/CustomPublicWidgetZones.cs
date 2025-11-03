@@ -92,5 +92,9 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string ProductDetailsDescriptionTabTop => "productdetails_description_tab_top";
 
         public static string PromoProductsBelowBanner => "promo_products_below_banner";
+
+        public static string HawthorneVideo => "hawthorne_video";
+        public static string HawthorneHome => "hawthorne_home";
+        public static string HawthorneHours => "hawthorne_hours";
     }
 }

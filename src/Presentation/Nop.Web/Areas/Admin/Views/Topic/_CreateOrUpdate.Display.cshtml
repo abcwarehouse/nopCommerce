@@ -65,52 +65,17 @@
         </div>
     </div>
     <nop-nested-setting asp-for="IsPasswordProtected">
-        <div class="form-group row advanced-setting" id="pnlPasswordEnabled">
+        <div class="form-group row advanced-setting">
             <div class="col-md-3">
                 <nop-label asp-for="Password" />
             </div>
             <div class="col-md-9">
-                <nop-editor asp-for="Password" autocomplete="off"/>
+                <nop-editor asp-for="Password" html-attributes="@(new { autocomplete = "off" })"/>
                 <span asp-validation-for="Password"></span>
             </div>
         </div>
     </nop-nested-setting>
-    <div class="form-group row advanced-setting">
-        <div class="col-md-3">
-            <nop-label asp-for="SelectedCustomerRoleIds" />
-        </div>
-        <div class="col-md-9">
-            <div class="row">
-                <div class="col-md-4">
-                    <nop-select asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" asp-multiple="true" />
-                    <script>
-                        $(document).ready(function() {
-                            var rolesIdsInput = $('#@Html.IdFor(model => model.SelectedCustomerRoleIds)').data("kendoMultiSelect");
-                            rolesIdsInput.setOptions({
-                                autoClose: false,
-                                filter: "contains"
-                            });
-
-                            @if (Model.AvailableCustomerRoles.Count == 0)
-                            {
-                                <text>
-                                    rolesIdsInput.setOptions({
-                                        enable: false,
-                                        placeholder: 'No customer roles available'
-                                    });
-                                    rolesIdsInput._placeholder();
-                                    rolesIdsInput._enable();
-                                </text>
-                            }
-                        });
-                    </script>
-                </div>
-                <div class="col-md-8">
-                    @await Component.InvokeAsync("AclDisabledWarning")
-                </div>
-            </div>
-        </div>
-    </div>
+    @await Component.InvokeAsync(typeof(AclCustomerRolesViewComponent), Model)
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
             <nop-label asp-for="SelectedStoreIds" />
@@ -120,29 +85,22 @@
                 <div class="col-md-4">
                     <nop-select asp-for="SelectedStoreIds" asp-items="Model.AvailableStores" asp-multiple="true" />
                     <script>
-                        $(document).ready(function() {
-                            var storesIdsInput = $('#@Html.IdFor(model => model.SelectedStoreIds)').data("kendoMultiSelect");
-                            storesIdsInput.setOptions({
-                                autoClose: false,
-                                filter: "contains"
-                            });
-
-                            @if (Model.AvailableStores.Count == 0)
-                            {
+                        $(function() {
+                            var storesIdsInput = $('#@Html.IdFor(model => model.SelectedStoreIds)').select2({
+                                closeOnSelect: false,
+                                @if (!Model.AvailableStores.Any())
+                                {
                                 <text>
-                                    storesIdsInput.setOptions({
-                                        enable: false,
-                                        placeholder: 'No stores available'
-                                    });
-                                    storesIdsInput._placeholder();
-                                    storesIdsInput._enable();
+                                disabled: true,
+                                placeholder: 'No stores available',
                                 </text>
-                            }
+                                }
+                            });
                         });
                     </script>
                 </div>
                 <div class="col-md-8">
-                    @await Component.InvokeAsync("MultistoreDisabledWarning")
+                    @await Component.InvokeAsync(typeof(MultistoreDisabledWarningViewComponent))
                 </div>
             </div>
         </div>
@@ -184,18 +142,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        $("#@Html.IdFor(model => model.IsPasswordProtected)").click(togglePassword);
-        togglePassword();
-    });
-
-    function togglePassword() {
-        if ($('#@Html.IdFor(model => model.IsPasswordProtected)').is(':checked')) {
-            $('#pnlPasswordEnabled').showElement();
-        } else {
-            $('#pnlPasswordEnabled').hideElement();
-        }
-    }
-</script>
