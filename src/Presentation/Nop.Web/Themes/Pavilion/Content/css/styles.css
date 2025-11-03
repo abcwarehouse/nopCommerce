@@ -10637,6 +10637,15 @@ body.storeId3 .header-lower {
     }
 }
 
+.storeId3 li.mega-menu-categories.hawthorne-link {
+    list-style-type: none;
+    position: absolute;
+    bottom: -40px;
+}
+li.mega-menu-categories.hawthorne-link a {
+    padding: 0;
+}
+
 /* Temp Css 10/16 */
 .storeId8 .header-menu > ul.mega-menu > li > a {
 padding: 40px 10px;
