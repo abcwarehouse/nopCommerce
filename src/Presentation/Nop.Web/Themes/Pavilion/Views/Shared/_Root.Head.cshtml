@@ -274,7 +274,7 @@
     <script>
         (function() {
             const SITE_ID = "4lt84w";
-            const BEACON_URL = "/searchspring/beacon";
+            const BEACON_URL = "/searchspring/beacon/events";
             const CATEGORY = "searchspring.recommendations.user-interactions";
             
             console.log("📍 Beacon URL configured as:", BEACON_URL);
@@ -369,22 +369,35 @@
                 const trackingCode = getTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
-                // Build context object matching SearchSpring's beacon spec
+                // Build context object, only including non-null values
                 const context = {
-                    type: eventType,
-                    tag: SITE_ID,
+                    siteId: SITE_ID,
+                    shopperId: ssShopperId,
                     sessionId: ssSessionId,
                     userId: ssShopperId,
-                    href: window.location.href
+                    page: window.location.href,
+                    pageLoadId: uuidv4(),
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
                 };
 
                 // Add optional fields only if they have values
+                if (document.referrer) {
+                    context.referrer = document.referrer;
+                }
+                
                 if (trackingCode) {
-                    context.search = trackingCode;
+                    context.trackingCode = trackingCode;
                 }
 
-                // Build payload array (SearchSpring expects an array of events)
-                const payload = [context];
+                // Build payload matching SearchSpring's expected format
+                const payload = {
+                    type: eventType,
+                    category: CATEGORY,
+                    id: uuidv4(),
+                    event: eventData,
+                    context: context
+                };
 
                 console.log('📡 Sending beacon to:', BEACON_URL);
                 console.log('📦 Payload:', payload);
@@ -405,7 +418,7 @@
                     if (!response.ok) {
                         return response.text().then(text => {
                             console.error("❌ Beacon failed with status:", response.status);
-                            console.error("❌ Response body:", text);
+                            console.error("❌ Response:", text);
                             throw new Error(`HTTP ${response.status}: ${text}`);
                         });
                     }
