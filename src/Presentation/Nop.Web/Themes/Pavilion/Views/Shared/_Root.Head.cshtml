@@ -407,7 +407,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         page: window.location.href,
                         referrer: document.referrer || null,
                         timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
+                        userAgent: navigator.userAgent,
+                        trackingCode: SITE_ID
                     }
                 };
 
