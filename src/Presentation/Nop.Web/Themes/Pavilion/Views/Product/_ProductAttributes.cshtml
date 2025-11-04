@@ -30,7 +30,7 @@
 {
     var productId = Model.First().ProductId;
     
-    <div class="attributes">
+    <div class="attributes mattress-con">
         <dl>
             @foreach (var attribute in Model)
             {
@@ -71,7 +71,7 @@
                 </dt>
                 var optionClass = "";
                 if (attribute.Name.Contains("Accessories")) { optionClass = "accessories"; }
-                <dd id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" class="@(optionClass) mattress-container" style="@($"{isHidden}")">
+                <dd id="@($"{NopCatalogDefaults.ProductAttributePrefix}input_{attribute.Id}")" class="@(optionClass)" style="@($"{isHidden}")">
                     @switch (attribute.AttributeControlType)
                     {
                         case AttributeControlType.DropdownList:
