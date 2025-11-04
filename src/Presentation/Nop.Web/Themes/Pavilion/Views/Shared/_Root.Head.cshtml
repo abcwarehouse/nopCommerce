@@ -608,11 +608,12 @@
 
             if (category != null)
             {
-                // Use IUrlRecordService.GetSeNameAsync in nopCommerce 4.4
-                var seName = urlRecordService.GetSeNameAsync(category, category.LanguageId ?? 0, ensureTwoPublishedLanguages: false).Result;
+                // Use current working language ID
+                var workingLanguage = workContext.GetWorkingLanguageAsync().Result;
+                var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, ensureTwoPublishedLanguages: false).Result;
 
                 if (string.IsNullOrEmpty(seName))
-                    seName = category.Name.ToLowerInvariant().Replace(" ", "-");
+                    seName = category.Name?.ToLowerInvariant().Replace(" ", "-");
 
                 categoryClass = $"category-{seName}";
             }
