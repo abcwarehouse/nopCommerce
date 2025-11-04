@@ -36,7 +36,7 @@
 
     string fullTitle = Html.NopTitle().ToString();
     string shortTitle = "";
-    if(fullTitle.Length >= 60) 
+    if(fullTitle.Length >= 60)
     {
         shortTitle = fullTitle.Substring(0, 60);
     }
@@ -85,8 +85,8 @@
     var currentPageClass = (await (await Html.PartialAsync("_CurrentPageClass")).RenderHtmlContentAsync()).Trim();
 
     var supportRtl = await this.ShouldUseRtlThemeAsync();
-    
-    //event    
+
+    //event
     await eventPublisher.PublishAsync(new PageRenderingEvent(this.Html));
 
     // ABC: custom stuff
@@ -141,7 +141,7 @@
     <!-- SearchSpring Scripts -->
     <script src="https://cdn.searchspring.io/script.js"></script>
     <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
-    
+
     <!-- Include the uuid library -->
     <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
 

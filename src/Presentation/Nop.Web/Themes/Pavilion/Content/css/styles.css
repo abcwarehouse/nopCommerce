@@ -10637,6 +10637,28 @@ body.storeId3 .header-lower {
     }
 }
 
+.catalog-category.storeId3 li.mega-menu-categories.hawthorne-link {
+    list-style-type: none;
+    position: absolute;
+    bottom: -40px;
+	animation: fadeInHawthorne 1.3s ease 0.0s forwards;
+}
+
+@keyframes fadeInHawthorne {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+li.mega-menu-categories.hawthorne-link a {
+    padding: 0;
+}
+
 /* Temp Css 10/16 */
 .storeId8 .header-menu > ul.mega-menu > li > a {
 padding: 40px 10px;
@@ -10687,3 +10709,6 @@ body .autocomplete-list {
         margin-left: -11%;
     }
 }
+
+
+
