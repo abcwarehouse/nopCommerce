@@ -10641,19 +10641,8 @@ body.storeId3 .header-lower {
     list-style-type: none;
     position: absolute;
     bottom: -40px;
+	transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s;
 }
-
-.category-navigation-list li {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all .4s ease;
-}
-
-.category-navigation-list.loaded li {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 
 li.mega-menu-categories.hawthorne-link a {
     padding: 0;
