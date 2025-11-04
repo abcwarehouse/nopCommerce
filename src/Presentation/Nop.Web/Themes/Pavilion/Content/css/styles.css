@@ -10713,7 +10713,8 @@ body .autocomplete-list {
 
 
 @media screen and (max-width: 1024px) {
-	.storeId3 .hawback {
-		background-color: #02463b !important;
+	.storeId3 .hawback:hover {
+    background: none !important;
+
 	}
 }
