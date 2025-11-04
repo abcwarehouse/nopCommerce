@@ -10641,10 +10641,10 @@ body.storeId3 .header-lower {
     list-style-type: none;
     position: absolute;
     bottom: -40px;
-	animation: fadeInHawthorne 0.3s ease 0.3s forwards;
+	animation: fadeInHawthorne 1.3s ease 0.0s forwards;
 }
 
-@keyframes fadeInHawthorne {
+/* @keyframes fadeInHawthorne {
     from {
         opacity: 0;
         transform: translateY(10px);
@@ -10653,7 +10653,7 @@ body.storeId3 .header-lower {
         opacity: 1;
         transform: translateY(0);
     }
-}
+} */
 
 li.mega-menu-categories.hawthorne-link a {
     padding: 0;
