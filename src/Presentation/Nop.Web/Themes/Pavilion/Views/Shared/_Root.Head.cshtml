@@ -12,6 +12,13 @@
 @using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Services
 @using Nop.Web.Framework.Infrastructure
+@using Nop.Services.Catalog
+@using Nop.Services.Seo
+@using Nop.Core.Domain.Catalog
+@inject ICategoryService categoryService
+@inject IUrlRecordService urlRecordService
+@inject Nop.Core.IWorkContext workContext
+@inject Nop.Core.IStoreContext storeContext
 
 @inject CommonSettings commonSettings
 @inject IEventPublisher eventPublisher
@@ -587,7 +594,31 @@
     </script>
 
 </head>
+@{
+    string categoryClass = string.Empty;
 
+    var routeData = Url.ActionContext.RouteData.Values;
+    if (routeData.ContainsKey("controller") && routeData.ContainsKey("action"))
+    {
+        var controller = routeData["controller"]?.ToString().ToLowerInvariant();
+        var action = routeData["action"]?.ToString().ToLowerInvariant();
+
+        // Detect category page
+        if (controller == "catalog" && action == "category")
+        {
+            if (routeData.ContainsKey("categoryId"))
+            {
+                var categoryId = Convert.ToInt32(routeData["categoryId"]);
+                var category = categoryService.GetCategoryById(categoryId);
+                if (category != null)
+                {
+                    var seName = urlRecordService.GetSeName(category);
+                    categoryClass = $"category-{seName}";
+                }
+            }
+        }
+    }
+}
 @functions {
     public string GetBodyClass()
     {
@@ -599,7 +630,7 @@
     }
 }
 
-<body class="@GetBodyClass() @storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
+<body class="@GetBodyClass() @categoryClass @storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
 
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
