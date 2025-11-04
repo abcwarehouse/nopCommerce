@@ -214,8 +214,6 @@
         })();
     </script>
 
-
-
     <!-- SearchSpring Suggest Integration -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -276,8 +274,10 @@
     <script>
         (function() {
             const SITE_ID = "4lt84w";
-            const BEACON_URL = "/searchspring/beacon";
+            const BEACON_URL = "/searchspring/beacon/events";
             const CATEGORY = "searchspring.recommendations.user-interactions";
+            
+            console.log("📍 Beacon URL configured as:", BEACON_URL);
 
             function uuidv4() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -288,10 +288,10 @@
 
             const ssShopperId = window.ssUtils.getCookie("ssShopperId") || window.ssUtils.getOrCreateId("ssShopperId", 365);
             const ssSessionId = window.ssUtils.getCookie("ssSessionIdNamespace") || window.ssUtils.getOrCreateId("ssSessionIdNamespace", 1);
-
+            
             // Listen for SearchSpring to set tracking code
             let cachedTrackingCode = null;
-
+            
             // Method 1: Listen for SearchSpring events
             document.addEventListener('searchspring-loaded', function(e) {
                 console.log("🎉 SearchSpring loaded event:", e);
@@ -300,14 +300,14 @@
                     console.log("✅ Captured trackingCode from event:", cachedTrackingCode);
                 }
             });
-
+            
             // Method 2: Poll for SearchSpring tracking code after load
             window.addEventListener('load', function() {
                 let attempts = 0;
                 const maxAttempts = 20; // 10 seconds max
                 const checkInterval = setInterval(function() {
                     attempts++;
-
+                    
                     if (window.searchspring && window.searchspring.tracking && window.searchspring.tracking.trackingCode) {
                         cachedTrackingCode = window.searchspring.tracking.trackingCode;
                         console.log("✅ Found trackingCode via polling:", cachedTrackingCode);
@@ -318,47 +318,47 @@
                     }
                 }, 500);
             });
-
+            
             function getTrackingCode() {
                 // Use cached value if available
                 if (cachedTrackingCode) {
                     return cachedTrackingCode;
                 }
-
+                
                 // SearchSpring may set tracking code in multiple ways
                 // Check cookie first, then window object, then localStorage
                 let trackingCode = null;
-
+                
                 // Method 1: Check cookie
-                trackingCode = window.ssUtils.getCookie("trackingCode") ||
+                trackingCode = window.ssUtils.getCookie("trackingCode") || 
                                window.ssUtils.getCookie("ssTrackingCode");
-
+                
                 // Method 2: Check SearchSpring global object
                 if (!trackingCode && window.searchspring && window.searchspring.tracking) {
-                    trackingCode = window.searchspring.tracking.trackingCode ||
+                    trackingCode = window.searchspring.tracking.trackingCode || 
                                    window.searchspring.tracking.code;
                 }
-
+                
                 // Method 3: Check localStorage
                 if (!trackingCode) {
                     try {
-                        trackingCode = localStorage.getItem('trackingCode') ||
+                        trackingCode = localStorage.getItem('trackingCode') || 
                                       localStorage.getItem('ssTrackingCode');
                     } catch (e) {
                         console.log("Could not access localStorage:", e);
                     }
                 }
-
+                
                 // Method 4: Check sessionStorage
                 if (!trackingCode) {
                     try {
-                        trackingCode = sessionStorage.getItem('trackingCode') ||
+                        trackingCode = sessionStorage.getItem('trackingCode') || 
                                       sessionStorage.getItem('ssTrackingCode');
                     } catch (e) {
                         console.log("Could not access sessionStorage:", e);
                     }
                 }
-
+                
                 console.log("🔍 Current trackingCode:", trackingCode);
                 return trackingCode;
             }
@@ -369,36 +369,43 @@
                 const trackingCode = getTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
+                // Build context object, only including non-null values
+                const context = {
+                    siteId: SITE_ID,
+                    shopperId: ssShopperId,
+                    sessionId: ssSessionId,
+                    userId: ssShopperId,
+                    page: window.location.href,
+                    pageLoadId: uuidv4(),
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent
+                };
+
+                // Add optional fields only if they have values
+                if (document.referrer) {
+                    context.referrer = document.referrer;
+                }
+                
+                if (trackingCode) {
+                    context.trackingCode = trackingCode;
+                }
+
                 // Build payload matching SearchSpring's expected format
                 const payload = {
                     type: eventType,
                     category: CATEGORY,
                     id: uuidv4(),
                     event: eventData,
-                    context: {
-                        siteId: SITE_ID,
-                        shopperId: ssShopperId,
-                        sessionId: ssSessionId,
-                        userId: ssShopperId, // SearchSpring may expect userId
-                        page: window.location.href,
-                        pageLoadId: uuidv4(), // Unique ID for this page load
-                        referrer: document.referrer || undefined,
-                        timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent
-                    }
+                    context: context
                 };
 
-                // Only add trackingCode if it exists
-                if (trackingCode) {
-                    payload.context.trackingCode = trackingCode;
-                }
-
-                console.log('📡 Sending beacon:', eventType, payload);
+                console.log('📡 Sending beacon to:', BEACON_URL);
+                console.log('📦 Payload:', payload);
 
                 // Use fetch with proper error handling
                 fetch(BEACON_URL, {
                     method: "POST",
-                    headers: {
+                    headers: { 
                         "Content-Type": "application/json",
                         "Accept": "application/json"
                     },
@@ -407,10 +414,11 @@
                     keepalive: true
                 })
                 .then(response => {
+                    console.log("📬 Response status:", response.status, response.statusText);
                     if (!response.ok) {
                         return response.text().then(text => {
                             console.error("❌ Beacon failed with status:", response.status);
-                            console.error("Response:", text);
+                            console.error("❌ Response:", text);
                             throw new Error(`HTTP ${response.status}: ${text}`);
                         });
                     }
@@ -421,7 +429,7 @@
                 })
                 .catch(err => {
                     console.error("❌ Beacon error:", err);
-                    console.error("Payload that failed:", payload);
+                    console.error("❌ Payload that failed:", JSON.stringify(payload, null, 2));
                 });
             }
 
@@ -443,9 +451,9 @@
                 const name = productElement?.querySelector(".product-title, h2, h3")?.textContent.trim() || "";
                 const price = productElement?.querySelector(".actual-price, .price")?.textContent.trim() || "";
 
-                sendBeacon("profile.product.click", {
-                    productId,
-                    sku,
+                sendBeacon("profile.product.click", { 
+                    productId, 
+                    sku, 
                     name,
                     price
                 });
@@ -457,8 +465,8 @@
                     setTimeout(() => {
                         const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
                         const orderTotal = document.querySelector(".order-total strong")?.textContent?.trim() || null;
-
-                        sendBeacon("profile.order.purchase", {
+                        
+                        sendBeacon("profile.order.purchase", { 
                             orderNumber,
                             orderTotal
                         });
@@ -468,17 +476,17 @@
 
             // Make sendBeacon available globally
             window.searchSpringBeacon = sendBeacon;
-
+            
             // Intercept SearchSpring API calls to capture tracking code
             (function() {
                 const originalFetch = window.fetch;
                 window.fetch = function(...args) {
                     const url = args[0];
-
+                    
                     return originalFetch.apply(this, args).then(response => {
                         // Clone response so we can read it
                         const clonedResponse = response.clone();
-
+                        
                         // Check if this is a SearchSpring API call
                         if (typeof url === 'string' && url.includes('searchspring')) {
                             clonedResponse.json().then(data => {
@@ -486,7 +494,7 @@
                                 if (data && data.tracking && data.tracking.trackingCode) {
                                     cachedTrackingCode = data.tracking.trackingCode;
                                     console.log("✅ Captured trackingCode from API response:", cachedTrackingCode);
-
+                                    
                                     // Also store in cookie for persistence
                                     window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
                                 } else if (data && data.merchandising && data.merchandising.trackingCode) {
@@ -498,7 +506,7 @@
                                 // Not JSON or error parsing, ignore
                             });
                         }
-
+                        
                         return response;
                     });
                 };
@@ -525,7 +533,7 @@
         t.src=v;s=b.getElementsByTagName(e)[0];
         s.parentNode.insertBefore(t,s)}(window,document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '279056429645080');
+        fbq('init', '279056429645080'); 
         fbq('track', 'PageView');
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -544,11 +552,11 @@
                     instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
                 }
             }
-        });
+        });    
     </script>
 
     <noscript>
-        <img height="1" width="1"
+        <img height="1" width="1" 
         src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
     </noscript>
     <!-- End Meta Pixel Code -->
@@ -559,12 +567,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const brandSearchInput = document.getElementById('brandSearchInput');
-
+            
             if (brandSearchInput) {
                 brandSearchInput.addEventListener('input', function() {
                     const searchTerm = this.value.trim().toLowerCase();
                     const brandItems = document.querySelectorAll('.brand-list li');
-
+                    
                     brandItems.forEach(item => {
                         const brandName = item.getAttribute('data-brand-name');
                         if (brandName.includes(searchTerm)) {
@@ -586,7 +594,7 @@
         var routeData = ViewContext.RouteData;
         var controller = routeData.Values["controller"]?.ToString() ?? "home";
         var action = routeData.Values["action"]?.ToString() ?? "index";
-
+        
         return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
     }
 }
