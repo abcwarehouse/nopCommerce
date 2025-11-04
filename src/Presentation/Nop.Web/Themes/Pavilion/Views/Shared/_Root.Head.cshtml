@@ -592,6 +592,16 @@
     </script>
 
 </head>
+@using Nop.Services.Catalog
+@using Nop.Services.Seo
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@inject ICategoryService categoryService
+@inject IProductService productService
+@inject IUrlRecordService urlRecordService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+
 @{
     string categoryClass = string.Empty;
 
@@ -602,18 +612,14 @@
         var action = routeData["action"]?.ToString().ToLowerInvariant();
         var workingLanguage = workContext.GetWorkingLanguageAsync().Result;
 
+        Category category = null;
+
         // 🟩 CATEGORY PAGE
         if (controller == "catalog" && action == "category" && routeData.ContainsKey("categoryId"))
         {
             var categoryId = Convert.ToInt32(routeData["categoryId"]);
-            var category = categoryService.GetCategoryByIdAsync(categoryId).Result;
-            if (category != null)
-            {
-                var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
-                categoryClass = $"category-{seName}";
-            }
+            category = categoryService.GetCategoryByIdAsync(categoryId).Result;
         }
-
         // 🟦 PRODUCT PAGE
         else if (controller == "product" && action == "productdetails" && routeData.ContainsKey("productId"))
         {
@@ -622,23 +628,33 @@
 
             if (product != null)
             {
-                // Try to find the product's default or first category
-                var categories = categoryService.GetProductCategoriesByProductIdAsync(product.Id).Result;
-                if (categories?.Any() ?? false)
+                var productCategories = categoryService.GetProductCategoriesByProductIdAsync(product.Id).Result;
+                if (productCategories?.Any() ?? false)
                 {
-                    var categoryId = categories.First().CategoryId;
-                    var category = categoryService.GetCategoryByIdAsync(categoryId).Result;
-
-                    if (category != null)
-                    {
-                        var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
-                        categoryClass = $"category-{seName}";
-                    }
+                    var categoryId = productCategories.First().CategoryId;
+                    category = categoryService.GetCategoryByIdAsync(categoryId).Result;
                 }
             }
         }
+
+        if (category != null)
+        {
+            // ✅ Try to get SEO name
+            var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
+
+            // If still blank, fall back to category.Name
+            if (string.IsNullOrWhiteSpace(seName))
+                seName = category.Name?.Trim().ToLowerInvariant().Replace(" ", "-");
+
+            // Safety: if even Name is empty, fallback to ID
+            if (string.IsNullOrWhiteSpace(seName))
+                seName = $"category-{category.Id}";
+
+            categoryClass = $"category-{seName}";
+        }
     }
 }
+
 @functions {
     public string GetBodyClass()
     {
