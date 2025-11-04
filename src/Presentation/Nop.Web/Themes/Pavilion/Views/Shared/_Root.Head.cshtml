@@ -599,23 +599,41 @@
     {
         var controller = routeData["controller"]?.ToString().ToLowerInvariant();
         var action = routeData["action"]?.ToString().ToLowerInvariant();
+        var workingLanguage = workContext.GetWorkingLanguageAsync().Result;
 
-        // Detect category page
+        // 🟩 CATEGORY PAGE
         if (controller == "catalog" && action == "category" && routeData.ContainsKey("categoryId"))
         {
             var categoryId = Convert.ToInt32(routeData["categoryId"]);
             var category = categoryService.GetCategoryByIdAsync(categoryId).Result;
-
             if (category != null)
             {
-                // Use current working language ID
-                var workingLanguage = workContext.GetWorkingLanguageAsync().Result;
-                var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, ensureTwoPublishedLanguages: false).Result;
-
-                if (string.IsNullOrEmpty(seName))
-                    seName = category.Name?.ToLowerInvariant().Replace(" ", "-");
-
+                var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
                 categoryClass = $"category-{seName}";
+            }
+        }
+
+        // 🟦 PRODUCT PAGE
+        else if (controller == "product" && action == "productdetails" && routeData.ContainsKey("productId"))
+        {
+            var productId = Convert.ToInt32(routeData["productId"]);
+            var product = productService.GetProductByIdAsync(productId).Result;
+
+            if (product != null)
+            {
+                // Try to find the product's default or first category
+                var categories = categoryService.GetProductCategoriesByProductIdAsync(product.Id).Result;
+                if (categories?.Any() ?? false)
+                {
+                    var categoryId = categories.First().CategoryId;
+                    var category = categoryService.GetCategoryByIdAsync(categoryId).Result;
+
+                    if (category != null)
+                    {
+                        var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
+                        categoryClass = $"category-{seName}";
+                    }
+                }
             }
         }
     }
