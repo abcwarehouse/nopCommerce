@@ -10637,11 +10637,29 @@ body.storeId3 .header-lower {
     }
 }
 
+
+
 .catalog-category.storeId3 li.mega-menu-categories.hawthorne-link {
     list-style-type: none;
     position: absolute;
     bottom: -40px;
+
+	opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .4s ease, transform .4s ease;
+    transition-delay: .3s;
+
 }
+
+.category-navigation-list-wrapper.loaded .hawthorne-link {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+
+
 li.mega-menu-categories.hawthorne-link a {
     padding: 0;
 }
@@ -10696,3 +10714,6 @@ body .autocomplete-list {
         margin-left: -11%;
     }
 }
+
+
+
