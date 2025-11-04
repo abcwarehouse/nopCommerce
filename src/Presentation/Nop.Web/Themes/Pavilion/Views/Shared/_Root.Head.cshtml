@@ -12,6 +12,11 @@
 @using Nop.Plugin.Misc.AbcCore
 @using Nop.Plugin.Misc.AbcCore.Services
 @using Nop.Web.Framework.Infrastructure
+@using Nop.Services.Catalog
+@using Nop.Services.Seo
+@inject IProductService productService
+@inject ICategoryService categoryService
+@inject IUrlRecordService urlRecordService
 
 @inject CommonSettings commonSettings
 @inject IEventPublisher eventPublisher
@@ -587,6 +592,68 @@
     </script>
 
 </head>
+@using Nop.Services.Catalog
+@using Nop.Services.Seo
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@inject ICategoryService categoryService
+@inject IProductService productService
+@inject IUrlRecordService urlRecordService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+
+@{
+    string categoryClass = string.Empty;
+
+    var routeData = Url.ActionContext.RouteData.Values;
+    if (routeData.ContainsKey("controller") && routeData.ContainsKey("action"))
+    {
+        var controller = routeData["controller"]?.ToString().ToLowerInvariant();
+        var action = routeData["action"]?.ToString().ToLowerInvariant();
+        var workingLanguage = workContext.GetWorkingLanguageAsync().Result;
+
+        Category category = null;
+
+        // 🟩 CATEGORY PAGE
+        if (controller == "catalog" && action == "category" && routeData.ContainsKey("categoryId"))
+        {
+            var categoryId = Convert.ToInt32(routeData["categoryId"]);
+            category = categoryService.GetCategoryByIdAsync(categoryId).Result;
+        }
+        // 🟦 PRODUCT PAGE
+        else if (controller == "product" && action == "productdetails" && routeData.ContainsKey("productId"))
+        {
+            var productId = Convert.ToInt32(routeData["productId"]);
+            var product = productService.GetProductByIdAsync(productId).Result;
+
+            if (product != null)
+            {
+                var productCategories = categoryService.GetProductCategoriesByProductIdAsync(product.Id).Result;
+                if (productCategories?.Any() ?? false)
+                {
+                    var categoryId = productCategories.First().CategoryId;
+                    category = categoryService.GetCategoryByIdAsync(categoryId).Result;
+                }
+            }
+        }
+
+        if (category != null)
+        {
+            // ✅ Try to get SEO name
+            var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
+
+            // If still blank, fall back to category.Name
+            if (string.IsNullOrWhiteSpace(seName))
+                seName = category.Name?.Trim().ToLowerInvariant().Replace(" ", "-");
+
+            // Safety: if even Name is empty, fallback to ID
+            if (string.IsNullOrWhiteSpace(seName))
+                seName = $"category-{category.Id}";
+
+            categoryClass = $"category-{seName}";
+        }
+    }
+}
 
 @functions {
     public string GetBodyClass()
@@ -599,7 +666,7 @@
     }
 }
 
-<body class="@GetBodyClass() @storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
+<body class="@GetBodyClass() @categoryClass @storeId @isAndroid23Class @currentPageClass @if (supportRtl){<text>rtl</text>}">
 
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
