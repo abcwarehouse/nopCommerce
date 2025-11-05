@@ -10,7 +10,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Infrastructure
         {
             endpointRouteBuilder.MapControllerRoute(
                 name: "SearchSpringBeacon",
-                pattern: "searchspring/beacon/event",
+                pattern: "searchspring/beacon/events",
                 defaults: new { controller = "SearchSpringBeacon", action = "SendEvent" }
             );
         }
