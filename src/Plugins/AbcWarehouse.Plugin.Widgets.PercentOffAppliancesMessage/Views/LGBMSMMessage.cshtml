@@ -1,0 +1,30 @@
+@model decimal
+
+@{
+    Html.AddCssFileParts("~/Plugins/Widgets.PercentOffAppliancesMessage/styles/style.css");
+}
+
+<div id="percent-off-appliances-message" style="font-weight: bold;">
+    Save an additional 5% and pay only @Model
+        
+        @{
+            if(Model >= 396.00M)
+            {
+                <text>
+                    <br />
+                    <span style="font-weight: normal; font-size: 0.9em;">
+                        Save an additional $50. <span class="discounted-price">$@(Model - 50)</span> on eligible in-store purchases.
+                    </span>
+                </text>;
+            }
+            else
+            {
+                <text>
+                    <span class="discounted-price">@Model</span> on eligible in-store purchases.
+                </text>;
+            }
+
+        }
+        <a href="/policies-information#10-percent-offer" target="_blank">
+        <span class="learn-more-text">Learn More</span></a>
+</div>
