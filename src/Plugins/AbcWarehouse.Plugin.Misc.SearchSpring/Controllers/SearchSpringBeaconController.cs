@@ -22,9 +22,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         }
 
         [HttpPost("events")]
-        public async Task<IActionResult> SendEvent([FromBody] JsonElement eventData)
+        public async Task<IActionResult> SendEvent([FromBody] object eventData)
         {
-            if (eventData.ValueKind == JsonValueKind.Undefined || eventData.ValueKind == JsonValueKind.Null)
+            if (eventData == null)
                 return BadRequest("Missing event data");
 
             try
