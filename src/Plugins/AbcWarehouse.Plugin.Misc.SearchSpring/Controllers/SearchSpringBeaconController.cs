@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Services.Logging;
 using System.Net.Http;
@@ -21,7 +22,10 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpPost("events")]
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("searchspring/beacon/events")]
+
         public async Task<IActionResult> SendEvent([FromBody] object eventData)
         {
             if (eventData == null)
