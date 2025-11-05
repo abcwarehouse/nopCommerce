@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Services.Logging;
 using System.Net.Http;
@@ -7,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
+    [AllowAnonymous]
+    [IgnoreAntiforgeryToken]
+    [AutoValidateAntiforgeryToken] 
     [Route("searchspring/beacon")]
     public class SearchSpringBeaconController : Controller
     {
         private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
 
-        private const string BeaconApiUrl = "https://beacon.searchspring.io/api/beacon";
+        private const string BeaconApiUrl = "https://beacon.searchspring.io/api/beacon/";
 
         public SearchSpringBeaconController(ILogger logger, IHttpClientFactory httpClientFactory)
         {
@@ -21,10 +25,13 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpPost("event")]
-        public async Task<IActionResult> SendEvent([FromBody] JsonElement eventData)
+        [AllowAnonymous]
+        [IgnoreAntiforgeryToken]
+        [HttpPost("events")]
+
+        public async Task<IActionResult> SendEvent([FromBody] object eventData)
         {
-            if (eventData.ValueKind == JsonValueKind.Undefined || eventData.ValueKind == JsonValueKind.Null)
+            if (eventData == null)
                 return BadRequest("Missing event data");
 
             try
