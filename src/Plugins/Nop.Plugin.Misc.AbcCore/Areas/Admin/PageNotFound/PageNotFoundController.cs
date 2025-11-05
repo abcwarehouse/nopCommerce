@@ -22,6 +22,7 @@ using Nop.Core.Domain.Logging;
 using Nop.Services.ExportImport;
 using Nop.Services.Messages;
 using System.Text;
+using Nop.Plugin.Misc.AbcCore.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
 {
@@ -31,33 +32,28 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IAbcExportManager _exportManager;
         private readonly INotificationService _notificationService;
-        private readonly IAbcLogger _logger;
-        // temporary
-        private readonly ICategoryService _categoryService;
+        private readonly IPageNotFoundRecordService _pageNotFoundRecordService;
 
         public PageNotFoundController(
             ICustomerService customerService,
             IDateTimeHelper dateTimeHelper,
             IAbcExportManager exportManager,
             INotificationService notificationService,
-            ICategoryService categoryService,
-            IAbcLogger logger)
+            IPageNotFoundRecordService pageNotFoundRecordService)
         {
             _customerService = customerService;
             _dateTimeHelper = dateTimeHelper;
             _exportManager = exportManager;
             _notificationService = notificationService;
-            _categoryService = categoryService;
-            _logger = logger;
+            _pageNotFoundRecordService = pageNotFoundRecordService;
         }
 
         public virtual async Task<IActionResult> ExportXlsx()
         {
             try
             {
-                var logs = _logger.GetPageNotFoundLogs();
-                var bytes = await _exportManager
-                    .ExportPageNotFoundRecordsToXlsxAsync(logs);
+                var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync();
+                var bytes = await _exportManager.ExportPageNotFoundRecordsToXlsxAsync(pageNotFoundRecords);
 
                 return File(bytes, MimeTypes.TextXlsx, "page-not-found-records.xlsx");
             }
@@ -79,57 +75,29 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
         [HttpPost]
         public virtual async Task<IActionResult> List(PageNotFoundSearchModel searchModel)
         {
-            var logs = _logger.GetPageNotFoundLogs();
-            if (!string.IsNullOrWhiteSpace(searchModel.Slug))
-            {
-                logs = logs.Where(log => log.PageUrl.Contains(searchModel.Slug)).ToList();
-            }
-            if (!string.IsNullOrWhiteSpace(searchModel.CustomerEmail))
-            {
-                var customerId = (await _customerService.GetCustomerByEmailAsync(searchModel.CustomerEmail))?.Id;
-                if (customerId.HasValue)
-                {
-                    logs = logs.Where(log => log.CustomerId == customerId.Value).ToList();
-                }
-                else
-                {
-                    logs = new List<Log>();
-                }
-            }
-            var createdOnFromValue = searchModel.CreatedOnFrom.HasValue
-                ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.CreatedOnFrom.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()) : null;
-            var createdToFromValue = searchModel.CreatedOnTo.HasValue
-                ? (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.CreatedOnTo.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1) : null;
+            var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync(
+                pageIndex: searchModel.Page - 1,
+                pageSize: searchModel.PageSize,
+                slug: searchModel.Slug,
+                customerEmail: searchModel.CustomerEmail,
+                createdOnFrom: searchModel.CreatedOnFrom,
+                createdOnTo: searchModel.CreatedOnTo,
+                ipAddress: searchModel.IpAddress
+                );
 
-            if (createdOnFromValue != null)
-            {
-                logs = logs.Where(log => log.CreatedOnUtc >= createdOnFromValue).ToList();
-            }
-            if (createdToFromValue != null)
-            {
-                logs = logs.Where(log => log.CreatedOnUtc <= createdToFromValue).ToList();
-            }
-
-            if (!string.IsNullOrWhiteSpace(searchModel.IpAddress))
-            {
-                logs = logs.Where(log => log.IpAddress == searchModel.IpAddress).ToList();
-            }
-
-            var pagedList = logs.ToPagedList(searchModel);
-            var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pagedList, () =>
+            var model = await new PageNotFoundListModel().PrepareToGridAsync(searchModel, pageNotFoundRecords, () =>
             {
                 //fill in model values from the entity
-                return pagedList.SelectAwait(async log =>
+                return pageNotFoundRecords.SelectAwait(async pageNotFoundRecord =>
                 {
-                    var customerId = log.CustomerId.HasValue ? log.CustomerId.Value : 0;
                     var PageNotFoundModel = new PageNotFoundModel()
                     {
-                        Slug = log.PageUrl,
-                        ReferrerUrl = log.ReferrerUrl,
-                        CustomerId = customerId,
-                        CustomerEmail = (await _customerService.GetCustomerByIdAsync(customerId))?.Email ?? "Guest",
-                        Date = await _dateTimeHelper.ConvertToUserTimeAsync(log.CreatedOnUtc, DateTimeKind.Utc),
-                        IpAddress = log.IpAddress
+                        Slug = pageNotFoundRecord.Slug,
+                        ReferrerUrl = pageNotFoundRecord.Referrer,
+                        CustomerId = pageNotFoundRecord.CustomerId,
+                        CustomerEmail = (await _customerService.GetCustomerByIdAsync(pageNotFoundRecord.CustomerId))?.Email ?? "Guest",
+                        Date = await _dateTimeHelper.ConvertToUserTimeAsync(pageNotFoundRecord.CreatedOnUtc, DateTimeKind.Utc),
+                        IpAddress = pageNotFoundRecord.IpAddress
                     };
 
                     return PageNotFoundModel;
@@ -148,10 +116,10 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
         }
 
         [HttpPost]
-        public virtual IActionResult Frequency(PageNotFoundFreqSearchModel searchModel)
+        public virtual async Task<IActionResult> Frequency(PageNotFoundFreqSearchModel searchModel)
         {
-            var logs = _logger.GetPageNotFoundLogs();
-            var groupedLogs = logs.GroupBy(l => l.PageUrl)
+            var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync();
+            var groupedRecords = pageNotFoundRecords.GroupBy(l => l.Slug)
                                   .Select(group => new
                                   {
                                       Slug = group.Key,
@@ -160,7 +128,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
                                   .OrderByDescending(g => g.Count)
                                   .ToList();
 
-            var pagedList = groupedLogs.ToPagedList(searchModel);
+            var pagedList = groupedRecords.ToPagedList(searchModel);
             var model = new PageNotFoundFreqListModel().PrepareToGrid(searchModel, pagedList, () =>
             {
                 //fill in model values from the entity

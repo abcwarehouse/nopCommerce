@@ -10,7 +10,7 @@
     {
         Tags = "similar",
         Products = Model,
-        Limits = "12",
+        Limits = "5",
         SiteId = "4lt84w"
     };
 
@@ -28,6 +28,7 @@
 @if (recommendations != null && recommendations.Profiles.Any())
 {
     <div class="product-recommendations-section" style="margin: 60px 0;">
+        <h2 class="rec-products-head">Recommended Products</h2>
         @foreach (var profile in recommendations.Profiles)
         {
             if (profile.Results.Any())

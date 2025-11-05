@@ -40,6 +40,7 @@ using Nop.Services.Shipping;
 using Nop.Services.Shipping.Date;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
+using Nop.Plugin.Misc.AbcCore.Domain;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -134,18 +135,21 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             _dateTimeHelper = dateTimeHelper;
         }
 
-        public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<Log> logs)
+        public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<PageNotFoundRecord> pageNotFoundRecords)
         {
             var properties = new[]
             {
-                new PropertyByName<Log>("Slug", l => l.PageUrl),
-                new PropertyByName<Log>("Referrer", l => l.ReferrerUrl),
-                new PropertyByName<Log>("Customer", async l => (await _customerService.GetCustomerByIdAsync(l.CustomerId.Value)).Email),
-                new PropertyByName<Log>("IpAddress", l => l.IpAddress),
-                new PropertyByName<Log>("Date", async l => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
+                new PropertyByName<PageNotFoundRecord>("Slug", l => l.Slug),
+                new PropertyByName<PageNotFoundRecord>("Referrer", l => l.Referrer),
+                new PropertyByName<PageNotFoundRecord>("Customer", async l => {
+                    var cust = await _customerService.GetCustomerByIdAsync(l.CustomerId);
+                    return cust?.Email ?? string.Empty;
+                }),
+                new PropertyByName<PageNotFoundRecord>("IpAddress", l => l.IpAddress),
+                new PropertyByName<PageNotFoundRecord>("Date", async l => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
             };
 
-            return await new PropertyManager<Log>(properties, _catalogSettings).ExportToXlsxAsync(logs);
+            return await new PropertyManager<PageNotFoundRecord>(properties, _catalogSettings).ExportToXlsxAsync(pageNotFoundRecords);
         }
     }
 }
