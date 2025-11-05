@@ -279,7 +279,7 @@
     <script>
         (function() {
             const SITE_ID = "4lt84w";
-            const BEACON_URL = "/searchspring/beacon/events";
+            const BEACON_URL = "https://beacon.searchspring.io/api/beacon/";
             const CATEGORY = "searchspring.recommendations.user-interactions";
             
             console.log("📍 Beacon URL configured as:", BEACON_URL);
@@ -309,7 +309,7 @@
             // Method 2: Poll for SearchSpring tracking code after load
             window.addEventListener('load', function() {
                 let attempts = 0;
-                const maxAttempts = 20; // 10 seconds max
+                const maxAttempts = 20;
                 const checkInterval = setInterval(function() {
                     attempts++;
                     
@@ -325,40 +325,37 @@
             });
             
             function getTrackingCode() {
-                // Use cached value if available
                 if (cachedTrackingCode) {
                     return cachedTrackingCode;
                 }
                 
-                // SearchSpring may set tracking code in multiple ways
-                // Check cookie first, then window object, then localStorage
                 let trackingCode = null;
                 
-                // Method 1: Check cookie
+                // Check cookie
                 trackingCode = window.ssUtils.getCookie("trackingCode") || 
-                               window.ssUtils.getCookie("ssTrackingCode");
+                            window.ssUtils.getCookie("ssTrackingCode");
                 
-                // Method 2: Check SearchSpring global object
+                // Check SearchSpring global object
                 if (!trackingCode && window.searchspring && window.searchspring.tracking) {
                     trackingCode = window.searchspring.tracking.trackingCode || 
-                                   window.searchspring.tracking.code;
+                                window.searchspring.tracking.code;
                 }
                 
-                // Method 3: Check localStorage
+                // Check localStorage
                 if (!trackingCode) {
                     try {
                         trackingCode = localStorage.getItem('trackingCode') || 
-                                      localStorage.getItem('ssTrackingCode');
+                                    localStorage.getItem('ssTrackingCode');
                     } catch (e) {
                         console.log("Could not access localStorage:", e);
                     }
                 }
                 
-                // Method 4: Check sessionStorage
+                // Check sessionStorage
                 if (!trackingCode) {
                     try {
                         trackingCode = sessionStorage.getItem('trackingCode') || 
-                                      sessionStorage.getItem('ssTrackingCode');
+                                    sessionStorage.getItem('ssTrackingCode');
                     } catch (e) {
                         console.log("Could not access sessionStorage:", e);
                     }
@@ -374,7 +371,7 @@
                 const trackingCode = getTrackingCode();
                 console.log("✅ Final trackingCode:", trackingCode);
 
-                // Build context object, only including non-null values
+                // Build context object
                 const context = {
                     siteId: SITE_ID,
                     shopperId: ssShopperId,
@@ -404,16 +401,15 @@
                     context: context
                 };
 
-                // Use fetch with proper error handling
+                // Send directly to SearchSpring Beacon API
                 fetch(BEACON_URL, {
                     method: "POST",
                     headers: { 
-                        "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "Content-Type": "application/json"
                     },
                     body: JSON.stringify(payload),
-                    credentials: 'same-origin',
-                    keepalive: true
+                    keepalive: true,
+                    mode: 'cors' // Enable CORS
                 })
                 .then(response => {
                     console.log("📬 Response status:", response.status, response.statusText);
@@ -435,6 +431,85 @@
                 });
             }
 
+            // --- Page view ---
+            document.addEventListener("DOMContentLoaded", function() {
+                setTimeout(() => {
+                    sendBeacon("profile.render", { action: "page.view" });
+                }, 500);
+            });
+
+            // --- Product click (Add to cart) ---
+            document.addEventListener("click", function(e) {
+                const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
+                if (!btn) return;
+
+                const productElement = btn.closest("[data-productid]");
+                const productId = productElement ? productElement.getAttribute("data-productid") : null;
+                const sku = productElement?.querySelector(".sku, .product-sku")?.textContent.trim() || "";
+                const name = productElement?.querySelector(".product-title, h2, h3")?.textContent.trim() || "";
+                const price = productElement?.querySelector(".actual-price, .price")?.textContent.trim() || "";
+
+                sendBeacon("profile.product.click", { 
+                    productId, 
+                    sku, 
+                    name,
+                    price
+                });
+            });
+
+            // --- Order completion ---
+            if (window.location.pathname.toLowerCase().includes("/checkout/completed")) {
+                document.addEventListener("DOMContentLoaded", function() {
+                    setTimeout(() => {
+                        const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
+                        const orderTotal = document.querySelector(".order-total strong")?.textContent?.trim() || null;
+                        
+                        sendBeacon("profile.order.purchase", { 
+                            orderNumber,
+                            orderTotal
+                        });
+                    }, 500);
+                });
+            }
+
+            // Make sendBeacon available globally
+            window.searchSpringBeacon = sendBeacon;
+            
+            // Intercept SearchSpring API calls to capture tracking code
+            (function() {
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    const url = args[0];
+                    
+                    return originalFetch.apply(this, args).then(response => {
+                        const clonedResponse = response.clone();
+                        
+                        if (typeof url === 'string' && url.includes('searchspring')) {
+                            clonedResponse.json().then(data => {
+                                if (data && data.tracking && data.tracking.trackingCode) {
+                                    cachedTrackingCode = data.tracking.trackingCode;
+                                    console.log("✅ Captured trackingCode from API response:", cachedTrackingCode);
+                                    window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
+                                } else if (data && data.merchandising && data.merchandising.trackingCode) {
+                                    cachedTrackingCode = data.merchandising.trackingCode;
+                                    console.log("✅ Captured trackingCode from merchandising:", cachedTrackingCode);
+                                    window.ssUtils.setCookie('trackingCode', cachedTrackingCode, 365);
+                                }
+                            }).catch(e => {
+                                // Not JSON or error parsing, ignore
+                            });
+                        }
+                        
+                        return response;
+                    });
+                };
+            })();
+        })();
+    </script>
+
+
+
+    <script>
             // --- Page view ---
             document.addEventListener("DOMContentLoaded", function() {
                 setTimeout(() => {
