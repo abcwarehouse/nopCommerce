@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
     [AllowAnonymous]
+    [IgnoreAntiforgeryToken]
+    [AutoValidateAntiforgeryToken] 
     [Route("searchspring/beacon")]
     public class SearchSpringBeaconController : Controller
     {
@@ -23,10 +25,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        [HttpPost]
         [AllowAnonymous]
         [IgnoreAntiforgeryToken]
-        [Route("searchspring/beacon/events")]
+        [HttpPost("events")]
 
         public async Task<IActionResult> SendEvent([FromBody] object eventData)
         {
