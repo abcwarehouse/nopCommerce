@@ -5,8 +5,6 @@
 @inject Nop.Services.Seo.IUrlRecordService urlRecordService
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
-@inject Nop.Web.Framework.UI.INopHtmlHelper NopHtml
-
 @inject Nop.Core.IWebHelper webHelper
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Catalog
@@ -24,7 +22,6 @@
     var query = Context.Request.Query.ContainsKey("q") ? Context.Request.Query["q"].ToString() : "";
     var currentPage = Model.PageNumber > 0 ? Model.PageNumber : 1;
 
-    // Build canonical URL (strip out filter, sort, and pagination params)
     var canonicalBase = "https://www.abcwarehouse.com/search/results";
     var canonicalParams = new Dictionary<string, string>();
 
@@ -38,10 +35,7 @@
         canonicalUrl += QueryHelpers.AddQueryString("", canonicalParams);
 }
 
-@{ 
-    NopHtml.AddHeadCustomParts($"<link rel=\"canonical\" href=\"{canonicalUrl}\" />");
-    NopHtml.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />");
-}
+@{ Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />"); }
 
 @if (!Model.Results.Any())
 {
