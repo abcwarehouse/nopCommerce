@@ -18,21 +18,34 @@
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
 
-    // Grab current query string parameters as a dictionary (string key -> string value)
     var queryParams = Context.Request.Query.ToDictionary(k => k.Key, v => v.Value.ToString());
-
-    // Current search query param
     var query = Context.Request.Query.ContainsKey("q") ? Context.Request.Query["q"].ToString() : "";
-
-    // Current page param fallback to 1
     var currentPage = Model.PageNumber > 0 ? Model.PageNumber : 1;
 
+    // Build canonical URL (strip out filter, sort, and pagination params)
+    var canonicalBase = "https://www.abcwarehouse.com/search/results";
+    var canonicalParams = new Dictionary<string, string>();
+
+    if (!string.IsNullOrEmpty(query))
+    {
+        canonicalParams["q"] = query;
+    }
+
+    var canonicalUrl = canonicalBase;
+    if (canonicalParams.Any())
+        canonicalUrl += QueryHelpers.AddQueryString("", canonicalParams);
+}
+
+@{ 
+    NopHtml.AddHeadCustomParts($"<link rel=\"canonical\" href=\"{canonicalUrl}\" />");
+    NopHtml.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />");
 }
 
 @if (!Model.Results.Any())
 {
     <p>No products found.</p>
 }
+
 else
 {
     <div class="master-column-wrapper">
