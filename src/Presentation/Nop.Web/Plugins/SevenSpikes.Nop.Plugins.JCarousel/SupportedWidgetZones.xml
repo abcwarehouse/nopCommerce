@@ -20,4 +20,5 @@
   <WidgetZone>right_side_column_after</WidgetZone>
   <WidgetZone>AboutUs</WidgetZone>
   <WidgetZone>AboutUsBottom</WidgetZone>
+  <WidgetZone>CategoryBottom</WidgetZone>
 </SupportedWidgetZones>

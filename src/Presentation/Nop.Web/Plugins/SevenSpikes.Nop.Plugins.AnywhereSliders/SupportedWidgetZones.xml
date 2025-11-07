@@ -2,7 +2,7 @@
 <SupportedWidgetZones>
   <WidgetZone>home_page_main_slider</WidgetZone>
   <WidgetZone>content_before</WidgetZone>
-  <WidgetZone>content_after</WidgetZone>  
+  <WidgetZone>content_after</WidgetZone>
   <WidgetZone>main_column_before</WidgetZone>
   <WidgetZone>main_column_after</WidgetZone>
   <WidgetZone>left_side_column_before</WidgetZone>
@@ -40,5 +40,5 @@
   <WidgetZone>mega_menu_categories_before_dropdown_end_7</WidgetZone>
   <WidgetZone>mega_menu_categories_before_dropdown_end_8</WidgetZone>
   <WidgetZone>AboutUs</WidgetZone>
-  <WidgetZone>AboutUsBottom</WidgetZone>
+  <WidgetZone>CategoryBottom</WidgetZone>
 </SupportedWidgetZones>
