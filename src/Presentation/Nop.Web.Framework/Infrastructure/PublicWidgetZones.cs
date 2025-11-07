@@ -4,6 +4,7 @@
     {
         public static string AboutUs => "AboutUs";
         public static string AboutUsBottom => "AboutUsBottom";
+
         public static string AccountNavigationAfter => "account_navigation_after";
         public static string AccountNavigationBefore => "account_navigation_before";
         public static string AdminHeaderLinksAfter => "admin_header_links_after";
@@ -49,6 +50,7 @@
         public static string BoardsTopicTop => "boards_topic_top";
         public static string BodyEndHtmlTagBefore => "body_end_html_tag_before";
         public static string BodyStartHtmlTagAfter => "body_start_html_tag_after";
+        public static string CategoryBottom => "CategoryBottom";
         public static string CategoryDetailsAfterBreadcrumb => "categorydetails_after_breadcrumb";
         public static string CategoryDetailsAfterFeaturedProducts => "categorydetails_after_featured_products";
         public static string CategoryDetailsBeforeFeaturedProducts => "categorydetails_before_featured_products";
