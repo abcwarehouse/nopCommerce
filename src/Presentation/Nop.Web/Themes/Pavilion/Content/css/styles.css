@@ -10687,6 +10687,9 @@ div#percent-off-appliances-message.percent-off {
 div#percent-off-appliances-message.percent-off {
     margin-bottom: 10px;
 }
+.in-store-container span{
+    color: #e91d24;
+}
 @media screen and (max-width: 1000px) {
 	.left-in-store {
 		max-width: 97px;
