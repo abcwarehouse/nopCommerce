@@ -4,9 +4,7 @@
     Html.AddCssFileParts("~/Plugins/Widgets.PercentOffAppliancesMessage/styles/style.css");
 }
 
-<div id="percent-off-appliances-message" style="font-weight: bold;">
-    Save an additional 5% and save an extra $50 <span class="discounted-price">$@(Model - 50)</span> on eligible in-store purchases.
-        
+<div id="percent-off-appliances-message" style="font-weight: bold;">        
         @{
             if(Model >= 596.00M)
             {
