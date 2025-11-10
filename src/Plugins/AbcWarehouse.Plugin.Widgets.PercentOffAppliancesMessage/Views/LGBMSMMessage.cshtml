@@ -4,7 +4,7 @@
     Html.AddCssFileParts("~/Plugins/Widgets.PercentOffAppliancesMessage/styles/style.css");
 }
 
-<div id="percent-off-appliances-message" style="font-weight: bold;">        
+<div id="percent-off-appliances-message" class="percent-off" style="font-weight: bold;">        
         @{
             if(Model >= 396.00M)
             {
@@ -19,7 +19,7 @@
                         <div class="right-store-text">
                             SAVE AN ADDITIONAL 5% OFF INSTANTLY IN STORE! <br />
                             PLUS, FOR A LIMITED TIME, <br />
-                            <span>PAY ONLY $@(Model - 50)</span> <a href="/policies-information#10-percent-offer" target="_blank">
+                            <span>PAY ONLY $@(Model - 50)</span> *After Rebate <a href="/policies-information#10-percent-offer" target="_blank">
                             <span class="learn-more-text">Learn More</span></a>
                         </div>
                     
