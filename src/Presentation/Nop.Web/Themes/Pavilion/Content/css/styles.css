@@ -10684,6 +10684,27 @@ div#percent-off-appliances-message.percent-off {
     max-width: 117px;
     display: inline-block;
 }
+@media screen and (max-width: 1000px) {
+	.left-in-store {
+		max-width: 97px;
+	}
+	.right-in-store {
+		width: 280px;
+	}
+}
+@media screen and (max-width: 858px) {
+	.left-in-store {
+		padding: 5px 10px;
+		max-width: none;
+		width: 100%;
+		text-align: center;
+	}
+	.right-in-store {
+		float: none;
+		width: 100%;
+		padding: 10px 10px;
+	}
+}
 
 /* Temp Css 10/16 */
 .storeId8 .header-menu > ul.mega-menu > li > a {
