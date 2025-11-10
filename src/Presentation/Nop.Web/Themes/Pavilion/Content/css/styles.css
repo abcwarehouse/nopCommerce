@@ -10684,6 +10684,9 @@ div#percent-off-appliances-message.percent-off {
     max-width: 117px;
     display: inline-block;
 }
+div#percent-off-appliances-message.percent-off {
+    margin-bottom: 10px;
+}
 @media screen and (max-width: 1000px) {
 	.left-in-store {
 		max-width: 97px;
