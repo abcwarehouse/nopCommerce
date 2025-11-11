@@ -1,0 +1,11 @@
+{
+  "Group": "Widgets",
+  "FriendlyName": "Mickey Shorr Sale Promotions",
+  "SystemName": "Widgets.MickeySalePromo",
+  "Version": "1.0.0",
+  "SupportedVersions": [ "4.40" ],
+  "Author": "ABC Warehouse",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widgets.MickeySalePromo.dll",
+  "Description": "Widget plugin to display Mickey Shorr promotional sales page with configurable products and banners"
+}

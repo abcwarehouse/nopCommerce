@@ -135,7 +135,7 @@
   </Target>
 
   <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
-    <Exec Command="git rev-parse --abbrev-ref HEAD > $(MSBuildProjectDirectory)\$(OutDir)branch.txt" />
-    <Exec Command="git rev-parse --short HEAD > $(MSBuildProjectDirectory)\$(OutDir)sha.txt" />
+    <Exec Command="git rev-parse --abbrev-ref HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)branch.txt&quot;" />
+    <Exec Command="git rev-parse --short HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)sha.txt&quot;" />
   </Target>
 </Project>

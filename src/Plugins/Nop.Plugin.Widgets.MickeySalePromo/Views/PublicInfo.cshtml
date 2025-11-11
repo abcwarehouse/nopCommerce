@@ -1,0 +1,321 @@
+@model Nop.Plugin.Widgets.MickeySalePromo.Models.MickeySalePromoSettings
+
+@{
+    var topBannerDesktop = string.IsNullOrEmpty(Model.TopBannerDesktopUrl)
+        ? "https://www.abcwarehouse.com/images/mickeyshorr/1200x500_7-3-25.jpg"
+        : Model.TopBannerDesktopUrl;
+
+    var topBannerMobile = string.IsNullOrEmpty(Model.TopBannerMobileUrl)
+        ? "https://www.abcwarehouse.com/images/mickeyshorr/1200x1000_7-3-25.jpg"
+        : Model.TopBannerMobileUrl;
+
+    var leftBanner = string.IsNullOrEmpty(Model.LeftBannerUrl)
+        ? "https://www.abcwarehouse.com/images/mickeyshorr/feature1_600x233_7-3-25.jpg"
+        : Model.LeftBannerUrl;
+
+    var rightBanner = string.IsNullOrEmpty(Model.RightBannerUrl)
+        ? "https://www.abcwarehouse.com/images/mickeyshorr/feature2_600x233_7-3-25.jpg"
+        : Model.RightBannerUrl;
+
+    var disclaimerText = string.IsNullOrEmpty(Model.DisclaimerText)
+        ? @"<p>* Free installation offer includes normal installation for remote start function & non-touchscreen in-dash stereo head unit. Additional optional features may be added depending on vehicle make/model. Vehicles with factory security systems may require an additional interface. Parts and extensive installation are extra. A basic materials fee of $13.99 applies. Prior sales not included.</p>
+<p>** Offers may not be combined, terms and conditions apply, see store associates for details.</p>
+<p>²applies to authorized resellers only</p>
+<p>³Installation offer includes normal installation and applies to new purchases made at Mickey Shorr. May not be combined with any other promotional offers. Excludes off-premise installs. A basic materials fee of $13.99 applies. Additional parts, extensive labor and extensive materials fee extra. Prior sales not included.</p>"
+        : Model.DisclaimerText;
+}
+
+<!-- Mickey Shorr Sale Promotional Page -->
+<div class="mickey-sale-banners">
+    <div class="mickey-top-banner">
+        <img
+          src="@topBannerDesktop"
+          alt="Mickey Shorr Top Promotion"
+          class="desktop-img"
+        />
+        <img
+          src="@topBannerMobile"
+          alt="Mickey Shorr Mobile Promotion"
+          class="mobile-img"
+        />
+    </div>
+
+    <div class="bottom-container">
+        <div class="mickey-left-banner banner-half">
+            <img src="@leftBanner" style="border: solid 2px #000;" alt="Mickey Shorr Left Promotion" />
+            <img class="right-border-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right.png" />
+            <img class="bottom-boarder-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom.png" />
+        </div>
+        <div class="mickey-right-banner banner-half">
+            <img src="@rightBanner" style="border: solid 2px #000;" alt="Mickey Shorr Right Promotion" />
+            <img class="right-border-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right.png" />
+            <img class="bottom-boarder-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom.png" />
+        </div>
+    </div>
+</div>
+
+<div class="page promo-page">
+    <div class="page-body">
+        <div class="product-grid">
+
+            <!-- Product items would go here -->
+            <!-- This is a template structure - actual products should be populated via CMS or configured separately -->
+
+            <!-- Example Product Item Structure -->
+            <div class="item-box">
+                <div class="content-box">
+                    <h2 class="product-title">
+                        <a href="#"><span>BRAND NAME</span><span class="man-no">SKU</span></a>
+                    </h2>
+                    <p class="item-number item-number-style">#ITEM NUMBER</p>
+
+                    <div class="picture">
+                        <div class="image-container">
+                            <a href="#" title="Product Details">
+                                <img src="https://www.mickeyshorr.com/images/thumbs/0014367_avital-4105l_360.jpeg" alt="Product Image" title="Product Details">
+                                <div class="hover-image">
+                                    <img src="https://www.mickeyshorr.com/images/thumbs/0014367_avital-4105l_360.jpeg" alt="Product Image" title="Product Details">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="ribbon-position bottom-right">
+                            <div class="product-ribbon free-installation!" style="background-color:#3e3e3e; color: #F3CC2E; padding: 2px;">
+                                <label class="ribbon-text" style="font-weight: bold;">BANNER TEXT</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="add-info">
+                        <a class="product-box-description" href="#">
+                            Product description goes here
+                        </a>
+                        <div class="prices">
+                            <span class="price old-price">Compare at $139.95</span>
+                            <span class="price you-save">Save $40</span>
+                            <span class="price-sale-tag">Sale</span>
+                            <span class="price actual-price">$99.95</span>
+                        </div>
+                    </div>
+
+                    <div class="disclaimer-text">*Vehicles with factory security systems may require additional interface</div>
+                </div>
+                <div class="sale-ad-button">
+                    <input type="button" class="button-1 add-to-cart-button" value="Add to cart">
+                </div>
+                <img class="right-border-productbox" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right-ProductBox.png"/>
+                <img class="bottom-boarder-productbox" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom-ProductBox.png"/>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        @Html.Raw(disclaimerText)
+    </div>
+</div>
+
+<style>
+    @@media screen and (min-width: 490px) {
+         .permanent-marker-regular, body p, body master-column-wrapper a, .sale-ad-button .add-to-cart-button {
+          font-family: "Permanent Marker", cursive !important;
+          font-weight: 400;
+          font-style: normal;
+        }
+    }
+
+    .disclaimer-text {
+        font-size: 9px;
+        line-height: 1.25;
+        position: absolute;
+        bottom: 50px;
+        padding: 3px 8px;
+        font-weight: bold;
+        margin-left: -5%;
+    }
+
+    .picture {
+        position: relative;
+    }
+
+    .sale-ad-button .add-to-cart-button {
+        border: none;
+        background: #f0c82c;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 16px;
+    }
+
+    label.ribbon-text {
+        text-transform: uppercase;
+    }
+
+    .image-container {
+        position: relative;
+    }
+
+    .mickey-top-banner img {
+        width: 100%;
+    }
+
+    .mickey-sale-banners img {
+        width: 100%;
+    }
+
+    .banner-half {
+        width: 48%;
+        float: left;
+        position: relative;
+    }
+
+    .sale-ad-button {
+        background: #f0c82c;
+        text-align: center;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-left: solid #000;
+        border-right: solid #000;
+        border-bottom: solid #000;
+    }
+
+    .sale-ad-button a {
+        text-decoration: none;
+        color: #000;
+        font-weight: 900;
+        font-size: 16px;
+        text-transform: uppercase;
+    }
+
+    .item-box .prices {
+        height: auto;
+        padding-bottom: 20px;
+    }
+
+    .content-box {
+        background: #fff;
+        padding: 20px 20px;
+    }
+
+    .content-box .product-box-description {
+        line-height: 1.25;
+        font-weight: bold;
+        min-height: 70px;
+        display: block;
+        text-transform: uppercase;
+    }
+
+    .content-box .product-box-description1 {
+        line-height: 1.25;
+        font-weight: bold;
+        min-height: 70px;
+        display: block;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+    }
+
+    .content-box {
+        background: #fff;
+        padding: 15px 15px;
+        border: solid 3px #000;
+    }
+
+    .content-box .add-info {
+        line-height: 1.25;
+        margin: 0px;
+    }
+
+    .product-grid {
+        padding-top: 30px;
+    }
+
+    .mickey-right-banner.banner-half {
+        margin-left: 2%;
+    }
+
+    .mickey-left-banner.banner-half {
+        margin-right: 2%;
+    }
+
+    img.right-border-img {
+        position: absolute;
+        right: -9px;
+        top: 0;
+        height: 100%;
+        width: auto;
+    }
+
+    img.bottom-boarder-img {
+        position: absolute;
+        bottom: 1px;
+        left: 0;
+        width: 100%;
+    }
+
+    img.bottom-boarder-productbox {
+        position: absolute;
+        bottom: -6px;
+        left: 5px;
+        width: 100%;
+    }
+
+    img.right-border-productbox {
+        position: absolute;
+        right: -6px;
+        top: 0;
+        height: 100%;
+        width: auto;
+    }
+
+    .promo-page h2.product-title {
+        padding: 0;
+        height: auto;
+    }
+
+    .page.promo-page .item-number {
+        margin: 0;
+    }
+
+    .promo-page .item-box .product-title span.man-no {
+        font-weight: bold;
+    }
+
+    .item-box .product-title a {
+        text-decoration: none;
+    }
+
+    /* Hide mobile image by default */
+    .mobile-img {
+        display: none;
+    }
+
+    /* Show mobile image and hide desktop image for max width 500px */
+    @@media (max-width: 500px) {
+        .desktop-img {
+            display: none;
+        }
+        .mobile-img {
+            display: block;
+            padding-bottom: 9px;
+        }
+    }
+
+    @@media (max-width: 500px) {
+        .mickey-right-banner.banner-half {
+            width: auto;
+            margin-left: 0%;
+        }
+        .mickey-left-banner.banner-half {
+            width: auto;
+            margin-right: 0%;
+        }
+    }
+
+    @@media (max-width: 469px) {
+        .disclaimer-text {
+            padding: 0px 0px;
+        }
+    }
+
+    .bottom-container {
+        overflow: hidden;
+    }
+</style>
