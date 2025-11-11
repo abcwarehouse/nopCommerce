@@ -30,7 +30,7 @@
 {
     var productId = Model.First().ProductId;
     
-    <div class="attributes">
+    <div class="attributes mattress-con">
         <dl>
             @foreach (var attribute in Model)
             {
@@ -553,13 +553,15 @@
                 var oldProductPriceElement = document.querySelector('.old-product-price');
                 var youSaveAmtElement = document.querySelector('.you-save-amt');
 
-                // add any bundled items
-                var visibleDropdowns = document.querySelectorAll('dd:not([style="display:none"]) select');
+                // all <dd> that do NOT contain display:none
+                const visibleDDs = [...document.querySelectorAll('dd')].filter(dd => !dd.style.cssText.includes('display: none'));
+                const visibleDropdowns = visibleDDs.flatMap(dd => [...dd.querySelectorAll('select')]);
+
                 var bundledItemsCost = 0;
                 for (var i = 0; i < visibleDropdowns.length; i++)
                 {
                     var v = visibleDropdowns[i];
-                    if (!v.className.includes('mattress-size') && v.selectedIndex != 0)
+                    if (!v.className.includes('mattress-size'))
                     {
                         var selectedOptionText = v.selectedOptions[0].text;
                         var firstBracketIndex = selectedOptionText.indexOf('[');
@@ -571,7 +573,8 @@
                                                                .replace(']', '')
                                                                .replace('$', '')
                                                                .replace('+', '')
-                                                               .replace('-', '');
+                                                               .replace('-', '')
+                                                               .replace(',', '');
                         bundledItemsCost += parseFloat(selectedOptionText);
                     }
                 }

@@ -116,19 +116,17 @@
 
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     <!-- SearchSpring Scripts -->
     <script src="https://cdn.searchspring.io/script.js"></script>
     <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
-    <script>
-        window.intellisuggest = window.intellisuggest || [];
-        intellisuggest.push(['setSiteId', '4lt84w']);
-    </script>
 
-    <!-- End SearchSpring Scripts -->
+    <!-- Include the uuid library -->
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
 
+    <!-- Consolidated Cookie & Session Management -->
     <script>
         (function() {
+            // Utility functions
             function getCookie(name) {
                 var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
                 return match ? match[2] : null;
@@ -151,18 +149,50 @@
                 });
             }
 
+            function getOrCreateId(cookieName, days) {
+                let id = getCookie(cookieName);
+                if (!id) {
+                    id = Math.random().toString(36).substring(2) + Date.now();
+                    setCookie(cookieName, id, days || 365);
+                }
+                return id;
+            }
+
+            // Initialize ssShopperId
             var ssShopperId = getCookie("ssShopperId");
             if (!ssShopperId) {
                 ssShopperId = generateUUID();
                 setCookie("ssShopperId", ssShopperId, 365);
             }
+            console.log("ssShopperId set to:", ssShopperId);
 
+            // Initialize ssSessionIdNamespace
+            var sessionKey = "ssSessionIdNamespace";
+            if (!sessionStorage.getItem(sessionKey)) {
+                console.log("ssSessionIdNamespace not found, creating a new one...");
+                var uuid = uuidv4();
+                sessionStorage.setItem(sessionKey, uuid);
+                setCookie(sessionKey, uuid, 1); // Session cookie
+            }
+            var sessionId = sessionStorage.getItem(sessionKey);
+            console.log("Session ID for this tab:", sessionId);
+
+            // Set intellisuggest configuration
             window.intellisuggest = window.intellisuggest || [];
+            intellisuggest.push(['setSiteId', '4lt84w']);
             intellisuggest.push(["setShopperId", ssShopperId]);
 
-            console.log("ssShopperId set to:", ssShopperId);
+            // Make utilities globally available
+            window.ssUtils = {
+                getCookie: getCookie,
+                setCookie: setCookie,
+                generateUUID: generateUUID,
+                getOrCreateId: getOrCreateId
+            };
         })();
     </script>
+
+    <!-- SearchSpring Suggest Integration -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const searchBox = document.querySelector('#small-searchterms')
@@ -191,8 +221,8 @@
                     return;
                 }
 
-                const userId = getCookie('ssShopperId');
-                const sessionId = getCookie('ssSessionIdNamespace');
+                const userId = window.ssUtils.getCookie('ssShopperId');
+                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
 
                 console.log('🔍 Suggest Input Triggered');
                 console.log('Query:', query);
@@ -215,11 +245,6 @@
                     console.error('❗ Suggest fetch error:', e);
                 }
             }, 300));
-
-            function getCookie(name) {
-                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
         });
     </script>
 
@@ -234,188 +259,143 @@
 
     <!-- Meta Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window,document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '279056429645080'); 
-    fbq('track', 'PageView');
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '279056429645080'); 
+        fbq('track', 'PageView');
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Check if .storeId8 exists
-  if (document.querySelector('.storeId8')) {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if .storeId8 exists (Hawthorne store)
+            if (document.querySelector('.storeId8')) {
+                // Load Adtaxi Container Tag asynchronously
+                (function(a,b,c,d){
+                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
+                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+                })();
 
-<!-- Begin Adtaxi Container Tag - Loading asynchronously -->
-    (function(a,b,c,d){
-        a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-        b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/java"+c;d.async=true;
-        a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-    })();
-    <!-- End Adtaxi Container Tag -->
-
-
-
-
-
-    // Update Instagram link only if .storeId8 is present
-    const instagramLink = document.querySelector('li.instagram a');
-    if (instagramLink) {
-      instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
-    }
-  }
-
-  
-});    
-   
-
-    </script>
-
-    <script>
-
-        @* Brand Filter Search *@
-document.addEventListener('DOMContentLoaded', function() {
-    const brandSearchInput = document.getElementById('brandSearchInput');
-    
-    if (brandSearchInput) {
-        // Trigger search on input
-        brandSearchInput.addEventListener('input', function() {
-            const searchTerm = this.value.trim().toLowerCase();
-            const brandItems = document.querySelectorAll('.brand-list li');
-            
-            brandItems.forEach(item => {
-                const brandName = item.getAttribute('data-brand-name');
-                if (brandName.includes(searchTerm)) {
-                    item.style.display = 'block'; // Show matching items
-                } else {
-                    item.style.display = 'none';  // Hide non-matching items
+                // Update Instagram link only if .storeId8 is present
+                const instagramLink = document.querySelector('li.instagram a');
+                if (instagramLink) {
+                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
                 }
-            });
-        });
-    }
-});
+            }
+        });    
     </script>
-
-
 
     <noscript>
-    <img height="1" width="1" 
-    src="https://www.facebook.com/tr?id=279056429645080&ev=PageView
-    &noscript=1"/>
+        <img height="1" width="1" 
+        src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
     </noscript>
     <!-- End Meta Pixel Code -->
 
     <script src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
 
-    <!-- Include the uuid library -->
-    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
+    <!-- Brand Filter Search -->
     <script>
-    function initializeSessionIdNamespace() {
-        var sessionKey = "ssSessionIdNamespace";
-
-        // Log current sessionStorage for debugging purposes
-        console.log("Current sessionStorage value:", sessionStorage.getItem(sessionKey));
-
-        // Check if the ssSessionIdNamespace is already set in sessionStorage
-        if (!sessionStorage.getItem(sessionKey)) {
-        console.log("ssSessionIdNamespace not found, creating a new one...");
-        // Generate a new UUID (ensure uuidv4 is properly loaded in your environment)
-        var uuid = uuidv4();
-        sessionStorage.setItem(sessionKey, uuid);
-        document.cookie = sessionKey + "=" + uuid + "; path=/; SameSite=Lax";
-        }
-
-        // Log the sessionId after ensuring it has been set
-        var sessionId = sessionStorage.getItem(sessionKey);
-        console.log("Session ID for this tab:", sessionId);
-    }
-
-    // Run the function when the page loads
-    window.addEventListener("load", initializeSessionIdNamespace);
-    </script>
-
-    <script>
-        (function() {
-            const SITE_ID = "4lt84w";
-            const API_URL = "/searchspring/beacon/event";
-
-            // --- Shopper/session management ---
-            function getOrCreateId(key) {
-                let id = localStorage.getItem(key);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    localStorage.setItem(key, id);
-                }
-                return id;
-            }
-
-            const ssShopperId = getOrCreateId("ssShopperId");
-            const ssSessionId = getOrCreateId("ssSessionId");
-
-            // --- Utility to send beacon event ---
-            function sendBeacon(eventType, data = {}) {
-                const eventPayload = {
-                    type: eventType,
-                    siteId: SITE_ID,
-                    shopperId: ssShopperId,
-                    sessionId: ssSessionId,
-                    timestamp: new Date().toISOString(),
-                    ...data
-                };
-
-                // Wrap inside { beacon: { ... } } to match Searchspring format
-                const payload = { beacon: eventPayload };
-
-                fetch(API_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }).catch(err => console.error("Beacon error:", err));
-            }
-
-            // --- 1. Track page views ---
-            document.addEventListener("DOMContentLoaded", function() {
-                sendBeacon("page.view", {
-                    page: window.location.href,
-                    referrer: document.referrer || null,
-                    userAgent: navigator.userAgent
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSearchInput = document.getElementById('brandSearchInput');
+            
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+                    const brandItems = document.querySelectorAll('.brand-list li');
+                    
+                    brandItems.forEach(item => {
+                        const brandName = item.getAttribute('data-brand-name');
+                        if (brandName.includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
                 });
-            });
-
-            // --- 2. Track add to cart ---
-            document.addEventListener("click", function(e) {
-                const btn = e.target.closest(".add-to-cart-button, input[name='addtocartbutton']");
-                if (!btn) return;
-
-                const productElement = btn.closest("[data-productid]");
-                const productId = productElement ? productElement.getAttribute("data-productid") : null;
-                const skuElement = productElement ? productElement.querySelector(".sku, .product-sku") : null;
-                const nameElement = productElement ? productElement.querySelector(".product-title, h2, h3") : null;
-
-                sendBeacon("cart.add", {
-                    product: {
-                        id: productId,
-                        sku: skuElement ? skuElement.textContent.trim() : "",
-                        name: nameElement ? nameElement.textContent.trim() : ""
-                    }
-                });
-            });
-
-            // --- 3. Track checkout/purchase ---
-            if (window.location.href.toLowerCase().includes("/checkout/completed")) {
-                const orderNumber = document.querySelector(".order-number strong")?.textContent?.trim() || null;
-                sendBeacon("purchase", { orderNumber });
             }
-        })();
+        });
     </script>
-
-
 
 </head>
-<body class="@currentPageClass @if (supportRtl){<text>rtl</text>}">
+@using Nop.Services.Catalog
+@using Nop.Services.Seo
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
+@inject ICategoryService categoryService
+@inject IProductService productService
+@inject IUrlRecordService urlRecordService
+@inject IStoreContext storeContext
+@inject IWorkContext workContext
+
+@{
+    string categoryClass = string.Empty;
+
+    var routeData = Url.ActionContext.RouteData.Values;
+    if (routeData.ContainsKey("controller") && routeData.ContainsKey("action"))
+    {
+        var controller = routeData["controller"]?.ToString().ToLowerInvariant();
+        var action = routeData["action"]?.ToString().ToLowerInvariant();
+        var workingLanguage = workContext.GetWorkingLanguageAsync().Result;
+
+        Category category = null;
+
+        // 🟩 CATEGORY PAGE
+        if (controller == "catalog" && action == "category" && routeData.ContainsKey("categoryId"))
+        {
+            var categoryId = Convert.ToInt32(routeData["categoryId"]);
+            category = categoryService.GetCategoryByIdAsync(categoryId).Result;
+        }
+        // 🟦 PRODUCT PAGE
+        else if (controller == "product" && action == "productdetails" && routeData.ContainsKey("productId"))
+        {
+            var productId = Convert.ToInt32(routeData["productId"]);
+            var product = productService.GetProductByIdAsync(productId).Result;
+
+            if (product != null)
+            {
+                var productCategories = categoryService.GetProductCategoriesByProductIdAsync(product.Id).Result;
+                if (productCategories?.Any() ?? false)
+                {
+                    var categoryId = productCategories.First().CategoryId;
+                    category = categoryService.GetCategoryByIdAsync(categoryId).Result;
+                }
+            }
+        }
+
+        if (category != null)
+        {
+            // ✅ Try to get SEO name
+            var seName = urlRecordService.GetSeNameAsync(category, workingLanguage.Id, false).Result;
+
+            // If still blank, fall back to category.Name
+            if (string.IsNullOrWhiteSpace(seName))
+                seName = category.Name?.Trim().ToLowerInvariant().Replace(" ", "-");
+
+            // Safety: if even Name is empty, fallback to ID
+            if (string.IsNullOrWhiteSpace(seName))
+                seName = $"category-{category.Id}";
+
+            categoryClass = $"category-{seName}";
+        }
+    }
+}
+
+@functions {
+    public string GetBodyClass()
+    {
+        var routeData = ViewContext.RouteData;
+        var controller = routeData.Values["controller"]?.ToString() ?? "home";
+        var action = routeData.Values["action"]?.ToString() ?? "index";
+        
+        return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
+    }
+}
+
+<body class="@currentPageClass @storeId @if (supportRtl){<text>rtl</text>}">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -443,17 +423,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         /* The Modal (background) */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1050; /* Sit on top */
-            padding-top: 100px; /* Location of the box */
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            padding-top: 100px;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
         }
         /* Modal Content */
         .modal-content {

@@ -9854,7 +9854,7 @@ a.us-ap-button {
 }
 
 body .autocomplete-list {
-	border: 3px solid #35699a;
+	border: 3px solid #ec232a;
 }
 
 .page.account-page.customer-info-page .page-title {
@@ -9884,11 +9884,11 @@ body .autocomplete-list {
 	}
 
 	body.storeId3 .header-lower {
-		border-bottom: solid #35699a 2px;
+		border-bottom: solid #ec232a 2px;
 	}
 
 	body.storeId3 .header-lower {
-		background-color: #35699a !important;
+		background-color: #ec232a !important;
 		height: auto !important;
 	}
 
@@ -10620,7 +10620,7 @@ body.storeId3 .header-lower {
 
 @media screen and (max-width: 1024px) {
 	body.storeId3 .master-wrapper-page .mobile-header-content-row {
-		background-color: #35699a !important;
+		background-color: #ec232a !important;
 	}
 }
 
@@ -10628,6 +10628,16 @@ body.storeId3 .header-lower {
 	color: #fff !important;
 }
 
+/********************* Black Friday Code ********************* */
+
+.home-index.storeId3 .master-wrapper-page {
+    background-image: url(/images/black-friday-back.jpg) !important;
+    background-size: contain;
+}
+.home-index.storeId3 .WidgetTitle__Header-sc-c581efe-2.jatqWO, .home-index.storeId3 .category-title, .home-index.storeId3 h2.carousel-title.has-navigation,
+.home-index.storeId3 .newsletter-signup {
+    color: #fff;
+} 
 
 
 @media screen and (max-width: 1024px) {
@@ -10635,6 +10645,28 @@ body.storeId3 .header-lower {
         margin-top: -32px;
         padding: 1px 0;
     }
+}
+
+.catalog-category.storeId3 li.mega-menu-categories.hawthorne-link {
+    list-style-type: none;
+    position: absolute;
+    bottom: -40px;
+	animation: fadeInHawthorne 1.3s ease 0.0s forwards;
+}
+
+@keyframes fadeInHawthorne {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+li.mega-menu-categories.hawthorne-link a {
+    padding: 0;
 }
 
 /* Temp Css 10/16 */
