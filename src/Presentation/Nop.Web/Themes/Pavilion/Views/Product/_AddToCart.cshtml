@@ -10,10 +10,9 @@
     {
         <div class="customer-entered-price">
             <div class="price-input">
-                <label asp-for="AddToCart.CustomerEnteredPrice" asp-postfix=":" class="enter-price-label"></label>
-                <input name="addtocart_@(Model.AddToCart.ProductId + ".CustomerEnteredPrice")" asp-for="AddToCart.CustomerEnteredPrice" 
-                       value="@Convert.ToInt32(Math.Ceiling(Model.AddToCart.CustomerEnteredPrice))" 
-                       class="enter-price-input"/>
+                <label asp-for="CustomerEnteredPrice" asp-postfix=":" class="enter-price-label"></label>
+                @*round price*@
+                <input asp-for="CustomerEnteredPrice" value="@Convert.ToInt32(Math.Ceiling(Model.CustomerEnteredPrice))" class="enter-price-input"/>
             </div>
             <div class="price-range">
                 @Model.CustomerEnteredPriceRange

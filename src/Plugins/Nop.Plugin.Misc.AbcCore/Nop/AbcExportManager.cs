@@ -41,6 +41,9 @@ using Nop.Services.Shipping.Date;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
 using Nop.Plugin.Misc.AbcCore.Domain;
+using Nop.Services.Attributes;
+using Nop.Core.Domain.Security;
+using Nop.Core.Domain.Localization;
 
 namespace Nop.Plugin.Misc.AbcCore.Nop
 {
@@ -135,21 +138,21 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         )
         {}
 
-        public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<PageNotFoundRecord> pageNotFoundRecords)
+        public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(PropertyByName<PageNotFoundRecord, Language>[] pageNotFoundRecords)
         {
             var properties = new[]
             {
-                new PropertyByName<PageNotFoundRecord>("Slug", l => l.Slug),
-                new PropertyByName<PageNotFoundRecord>("Referrer", l => l.Referrer),
-                new PropertyByName<PageNotFoundRecord>("Customer", async l => {
-                    var cust = await _customerService.GetCustomerByIdAsync(l.CustomerId);
+                new PropertyByName<PageNotFoundRecord, Language>("Slug", (p, l) => p.Slug),
+                new PropertyByName<PageNotFoundRecord, Language>("Referrer", (p, l) => p.Referrer),
+                new PropertyByName<PageNotFoundRecord, Language>("Customer", async (p, l) => {
+                    var cust = await _customerService.GetCustomerByIdAsync(p.CustomerId);
                     return cust?.Email ?? string.Empty;
                 }),
-                new PropertyByName<PageNotFoundRecord>("IpAddress", l => l.IpAddress),
-                new PropertyByName<PageNotFoundRecord>("Date", async l => (await _dateTimeHelper.ConvertToUserTimeAsync(l.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
+                new PropertyByName<PageNotFoundRecord, Language>("IpAddress", (p, l) => p.IpAddress),
+                new PropertyByName<PageNotFoundRecord, Language>("Date", async (p, l) => (await _dateTimeHelper.ConvertToUserTimeAsync(p.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
             };
 
-            return await new PropertyManager<PageNotFoundRecord>(properties, _catalogSettings).ExportToXlsxAsync(pageNotFoundRecords);
+            return await new PropertyManager<PageNotFoundRecord, Language>(properties, _catalogSettings).ExportToXlsxAsync(pageNotFoundRecords);
         }
     }
 }
