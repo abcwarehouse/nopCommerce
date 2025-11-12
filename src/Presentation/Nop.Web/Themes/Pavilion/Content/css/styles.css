@@ -10669,6 +10669,52 @@ li.mega-menu-categories.hawthorne-link a {
     padding: 0;
 }
 
+div#percent-off-appliances-message.percent-off {
+    padding: 0;
+}
+.right-in-store {
+    float: right;
+    width: 350px;
+    padding: 5px 7px;
+}
+.left-in-store {
+    background: #4f4f4f;
+    color: #fff;
+    padding: 16px 10px;
+    max-width: 117px;
+    display: inline-block;
+}
+div#percent-off-appliances-message.percent-off {
+    margin-bottom: 10px;
+}
+.in-store-container span{
+    color: #e91d24;
+}
+.learn-more-text span {
+	color: #4f4f4f;
+}
+@media screen and (max-width: 1000px) {
+	.left-in-store {
+		max-width: 97px;
+	}
+	.right-in-store {
+		width: 280px;
+	}
+}
+@media screen and (max-width: 858px) {
+	.left-in-store {
+		padding: 5px 10px;
+		max-width: none;
+		width: 100%;
+		text-align: center;
+	}
+	.right-in-store {
+		float: none;
+		width: 100%;
+		padding: 10px 10px;
+	}
+}
+
 /* Temp Css 10/16 */
 .storeId8 .header-menu > ul.mega-menu > li > a {
 padding: 40px 10px;
