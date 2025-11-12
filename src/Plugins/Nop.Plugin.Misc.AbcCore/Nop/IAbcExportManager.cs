@@ -13,6 +13,6 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public interface IAbcExportManager : IExportManager
     {
-        Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(PropertyByName<PageNotFoundRecord, Language>[] logs);
+        Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<PageNotFoundRecord> pageNotFoundRecords);
     }
 }

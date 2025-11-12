@@ -138,7 +138,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
         )
         {}
 
-        public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(PropertyByName<PageNotFoundRecord, Language>[] pageNotFoundRecords)
+        public async Task<byte[]> ExportPageNotFoundRecordsToXlsxAsync(IList<PageNotFoundRecord> pageNotFoundRecords)
         {
             var properties = new[]
             {
