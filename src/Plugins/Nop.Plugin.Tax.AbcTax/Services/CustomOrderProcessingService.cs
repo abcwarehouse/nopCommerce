@@ -22,9 +22,14 @@ using Nop.Services.Logging;
 using Nop.Services.Messages;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
+using Nop.Services.Security;
 using Nop.Services.Shipping;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
+using Nop.Core.Domain.Directory;
+using Nop.Core.Events;
+using Nop.Core.Caching;
+using Nop.Services.Stores;
 
 namespace Nop.Plugin.Tax.AbcTax.Services
 {
@@ -170,8 +175,8 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 
 
                 //attributes
-                var attributeDescription =
-                    await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.Customer);
+                var store = await _storeService.GetStoreByIdAsync(sc.StoreId);
+                var attributeDescription = await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.Customer, store);
 
                 var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(sc);
 

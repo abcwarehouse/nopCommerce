@@ -52,12 +52,11 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             IWarrantyTaxService warrantyTaxService,
             ILogger logger
         )
-            : base(catalogSettings, addressService, checkoutAttributeParser, customerService,
-                discountService, genericAttributeService, giftCardService, orderService,
-                paymentService, priceCalculationService, productService, rewardPointService,
-                shippingPluginManager, shippingService, shoppingCartService,
-                storeContext, taxService, workContext, rewardPointsSettings,
-                shippingSettings, shoppingCartSettings, taxSettings, logger)
+            : base(catalogSettings, addressService, checkoutAttributeParser, customerService, discountService, genericAttributeService,
+                  giftCardService, orderService, paymentService, priceCalculationService,
+                  productService, rewardPointService, shippingPluginManager, shippingService,
+                  shoppingCartService, storeContext, taxService, workContext,
+                  rewardPointsSettings, shippingSettings, shoppingCartSettings, taxSettings)
         {
             // custom
             _warrantyTaxService = warrantyTaxService;
@@ -113,8 +112,9 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             //checkout attributes
             if (customer != null)
             {
-                var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
-                var attributeValues = _checkoutAttributeParser.ParseCheckoutAttributeValues(checkoutAttributesXml);
+                var store = await _storeContext.GetCurrentStoreAsync();
+                var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.CheckoutAttributes, store.Id);
+                var attributeValues = _checkoutAttributeParser.ParseAttributeValues(checkoutAttributesXml);
                 if (attributeValues != null)
                 {
                     await foreach (var (attribute, values) in attributeValues)

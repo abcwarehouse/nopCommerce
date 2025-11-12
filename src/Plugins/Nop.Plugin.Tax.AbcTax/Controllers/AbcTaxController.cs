@@ -71,12 +71,10 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
 
         }
 
+        [CheckPermission(StandardPermission.Configuration.MANAGE_TAX_SETTINGS)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> Configure(bool showtour = false)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return AccessDeniedView();
-
             var taxCategories = await _taxCategoryService.GetAllTaxCategoriesAsync();
 
             if (!taxCategories.Any())
@@ -93,7 +91,7 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
             }
 
             var model = new ConfigurationModel();
-            
+
             //stores
             model.AvailableStores.Add(new SelectListItem { Text = "*", Value = "0" });
             var stores = await _storeService.GetAllStoresAsync();
