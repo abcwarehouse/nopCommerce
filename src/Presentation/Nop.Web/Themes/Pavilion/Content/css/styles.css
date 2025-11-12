@@ -10681,7 +10681,7 @@ div#percent-off-appliances-message.percent-off {
     background: #4f4f4f;
     color: #fff;
     padding: 16px 10px;
-    max-width: 117px;
+    max-width: 125px;
     display: inline-block;
 }
 div#percent-off-appliances-message.percent-off {
@@ -10707,6 +10707,7 @@ div#percent-off-appliances-message.percent-off {
 		max-width: none;
 		width: 100%;
 		text-align: center;
+		max-width: none;
 	}
 	.right-in-store {
 		float: none;
