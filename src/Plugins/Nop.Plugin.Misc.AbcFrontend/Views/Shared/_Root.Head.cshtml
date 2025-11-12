@@ -78,6 +78,9 @@
     {
         shortTitle = fullTitle;
     }
+
+    var currentStore = await storeContext.GetCurrentStoreAsync();
+    string storeId = "storeId" + currentStore.Id.ToString();
 }
 
 <!DOCTYPE html>
