@@ -4,7 +4,7 @@
     Layout = "_ConfigurePlugin";
 }
 
-<form asp-controller="MickeySalePromo" asp-action="Configure" method="post" id="mickey-config-form">
+<form asp-controller="MickeySalePromo" asp-action="Configure" method="post" id="mickey-config-form" enctype="multipart/form-data">
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -13,38 +13,74 @@
             <div class="panel-body">
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label asp-for="TopBannerDesktopUrl" />
+                        <label>Top Banner Desktop Image</label>
                     </div>
                     <div class="col-md-9">
-                        <nop-editor asp-for="TopBannerDesktopUrl" />
-                        <span asp-validation-for="TopBannerDesktopUrl"></span>
+                        @if (!string.IsNullOrEmpty(Model.TopBannerDesktopUrl))
+                        {
+                            <div style="margin-bottom: 10px;">
+                                <strong>Current Image:</strong><br />
+                                <img src="@Model.TopBannerDesktopUrl" alt="Top Banner Desktop" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                <br />
+                                <small class="text-muted">@Model.TopBannerDesktopUrl</small>
+                            </div>
+                        }
+                        <input type="file" name="TopBannerDesktopUpload" class="form-control" accept="image/*" />
+                        <span class="text-muted">Upload a new image to replace the current one</span>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label asp-for="TopBannerMobileUrl" />
+                        <label>Top Banner Mobile Image</label>
                     </div>
                     <div class="col-md-9">
-                        <nop-editor asp-for="TopBannerMobileUrl" />
-                        <span asp-validation-for="TopBannerMobileUrl"></span>
+                        @if (!string.IsNullOrEmpty(Model.TopBannerMobileUrl))
+                        {
+                            <div style="margin-bottom: 10px;">
+                                <strong>Current Image:</strong><br />
+                                <img src="@Model.TopBannerMobileUrl" alt="Top Banner Mobile" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                <br />
+                                <small class="text-muted">@Model.TopBannerMobileUrl</small>
+                            </div>
+                        }
+                        <input type="file" name="TopBannerMobileUpload" class="form-control" accept="image/*" />
+                        <span class="text-muted">Upload a new image to replace the current one</span>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label asp-for="LeftBannerUrl" />
+                        <label>Left Feature Banner Image</label>
                     </div>
                     <div class="col-md-9">
-                        <nop-editor asp-for="LeftBannerUrl" />
-                        <span asp-validation-for="LeftBannerUrl"></span>
+                        @if (!string.IsNullOrEmpty(Model.LeftBannerUrl))
+                        {
+                            <div style="margin-bottom: 10px;">
+                                <strong>Current Image:</strong><br />
+                                <img src="@Model.LeftBannerUrl" alt="Left Banner" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                <br />
+                                <small class="text-muted">@Model.LeftBannerUrl</small>
+                            </div>
+                        }
+                        <input type="file" name="LeftBannerUpload" class="form-control" accept="image/*" />
+                        <span class="text-muted">Upload a new image to replace the current one</span>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <nop-label asp-for="RightBannerUrl" />
+                        <label>Right Feature Banner Image</label>
                     </div>
                     <div class="col-md-9">
-                        <nop-editor asp-for="RightBannerUrl" />
-                        <span asp-validation-for="RightBannerUrl"></span>
+                        @if (!string.IsNullOrEmpty(Model.RightBannerUrl))
+                        {
+                            <div style="margin-bottom: 10px;">
+                                <strong>Current Image:</strong><br />
+                                <img src="@Model.RightBannerUrl" alt="Right Banner" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                <br />
+                                <small class="text-muted">@Model.RightBannerUrl</small>
+                            </div>
+                        }
+                        <input type="file" name="RightBannerUpload" class="form-control" accept="image/*" />
+                        <span class="text-muted">Upload a new image to replace the current one</span>
                     </div>
                 </div>
             </div>

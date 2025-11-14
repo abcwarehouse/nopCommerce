@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using System.Collections.Generic;
@@ -22,6 +23,19 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
 
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.RightBannerUrl")]
         public string RightBannerUrl { get; set; }
+
+        // File upload properties
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopBannerDesktopUpload")]
+        public IFormFile TopBannerDesktopUpload { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopBannerMobileUpload")]
+        public IFormFile TopBannerMobileUpload { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.LeftBannerUpload")]
+        public IFormFile LeftBannerUpload { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.RightBannerUpload")]
+        public IFormFile RightBannerUpload { get; set; }
 
         public List<SaleProductModel> Products { get; set; }
     }
