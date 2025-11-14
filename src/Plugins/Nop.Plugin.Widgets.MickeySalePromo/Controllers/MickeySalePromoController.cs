@@ -48,23 +48,21 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
         [HttpPost]
         public async Task<IActionResult> Configure(ConfigurationModel model)
         {
-            // Debug: Log what we're receiving
+            // Debug: Show what we're receiving
             var productCount = model.Products?.Count ?? 0;
-            System.Diagnostics.Debug.WriteLine($"Products received: {productCount}");
+            _notificationService.WarningNotification($"DEBUG: Products received: {productCount}");
 
-            if (model.Products != null)
+            if (model.Products != null && model.Products.Count > 0)
             {
-                for (int i = 0; i < model.Products.Count; i++)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Product {i}: ItemNumber={model.Products[i].ItemNumber}, Sku={model.Products[i].Sku}");
-                }
+                var firstProduct = model.Products[0];
+                _notificationService.WarningNotification($"DEBUG: First product - ItemNumber: '{firstProduct.ItemNumber}', Sku: '{firstProduct.Sku}', ProductId: {firstProduct.ProductId}");
             }
 
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                System.Diagnostics.Debug.WriteLine($"ModelState Errors: {string.Join(", ", errors)}");
-                return Configure();
+                _notificationService.ErrorNotification($"DEBUG: ModelState Errors: {string.Join(", ", errors)}");
+                return RedirectToAction("Configure");
             }
 
             // Start with current settings to preserve existing values
@@ -79,7 +77,14 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                     : string.Empty
             };
 
-            System.Diagnostics.Debug.WriteLine($"ProductsJson being saved: {settings.ProductsJson}");
+            if (!string.IsNullOrEmpty(settings.ProductsJson))
+            {
+                _notificationService.WarningNotification($"DEBUG: ProductsJson length: {settings.ProductsJson.Length} chars");
+            }
+            else
+            {
+                _notificationService.ErrorNotification("DEBUG: ProductsJson is EMPTY!");
+            }
 
             // Create the upload directory if it doesn't exist
             var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");
@@ -144,7 +149,8 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
             await _settingService.SaveSettingAsync(settings);
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
-            return Configure();
+            // Redirect to force a fresh load of settings from the database
+            return RedirectToAction("Configure");
         }
     }
 }
