@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Nop.Core.Infrastructure;
 using Nop.Plugin.Widgets.MickeySalePromo.Models;
@@ -11,6 +13,7 @@ using Nop.Services.Localization;
 using Nop.Services.Messages;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Infrastructure;
 using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
@@ -42,28 +45,37 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
 
         public IActionResult Configure()
         {
-            return View("~/Plugins/Widgets.MickeySalePromo/Views/Configure.cshtml", _settings.ToModel());
+            var model = _settings.ToModel();
+
+            // Populate available widget zones with common zones for product promotions
+            model.AvailableWidgetZones = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Home Page - Top", Value = PublicWidgetZones.HomepageTop },
+                new SelectListItem { Text = "Home Page - Bottom", Value = PublicWidgetZones.HomepageBottom },
+                new SelectListItem { Text = "Home Page - Before Products", Value = PublicWidgetZones.HomepageBeforeProducts },
+                new SelectListItem { Text = "Home Page - Before Categories", Value = PublicWidgetZones.HomepageBeforeCategories },
+                new SelectListItem { Text = "Category Details - Top", Value = PublicWidgetZones.CategoryDetailsTop },
+                new SelectListItem { Text = "Category Details - Bottom", Value = PublicWidgetZones.CategoryDetailsBottom },
+                new SelectListItem { Text = "Category Details - Before Product List", Value = PublicWidgetZones.CategoryDetailsBeforeProductList },
+                new SelectListItem { Text = "Product Details - Top", Value = PublicWidgetZones.ProductDetailsTop },
+                new SelectListItem { Text = "Product Details - Bottom", Value = PublicWidgetZones.ProductDetailsBottom },
+                new SelectListItem { Text = "Product Details - Overview Top", Value = PublicWidgetZones.ProductDetailsOverviewTop },
+                new SelectListItem { Text = "Product Details - Overview Bottom", Value = PublicWidgetZones.ProductDetailsOverviewBottom },
+                new SelectListItem { Text = "Header - After", Value = PublicWidgetZones.HeaderAfter },
+                new SelectListItem { Text = "Header - Before", Value = PublicWidgetZones.HeaderBefore },
+                new SelectListItem { Text = "Content - Before", Value = PublicWidgetZones.ContentBefore },
+                new SelectListItem { Text = "Content - After", Value = PublicWidgetZones.ContentAfter },
+                new SelectListItem { Text = "Footer", Value = PublicWidgetZones.Footer }
+            };
+
+            return View("~/Plugins/Widgets.MickeySalePromo/Views/Configure.cshtml", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Configure(ConfigurationModel model)
         {
-            // Debug: Show what we're receiving
-            var productCount = model.Products?.Count ?? 0;
-            _notificationService.WarningNotification($"DEBUG: Products received: {productCount}");
-
-            if (model.Products != null && model.Products.Count > 0)
-            {
-                var firstProduct = model.Products[0];
-                _notificationService.WarningNotification($"DEBUG: First product - ItemNumber: '{firstProduct.ItemNumber}', Sku: '{firstProduct.Sku}', ProductId: {firstProduct.ProductId}");
-            }
-
             if (!ModelState.IsValid)
-            {
-                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                _notificationService.ErrorNotification($"DEBUG: ModelState Errors: {string.Join(", ", errors)}");
                 return RedirectToAction("Configure");
-            }
 
             // Start with current settings to preserve existing values
             var settings = new MickeySalePromoSettings
@@ -76,15 +88,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                     ? JsonConvert.SerializeObject(model.Products)
                     : string.Empty
             };
-
-            if (!string.IsNullOrEmpty(settings.ProductsJson))
-            {
-                _notificationService.WarningNotification($"DEBUG: ProductsJson length: {settings.ProductsJson.Length} chars");
-            }
-            else
-            {
-                _notificationService.ErrorNotification("DEBUG: ProductsJson is EMPTY!");
-            }
 
             // Create the upload directory if it doesn't exist
             var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");

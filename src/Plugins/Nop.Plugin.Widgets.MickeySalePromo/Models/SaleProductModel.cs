@@ -40,5 +40,8 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
 
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.Product.ShowDisclaimer")]
         public bool ShowDisclaimer { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.Product.WidgetZone")]
+        public string WidgetZone { get; set; }
     }
 }

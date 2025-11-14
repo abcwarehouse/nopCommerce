@@ -101,16 +101,28 @@
                             <h4>Product #@(i + 1)</h4>
 
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Item Number</label>
                                         <input type="text" name="Products[@i].ItemNumber" value="@Model.Products[i].ItemNumber" class="form-control" />
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Product ID (for Add to Cart)</label>
                                         <input type="number" name="Products[@i].ProductId" value="@Model.Products[i].ProductId" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Widget Zone (Where to Display)</label>
+                                        <select name="Products[@i].WidgetZone" class="form-control widget-zone-select">
+                                            <option value="">-- Select Widget Zone --</option>
+                                            @foreach (var zone in Model.AvailableWidgetZones)
+                                            {
+                                                <option value="@zone.Value" @(Model.Products[i].WidgetZone == zone.Value ? "selected" : "")>@zone.Text</option>
+                                            }
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -173,8 +185,7 @@
 
                             <div class="form-group">
                                 <div class="form-check">
-                                    <input type="hidden" name="Products[@i].ShowDisclaimer" value="false" />
-                                    <input type="checkbox" name="Products[@i].ShowDisclaimer" value="true" @(Model.Products[i].ShowDisclaimer ? "checked" : "") class="form-check-input" id="disclaimer-@i" />
+                                    <input type="checkbox" name="Products[@i].ShowDisclaimer" value="true" @(Model.Products[i].ShowDisclaimer ? "checked" : "") class="form-check-input disclaimer-checkbox" id="disclaimer-@i" data-index="@i" />
                                     <label class="form-check-label" for="disclaimer-@i">
                                         Show Disclaimer: "Vehicles with factory security systems may require additional interface"
                                     </label>
@@ -205,6 +216,17 @@
     $(document).ready(function() {
         var productIndex = @Model.Products.Count;
 
+        // Widget zones for the dropdown
+        var widgetZones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableWidgetZones.Select(z => new { text = z.Text, value = z.Value })));
+
+        function generateWidgetZoneOptions() {
+            var options = '<option value="">-- Select Widget Zone --</option>';
+            widgetZones.forEach(function(zone) {
+                options += '<option value="' + zone.value + '">' + zone.text + '</option>';
+            });
+            return options;
+        }
+
         $('#add-product').click(function() {
             var html = `
                 <div class="product-item" data-index="${productIndex}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative;">
@@ -214,16 +236,24 @@
                     <h4>Product #${productIndex + 1}</h4>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Item Number</label>
                                 <input type="text" name="Products[${productIndex}].ItemNumber" class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Product ID (for Add to Cart)</label>
                                 <input type="number" name="Products[${productIndex}].ProductId" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Widget Zone (Where to Display)</label>
+                                <select name="Products[${productIndex}].WidgetZone" class="form-control widget-zone-select">
+                                    ${generateWidgetZoneOptions()}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -286,8 +316,7 @@
 
                     <div class="form-group">
                         <div class="form-check">
-                            <input type="hidden" name="Products[${productIndex}].ShowDisclaimer" value="false" />
-                            <input type="checkbox" name="Products[${productIndex}].ShowDisclaimer" value="true" class="form-check-input" id="disclaimer-${productIndex}" />
+                            <input type="checkbox" name="Products[${productIndex}].ShowDisclaimer" value="true" class="form-check-input disclaimer-checkbox" id="disclaimer-${productIndex}" data-index="${productIndex}" />
                             <label class="form-check-label" for="disclaimer-${productIndex}">
                                 Show Disclaimer: "Vehicles with factory security systems may require additional interface"
                             </label>
@@ -302,6 +331,25 @@
 
         $(document).on('click', '.remove-product', function() {
             $(this).closest('.product-item').remove();
+        });
+
+        // Handle checkbox submission - ensure unchecked boxes post false
+        $('#mickey-config-form').on('submit', function() {
+            // Remove any previously added hidden disclaimer inputs
+            $('.disclaimer-hidden-field').remove();
+
+            // For each checkbox, if it's NOT checked, add a hidden input with false value
+            $('.disclaimer-checkbox').each(function() {
+                if (!$(this).is(':checked')) {
+                    var index = $(this).data('index');
+                    $('<input>')
+                        .attr('type', 'hidden')
+                        .attr('name', 'Products[' + index + '].ShowDisclaimer')
+                        .attr('class', 'disclaimer-hidden-field')
+                        .val('false')
+                        .appendTo('#mickey-config-form');
+                }
+            });
         });
     });
 </script>

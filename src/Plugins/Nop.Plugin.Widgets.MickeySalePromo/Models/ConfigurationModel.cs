@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public ConfigurationModel()
         {
             Products = new List<SaleProductModel>();
+            AvailableWidgetZones = new List<SelectListItem>();
         }
 
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopBannerDesktopUrl")]
@@ -38,5 +40,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public IFormFile RightBannerUpload { get; set; }
 
         public List<SaleProductModel> Products { get; set; }
+
+        public IList<SelectListItem> AvailableWidgetZones { get; set; }
     }
 }
