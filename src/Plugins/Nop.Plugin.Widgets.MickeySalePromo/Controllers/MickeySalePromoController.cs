@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Nop.Core.Infrastructure;
 using Nop.Plugin.Widgets.MickeySalePromo.Models;
 using Nop.Services.Configuration;
@@ -49,14 +50,23 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
             if (!ModelState.IsValid)
                 return Configure();
 
-            // Handle file uploads
-            var settings = MickeySalePromoSettings.FromModel(model);
+            // Start with current settings to preserve existing values
+            var settings = new MickeySalePromoSettings
+            {
+                TopBannerDesktopUrl = _settings.TopBannerDesktopUrl,
+                TopBannerMobileUrl = _settings.TopBannerMobileUrl,
+                LeftBannerUrl = _settings.LeftBannerUrl,
+                RightBannerUrl = _settings.RightBannerUrl,
+                ProductsJson = model.Products != null && model.Products.Count > 0
+                    ? JsonConvert.SerializeObject(model.Products)
+                    : string.Empty
+            };
 
             // Create the upload directory if it doesn't exist
             var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");
             _fileProvider.CreateDirectory(uploadPath);
 
-            // Process Top Banner Desktop upload
+            // Process Top Banner Desktop upload (only update if new file uploaded)
             if (model.TopBannerDesktopUpload != null && model.TopBannerDesktopUpload.Length > 0)
             {
                 var fileName = $"top-banner-desktop{Path.GetExtension(model.TopBannerDesktopUpload.FileName)}";
@@ -70,7 +80,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 settings.TopBannerDesktopUrl = $"/images/mickey-sale-promo/{fileName}";
             }
 
-            // Process Top Banner Mobile upload
+            // Process Top Banner Mobile upload (only update if new file uploaded)
             if (model.TopBannerMobileUpload != null && model.TopBannerMobileUpload.Length > 0)
             {
                 var fileName = $"top-banner-mobile{Path.GetExtension(model.TopBannerMobileUpload.FileName)}";
@@ -84,7 +94,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 settings.TopBannerMobileUrl = $"/images/mickey-sale-promo/{fileName}";
             }
 
-            // Process Left Banner upload
+            // Process Left Banner upload (only update if new file uploaded)
             if (model.LeftBannerUpload != null && model.LeftBannerUpload.Length > 0)
             {
                 var fileName = $"left-banner{Path.GetExtension(model.LeftBannerUpload.FileName)}";
@@ -98,7 +108,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 settings.LeftBannerUrl = $"/images/mickey-sale-promo/{fileName}";
             }
 
-            // Process Right Banner upload
+            // Process Right Banner upload (only update if new file uploaded)
             if (model.RightBannerUpload != null && model.RightBannerUpload.Length > 0)
             {
                 var fileName = $"right-banner{Path.GetExtension(model.RightBannerUpload.FileName)}";
