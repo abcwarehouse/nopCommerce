@@ -53,7 +53,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
             var settings = MickeySalePromoSettings.FromModel(model);
 
             // Create the upload directory if it doesn't exist
-            var uploadPath = _fileProvider.Combine(_fileProvider.WebRootPath, "images", "mickey-sale-promo");
+            var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");
             _fileProvider.CreateDirectory(uploadPath);
 
             // Process Top Banner Desktop upload
