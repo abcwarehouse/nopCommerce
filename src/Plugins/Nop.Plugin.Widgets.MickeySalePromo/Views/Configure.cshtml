@@ -120,7 +120,7 @@
                                             <option value="">-- Select Widget Zone --</option>
                                             @foreach (var zone in Model.AvailableWidgetZones)
                                             {
-                                                <option value="@zone.Value" @(Model.Products[i].WidgetZone == zone.Value ? "selected" : "")>@zone.Text</option>
+                                                <option value="@zone.Value" selected="@(Model.Products[i].WidgetZone == zone.Value)">@zone.Text</option>
                                             }
                                         </select>
                                     </div>
