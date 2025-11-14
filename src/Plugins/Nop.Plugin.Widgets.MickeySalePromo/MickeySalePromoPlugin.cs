@@ -36,8 +36,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo
         {
             return Task.FromResult<IList<string>>(new List<string>
             {
-                PublicWidgetZones.HomepageTop,
-                "AboutUsBottom"
+                "sales_ad_page"
             });
         }
 

@@ -23,6 +23,8 @@
 <p>²applies to authorized resellers only</p>
 <p>³Installation offer includes normal installation and applies to new purchases made at Mickey Shorr. May not be combined with any other promotional offers. Excludes off-premise installs. A basic materials fee of $13.99 applies. Additional parts, extensive labor and extensive materials fee extra. Prior sales not included.</p>"
         : Model.DisclaimerText;
+
+    var products = Model.GetProducts();
 }
 
 <!-- Mickey Shorr Sale Promotional Page -->
@@ -58,53 +60,65 @@
     <div class="page-body">
         <div class="product-grid">
 
-            <!-- Product items would go here -->
-            <!-- This is a template structure - actual products should be populated via CMS or configured separately -->
+            @foreach (var product in products)
+            {
+                <div class="item-box">
+                    <div class="content-box">
+                        <h2 class="product-title">
+                            <a href="@product.ProductUrl"><span>@product.BrandName</span><span class="man-no">@product.Sku</span></a>
+                        </h2>
+                        <p class="item-number item-number-style">#@product.ItemNumber</p>
 
-            <!-- Example Product Item Structure -->
-            <div class="item-box">
-                <div class="content-box">
-                    <h2 class="product-title">
-                        <a href="#"><span>BRAND NAME</span><span class="man-no">SKU</span></a>
-                    </h2>
-                    <p class="item-number item-number-style">#ITEM NUMBER</p>
-
-                    <div class="picture">
-                        <div class="image-container">
-                            <a href="#" title="Product Details">
-                                <img src="https://www.mickeyshorr.com/images/thumbs/0014367_avital-4105l_360.jpeg" alt="Product Image" title="Product Details">
-                                <div class="hover-image">
-                                    <img src="https://www.mickeyshorr.com/images/thumbs/0014367_avital-4105l_360.jpeg" alt="Product Image" title="Product Details">
+                        <div class="picture">
+                            <div class="image-container">
+                                <a href="@product.ProductUrl" title="Show details for @product.BrandName @product.Sku">
+                                    <img src="@product.ImageUrl" alt="Picture of @product.BrandName @product.Sku" title="Show details for @product.BrandName @product.Sku">
+                                    <div class="hover-image">
+                                        <img src="@product.ImageUrl" alt="Picture of @product.BrandName @product.Sku" title="Show details for @product.BrandName @product.Sku">
+                                    </div>
+                                </a>
+                            </div>
+                            @if (!string.IsNullOrEmpty(product.Banner))
+                            {
+                                <div class="ribbon-position bottom-right">
+                                    <div class="product-ribbon free-installation!" style="background-color:#3e3e3e; color: #F3CC2E; padding: 2px;">
+                                        <label class="ribbon-text" style="font-weight: bold;">@product.Banner</label>
+                                    </div>
                                 </div>
-                            </a>
+                            }
                         </div>
-                        <div class="ribbon-position bottom-right">
-                            <div class="product-ribbon free-installation!" style="background-color:#3e3e3e; color: #F3CC2E; padding: 2px;">
-                                <label class="ribbon-text" style="font-weight: bold;">BANNER TEXT</label>
+
+                        <div class="add-info">
+                            <a class="product-box-description" href="@product.ProductUrl">
+                                @product.Description
+                            </a>
+                            <div class="prices">
+                                <span class="price old-price">@product.OldPrice</span>
+                                <span class="price you-save">@product.YouSave</span>
+                                <span class="price-sale-tag">Sale</span>
+                                <span class="price actual-price">@product.ActualPrice</span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="add-info">
-                        <a class="product-box-description" href="#">
-                            Product description goes here
-                        </a>
-                        <div class="prices">
-                            <span class="price old-price">Compare at $139.95</span>
-                            <span class="price you-save">Save $40</span>
-                            <span class="price-sale-tag">Sale</span>
-                            <span class="price actual-price">$99.95</span>
-                        </div>
+                        @if (!string.IsNullOrEmpty(product.DisclaimerText))
+                        {
+                            <div class="disclaimer-text">@product.DisclaimerText</div>
+                        }
                     </div>
-
-                    <div class="disclaimer-text">*Vehicles with factory security systems may require additional interface</div>
+                    <div class="sale-ad-button">
+                        @if (product.ProductId > 0)
+                        {
+                            <input type="button" id="add-to-cart-button-@product.ProductId" class="button-1 add-to-cart-button" value="Add to cart" data-productid="@product.ProductId" onclick="return AjaxCart.addproducttocart_details('/addproducttocart/details/@product.ProductId/1','#product-details-form'),!1">
+                        }
+                        else
+                        {
+                            <a href="@product.ProductUrl" class="button-1 add-to-cart-button">View Product</a>
+                        }
+                    </div>
+                    <img class="right-border-productbox" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right-ProductBox.png"/>
+                    <img class="bottom-boarder-productbox" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom-ProductBox.png"/>
                 </div>
-                <div class="sale-ad-button">
-                    <input type="button" class="button-1 add-to-cart-button" value="Add to cart">
-                </div>
-                <img class="right-border-productbox" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right-ProductBox.png"/>
-                <img class="bottom-boarder-productbox" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom-ProductBox.png"/>
-            </div>
+            }
 
         </div>
     </div>

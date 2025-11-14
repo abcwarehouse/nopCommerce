@@ -1,4 +1,6 @@
 using Nop.Core.Configuration;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Nop.Plugin.Widgets.MickeySalePromo.Models
 {
@@ -9,10 +11,16 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public string LeftBannerUrl { get; set; }
         public string RightBannerUrl { get; set; }
         public string DisclaimerText { get; set; }
-        public string WidgetZone { get; set; }
+
+        // Store products as JSON string
+        public string ProductsJson { get; set; }
 
         internal ConfigurationModel ToModel()
         {
+            var products = string.IsNullOrEmpty(ProductsJson)
+                ? new List<SaleProductModel>()
+                : JsonConvert.DeserializeObject<List<SaleProductModel>>(ProductsJson);
+
             return new ConfigurationModel
             {
                 TopBannerDesktopUrl = TopBannerDesktopUrl,
@@ -20,12 +28,16 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 LeftBannerUrl = LeftBannerUrl,
                 RightBannerUrl = RightBannerUrl,
                 DisclaimerText = DisclaimerText,
-                WidgetZone = WidgetZone
+                Products = products
             };
         }
 
         internal static MickeySalePromoSettings FromModel(ConfigurationModel model)
         {
+            var productsJson = model.Products != null && model.Products.Count > 0
+                ? JsonConvert.SerializeObject(model.Products)
+                : string.Empty;
+
             return new MickeySalePromoSettings
             {
                 TopBannerDesktopUrl = model.TopBannerDesktopUrl,
@@ -33,8 +45,15 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 LeftBannerUrl = model.LeftBannerUrl,
                 RightBannerUrl = model.RightBannerUrl,
                 DisclaimerText = model.DisclaimerText,
-                WidgetZone = model.WidgetZone
+                ProductsJson = productsJson
             };
+        }
+
+        public List<SaleProductModel> GetProducts()
+        {
+            return string.IsNullOrEmpty(ProductsJson)
+                ? new List<SaleProductModel>()
+                : JsonConvert.DeserializeObject<List<SaleProductModel>>(ProductsJson);
         }
     }
 }

@@ -1,10 +1,16 @@
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
+using System.Collections.Generic;
 
 namespace Nop.Plugin.Widgets.MickeySalePromo.Models
 {
     public record ConfigurationModel : BaseNopModel
     {
+        public ConfigurationModel()
+        {
+            Products = new List<SaleProductModel>();
+        }
+
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopBannerDesktopUrl")]
         public string TopBannerDesktopUrl { get; set; }
 
@@ -20,7 +26,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.DisclaimerText")]
         public string DisclaimerText { get; set; }
 
-        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.WidgetZone")]
-        public string WidgetZone { get; set; }
+        public List<SaleProductModel> Products { get; set; }
     }
 }

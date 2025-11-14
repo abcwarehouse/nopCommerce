@@ -4,7 +4,7 @@
     Layout = "_ConfigurePlugin";
 }
 
-<form asp-controller="MickeySalePromo" asp-action="Configure" method="post">
+<form asp-controller="MickeySalePromo" asp-action="Configure" method="post" id="mickey-config-form">
     <div class="content-header clearfix">
         <div class="pull-right">
             <button type="submit" name="save" class="btn bg-blue">
@@ -13,8 +13,12 @@
             </button>
         </div>
     </div>
+
     <div class="panel-group">
         <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Banner Configuration</h3>
+            </div>
             <div class="panel-body">
                 <div class="form-group">
                     <div class="col-md-3">
@@ -57,20 +61,210 @@
                         <nop-label asp-for="DisclaimerText" />
                     </div>
                     <div class="col-md-9">
-                        <nop-textarea asp-for="DisclaimerText" />
+                        <nop-textarea asp-for="DisclaimerText" rows="6" />
                         <span asp-validation-for="DisclaimerText"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-3">
-                        <nop-label asp-for="WidgetZone" />
-                    </div>
-                    <div class="col-md-9">
-                        <nop-editor asp-for="WidgetZone" />
-                        <span asp-validation-for="WidgetZone"></span>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Sale Products</h3>
+            </div>
+            <div class="panel-body">
+                <div id="products-container">
+                    @for (int i = 0; i < Model.Products.Count; i++)
+                    {
+                        <div class="product-item" data-index="@i" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative;">
+                            <button type="button" class="btn btn-danger btn-sm remove-product" style="position: absolute; top: 10px; right: 10px;">
+                                <i class="fa fa-trash"></i> Remove
+                            </button>
+                            <h4>Product #@(i + 1)</h4>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Item Number</label>
+                                        <input type="text" name="Products[@i].ItemNumber" value="@Model.Products[i].ItemNumber" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Product ID (for Add to Cart)</label>
+                                        <input type="number" name="Products[@i].ProductId" value="@Model.Products[i].ProductId" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Brand Name</label>
+                                        <input type="text" name="Products[@i].BrandName" value="@Model.Products[i].BrandName" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>SKU</label>
+                                        <input type="text" name="Products[@i].Sku" value="@Model.Products[i].Sku" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Product URL</label>
+                                <input type="text" name="Products[@i].ProductUrl" value="@Model.Products[i].ProductUrl" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="text" name="Products[@i].ImageUrl" value="@Model.Products[i].ImageUrl" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Banner Text (Ribbon)</label>
+                                <input type="text" name="Products[@i].Banner" value="@Model.Products[i].Banner" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="Products[@i].Description" class="form-control" rows="2">@Model.Products[i].Description</textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Old Price</label>
+                                        <input type="text" name="Products[@i].OldPrice" value="@Model.Products[i].OldPrice" class="form-control" placeholder="Compare at $139.95" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>You Save</label>
+                                        <input type="text" name="Products[@i].YouSave" value="@Model.Products[i].YouSave" class="form-control" placeholder="Save $40" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Actual Price</label>
+                                        <input type="text" name="Products[@i].ActualPrice" value="@Model.Products[i].ActualPrice" class="form-control" placeholder="$99.95" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Product Disclaimer Text (Optional)</label>
+                                <input type="text" name="Products[@i].DisclaimerText" value="@Model.Products[i].DisclaimerText" class="form-control" placeholder="*Vehicles with factory security systems may require additional interface" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <button type="button" id="add-product" class="btn btn-success">
+                    <i class="fa fa-plus"></i> Add Product
+                </button>
+            </div>
+        </div>
     </div>
 </form>
+
+<script>
+    $(document).ready(function() {
+        var productIndex = @Model.Products.Count;
+
+        $('#add-product').click(function() {
+            var html = `
+                <div class="product-item" data-index="${productIndex}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative;">
+                    <button type="button" class="btn btn-danger btn-sm remove-product" style="position: absolute; top: 10px; right: 10px;">
+                        <i class="fa fa-trash"></i> Remove
+                    </button>
+                    <h4>Product #${productIndex + 1}</h4>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Item Number</label>
+                                <input type="text" name="Products[${productIndex}].ItemNumber" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Product ID (for Add to Cart)</label>
+                                <input type="number" name="Products[${productIndex}].ProductId" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Brand Name</label>
+                                <input type="text" name="Products[${productIndex}].BrandName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>SKU</label>
+                                <input type="text" name="Products[${productIndex}].Sku" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product URL</label>
+                        <input type="text" name="Products[${productIndex}].ProductUrl" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" name="Products[${productIndex}].ImageUrl" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Banner Text (Ribbon)</label>
+                        <input type="text" name="Products[${productIndex}].Banner" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="Products[${productIndex}].Description" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Old Price</label>
+                                <input type="text" name="Products[${productIndex}].OldPrice" class="form-control" placeholder="Compare at $139.95" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>You Save</label>
+                                <input type="text" name="Products[${productIndex}].YouSave" class="form-control" placeholder="Save $40" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Actual Price</label>
+                                <input type="text" name="Products[${productIndex}].ActualPrice" class="form-control" placeholder="$99.95" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Disclaimer Text (Optional)</label>
+                        <input type="text" name="Products[${productIndex}].DisclaimerText" class="form-control" placeholder="*Vehicles with factory security systems may require additional interface" />
+                    </div>
+                </div>
+            `;
+
+            $('#products-container').append(html);
+            productIndex++;
+        });
+
+        $(document).on('click', '.remove-product', function() {
+            $(this).closest('.product-item').remove();
+        });
+    });
+</script>
