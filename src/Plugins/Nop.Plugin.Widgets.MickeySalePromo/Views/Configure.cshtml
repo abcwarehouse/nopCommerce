@@ -5,15 +5,6 @@
 }
 
 <form asp-controller="MickeySalePromo" asp-action="Configure" method="post" id="mickey-config-form">
-    <div class="content-header clearfix">
-        <div class="pull-right">
-            <button type="submit" name="save" class="btn bg-blue">
-                <i class="fa fa-floppy-o"></i>
-                @T("Admin.Common.Save")
-            </button>
-        </div>
-    </div>
-
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -54,15 +45,6 @@
                     <div class="col-md-9">
                         <nop-editor asp-for="RightBannerUrl" />
                         <span asp-validation-for="RightBannerUrl"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-3">
-                        <nop-label asp-for="DisclaimerText" />
-                    </div>
-                    <div class="col-md-9">
-                        <nop-textarea asp-for="DisclaimerText" rows="6" />
-                        <span asp-validation-for="DisclaimerText"></span>
                     </div>
                 </div>
             </div>
@@ -154,8 +136,13 @@
                             </div>
 
                             <div class="form-group">
-                                <label>Product Disclaimer Text (Optional)</label>
-                                <input type="text" name="Products[@i].DisclaimerText" value="@Model.Products[i].DisclaimerText" class="form-control" placeholder="*Vehicles with factory security systems may require additional interface" />
+                                <div class="form-check">
+                                    <input type="hidden" name="Products[@i].ShowDisclaimer" value="false" />
+                                    <input type="checkbox" name="Products[@i].ShowDisclaimer" value="true" @(Model.Products[i].ShowDisclaimer ? "checked" : "") class="form-check-input" id="disclaimer-@i" />
+                                    <label class="form-check-label" for="disclaimer-@i">
+                                        Show Disclaimer: "Vehicles with factory security systems may require additional interface"
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     }
@@ -165,6 +152,15 @@
                     <i class="fa fa-plus"></i> Add Product
                 </button>
             </div>
+        </div>
+    </div>
+
+    <div class="content-footer clearfix">
+        <div class="pull-right">
+            <button type="submit" name="save" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                @T("Admin.Common.Save")
+            </button>
         </div>
     </div>
 </form>
@@ -253,8 +249,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Product Disclaimer Text (Optional)</label>
-                        <input type="text" name="Products[${productIndex}].DisclaimerText" class="form-control" placeholder="*Vehicles with factory security systems may require additional interface" />
+                        <div class="form-check">
+                            <input type="hidden" name="Products[${productIndex}].ShowDisclaimer" value="false" />
+                            <input type="checkbox" name="Products[${productIndex}].ShowDisclaimer" value="true" class="form-check-input" id="disclaimer-${productIndex}" />
+                            <label class="form-check-label" for="disclaimer-${productIndex}">
+                                Show Disclaimer: "Vehicles with factory security systems may require additional interface"
+                            </label>
+                        </div>
                     </div>
                 </div>
             `;

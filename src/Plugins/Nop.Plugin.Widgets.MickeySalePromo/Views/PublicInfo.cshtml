@@ -17,13 +17,6 @@
         ? "https://www.abcwarehouse.com/images/mickeyshorr/feature2_600x233_7-3-25.jpg"
         : Model.RightBannerUrl;
 
-    var disclaimerText = string.IsNullOrEmpty(Model.DisclaimerText)
-        ? @"<p>* Free installation offer includes normal installation for remote start function & non-touchscreen in-dash stereo head unit. Additional optional features may be added depending on vehicle make/model. Vehicles with factory security systems may require an additional interface. Parts and extensive installation are extra. A basic materials fee of $13.99 applies. Prior sales not included.</p>
-<p>** Offers may not be combined, terms and conditions apply, see store associates for details.</p>
-<p>²applies to authorized resellers only</p>
-<p>³Installation offer includes normal installation and applies to new purchases made at Mickey Shorr. May not be combined with any other promotional offers. Excludes off-premise installs. A basic materials fee of $13.99 applies. Additional parts, extensive labor and extensive materials fee extra. Prior sales not included.</p>"
-        : Model.DisclaimerText;
-
     var products = Model.GetProducts();
 }
 
@@ -100,9 +93,9 @@
                             </div>
                         </div>
 
-                        @if (!string.IsNullOrEmpty(product.DisclaimerText))
+                        @if (product.ShowDisclaimer)
                         {
-                            <div class="disclaimer-text">@product.DisclaimerText</div>
+                            <div class="disclaimer-text">*Vehicles with factory security systems may require additional interface</div>
                         }
                     </div>
                     <div class="sale-ad-button">
@@ -124,7 +117,10 @@
     </div>
 
     <div class="disclaimer">
-        @Html.Raw(disclaimerText)
+        <p>* Free installation offer includes normal installation for remote start function & non-touchscreen in-dash stereo head unit. Additional optional features may be added depending on vehicle make/model. Vehicles with factory security systems may require an additional interface. Parts and extensive installation are extra. A basic materials fee of $13.99 applies. Prior sales not included.</p>
+        <p>** Offers may not be combined, terms and conditions apply, see store associates for details.</p>
+        <p>²applies to authorized resellers only</p>
+        <p>³Installation offer includes normal installation and applies to new purchases made at Mickey Shorr. May not be combined with any other promotional offers. Excludes off-premise installs. A basic materials fee of $13.99 applies. Additional parts, extensive labor and extensive materials fee extra. Prior sales not included.</p>
     </div>
 </div>
 

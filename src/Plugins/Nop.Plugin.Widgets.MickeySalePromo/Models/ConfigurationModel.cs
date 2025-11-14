@@ -23,9 +23,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.RightBannerUrl")]
         public string RightBannerUrl { get; set; }
 
-        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.DisclaimerText")]
-        public string DisclaimerText { get; set; }
-
         public List<SaleProductModel> Products { get; set; }
     }
 }

@@ -38,7 +38,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.Product.ProductId")]
         public int ProductId { get; set; }
 
-        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.Product.DisclaimerText")]
-        public string DisclaimerText { get; set; }
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.Product.ShowDisclaimer")]
+        public bool ShowDisclaimer { get; set; }
     }
 }

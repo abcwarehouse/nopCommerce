@@ -10,7 +10,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public string TopBannerMobileUrl { get; set; }
         public string LeftBannerUrl { get; set; }
         public string RightBannerUrl { get; set; }
-        public string DisclaimerText { get; set; }
 
         // Store products as JSON string
         public string ProductsJson { get; set; }
@@ -27,7 +26,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 TopBannerMobileUrl = TopBannerMobileUrl,
                 LeftBannerUrl = LeftBannerUrl,
                 RightBannerUrl = RightBannerUrl,
-                DisclaimerText = DisclaimerText,
                 Products = products
             };
         }
@@ -44,7 +42,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 TopBannerMobileUrl = model.TopBannerMobileUrl,
                 LeftBannerUrl = model.LeftBannerUrl,
                 RightBannerUrl = model.RightBannerUrl,
-                DisclaimerText = model.DisclaimerText,
                 ProductsJson = productsJson
             };
         }
