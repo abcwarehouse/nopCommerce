@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -47,8 +48,24 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
         [HttpPost]
         public async Task<IActionResult> Configure(ConfigurationModel model)
         {
+            // Debug: Log what we're receiving
+            var productCount = model.Products?.Count ?? 0;
+            System.Diagnostics.Debug.WriteLine($"Products received: {productCount}");
+
+            if (model.Products != null)
+            {
+                for (int i = 0; i < model.Products.Count; i++)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Product {i}: ItemNumber={model.Products[i].ItemNumber}, Sku={model.Products[i].Sku}");
+                }
+            }
+
             if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                System.Diagnostics.Debug.WriteLine($"ModelState Errors: {string.Join(", ", errors)}");
                 return Configure();
+            }
 
             // Start with current settings to preserve existing values
             var settings = new MickeySalePromoSettings
@@ -61,6 +78,8 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                     ? JsonConvert.SerializeObject(model.Products)
                     : string.Empty
             };
+
+            System.Diagnostics.Debug.WriteLine($"ProductsJson being saved: {settings.ProductsJson}");
 
             // Create the upload directory if it doesn't exist
             var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");
