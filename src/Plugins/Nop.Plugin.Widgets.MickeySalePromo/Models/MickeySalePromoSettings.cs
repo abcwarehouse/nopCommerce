@@ -11,6 +11,9 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public string LeftBannerUrl { get; set; }
         public string RightBannerUrl { get; set; }
 
+        // Widget zone where all products will be displayed
+        public string WidgetZone { get; set; }
+
         // Store products as JSON string
         public string ProductsJson { get; set; }
 
@@ -26,6 +29,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 TopBannerMobileUrl = TopBannerMobileUrl,
                 LeftBannerUrl = LeftBannerUrl,
                 RightBannerUrl = RightBannerUrl,
+                WidgetZone = WidgetZone,
                 Products = products
             };
         }

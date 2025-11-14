@@ -83,6 +83,21 @@
                         <span class="text-muted">Upload a new image to replace the current one</span>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <label>Widget Zone (Where to Display)</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select name="WidgetZone" class="form-control">
+                            <option value="">-- Select Widget Zone --</option>
+                            @foreach (var zone in Model.AvailableWidgetZones)
+                            {
+                                <option value="@zone.Value" selected="@(Model.WidgetZone == zone.Value)">@zone.Text</option>
+                            }
+                        </select>
+                        <span class="text-muted">Choose where all sale products will be displayed on the site</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -101,28 +116,16 @@
                             <h4>Product #@(i + 1)</h4>
 
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Item Number</label>
                                         <input type="text" name="Products[@i].ItemNumber" value="@Model.Products[i].ItemNumber" class="form-control" />
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Product ID (for Add to Cart)</label>
                                         <input type="number" name="Products[@i].ProductId" value="@Model.Products[i].ProductId" class="form-control" />
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Widget Zone (Where to Display)</label>
-                                        <select name="Products[@i].WidgetZone" class="form-control widget-zone-select">
-                                            <option value="">-- Select Widget Zone --</option>
-                                            @foreach (var zone in Model.AvailableWidgetZones)
-                                            {
-                                                <option value="@zone.Value" selected="@(Model.Products[i].WidgetZone == zone.Value)">@zone.Text</option>
-                                            }
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -216,17 +219,6 @@
     $(document).ready(function() {
         var productIndex = @Model.Products.Count;
 
-        // Widget zones for the dropdown
-        var widgetZones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableWidgetZones.Select(z => new { text = z.Text, value = z.Value })));
-
-        function generateWidgetZoneOptions() {
-            var options = '<option value="">-- Select Widget Zone --</option>';
-            widgetZones.forEach(function(zone) {
-                options += '<option value="' + zone.value + '">' + zone.text + '</option>';
-            });
-            return options;
-        }
-
         $('#add-product').click(function() {
             var html = `
                 <div class="product-item" data-index="${productIndex}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative;">
@@ -236,24 +228,16 @@
                     <h4>Product #${productIndex + 1}</h4>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Item Number</label>
                                 <input type="text" name="Products[${productIndex}].ItemNumber" class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label>Product ID (for Add to Cart)</label>
                                 <input type="number" name="Products[${productIndex}].ProductId" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Widget Zone (Where to Display)</label>
-                                <select name="Products[${productIndex}].WidgetZone" class="form-control widget-zone-select">
-                                    ${generateWidgetZoneOptions()}
-                                </select>
                             </div>
                         </div>
                     </div>

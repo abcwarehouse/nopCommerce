@@ -84,6 +84,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 TopBannerMobileUrl = _settings.TopBannerMobileUrl,
                 LeftBannerUrl = _settings.LeftBannerUrl,
                 RightBannerUrl = _settings.RightBannerUrl,
+                WidgetZone = model.WidgetZone,
                 ProductsJson = model.Products != null && model.Products.Count > 0
                     ? JsonConvert.SerializeObject(model.Products)
                     : string.Empty

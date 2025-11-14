@@ -39,6 +39,9 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.RightBannerUpload")]
         public IFormFile RightBannerUpload { get; set; }
 
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.WidgetZone")]
+        public string WidgetZone { get; set; }
+
         public List<SaleProductModel> Products { get; set; }
 
         public IList<SelectListItem> AvailableWidgetZones { get; set; }
