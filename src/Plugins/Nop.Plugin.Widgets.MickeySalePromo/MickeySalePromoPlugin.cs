@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nop.Core;
+using Nop.Plugin.Widgets.MickeySalePromo.Models;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
@@ -14,15 +15,18 @@ namespace Nop.Plugin.Widgets.MickeySalePromo
         private readonly IWebHelper _webHelper;
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
+        private readonly MickeySalePromoSettings _settings;
 
         public MickeySalePromoPlugin(
             IWebHelper webHelper,
             ILocalizationService localizationService,
-            ISettingService settingService)
+            ISettingService settingService,
+            MickeySalePromoSettings settings)
         {
             _webHelper = webHelper;
             _localizationService = localizationService;
             _settingService = settingService;
+            _settings = settings;
         }
 
         public bool HideInWidgetList => false;
@@ -34,10 +38,15 @@ namespace Nop.Plugin.Widgets.MickeySalePromo
 
         public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return Task.FromResult<IList<string>>(new List<string>
+            // Return the configured widget zone from settings
+            var widgetZones = new List<string>();
+
+            if (!string.IsNullOrEmpty(_settings.WidgetZone))
             {
-                "sales_ad_page"
-            });
+                widgetZones.Add(_settings.WidgetZone);
+            }
+
+            return Task.FromResult<IList<string>>(widgetZones);
         }
 
         public override string GetConfigurationPageUrl()
