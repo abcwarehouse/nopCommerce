@@ -77,81 +77,92 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Configure");
 
-            // Start with current settings to preserve existing values
-            var settings = new MickeySalePromoSettings
+            try
             {
-                TopBannerDesktopUrl = _settings.TopBannerDesktopUrl,
-                TopBannerMobileUrl = _settings.TopBannerMobileUrl,
-                LeftBannerUrl = _settings.LeftBannerUrl,
-                RightBannerUrl = _settings.RightBannerUrl,
-                WidgetZone = model.WidgetZone,
-                ProductsJson = model.Products != null && model.Products.Count > 0
-                    ? JsonConvert.SerializeObject(model.Products)
-                    : string.Empty
-            };
-
-            // Create the upload directory if it doesn't exist
-            var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");
-            _fileProvider.CreateDirectory(uploadPath);
-
-            // Process Top Banner Desktop upload (only update if new file uploaded)
-            if (model.TopBannerDesktopUpload != null && model.TopBannerDesktopUpload.Length > 0)
-            {
-                var fileName = $"top-banner-desktop{Path.GetExtension(model.TopBannerDesktopUpload.FileName)}";
-                var filePath = _fileProvider.Combine(uploadPath, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Start with current settings to preserve existing values
+                var settings = new MickeySalePromoSettings
                 {
-                    await model.TopBannerDesktopUpload.CopyToAsync(fileStream);
+                    TopBannerDesktopUrl = _settings.TopBannerDesktopUrl,
+                    TopBannerMobileUrl = _settings.TopBannerMobileUrl,
+                    LeftBannerUrl = _settings.LeftBannerUrl,
+                    RightBannerUrl = _settings.RightBannerUrl,
+                    WidgetZone = model.WidgetZone,
+                    ProductsJson = model.Products != null && model.Products.Count > 0
+                        ? JsonConvert.SerializeObject(model.Products)
+                        : string.Empty
+                };
+
+                // Create the upload directory if it doesn't exist
+                var uploadPath = _fileProvider.MapPath("~/images/mickey-sale-promo");
+                if (!_fileProvider.DirectoryExists(uploadPath))
+                {
+                    _fileProvider.CreateDirectory(uploadPath);
                 }
 
-                settings.TopBannerDesktopUrl = $"/images/mickey-sale-promo/{fileName}";
-            }
-
-            // Process Top Banner Mobile upload (only update if new file uploaded)
-            if (model.TopBannerMobileUpload != null && model.TopBannerMobileUpload.Length > 0)
-            {
-                var fileName = $"top-banner-mobile{Path.GetExtension(model.TopBannerMobileUpload.FileName)}";
-                var filePath = _fileProvider.Combine(uploadPath, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Process Top Banner Desktop upload (only update if new file uploaded)
+                if (model.TopBannerDesktopUpload != null && model.TopBannerDesktopUpload.Length > 0)
                 {
-                    await model.TopBannerMobileUpload.CopyToAsync(fileStream);
+                    var fileName = $"top-banner-desktop{Path.GetExtension(model.TopBannerDesktopUpload.FileName)}";
+                    var filePath = _fileProvider.Combine(uploadPath, fileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.TopBannerDesktopUpload.CopyToAsync(fileStream);
+                    }
+
+                    settings.TopBannerDesktopUrl = $"/images/mickey-sale-promo/{fileName}";
                 }
 
-                settings.TopBannerMobileUrl = $"/images/mickey-sale-promo/{fileName}";
-            }
-
-            // Process Left Banner upload (only update if new file uploaded)
-            if (model.LeftBannerUpload != null && model.LeftBannerUpload.Length > 0)
-            {
-                var fileName = $"left-banner{Path.GetExtension(model.LeftBannerUpload.FileName)}";
-                var filePath = _fileProvider.Combine(uploadPath, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Process Top Banner Mobile upload (only update if new file uploaded)
+                if (model.TopBannerMobileUpload != null && model.TopBannerMobileUpload.Length > 0)
                 {
-                    await model.LeftBannerUpload.CopyToAsync(fileStream);
+                    var fileName = $"top-banner-mobile{Path.GetExtension(model.TopBannerMobileUpload.FileName)}";
+                    var filePath = _fileProvider.Combine(uploadPath, fileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.TopBannerMobileUpload.CopyToAsync(fileStream);
+                    }
+
+                    settings.TopBannerMobileUrl = $"/images/mickey-sale-promo/{fileName}";
                 }
 
-                settings.LeftBannerUrl = $"/images/mickey-sale-promo/{fileName}";
-            }
-
-            // Process Right Banner upload (only update if new file uploaded)
-            if (model.RightBannerUpload != null && model.RightBannerUpload.Length > 0)
-            {
-                var fileName = $"right-banner{Path.GetExtension(model.RightBannerUpload.FileName)}";
-                var filePath = _fileProvider.Combine(uploadPath, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                // Process Left Banner upload (only update if new file uploaded)
+                if (model.LeftBannerUpload != null && model.LeftBannerUpload.Length > 0)
                 {
-                    await model.RightBannerUpload.CopyToAsync(fileStream);
+                    var fileName = $"left-banner{Path.GetExtension(model.LeftBannerUpload.FileName)}";
+                    var filePath = _fileProvider.Combine(uploadPath, fileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.LeftBannerUpload.CopyToAsync(fileStream);
+                    }
+
+                    settings.LeftBannerUrl = $"/images/mickey-sale-promo/{fileName}";
                 }
 
-                settings.RightBannerUrl = $"/images/mickey-sale-promo/{fileName}";
-            }
+                // Process Right Banner upload (only update if new file uploaded)
+                if (model.RightBannerUpload != null && model.RightBannerUpload.Length > 0)
+                {
+                    var fileName = $"right-banner{Path.GetExtension(model.RightBannerUpload.FileName)}";
+                    var filePath = _fileProvider.Combine(uploadPath, fileName);
 
-            await _settingService.SaveSettingAsync(settings);
-            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.RightBannerUpload.CopyToAsync(fileStream);
+                    }
+
+                    settings.RightBannerUrl = $"/images/mickey-sale-promo/{fileName}";
+                }
+
+                await _settingService.SaveSettingAsync(settings);
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ErrorNotification($"Error saving configuration: {ex.Message}");
+                return RedirectToAction("Configure");
+            }
 
             // Redirect to force a fresh load of settings from the database
             return RedirectToAction("Configure");

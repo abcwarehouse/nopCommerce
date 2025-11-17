@@ -46,6 +46,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 TopBannerMobileUrl = model.TopBannerMobileUrl,
                 LeftBannerUrl = model.LeftBannerUrl,
                 RightBannerUrl = model.RightBannerUrl,
+                WidgetZone = model.WidgetZone,
                 ProductsJson = productsJson
             };
         }
