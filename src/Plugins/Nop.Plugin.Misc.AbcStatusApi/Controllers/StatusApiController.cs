@@ -14,6 +14,13 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Nop.Core;
+using Nop.Services.Logging;
+using Nop.Plugin.Misc.AbcStatusApi.Models;
+using Nop.Services.Localization;
+using Nop.Services.Messages;
+using Nop.Services.Configuration;
+using Nop.Web.Framework;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
 {
@@ -25,6 +32,12 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
         IShipmentService _shipmentService;
         IAttributeUtilities _attributeUtilities;
         IProductService _productService;
+        private readonly AbcStatusApiSettings _abcStatusApiSettings;
+        private readonly ILogger _logger;
+        private readonly IStoreContext _storeContext;
+        private readonly ISettingService _settingService;
+        private readonly INotificationService _notificationService;
+        private readonly ILocalizationService _localizationService;
 
         public StatusApiController(
             ICustomerRegistrationService customerRegistrationService,
@@ -32,7 +45,13 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
             IOrderService orderService,
             IShipmentService shipmentService,
             IAttributeUtilities attributeUtilities,
-            IProductService productService
+            IProductService productService,
+            AbcStatusApiSettings abcStatusApiSettings,
+            ILogger logger,
+            IStoreContext storeContext,
+            ISettingService settingService,
+            INotificationService notificationService,
+            ILocalizationService localizationService
             )
         {
             _customerRegistrationService = customerRegistrationService;
@@ -41,19 +60,24 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
             _shipmentService = shipmentService;
             _attributeUtilities = attributeUtilities;
             _productService = productService;
-        }
-
-        public IActionResult SetStatus()
-        {
-            return Ok();
+            _abcStatusApiSettings = abcStatusApiSettings;
+            _logger = logger;
+            _storeContext = storeContext;
+            _settingService = settingService;
+            _notificationService = notificationService;
+            _localizationService = localizationService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetStatus(string request)
+        public async Task<IActionResult> SetStatus()
         {
             // add a sequence number
             string email = Request.Query["email"];
             string password = Request.Query["password"];
+            if (_abcStatusApiSettings.IsDebugModeEnabled)
+            {
+                await _logger.InformationAsync($"AbcStatusApi: SetStatus called with email: {email}, password: {password}");
+            }
             var loginResult = await _customerRegistrationService.ValidateCustomerAsync(email, password);
 
             if (loginResult != CustomerLoginResults.Successful) { return new BadRequestObjectResult("Unable to login, check credentials."); }
@@ -138,6 +162,42 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
                 // if the update wasn't successful, throw 400 Bad Request
                 return new BadRequestObjectResult(failureMessage);
             }
+        }
+
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        [AutoValidateAntiforgeryToken]
+        public ActionResult Configure()
+        {
+            var model = new ConfigModel
+            {
+                IsDebugModeEnabled = _abcStatusApiSettings.IsDebugModeEnabled
+            };
+
+            return View("~/Plugins/Misc.AbcStatusApi/Views/Configure.cshtml", model);
+        }
+
+        [HttpPost]
+        [AuthorizeAdmin]
+        [Area(AreaNames.Admin)]
+        [AutoValidateAntiforgeryToken]
+        public async Task<ActionResult> Configure(ConfigModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Configure();
+            }
+
+            var settings = new AbcStatusApiSettings()
+            {
+                IsDebugModeEnabled = model.IsDebugModeEnabled
+            };
+
+            await _settingService.SaveSettingAsync(settings);
+            _notificationService.SuccessNotification(
+                await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
+
+            return Configure();
         }
 
         /// <summary>
