@@ -110,7 +110,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                         await model.TopBannerDesktopUpload.CopyToAsync(fileStream);
                     }
 
-                    settings.TopBannerDesktopUrl = $"/images/mickey-sale-promo/{fileName}";
+                    settings.TopBannerDesktopUrl = $"https://www.mickeyshorr.com/images/mickey-sale-promo/{fileName}";
                 }
 
                 // Process Top Banner Mobile upload (only update if new file uploaded)
@@ -124,7 +124,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                         await model.TopBannerMobileUpload.CopyToAsync(fileStream);
                     }
 
-                    settings.TopBannerMobileUrl = $"/images/mickey-sale-promo/{fileName}";
+                    settings.TopBannerMobileUrl = $"https://www.mickeyshorr.com/images/mickey-sale-promo/{fileName}";
                 }
 
                 // Process Left Banner upload (only update if new file uploaded)
@@ -138,7 +138,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                         await model.LeftBannerUpload.CopyToAsync(fileStream);
                     }
 
-                    settings.LeftBannerUrl = $"/images/mickey-sale-promo/{fileName}";
+                    settings.LeftBannerUrl = $"https://www.mickeyshorr.com/images/mickey-sale-promo/{fileName}";
                 }
 
                 // Process Right Banner upload (only update if new file uploaded)
@@ -152,7 +152,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                         await model.RightBannerUpload.CopyToAsync(fileStream);
                     }
 
-                    settings.RightBannerUrl = $"/images/mickey-sale-promo/{fileName}";
+                    settings.RightBannerUrl = $"https://www.mickeyshorr.com/images/mickey-sale-promo/{fileName}";
                 }
 
                 await _settingService.SaveSettingAsync(settings);
