@@ -393,12 +393,12 @@ namespace Nop.Web.Controllers
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
+        /// 
         private async Task<bool> CheckManufacturerAvailabilityAsync(Manufacturer manufacturer)
         {
-            var isAvailable = true;
-
+            // If null or deleted, instantly return false
             if (manufacturer == null || manufacturer.Deleted)
-                isAvailable = false;
+                return false;
 
             var notAvailable =
                 //published?
@@ -408,13 +408,17 @@ namespace Nop.Web.Controllers
                 //Store mapping
                 !await _storeMappingService.AuthorizeAsync(manufacturer);
             //Check whether the current user has a "Manage categories" permission (usually a store owner)
-            //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers);
-            if (notAvailable && !hasAdminAccess)
-                isAvailable = false;
+            //Check whether the current user has admin access
+            var hasAdminAccess =
+                await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) &&
+                await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers);
 
-            return isAvailable;
+            if (notAvailable && !hasAdminAccess)
+                return false;
+
+            return true;
         }
+
 
         /// <returns>A task that represents the asynchronous operation</returns>
         private Task<bool> CheckVendorAvailabilityAsync(Vendor vendor)
