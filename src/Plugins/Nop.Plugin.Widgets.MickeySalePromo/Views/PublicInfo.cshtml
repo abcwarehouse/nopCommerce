@@ -1,53 +1,62 @@
 @model Nop.Plugin.Widgets.MickeySalePromo.Models.MickeySalePromoSettings
 
 @{
-    var topBannerDesktop = string.IsNullOrEmpty(Model.TopBannerDesktopUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/1200x500_7-3-25.jpg"
-        : Model.TopBannerDesktopUrl;
-
-    var topBannerMobile = string.IsNullOrEmpty(Model.TopBannerMobileUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/1200x1000_7-3-25.jpg"
-        : Model.TopBannerMobileUrl;
-
-    var leftBanner = string.IsNullOrEmpty(Model.LeftBannerUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/feature1_600x233_7-3-25.jpg"
-        : Model.LeftBannerUrl;
-
-    var rightBanner = string.IsNullOrEmpty(Model.RightBannerUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/feature2_600x233_7-3-25.jpg"
-        : Model.RightBannerUrl;
-
+    var topBannerDesktop = Model.TopBannerDesktopUrl;
+    var topBannerMobile = Model.TopBannerMobileUrl;
+    var leftBanner = Model.LeftBannerUrl;
+    var rightBanner = Model.RightBannerUrl;
     var products = Model.GetProducts();
 }
 
 <!-- Mickey Shorr Sale Promotional Page -->
-<div class="mickey-sale-banners">
-    <div class="mickey-top-banner">
-        <img
-          src="@topBannerDesktop"
-          alt="Mickey Shorr Top Promotion"
-          class="desktop-img"
-        />
-        <img
-          src="@topBannerMobile"
-          alt="Mickey Shorr Mobile Promotion"
-          class="mobile-img"
-        />
-    </div>
+@if (!string.IsNullOrEmpty(topBannerDesktop) || !string.IsNullOrEmpty(topBannerMobile) || !string.IsNullOrEmpty(leftBanner) || !string.IsNullOrEmpty(rightBanner))
+{
+    <div class="mickey-sale-banners">
+        @if (!string.IsNullOrEmpty(topBannerDesktop) || !string.IsNullOrEmpty(topBannerMobile))
+        {
+            <div class="mickey-top-banner">
+                @if (!string.IsNullOrEmpty(topBannerDesktop))
+                {
+                    <img
+                      src="@topBannerDesktop"
+                      alt="Mickey Shorr Top Promotion"
+                      class="desktop-img"
+                    />
+                }
+                @if (!string.IsNullOrEmpty(topBannerMobile))
+                {
+                    <img
+                      src="@topBannerMobile"
+                      alt="Mickey Shorr Mobile Promotion"
+                      class="mobile-img"
+                    />
+                }
+            </div>
+        }
 
-    <div class="bottom-container">
-        <div class="mickey-left-banner banner-half">
-            <img src="@leftBanner" style="border: solid 2px #000;" alt="Mickey Shorr Left Promotion" />
-            <img class="right-border-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right.png" />
-            <img class="bottom-boarder-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom.png" />
-        </div>
-        <div class="mickey-right-banner banner-half">
-            <img src="@rightBanner" style="border: solid 2px #000;" alt="Mickey Shorr Right Promotion" />
-            <img class="right-border-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right.png" />
-            <img class="bottom-boarder-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom.png" />
-        </div>
+        @if (!string.IsNullOrEmpty(leftBanner) || !string.IsNullOrEmpty(rightBanner))
+        {
+            <div class="bottom-container">
+                @if (!string.IsNullOrEmpty(leftBanner))
+                {
+                    <div class="mickey-left-banner banner-half">
+                        <img src="@leftBanner" style="border: solid 2px #000;" alt="Mickey Shorr Left Promotion" />
+                        <img class="right-border-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right.png" />
+                        <img class="bottom-boarder-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom.png" />
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(rightBanner))
+                {
+                    <div class="mickey-right-banner banner-half">
+                        <img src="@rightBanner" style="border: solid 2px #000;" alt="Mickey Shorr Right Promotion" />
+                        <img class="right-border-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Right.png" />
+                        <img class="bottom-boarder-img" src="https://www.mickeyshorr.com/images/uploaded/default/MickeyAd-Product-Background-Bottom.png" />
+                    </div>
+                }
+            </div>
+        }
     </div>
-</div>
+}
 
 <div class="page promo-page">
     <div class="page-body">
