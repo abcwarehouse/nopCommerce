@@ -23,6 +23,10 @@
                                 <img src="@Model.TopBannerDesktopUrl" alt="Top Banner Desktop" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
                                 <br />
                                 <small class="text-muted">@Model.TopBannerDesktopUrl</small>
+                                <br />
+                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('TopBannerDesktop')">
+                                    <i class="fa fa-trash"></i> Remove Image
+                                </button>
                             </div>
                         }
                         <input type="file" name="TopBannerDesktopUpload" class="form-control" accept="image/*" />
@@ -41,6 +45,10 @@
                                 <img src="@Model.TopBannerMobileUrl" alt="Top Banner Mobile" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
                                 <br />
                                 <small class="text-muted">@Model.TopBannerMobileUrl</small>
+                                <br />
+                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('TopBannerMobile')">
+                                    <i class="fa fa-trash"></i> Remove Image
+                                </button>
                             </div>
                         }
                         <input type="file" name="TopBannerMobileUpload" class="form-control" accept="image/*" />
@@ -59,6 +67,10 @@
                                 <img src="@Model.LeftBannerUrl" alt="Left Banner" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
                                 <br />
                                 <small class="text-muted">@Model.LeftBannerUrl</small>
+                                <br />
+                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('LeftBanner')">
+                                    <i class="fa fa-trash"></i> Remove Image
+                                </button>
                             </div>
                         }
                         <input type="file" name="LeftBannerUpload" class="form-control" accept="image/*" />
@@ -77,6 +89,10 @@
                                 <img src="@Model.RightBannerUrl" alt="Right Banner" style="max-width: 300px; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
                                 <br />
                                 <small class="text-muted">@Model.RightBannerUrl</small>
+                                <br />
+                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('RightBanner')">
+                                    <i class="fa fa-trash"></i> Remove Image
+                                </button>
                             </div>
                         }
                         <input type="file" name="RightBannerUpload" class="form-control" accept="image/*" />
@@ -335,5 +351,27 @@
                 }
             });
         });
+
+        // Function to remove banner images
+        window.removeBanner = function(bannerType) {
+            if (confirm('Are you sure you want to remove this banner image?')) {
+                // Submit a form to remove the banner
+                var form = $('<form>', {
+                    'method': 'POST',
+                    'action': '@Url.Action("RemoveBanner", "MickeySalePromo")'
+                });
+
+                var input = $('<input>', {
+                    'type': 'hidden',
+                    'name': 'bannerType',
+                    'value': bannerType
+                });
+
+                form.append(input);
+                form.append('@Html.AntiForgeryToken()');
+                $('body').append(form);
+                form.submit();
+            }
+        };
     });
 </script>

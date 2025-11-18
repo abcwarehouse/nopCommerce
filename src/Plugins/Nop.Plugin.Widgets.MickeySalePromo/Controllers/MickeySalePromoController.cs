@@ -167,5 +167,48 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
             // Redirect to force a fresh load of settings from the database
             return RedirectToAction("Configure");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveBanner(string bannerType)
+        {
+            try
+            {
+                var settings = new MickeySalePromoSettings
+                {
+                    TopBannerDesktopUrl = _settings.TopBannerDesktopUrl,
+                    TopBannerMobileUrl = _settings.TopBannerMobileUrl,
+                    LeftBannerUrl = _settings.LeftBannerUrl,
+                    RightBannerUrl = _settings.RightBannerUrl,
+                    WidgetZone = _settings.WidgetZone,
+                    ProductsJson = _settings.ProductsJson
+                };
+
+                // Clear the specified banner URL
+                switch (bannerType)
+                {
+                    case "TopBannerDesktop":
+                        settings.TopBannerDesktopUrl = string.Empty;
+                        break;
+                    case "TopBannerMobile":
+                        settings.TopBannerMobileUrl = string.Empty;
+                        break;
+                    case "LeftBanner":
+                        settings.LeftBannerUrl = string.Empty;
+                        break;
+                    case "RightBanner":
+                        settings.RightBannerUrl = string.Empty;
+                        break;
+                }
+
+                await _settingService.SaveSettingAsync(settings);
+                _notificationService.SuccessNotification("Banner image removed successfully.");
+            }
+            catch (Exception ex)
+            {
+                _notificationService.ErrorNotification($"Error removing banner: {ex.Message}");
+            }
+
+            return RedirectToAction("Configure");
+        }
     }
 }
