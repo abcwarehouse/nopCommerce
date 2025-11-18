@@ -45,6 +45,26 @@ public class ListrakService : IListrakService
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+        var payload = new
+        {
+            phoneNumber = phoneNumber,
+            shortCodeId = "1026",   // your short code
+            listId = "152"          // your list ID
+        };
+
+        return await client.PostAsJsonAsync(
+            "https://api.listrak.com/sms/v1/Subscription/Initiate",
+            payload
+        );
+    }
+
+    //This can be cleaned up later if the above works
+    public async Task<HttpResponseMessage> SubscribePhoneNumberAsyncOld(string phoneNumber)
+    {
+        var token = await GetTokenAsync();
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
         var listrakData = new
         {
             ShortCodeId = "1026",
