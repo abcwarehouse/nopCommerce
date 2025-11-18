@@ -2,19 +2,19 @@
 
 @{
     var topBannerDesktop = string.IsNullOrEmpty(Model.TopBannerDesktopUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/1200x500_7-3-25.jpg"
+        ? "https://www.abcwarehouse.com/images/mickey-sale-promo/Desktop-Mickey-Banner.svg"
         : Model.TopBannerDesktopUrl;
 
     var topBannerMobile = string.IsNullOrEmpty(Model.TopBannerMobileUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/1200x1000_7-3-25.jpg"
+        ? "https://www.abcwarehouse.com/images/mickey-sale-promo/Mobile-Mickey-Banner.svg"
         : Model.TopBannerMobileUrl;
 
     var leftBanner = string.IsNullOrEmpty(Model.LeftBannerUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/feature1_600x233_7-3-25.jpg"
+        ? "https://www.abcwarehouse.com/images/mickey-sale-promo/Left-Mickey-Banner.svg"
         : Model.LeftBannerUrl;
 
     var rightBanner = string.IsNullOrEmpty(Model.RightBannerUrl)
-        ? "https://www.abcwarehouse.com/images/mickeyshorr/feature2_600x233_7-3-25.jpg"
+        ? "https://www.abcwarehouse.com/images/mickey-sale-promo/Right-Mickey-Banner.svg"
         : Model.RightBannerUrl;
 
     var products = Model.GetProducts();
