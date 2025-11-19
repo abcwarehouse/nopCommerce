@@ -1,4 +1,6 @@
-﻿@model CatalogProductsModel
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
+
+@model CatalogProductsModel
 
 <script src="~/js/public.catalogproducts.js" asp-location="Footer"></script>
 
@@ -8,6 +10,7 @@
         @await Html.PartialAsync("_ProductsInGridOrLines", Model)
     </div>
 </div>
+@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryBottom, additionalData = Model })
 
 <script asp-location="Footer">
     $(function() {

@@ -73,7 +73,7 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 Zip = taxRate.Zip,
                 Percentage = taxRate.Percentage,
                 IsTaxJarEnabled = taxRate.IsTaxJarEnabled
-            }).ToList());
+            }).ToList(), cacheKey);
 
             var countryId = address.CountryId;
             var stateProvinceId = address.StateProvinceId;
