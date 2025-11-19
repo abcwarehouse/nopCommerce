@@ -106,7 +106,10 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 // Process Top Banner Desktop upload (only update if new file uploaded)
                 if (model.TopBannerDesktopUpload != null && model.TopBannerDesktopUpload.Length > 0)
                 {
-                    var fileName = $"top-banner-desktop{Path.GetExtension(model.TopBannerDesktopUpload.FileName)}";
+                    var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    var originalFileName = Path.GetFileNameWithoutExtension(model.TopBannerDesktopUpload.FileName);
+                    var extension = Path.GetExtension(model.TopBannerDesktopUpload.FileName);
+                    var fileName = $"{originalFileName}-{timestamp}{extension}";
                     var filePath = _fileProvider.Combine(uploadPath, fileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -120,7 +123,10 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 // Process Top Banner Mobile upload (only update if new file uploaded)
                 if (model.TopBannerMobileUpload != null && model.TopBannerMobileUpload.Length > 0)
                 {
-                    var fileName = $"top-banner-mobile{Path.GetExtension(model.TopBannerMobileUpload.FileName)}";
+                    var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    var originalFileName = Path.GetFileNameWithoutExtension(model.TopBannerMobileUpload.FileName);
+                    var extension = Path.GetExtension(model.TopBannerMobileUpload.FileName);
+                    var fileName = $"{originalFileName}-{timestamp}{extension}";
                     var filePath = _fileProvider.Combine(uploadPath, fileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -134,7 +140,10 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 // Process Left Banner upload (only update if new file uploaded)
                 if (model.LeftBannerUpload != null && model.LeftBannerUpload.Length > 0)
                 {
-                    var fileName = $"left-banner{Path.GetExtension(model.LeftBannerUpload.FileName)}";
+                    var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    var originalFileName = Path.GetFileNameWithoutExtension(model.LeftBannerUpload.FileName);
+                    var extension = Path.GetExtension(model.LeftBannerUpload.FileName);
+                    var fileName = $"{originalFileName}-{timestamp}{extension}";
                     var filePath = _fileProvider.Combine(uploadPath, fileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -148,7 +157,10 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                 // Process Right Banner upload (only update if new file uploaded)
                 if (model.RightBannerUpload != null && model.RightBannerUpload.Length > 0)
                 {
-                    var fileName = $"right-banner{Path.GetExtension(model.RightBannerUpload.FileName)}";
+                    var timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    var originalFileName = Path.GetFileNameWithoutExtension(model.RightBannerUpload.FileName);
+                    var extension = Path.GetExtension(model.RightBannerUpload.FileName);
+                    var fileName = $"{originalFileName}-{timestamp}{extension}";
                     var filePath = _fileProvider.Combine(uploadPath, fileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
