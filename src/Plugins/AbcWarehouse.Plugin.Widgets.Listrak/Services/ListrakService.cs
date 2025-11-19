@@ -53,7 +53,7 @@ public class ListrakService : IListrakService
         };
 
         return await client.PostAsJsonAsync(
-            "https://api.listrak.com/sms/v1/Subscription",
+            "https://api.listrak.com/communication/v1/Sms/Subscriptions",
             payload
         );
     }
