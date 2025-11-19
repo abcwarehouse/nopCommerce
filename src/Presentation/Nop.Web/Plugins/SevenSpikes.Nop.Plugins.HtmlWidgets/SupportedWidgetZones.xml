@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <SupportedWidgetZones>
   <WidgetZone>account_navigation_after</WidgetZone>
   <WidgetZone>account_navigation_before</WidgetZone>
@@ -213,4 +213,5 @@
   <WidgetZone>cart_popup</WidgetZone>
   <WidgetZone>AboutUs</WidgetZone>
   <WidgetZone>AboutUsBottom</WidgetZone>
+  <WidgetZone>CategoryBottom</WidgetZone>
 </SupportedWidgetZones>

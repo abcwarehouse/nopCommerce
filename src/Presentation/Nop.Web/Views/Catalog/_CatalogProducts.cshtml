@@ -8,6 +8,8 @@
         @await Html.PartialAsync("_ProductsInGridOrLines", Model)
     </div>
 </div>
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryBottom, additionalData = Model })
+
 <script asp-location="Footer">
     $(function() {
         CatalogProducts.init({

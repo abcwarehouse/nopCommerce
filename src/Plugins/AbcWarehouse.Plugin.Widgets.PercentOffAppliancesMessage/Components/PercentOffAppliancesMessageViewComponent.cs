@@ -26,7 +26,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             "LG SIGNATURE", "LG STUDIO", "LG XBOOM", "LG", "LG APPLIANCES", 
         };
         private static readonly string[] BuyMoreBrands = {
-            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery",
+            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery",
             "Electrolux", "Electrolux ICON", "Electrolux Professional", "Miele",
         };
         private static readonly string[] ExcludedBrands = {
@@ -126,11 +126,11 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         }
 
         /// <summary>
-        /// Calculates and formats the discounted price (10% off).
+        /// Calculates and formats the discounted price (5% off - USED TO BE 10% ).
         /// </summary>
         private async Task<string> GetFormattedDiscountedPriceAsync(decimal originalPrice)
         {
-            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice * 0.9M);
+            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice * 0.95M);
             return await _priceFormatter.FormatPriceAsync(discounted);
         }
     }

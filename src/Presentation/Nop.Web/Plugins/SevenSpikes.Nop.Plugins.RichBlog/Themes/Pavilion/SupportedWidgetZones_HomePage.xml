@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <SupportedWidgetZones>
   <WidgetZone>pavilion_home_page_richblog</WidgetZone>
   <WidgetZone>home_page_top</WidgetZone>
@@ -11,4 +11,5 @@
   <!-- ABC custom -->
   <WidgetZone>AboutUs</WidgetZone>
   <WidgetZone>AboutUsBottom</WidgetZone>
+  <WidgetZone>CategoryBottom</WidgetZone>
 </SupportedWidgetZones>

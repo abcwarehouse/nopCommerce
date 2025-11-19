@@ -17,6 +17,8 @@
 @using Nop.Web.Framework.Events;                    @* PageRenderingEvent *@
 @using System.Globalization;                        @* CultureInfo *@
 @using Nop.Web.Components;                          @* WidgetViewComponent *@
+@using Nop.Services.Catalog
+@using Nop.Services.Seo
 
 @inject CatalogSettings catalogSettings
 @inject CommonSettings commonSettings
@@ -25,6 +27,10 @@
 @inject IWorkContext workContext
 @inject SeoSettings seoSettings
 @inject AppSettings appSettings
+@* custom *@
+@inject IProductService productService
+@inject ICategoryService categoryService
+@inject IUrlRecordService urlRecordService
 
 @{
     if (catalogSettings.DisplayAllPicturesOnCatalogPages)
@@ -70,7 +76,7 @@
     // ABC: shorten title to 60 chars
     string fullTitle = title.ToString();
     string shortTitle = string.Empty;
-    if(fullTitle.Length >= 60) 
+    if (fullTitle.Length >= 60) 
     {
         shortTitle = fullTitle.Substring(0, 60);
     }
