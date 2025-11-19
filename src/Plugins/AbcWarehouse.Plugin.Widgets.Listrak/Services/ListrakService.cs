@@ -39,7 +39,7 @@ public class ListrakService : IListrakService
         return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
     }
 
-    public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber)
+    public async Task<HttpResponseMessage> SubscribePhoneNumberAsyncHide(string phoneNumber)
     {
         var token = await GetTokenAsync();
         var client = _httpClientFactory.CreateClient();
@@ -59,7 +59,7 @@ public class ListrakService : IListrakService
     }
 
     //This can be cleaned up later if the above works
-    public async Task<HttpResponseMessage> SubscribePhoneNumberAsyncOld(string phoneNumber)
+    public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber)
     {
         var token = await GetTokenAsync();
         var client = _httpClientFactory.CreateClient();
