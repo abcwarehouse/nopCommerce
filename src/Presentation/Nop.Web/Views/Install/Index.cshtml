@@ -3,13 +3,15 @@
 @{
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>@ILS.GetResource("Title")</title>
+    
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <link rel="shortcut icon" href="/icons/icons_0/favicon.ico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" />
+    <link rel="shortcut icon" href="/icons/icons_0/favicon.ico" />
     @if (ILS.GetCurrentLanguage().IsRightToLeft)
     {
         <link href="@Url.Content("~/lib_npm/@laylazi/bootstrap-rtl/css/bootstrap-rtl.min.css")" type="text/css" rel="stylesheet" />
@@ -56,7 +58,7 @@
                         }, 1000);
                     }
 
-                    $(document).ready(function () {
+                    $(function() {
                         $('#installation-form').submit(function () {
                             if ($('#installation-form').valid()) {
                                 $("html, body").animate({ scrollTop: 0 }, 400);
@@ -66,7 +68,7 @@
                         });
                     });
 
-                    $(document).ready(function () {
+                    $(function() {
                         $('#restart-form').submit(function () {
                             $("html, body").animate({ scrollTop: 0 }, 400);
                             showThrobber('@Html.Raw(JavaScriptEncoder.Default.Encode(ILS.GetResource("RestartProgress")))');
@@ -74,7 +76,7 @@
                         });
                     });
 
-                    $(document).ready(function () {
+                    $(function() {
                         $('#@Html.IdFor(x => x.ConnectionStringRaw)').click(toggleSqlConnectionInfo);
 
                         $("input:checkbox[name=UseCustomCollation]").click(toggleCollation);
@@ -83,7 +85,7 @@
                         toggleCollation();
                     });
 
-                    $(document).ready(function () {
+                    $(function() {
                         $('#@Html.IdFor(m => m.DataProvider)').on('change', function() {
                             var integratedSecurityProviders = ['@((int)DataProviderType.SqlServer)']
                             if(!integratedSecurityProviders.includes($(this).val())) {
@@ -122,11 +124,11 @@
                     @if (!string.IsNullOrEmpty(Model.RestartUrl))
                     {
                         <text>
-                            $(document).ready(function () {
+                            $(function() {
                                 showThrobber('@Html.Raw(JavaScriptEncoder.Default.Encode(ILS.GetResource("RestartProgress")))');
                                 $.ajax({
                                     type: "GET",
-                                    url: "@Url.Action("RestartApplication", "Install")",
+                                    url: "@Url.RouteUrl("InstallationRestartApplication")",
                                     complete: function() {
                                         window.setTimeout(function () {
                                             window.location.replace('@Model.RestartUrl');
@@ -175,7 +177,7 @@
                                         @ILS.GetResource("Country")
                                     </label>
                                     <div class="col-sm-8">
-                                        <nop-select asp-for="Country" asp-items="Model.AvailableCountries" />
+                                        <select asp-for="Country" asp-items="Model.AvailableCountries" class="form-control"></select>
                                     </div>
                                 </div>
                             }
@@ -192,6 +194,16 @@
                                     </div>
                                 </div>
                             }
+                            <div class="form-group row">
+                                <div class="col-md-6 offset-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" asp-for="SubscribeNewsletters" />
+                                        <label class="form-check-label" for="@Html.IdFor(m => m.SubscribeNewsletters)">
+                                            @ILS.GetResource("SubscribeNewsletters")
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -205,7 +217,7 @@
                                     @ILS.GetResource("Database")
                                 </label>
                                 <div class="col-sm-8">
-                                    <nop-select asp-for="DataProvider" asp-items="Model.AvailableDataProviders" />
+                                    <select asp-for="DataProvider" asp-items="Model.AvailableDataProviders" class="form-control"></select>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -236,7 +248,7 @@
                                         @ILS.GetResource("ConnectionString")
                                     </label>
                                     <div class="col-sm-8">
-                                        <input asp-for="ConnectionString" class="form-control" />
+                                        <input asp-for="ConnectionString" class="form-control" autocomplete="off" />
                                         <span class="hint">
                                             @ILS.GetResource("Example"):<br />
                                             Data Source=sqlServerName;Initial Catalog=dbName;Persist Security Info=True;User

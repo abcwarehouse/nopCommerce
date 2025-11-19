@@ -12,7 +12,7 @@ using Nop.Core;
 namespace AbcWarehouse.Plugin.Widgets.AddressAutocomplete.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class AddressAutocompleteController : BasePluginController
     {
@@ -37,7 +37,7 @@ namespace AbcWarehouse.Plugin.Widgets.AddressAutocomplete.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public ActionResult Configure()
         {
@@ -47,7 +47,7 @@ namespace AbcWarehouse.Plugin.Widgets.AddressAutocomplete.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         [HttpPost]
         public async Task<ActionResult> Configure(ConfigModel model)

@@ -33,16 +33,16 @@
 }
 /* cross-page map elements */
 .map-wrapper .map {
-    height: 300px;
+    height: 350px;
 }
 .map-wrapper .map img {
     max-width: none;
     max-height: none;
 }
 #shop-address-input {
-    top: 10px !important;
 	width: 180px;
 	height: 30px;
+    margin: 10px;
 	border: none;
 	border-radius: 2px;
 	box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);

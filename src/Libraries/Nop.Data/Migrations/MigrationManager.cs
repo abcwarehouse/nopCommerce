@@ -1,248 +1,163 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using FluentMigrator;
-using FluentMigrator.Builders.Create;
-using FluentMigrator.Builders.Create.Table;
-using FluentMigrator.Builders.IfDatabase;
-using FluentMigrator.Expressions;
 using FluentMigrator.Infrastructure;
-using FluentMigrator.Model;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
-using Nop.Core;
-using Nop.Core.Infrastructure;
-using Nop.Data.Mapping;
-using Nop.Data.Mapping.Builders;
 
-namespace Nop.Data.Migrations
+namespace Nop.Data.Migrations;
+
+/// <summary>
+/// Represents the migration manager
+/// </summary>
+public partial class MigrationManager : IMigrationManager
 {
-    /// <summary>
-    /// Represents the migration manager
-    /// </summary>
-    public partial class MigrationManager : IMigrationManager
+    #region Fields
+
+    protected readonly IFilteringMigrationSource _filteringMigrationSource;
+    protected readonly IMigrationRunner _migrationRunner;
+    protected readonly IMigrationRunnerConventions _migrationRunnerConventions;
+    protected readonly Lazy<IVersionLoader> _versionLoader;
+
+    #endregion
+
+    #region Ctor
+
+    public MigrationManager(
+        IFilteringMigrationSource filteringMigrationSource,
+        IMigrationRunner migrationRunner,
+        IMigrationRunnerConventions migrationRunnerConventions,
+        Lazy<IVersionLoader> versionLoader)
     {
-        #region Fields
+        _versionLoader = versionLoader;
 
-        private readonly Dictionary<Type, Action<ICreateTableColumnAsTypeSyntax>> _typeMapping;
-        private readonly IFilteringMigrationSource _filteringMigrationSource;
-        private readonly IMigrationRunner _migrationRunner;
-        private readonly IMigrationRunnerConventions _migrationRunnerConventions;
-        private readonly IMigrationContext _migrationContext;
-        private readonly ITypeFinder _typeFinder;
-        private readonly Lazy<IVersionLoader> _versionLoader;
-
-        #endregion
-
-        #region Ctor
-
-        public MigrationManager(
-            IFilteringMigrationSource filteringMigrationSource,
-            IMigrationRunner migrationRunner,
-            IMigrationRunnerConventions migrationRunnerConventions,
-            IMigrationContext migrationContext,
-            ITypeFinder typeFinder)
-        {
-            _versionLoader = new Lazy<IVersionLoader>(() => EngineContext.Current.Resolve<IVersionLoader>());
-            
-            _typeMapping = new Dictionary<Type, Action<ICreateTableColumnAsTypeSyntax>>
-            {
-                [typeof(int)] = c => c.AsInt32(),
-                [typeof(long)] = c => c.AsInt64(),
-                [typeof(string)] = c => c.AsString(int.MaxValue).Nullable(),
-                [typeof(bool)] = c => c.AsBoolean(),
-                [typeof(decimal)] = c => c.AsDecimal(18, 4),
-                [typeof(DateTime)] = c => c.AsDateTime2(),
-                [typeof(byte[])] = c => c.AsBinary(int.MaxValue),
-                [typeof(Guid)] = c => c.AsGuid()
-            };
-
-            _filteringMigrationSource = filteringMigrationSource;
-            _migrationRunner = migrationRunner;
-            _migrationRunnerConventions = migrationRunnerConventions;
-            _migrationContext = migrationContext;
-            _typeFinder = typeFinder;
-        }
-
-        #endregion
-
-        #region Utils
-
-        /// <summary>
-        /// Defines the column specifications by default
-        /// </summary>
-        /// <param name="type">Type of entity</param>
-        /// <param name="create">An expression builder for a FluentMigrator.Expressions.CreateTableExpression</param>
-        /// <param name="propertyInfo">Property info</param>
-        /// <param name="canBeNullable">The value indicating whether this column is nullable</param>
-        protected virtual void DefineByOwnType(Type type, CreateTableExpressionBuilder create, PropertyInfo propertyInfo, bool canBeNullable = false)
-        {
-            var propType = propertyInfo.PropertyType;
-
-            if (Nullable.GetUnderlyingType(propType) is Type uType)
-            {
-                propType = uType;
-                canBeNullable = true;
-            }
-
-            if (!_typeMapping.ContainsKey(propType))
-                return;
-            
-            if (type == typeof(string) || propType.FindInterfaces((t, o) => t.FullName?.Equals(o.ToString(), StringComparison.InvariantCultureIgnoreCase) ?? false, "System.Collections.IEnumerable").Any())
-                canBeNullable = true;
-
-            var column = create.WithColumn(NameCompatibilityManager.GetColumnName(type, propertyInfo.Name));
-            _typeMapping[propType](column);
-
-            if (canBeNullable)
-                create.Nullable();
-        }
-
-        /// <summary>
-        /// Retrieves expressions for building an entity table
-        /// </summary>
-        /// <param name="type">Type of entity</param>
-        /// <param name="builder">An expression builder for a FluentMigrator.Expressions.CreateTableExpression</param>
-        protected void RetrieveTableExpressions(Type type, CreateTableExpressionBuilder builder)
-        {
-            var tp = _typeFinder
-                .FindClassesOfType(typeof(IEntityBuilder))
-                .FirstOrDefault(t => t.BaseType?.GetGenericArguments().Contains(type) ?? false);
-
-            if (tp != null)
-                (EngineContext.Current.ResolveUnregistered(tp) as IEntityBuilder)?.MapEntity(builder);
-
-            var expression = builder.Expression;
-
-            if (!expression.Columns.Any(c => c.IsPrimaryKey))
-            {
-                var pk = new ColumnDefinition
-                {
-                    Name = nameof(BaseEntity.Id),
-                    Type = DbType.Int32,
-                    IsIdentity = true,
-                    TableName = NameCompatibilityManager.GetTableName(type),
-                    ModificationType = ColumnModificationType.Create,
-                    IsPrimaryKey = true
-                };
-
-                expression.Columns.Insert(0, pk);
-                builder.CurrentColumn = pk;
-            }
-
-            var propertiesToAutoMap = type
-                .GetProperties(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.SetProperty)
-                .Where(p =>
-                    !expression.Columns.Any(x => x.Name.Equals(NameCompatibilityManager.GetColumnName(type, p.Name), StringComparison.OrdinalIgnoreCase)));
-
-            foreach (var prop in propertiesToAutoMap)
-            {
-                DefineByOwnType(type, builder, prop);
-            }
-        }
-
-        /// <summary>
-        /// Returns the instances for found types implementing FluentMigrator.IMigration
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns>The instances for found types implementing FluentMigrator.IMigration</returns>
-        private IEnumerable<IMigrationInfo> GetMigrations(Assembly assembly)
-        {
-            var migrations = _filteringMigrationSource.GetMigrations(t => assembly == null || t.Assembly == assembly) ?? Enumerable.Empty<IMigration>();
-
-            return migrations.Select(m => _migrationRunnerConventions.GetMigrationInfoForMigration(m)).OrderBy(migration => migration.Version);
-        }
-
-        /// <summary>
-        /// Provides migration context with a null implementation of a processor that does not do any work
-        /// </summary>
-        /// <returns>The context of a migration while collecting up/down expressions</returns>
-        protected IMigrationContext CreateNullMigrationContext()
-        {
-            return new MigrationContext(new NullIfDatabaseProcessor(), _migrationContext.ServiceProvider, null, null);
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Executes all found (and unapplied) migrations
-        /// </summary>
-        /// <param name="assembly">Assembly to find the migration</param>
-        /// <param name="isUpdateProcess">Indicates whether the upgrade or installation process is ongoing. True - if an upgrade process</param>
-        public void ApplyUpMigrations(Assembly assembly, bool isUpdateProcess = false)
-        {
-            if(assembly is null)
-                throw new ArgumentNullException(nameof(assembly));
-
-            var migrations = GetMigrations(assembly);
-
-            bool needToExecute(IMigrationInfo migrationInfo1)
-            {
-                var skip = migrationInfo1.Migration.GetType().GetCustomAttributes(typeof(SkipMigrationAttribute)).Any() || isUpdateProcess && migrationInfo1.Migration.GetType()
-                    .GetCustomAttributes(typeof(SkipMigrationOnUpdateAttribute)).Any() || !isUpdateProcess && migrationInfo1.Migration.GetType()
-                    .GetCustomAttributes(typeof(SkipMigrationOnInstallAttribute)).Any();
-
-                return !skip;
-            }
-
-            foreach (var migrationInfo in migrations.Where(needToExecute))
-                    _migrationRunner.MigrateUp(migrationInfo.Version);
-        }
-
-        /// <summary>
-        /// Executes all found (and unapplied) migrations
-        /// </summary>
-        /// <param name="assembly">Assembly to find the migration</param>
-        public void ApplyDownMigrations(Assembly assembly)
-        {
-            if(assembly is null)
-                throw new ArgumentNullException(nameof(assembly));
-
-            var migrations = GetMigrations(assembly).Reverse();
-
-            foreach (var migrationInfo in migrations)
-            {
-                if (migrationInfo.Migration.GetType().GetCustomAttributes(typeof(SkipMigrationAttribute)).Any())
-                    continue;
-
-                _migrationRunner.Down(migrationInfo.Migration);
-                _versionLoader.Value.DeleteVersion(migrationInfo.Version);
-            }
-        }
-
-        /// <summary>
-        /// Retrieves expressions into ICreateExpressionRoot
-        /// </summary>
-        /// <param name="expressionRoot">The root expression for a CREATE operation</param>
-        /// <typeparam name="TEntity">Entity type</typeparam>
-        public virtual void BuildTable<TEntity>(ICreateExpressionRoot expressionRoot)
-        {
-            var type = typeof(TEntity);
-
-            var builder = expressionRoot.Table(NameCompatibilityManager.GetTableName(type)) as CreateTableExpressionBuilder;
-
-            RetrieveTableExpressions(type, builder);
-        }
-
-        /// <summary>
-        /// Gets create table expression for entity type
-        /// </summary>
-        /// <param name="type">Entity type</param>
-        /// <returns>Expression to create a table</returns>
-        public virtual CreateTableExpression GetCreateTableExpression(Type type)
-        {
-            var expression = new CreateTableExpression { TableName = NameCompatibilityManager.GetTableName(type) };
-            var builder = new CreateTableExpressionBuilder(expression, CreateNullMigrationContext());
-
-            RetrieveTableExpressions(type, builder);
-
-            return builder.Expression;
-        }
-
-        #endregion
+        _filteringMigrationSource = filteringMigrationSource;
+        _migrationRunner = migrationRunner;
+        _migrationRunnerConventions = migrationRunnerConventions;
     }
+
+    #endregion
+
+    #region Utilities
+
+    /// <summary>
+    /// Returns the instances for found types implementing FluentMigrator.IMigration which ready to Up or Down process (depends on isApplied parameter)
+    /// </summary>
+    /// <param name="assembly">Assembly to find migrations</param>
+    /// <param name="exactlyProcessType">Indicate whether to found exactly specified migration process type; if it set to true, you should set the migrationProcessType parameter to different of NoMatter</param>
+    /// <param name="migrationProcessType">Type of migration process; pass MigrationProcessType.NoMatter to load all migrations</param>
+    /// <param name="isApplied">A value indicating whether to select those migrations that have been applied</param>
+    /// <param name="isSchemaMigration">Indicate whether to found only schema migration; if set to true will by returns only that migrations which has the IsSchemaMigration property set to true</param>
+    /// <returns>The instances for found types implementing FluentMigrator.IMigration</returns>
+    protected virtual IEnumerable<IMigrationInfo> GetMigrations(Assembly assembly, bool exactlyProcessType,
+        MigrationProcessType migrationProcessType = MigrationProcessType.NoMatter, bool isApplied = false, bool isSchemaMigration = false)
+    {
+        if (exactlyProcessType && migrationProcessType == MigrationProcessType.NoMatter)
+            throw new ArgumentException("Migration process type can't be NoMatter if exactlyProcessType set to true", nameof(migrationProcessType));
+
+        //load all version data stored in the version table
+        //we do this for avoid a problem with state of migration
+        _versionLoader.Value.LoadVersionInfo();
+
+        var migrations = _filteringMigrationSource
+            .GetMigrations(t =>
+            {
+                var migrationAttribute = t.GetCustomAttribute<NopMigrationAttribute>();
+
+                if (migrationAttribute is null)
+                    return false;
+
+                if (isSchemaMigration && !migrationAttribute.IsSchemaMigration)
+                    return false;
+
+                if (isApplied == !_versionLoader.Value.VersionInfo.HasAppliedMigration(migrationAttribute.Version))
+                    return false;
+
+                if (exactlyProcessType && migrationProcessType != migrationAttribute.TargetMigrationProcess)
+                    return false;
+
+                if (migrationAttribute.TargetMigrationProcess != MigrationProcessType.NoMatter &&
+                    migrationProcessType != MigrationProcessType.NoMatter &&
+                    migrationProcessType != migrationAttribute.TargetMigrationProcess)
+                    return false;
+
+                return assembly == null || t.Assembly == assembly;
+            }) ?? Enumerable.Empty<IMigration>();
+
+        return migrations.Select(_migrationRunnerConventions.GetMigrationInfoForMigration);
+    }
+
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Executes an Up for all found unapplied migrations
+    /// </summary>
+    /// <param name="assembly">Assembly to find migrations</param>
+    /// <param name="migrationProcessType">Type of migration process</param>
+    /// <param name="commitVersionOnly">Commit only version information</param>
+    public virtual void ApplyUpMigrations(Assembly assembly, MigrationProcessType migrationProcessType = MigrationProcessType.Installation, bool commitVersionOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        foreach (var migrationInfo in GetMigrations(assembly, commitVersionOnly && migrationProcessType != MigrationProcessType.NoMatter, migrationProcessType).OrderBy(migration => migration.Version))
+            ApplyUpMigration(migrationInfo, commitVersionOnly);
+    }
+
+    /// <summary>
+    /// Executes an Up for schema unapplied migrations
+    /// </summary>
+    /// <param name="assembly">Assembly to find migrations</param>
+    public virtual void ApplyUpSchemaMigrations(Assembly assembly)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        foreach (var migrationInfo in GetMigrations(assembly, false, MigrationProcessType.NoMatter, isSchemaMigration: true).OrderBy(migration => migration.Version))
+            ApplyUpMigration(migrationInfo);
+    }
+
+    /// <summary>
+    /// Executes a Down for all found (and applied) migrations
+    /// </summary>
+    /// <param name="assembly">Assembly to find the migration</param>
+    public void ApplyDownMigrations(Assembly assembly)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        foreach (var migrationInfo in GetMigrations(assembly, false, MigrationProcessType.NoMatter, true).OrderByDescending(migration => migration.Version))
+            ApplyDownMigration(migrationInfo);
+    }
+
+    /// <summary>
+    /// Executes down expressions for the passed migration
+    /// </summary>
+    /// <param name="migrationInfo">Migration to rollback</param>
+    public void ApplyDownMigration(IMigrationInfo migrationInfo)
+    {
+        ArgumentNullException.ThrowIfNull(migrationInfo);
+
+        _migrationRunner.Down(migrationInfo.Migration);
+        _versionLoader.Value.DeleteVersion(migrationInfo.Version);
+    }
+
+    /// <summary>
+    /// Executes up expressions for the passed migration
+    /// </summary>
+    /// <param name="migrationInfo">Migration to apply</param>
+    /// <param name="commitVersionOnly">Commit only version information</param>
+    public void ApplyUpMigration(IMigrationInfo migrationInfo, bool commitVersionOnly = false)
+    {
+        ArgumentNullException.ThrowIfNull(migrationInfo);
+
+        if (!commitVersionOnly)
+            _migrationRunner.Up(migrationInfo.Migration);
+#if DEBUG
+        if (!migrationInfo.IsNeedToApplyInDbOnDebugMode())
+            return;
+#endif
+        _versionLoader.Value
+            .UpdateVersionInfo(migrationInfo.Version, migrationInfo.Description ?? migrationInfo.Migration.GetType().Name);
+    }
+
+    #endregion
 }

@@ -12,7 +12,7 @@ using Nop.Core;
 namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class ListrakController : BasePluginController
     {

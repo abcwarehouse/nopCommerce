@@ -12,7 +12,7 @@ using Nop.Core;
 namespace AbcWarehouse.Plugin.Widgets.GA4.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class GA4Controller : BasePluginController
     {

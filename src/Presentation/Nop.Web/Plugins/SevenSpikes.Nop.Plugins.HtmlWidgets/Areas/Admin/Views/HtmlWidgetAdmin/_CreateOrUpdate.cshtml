@@ -6,9 +6,9 @@
 <section class="content">
     <div class="form-horizontal">
         @await Html.TrialMessageAsync(Model.IsTrialVersion, Plugin.Name, Plugin.UrlInStore)
-        <nop-tabs id="htmlwidget-create-or-edit">
+        <nop-tabs id="htmlwidget-create-or-edit" asp-tab-name-to-select="tab-settings">
             <nop-tab asp-name="tab-settings" asp-default="true" asp-title="@T("SevenSpikes.Plugins.HtmlWidgets.Admin.Entities.HtmlWidget.SettingsTabTitle")">
-                @await Html.PartialAsync(Views.HtmlWidgetSettings, @Model)
+                @{ await Html.RenderPartialAsync(Views.HtmlWidgetSettings, @Model); }
             </nop-tab>
             @if (Model.Id > 0)
             {
