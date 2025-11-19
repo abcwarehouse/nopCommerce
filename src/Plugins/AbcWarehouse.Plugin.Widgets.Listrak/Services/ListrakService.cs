@@ -53,7 +53,7 @@ public class ListrakService : IListrakService
         };
 
         return await client.PostAsJsonAsync(
-            $"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ShortCodeId}/Contact/{listrakData.PhoneNumber}/PhoneList/{listrakData.PhoneListId}",
+            $"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ShortCodeId}/PhoneList/{listrakData.PhoneListId}/Contact",
             listrakData
         );
     }
