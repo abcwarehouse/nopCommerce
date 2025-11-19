@@ -39,25 +39,6 @@ public class ListrakService : IListrakService
         return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
     }
 
-    public async Task<HttpResponseMessage> SubscribePhoneNumberAsyncOldishMaybe(string phoneNumber)
-    {
-        var token = await GetTokenAsync();
-        var client = _httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        var listrakData = new
-        {
-            ShortCodeId = "1026",
-            PhoneNumber = phoneNumber,
-            PhoneListId = "152"
-        };
-
-        return await client.PostAsJsonAsync(
-            $"https://api.listrak.com/sms/v1/ShortCode/{listrakData.ShortCodeId}/Contact/{listrakData.PhoneNumber}/PhoneList/{listrakData.PhoneListId}",
-            listrakData
-        );
-    }
-
     public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber)
     {
         var token = await GetTokenAsync();
