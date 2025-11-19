@@ -48,12 +48,12 @@ public class ListrakService : IListrakService
         var payload = new
         {
             phoneNumber = phoneNumber,
-            shortCodeId = "1026",   // your short code
-            listId = "152"          // your list ID
+            shortCodeId = "1026",
+            listId = "152"
         };
 
         return await client.PostAsJsonAsync(
-            "https://api.listrak.com/sms/v1/Subscription/Initiate",
+            "https://api.listrak.com/sms/v1/Subscription",
             payload
         );
     }
