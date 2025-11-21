@@ -267,12 +267,14 @@
                     <div class="search-spring-container">
                         @await Component.InvokeAsync("SearchSpring")
                     </div>
+                    <div class="search-box store-search-box old-search">
+                        @await Html.PartialAsync("~/Views/Boards/_SearchBox.cshtml")
+                    </div>
+
                 }
                 else
                 {
-                    <div class="search-box store-search-box old-search">
-                        @await Component.InvokeAsync("SearchBox")
-                    </div>
+
                 }
                 
                 @await Component.InvokeAsync("FlyoutShoppingCart")
