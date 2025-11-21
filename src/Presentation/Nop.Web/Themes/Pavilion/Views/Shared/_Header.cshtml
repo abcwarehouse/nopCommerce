@@ -264,13 +264,15 @@
                 }
                 @if(storeId == 3)
                 {
-                    <div class="search-box store-search-box old-search">
-                        @await Html.PartialAsync("~/Views/Boards/_SearchBox.cshtml")
+                    <div class="search-spring-container">
+                        @await Component.InvokeAsync("SearchSpring")
                     </div>
                 }
                 else
                 {
-                    
+                    <div class="search-box store-search-box old-search">
+                        @await Html.PartialAsync("~/Views/Boards/_SearchBox.cshtml")
+                    </div>
                 }
                 
                 @await Component.InvokeAsync("FlyoutShoppingCart")
