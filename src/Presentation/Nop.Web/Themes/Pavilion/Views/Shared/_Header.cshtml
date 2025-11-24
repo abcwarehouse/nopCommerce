@@ -250,11 +250,11 @@
 
                         @if(storeId == 3)
                             {
-                               <li style="background-color:#02463b; width: auto; height: 46px;" class="mega-menu-categories hawthorne-link">
+                                <li style="background-color:#02463b; width: auto; height: 46px;" class="mega-menu-categories hawthorne-link">
                                 <a href="https://hawthorne.abcwarehouse.com/">
-                                 <img class="hawthorne-logo" src="https://www.abcwarehouse.com/images/hawthorne/Hawthorne-Logo-Gold-email.png" alt="hawthorne logo">
-                                 </a>
-                               </li>
+                                    <img class="hawthorne-logo" src="https://www.abcwarehouse.com/images/hawthorne/Hawthorne-Logo-Gold-email.png" alt="hawthorne logo">
+                                    </a>
+                                </li>
                             }
 
                         </ul>
@@ -264,14 +264,15 @@
                 }
                 @if(storeId == 3)
                 {
-                    <div class="search-spring-container">
-                        @await Component.InvokeAsync("SearchSpring")
+                    <div class="search-box store-search-box old-search">
+                        @await Html.PartialAsync("~/Views/Boards/_SearchBox.cshtml")
                     </div>
+                    
                 }
                 else
                 {
-                    <div class="search-box store-search-box old-search">
-                        @await Html.PartialAsync("~/Views/Boards/_SearchBox.cshtml")
+                    <div class="search-spring-container">
+                        @await Component.InvokeAsync("SearchSpring")
                     </div>
                 }
                 
