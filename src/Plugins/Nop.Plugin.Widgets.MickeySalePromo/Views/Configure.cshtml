@@ -5,249 +5,240 @@
 }
 
 <form asp-controller="MickeySalePromo" asp-action="Configure" method="post" id="mickey-config-form" enctype="multipart/form-data">
-    <section class="content">
-        <div class="container-fluid">
-            <div class="form-horizontal">
-                <nop-cards id="mickey-sale-promo-cards">
-
-                    @* Banner Configuration Tab *@
-                    <nop-card asp-name="banner-configuration" asp-icon="fas fa-image" asp-title="Banner Configuration" asp-hide-block-attribute-name="MickeySalePromoPage.HideBannerBlock" asp-hide="false" asp-advanced="false">
-                        <div class="row">
-                            @* Top Banner Desktop *@
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <div class="col-md-12">
-                                        <label class="control-label">Top Banner Desktop Image</label>
-                                    </div>
-                                    <div class="col-md-12">
-                                        @if (!string.IsNullOrEmpty(Model.TopBannerDesktopUrl))
-                                        {
-                                            <div style="margin-bottom: 10px;">
-                                                <strong>Current Image:</strong><br />
-                                                <img src="@Model.TopBannerDesktopUrl" alt="Top Banner Desktop" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
-                                                <br />
-                                                <small class="text-muted">@Model.TopBannerDesktopUrl</small>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('TopBannerDesktop')">
-                                                    <i class="fa fa-trash"></i> Remove Image
-                                                </button>
-                                            </div>
-                                        }
-                                        <input type="file" name="TopBannerDesktopUpload" class="form-control" accept="image/*" />
-                                    </div>
-                                </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Banner Configuration</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    @* Top Banner Desktop *@
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label>Top Banner Desktop Image</label>
                             </div>
-
-                            @* Top Banner Mobile *@
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <div class="col-md-12">
-                                        <label class="control-label">Top Banner Mobile Image</label>
+                            <div class="col-md-12">
+                                @if (!string.IsNullOrEmpty(Model.TopBannerDesktopUrl))
+                                {
+                                    <div style="margin-bottom: 10px;">
+                                        <strong>Current Image:</strong><br />
+                                        <img src="@Model.TopBannerDesktopUrl" alt="Top Banner Desktop" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                        <br />
+                                        <small class="text-muted">@Model.TopBannerDesktopUrl</small>
+                                        <br />
+                                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('TopBannerDesktop')">
+                                            <i class="fa fa-trash"></i> Remove Image
+                                        </button>
                                     </div>
-                                    <div class="col-md-12">
-                                        @if (!string.IsNullOrEmpty(Model.TopBannerMobileUrl))
-                                        {
-                                            <div style="margin-bottom: 10px;">
-                                                <strong>Current Image:</strong><br />
-                                                <img src="@Model.TopBannerMobileUrl" alt="Top Banner Mobile" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
-                                                <br />
-                                                <small class="text-muted">@Model.TopBannerMobileUrl</small>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('TopBannerMobile')">
-                                                    <i class="fa fa-trash"></i> Remove Image
-                                                </button>
-                                            </div>
-                                        }
-                                        <input type="file" name="TopBannerMobileUpload" class="form-control" accept="image/*" />
-                                    </div>
-                                </div>
+                                }
+                                <input type="file" name="TopBannerDesktopUpload" class="form-control" accept="image/*" />
                             </div>
                         </div>
+                    </div>
 
-                        <div class="row" style="margin-top: 20px;">
-                            @* Left Feature Banner *@
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <div class="col-md-12">
-                                        <label class="control-label">Left Feature Banner Image</label>
-                                    </div>
-                                    <div class="col-md-12">
-                                        @if (!string.IsNullOrEmpty(Model.LeftBannerUrl))
-                                        {
-                                            <div style="margin-bottom: 10px;">
-                                                <strong>Current Image:</strong><br />
-                                                <img src="@Model.LeftBannerUrl" alt="Left Banner" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
-                                                <br />
-                                                <small class="text-muted">@Model.LeftBannerUrl</small>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('LeftBanner')">
-                                                    <i class="fa fa-trash"></i> Remove Image
-                                                </button>
-                                            </div>
-                                        }
-                                        <input type="file" name="LeftBannerUpload" class="form-control" accept="image/*" />
-                                    </div>
-                                </div>
+                    @* Top Banner Mobile *@
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label>Top Banner Mobile Image</label>
                             </div>
-
-                            @* Right Feature Banner *@
-                            <div class="col-md-6">
-                                <div class="form-group row">
-                                    <div class="col-md-12">
-                                        <label class="control-label">Right Feature Banner Image</label>
+                            <div class="col-md-12">
+                                @if (!string.IsNullOrEmpty(Model.TopBannerMobileUrl))
+                                {
+                                    <div style="margin-bottom: 10px;">
+                                        <strong>Current Image:</strong><br />
+                                        <img src="@Model.TopBannerMobileUrl" alt="Top Banner Mobile" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                        <br />
+                                        <small class="text-muted">@Model.TopBannerMobileUrl</small>
+                                        <br />
+                                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('TopBannerMobile')">
+                                            <i class="fa fa-trash"></i> Remove Image
+                                        </button>
                                     </div>
-                                    <div class="col-md-12">
-                                        @if (!string.IsNullOrEmpty(Model.RightBannerUrl))
-                                        {
-                                            <div style="margin-bottom: 10px;">
-                                                <strong>Current Image:</strong><br />
-                                                <img src="@Model.RightBannerUrl" alt="Right Banner" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
-                                                <br />
-                                                <small class="text-muted">@Model.RightBannerUrl</small>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('RightBanner')">
-                                                    <i class="fa fa-trash"></i> Remove Image
-                                                </button>
-                                            </div>
-                                        }
-                                        <input type="file" name="RightBannerUpload" class="form-control" accept="image/*" />
-                                    </div>
-                                </div>
+                                }
+                                <input type="file" name="TopBannerMobileUpload" class="form-control" accept="image/*" />
                             </div>
                         </div>
-                    </nop-card>
+                    </div>
+                </div>
 
-                    @* Widget Zone Tab *@
-                    <nop-card asp-name="widget-zone" asp-icon="fas fa-map-marker-alt" asp-title="Widget Zone" asp-hide-block-attribute-name="MickeySalePromoPage.HideWidgetZoneBlock" asp-hide="false" asp-advanced="false">
-                        <div class="form-group row">
-                            <div class="col-md-3">
-                                <label class="control-label">Widget Zone (Where to Display)</label>
+                <div class="row">
+                    @* Left Feature Banner *@
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label>Left Feature Banner Image</label>
                             </div>
-                            <div class="col-md-9">
-                                <select name="WidgetZone" class="form-control">
-                                    <option value="">-- Select Widget Zone --</option>
-                                    @foreach (var zone in Model.AvailableWidgetZones)
-                                    {
-                                        <option value="@zone.Value" selected="@(Model.WidgetZone == zone.Value)">@zone.Text</option>
-                                    }
-                                </select>
-                                <span class="text-muted">Choose where all sale products will be displayed on the site</span>
+                            <div class="col-md-12">
+                                @if (!string.IsNullOrEmpty(Model.LeftBannerUrl))
+                                {
+                                    <div style="margin-bottom: 10px;">
+                                        <strong>Current Image:</strong><br />
+                                        <img src="@Model.LeftBannerUrl" alt="Left Banner" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                        <br />
+                                        <small class="text-muted">@Model.LeftBannerUrl</small>
+                                        <br />
+                                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('LeftBanner')">
+                                            <i class="fa fa-trash"></i> Remove Image
+                                        </button>
+                                    </div>
+                                }
+                                <input type="file" name="LeftBannerUpload" class="form-control" accept="image/*" />
                             </div>
                         </div>
-                    </nop-card>
+                    </div>
 
-                    @* Sale Products Tab *@
-                    <nop-card asp-name="sale-products" asp-icon="fas fa-shopping-cart" asp-title="Sale Products" asp-hide-block-attribute-name="MickeySalePromoPage.HideSaleProductsBlock" asp-hide="false" asp-advanced="false">
-                        <div id="products-container">
-                            @for (int i = 0; i < Model.Products.Count; i++)
+                    @* Right Feature Banner *@
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label>Right Feature Banner Image</label>
+                            </div>
+                            <div class="col-md-12">
+                                @if (!string.IsNullOrEmpty(Model.RightBannerUrl))
+                                {
+                                    <div style="margin-bottom: 10px;">
+                                        <strong>Current Image:</strong><br />
+                                        <img src="@Model.RightBannerUrl" alt="Right Banner" style="max-width: 100%; max-height: 150px; border: 1px solid #ddd; padding: 5px;" />
+                                        <br />
+                                        <small class="text-muted">@Model.RightBannerUrl</small>
+                                        <br />
+                                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 5px;" onclick="removeBanner('RightBanner')">
+                                            <i class="fa fa-trash"></i> Remove Image
+                                        </button>
+                                    </div>
+                                }
+                                <input type="file" name="RightBannerUpload" class="form-control" accept="image/*" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <label>Widget Zone (Where to Display)</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select name="WidgetZone" class="form-control">
+                            <option value="">-- Select Widget Zone --</option>
+                            @foreach (var zone in Model.AvailableWidgetZones)
                             {
-                                <div class="product-item" data-index="@i" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative; border-radius: 5px; background-color: #f9f9f9;">
-                                    <button type="button" class="btn btn-danger btn-sm remove-product" style="position: absolute; top: 10px; right: 10px;">
-                                        <i class="fa fa-trash"></i> Remove
-                                    </button>
-                                    <h4 style="margin-bottom: 15px; color: #333;">Product #@(i + 1)</h4>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Item Number</label>
-                                                <input type="text" name="Products[@i].ItemNumber" value="@Model.Products[i].ItemNumber" class="form-control" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Product ID (for Add to Cart)</label>
-                                                <input type="number" name="Products[@i].ProductId" value="@Model.Products[i].ProductId" class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Brand Name</label>
-                                                <input type="text" name="Products[@i].BrandName" value="@Model.Products[i].BrandName" class="form-control" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>SKU</label>
-                                                <input type="text" name="Products[@i].Sku" value="@Model.Products[i].Sku" class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Product URL</label>
-                                        <input type="text" name="Products[@i].ProductUrl" value="@Model.Products[i].ProductUrl" class="form-control" />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Image URL</label>
-                                        <input type="text" name="Products[@i].ImageUrl" value="@Model.Products[i].ImageUrl" class="form-control" />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Banner Text (Ribbon)</label>
-                                        <input type="text" name="Products[@i].Banner" value="@Model.Products[i].Banner" class="form-control" />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <textarea name="Products[@i].Description" class="form-control" rows="2">@Model.Products[i].Description</textarea>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Old Price</label>
-                                                <input type="text" name="Products[@i].OldPrice" value="@Model.Products[i].OldPrice" class="form-control" placeholder="Compare at $139.95" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>You Save</label>
-                                                <input type="text" name="Products[@i].YouSave" value="@Model.Products[i].YouSave" class="form-control" placeholder="Save $40" />
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Actual Price</label>
-                                                <input type="text" name="Products[@i].ActualPrice" value="@Model.Products[i].ActualPrice" class="form-control" placeholder="$99.95" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" name="Products[@i].ShowDisclaimer" value="true" @(Model.Products[i].ShowDisclaimer ? "checked" : "") class="form-check-input disclaimer-checkbox" id="disclaimer-@i" data-index="@i" />
-                                            <label class="form-check-label" for="disclaimer-@i">
-                                                Show Disclaimer: "Vehicles with factory security systems may require additional interface"
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+                                <option value="@zone.Value" selected="@(Model.WidgetZone == zone.Value)">@zone.Text</option>
                             }
-                        </div>
-
-                        <button type="button" id="add-product" class="btn btn-success">
-                            <i class="fa fa-plus"></i> Add Product
-                        </button>
-                    </nop-card>
-
-                </nop-cards>
+                        </select>
+                        <span class="text-muted">Choose where all sale products will be displayed on the site</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Sale Products</h3>
+            </div>
+            <div class="panel-body">
+                <div id="products-container">
+                    @for (int i = 0; i < Model.Products.Count; i++)
+                    {
+                        <div class="product-item" data-index="@i" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative;">
+                            <button type="button" class="btn btn-danger btn-sm remove-product" style="position: absolute; top: 10px; right: 10px;">
+                                <i class="fa fa-trash"></i> Remove
+                            </button>
+                            <h4>Product #@(i + 1)</h4>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Item Number</label>
+                                        <input type="text" name="Products[@i].ItemNumber" value="@Model.Products[i].ItemNumber" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Product ID (for Add to Cart)</label>
+                                        <input type="number" name="Products[@i].ProductId" value="@Model.Products[i].ProductId" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Brand Name</label>
+                                        <input type="text" name="Products[@i].BrandName" value="@Model.Products[i].BrandName" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>SKU</label>
+                                        <input type="text" name="Products[@i].Sku" value="@Model.Products[i].Sku" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Product URL</label>
+                                <input type="text" name="Products[@i].ProductUrl" value="@Model.Products[i].ProductUrl" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="text" name="Products[@i].ImageUrl" value="@Model.Products[i].ImageUrl" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Banner Text (Ribbon)</label>
+                                <input type="text" name="Products[@i].Banner" value="@Model.Products[i].Banner" class="form-control" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="Products[@i].Description" class="form-control" rows="2">@Model.Products[i].Description</textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Old Price</label>
+                                        <input type="text" name="Products[@i].OldPrice" value="@Model.Products[i].OldPrice" class="form-control" placeholder="Compare at $139.95" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>You Save</label>
+                                        <input type="text" name="Products[@i].YouSave" value="@Model.Products[i].YouSave" class="form-control" placeholder="Save $40" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Actual Price</label>
+                                        <input type="text" name="Products[@i].ActualPrice" value="@Model.Products[i].ActualPrice" class="form-control" placeholder="$99.95" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" name="Products[@i].ShowDisclaimer" value="true" @(Model.Products[i].ShowDisclaimer ? "checked" : "") class="form-check-input disclaimer-checkbox" id="disclaimer-@i" data-index="@i" />
+                                    <label class="form-check-label" for="disclaimer-@i">
+                                        Show Disclaimer: "Vehicles with factory security systems may require additional interface"
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <button type="button" id="add-product" class="btn btn-success">
+                    <i class="fa fa-plus"></i> Add Product
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="content-footer clearfix">
-        <div class="float-left">
-            <a asp-action="List" asp-controller="Widget" class="btn btn-default">
-                <i class="fas fa-arrow-circle-left"></i>
-                Back to widget list
-            </a>
-        </div>
-        <div class="float-right">
+        <div class="pull-right">
             <button type="submit" name="save" class="btn bg-blue">
                 <i class="fa fa-floppy-o"></i>
                 @T("Admin.Common.Save")
@@ -262,11 +253,11 @@
 
         $('#add-product').click(function() {
             var html = `
-                <div class="product-item" data-index="${productIndex}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative; border-radius: 5px; background-color: #f9f9f9;">
+                <div class="product-item" data-index="${productIndex}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; position: relative;">
                     <button type="button" class="btn btn-danger btn-sm remove-product" style="position: absolute; top: 10px; right: 10px;">
                         <i class="fa fa-trash"></i> Remove
                     </button>
-                    <h4 style="margin-bottom: 15px; color: #333;">Product #${productIndex + 1}</h4>
+                    <h4>Product #${productIndex + 1}</h4>
 
                     <div class="row">
                         <div class="col-md-6">
