@@ -65,6 +65,8 @@ namespace Nop.Web
 
                 await next();
             });
+
+            application.UseStaticFiles();
             application.ConfigureRequestPipeline();
             application.StartEngine();
         }
