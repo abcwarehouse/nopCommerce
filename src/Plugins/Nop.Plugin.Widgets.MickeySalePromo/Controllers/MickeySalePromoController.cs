@@ -11,6 +11,7 @@ using Nop.Plugin.Widgets.MickeySalePromo.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
+using Nop.Services.Topics;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Infrastructure;
@@ -28,24 +29,40 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
         private readonly INopFileProvider _fileProvider;
+        private readonly ITopicService _topicService;
 
         public MickeySalePromoController(
             MickeySalePromoSettings settings,
             INotificationService notificationService,
             ILocalizationService localizationService,
             ISettingService settingService,
-            INopFileProvider fileProvider)
+            INopFileProvider fileProvider,
+            ITopicService topicService)
         {
             _settings = settings;
             _notificationService = notificationService;
             _localizationService = localizationService;
             _settingService = settingService;
             _fileProvider = fileProvider;
+            _topicService = topicService;
         }
 
-        public IActionResult Configure()
+        public async Task<IActionResult> Configure()
         {
             var model = _settings.ToModel();
+
+            // Populate available topics (storeId = 0 to load all)
+            var topics = await _topicService.GetAllTopicsAsync(storeId: 0, showHidden: true);
+            var topicsList = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "-- Show on All Topic Pages --", Value = "0" }
+            };
+            topicsList.AddRange(topics.Select(t => new SelectListItem
+            {
+                Text = t.SystemName,
+                Value = t.Id.ToString()
+            }));
+            model.AvailableTopics = topicsList;
 
             // Populate available widget zones with common zones for product promotions
             model.AvailableWidgetZones = new List<SelectListItem>
@@ -89,7 +106,8 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                     WidgetZone = model.WidgetZone,
                     ProductsJson = model.Products != null && model.Products.Count > 0
                         ? JsonConvert.SerializeObject(model.Products)
-                        : string.Empty
+                        : string.Empty,
+                    TopicId = model.TopicId
                 };
 
                 // Create the upload directory if it doesn't exist in wwwroot/images

@@ -69,7 +69,9 @@ namespace Nop.Plugin.Widgets.MickeySalePromo
                 ["Plugins.Widgets.MickeySalePromo.DisclaimerText"] = "Disclaimer Text",
                 ["Plugins.Widgets.MickeySalePromo.DisclaimerText.Hint"] = "Disclaimer text to display at the bottom of the page",
                 ["Plugins.Widgets.MickeySalePromo.WidgetZone"] = "Widget Zone",
-                ["Plugins.Widgets.MickeySalePromo.WidgetZone.Hint"] = "The widget zone where this promotional page will be displayed"
+                ["Plugins.Widgets.MickeySalePromo.WidgetZone.Hint"] = "The widget zone where this promotional page will be displayed",
+                ["Plugins.Widgets.MickeySalePromo.TopicId"] = "Topic Page",
+                ["Plugins.Widgets.MickeySalePromo.TopicId.Hint"] = "Select which topic page should display this sale ad. Choose 'Show on All Topic Pages' to display on all topic pages."
             });
 
             await base.InstallAsync();

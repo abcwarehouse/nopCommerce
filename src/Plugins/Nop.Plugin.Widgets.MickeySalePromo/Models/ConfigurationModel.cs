@@ -12,6 +12,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         {
             Products = new List<SaleProductModel>();
             AvailableWidgetZones = new List<SelectListItem>();
+            AvailableTopics = new List<SelectListItem>();
         }
 
         [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopBannerDesktopUrl")]
@@ -45,5 +46,10 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public List<SaleProductModel> Products { get; set; }
 
         public IList<SelectListItem> AvailableWidgetZones { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopicId")]
+        public int TopicId { get; set; }
+
+        public IList<SelectListItem> AvailableTopics { get; set; }
     }
 }
