@@ -92,11 +92,9 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                         : string.Empty
                 };
 
-                // Create the upload directory if it doesn't exist
-                // Use wwwroot/images path explicitly
-                var wwwrootPath = _fileProvider.MapPath("~/");
-                var imagesPath = _fileProvider.Combine(wwwrootPath, "images");
-                var uploadPath = _fileProvider.Combine(imagesPath, "mickey-sale-promo");
+                // Create the upload directory if it doesn't exist in wwwroot/images
+                // GetAbsolutePath automatically prepends WebRootPath
+                var uploadPath = _fileProvider.GetAbsolutePath("images", "mickey-sale-promo");
 
                 if (!_fileProvider.DirectoryExists(uploadPath))
                 {
