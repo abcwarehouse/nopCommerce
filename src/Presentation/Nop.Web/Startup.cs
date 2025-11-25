@@ -53,12 +53,12 @@ namespace Nop.Web
 
         public void Configure(IApplicationBuilder application)
         {
-            // Add the Permissions-Policy header for geolocation
+            application.UseCors("ImageCorsPolicy");
+
             application.Use(async (context, next) =>
             {
                 context.Response.OnStarting(() =>
                 {
-                    // Allow geolocation from your own site
                     context.Response.Headers["Permissions-Policy"] = "geolocation=(self)";
                     return Task.CompletedTask;
                 });
@@ -70,6 +70,7 @@ namespace Nop.Web
             application.ConfigureRequestPipeline();
             application.StartEngine();
         }
+
         
 
     }
