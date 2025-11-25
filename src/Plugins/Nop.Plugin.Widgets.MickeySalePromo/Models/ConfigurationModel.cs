@@ -45,5 +45,15 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         public List<SaleProductModel> Products { get; set; }
 
         public IList<SelectListItem> AvailableWidgetZones { get; set; }
+
+        // Condition fields
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.CategoryIds")]
+        public string CategoryIds { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.TopicSystemNames")]
+        public string TopicSystemNames { get; set; }
+
+        [NopResourceDisplayName("Plugins.Widgets.MickeySalePromo.ShowOnAllPages")]
+        public bool ShowOnAllPages { get; set; }
     }
 }

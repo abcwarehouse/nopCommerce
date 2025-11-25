@@ -115,6 +115,54 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
+                <h3 class="panel-title">Display Conditions</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="ShowOnAllPages" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="ShowOnAllPages" />
+                        <span asp-validation-for="ShowOnAllPages"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="CategoryIds" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="CategoryIds" />
+                        <span asp-validation-for="CategoryIds"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <nop-label asp-for="TopicSystemNames" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="TopicSystemNames" />
+                        <span asp-validation-for="TopicSystemNames"></span>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>How Conditions Work:</strong>
+                    <ul>
+                        <li>If <strong>"Show on All Pages"</strong> is checked, the promo will display on every page where the widget zone exists.</li>
+                        <li>If <strong>"Show on All Pages"</strong> is unchecked, the promo will only display on pages matching the conditions below.</li>
+                        <li><strong>Category IDs:</strong> Enter comma-separated category IDs (e.g., <code>1,5,10</code>) to show the promo only on those category pages.</li>
+                        <li><strong>Topic System Names:</strong> Enter comma-separated topic system names (e.g., <code>AboutUs,ContactUs</code>) to show the promo only on those topic pages.</li>
+                        <li>Leave both fields empty to show on all pages (same as checking "Show on All Pages").</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
                 <h3 class="panel-title">Sale Products</h3>
             </div>
             <div class="panel-body">
