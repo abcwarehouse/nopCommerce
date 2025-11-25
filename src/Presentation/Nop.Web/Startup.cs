@@ -66,6 +66,7 @@ namespace Nop.Web
                 await next();
             });
 
+            app.UseCors("ImagesCors");
             application.UseStaticFiles();
             application.ConfigureRequestPipeline();
             application.StartEngine();
