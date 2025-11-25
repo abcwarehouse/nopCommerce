@@ -17,13 +17,6 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
         // Store products as JSON string
         public string ProductsJson { get; set; }
 
-        // Condition fields - comma-separated IDs/names
-        public string CategoryIds { get; set; }
-        public string TopicSystemNames { get; set; }
-
-        // If true, show on ALL pages. If false, only show on pages matching conditions
-        public bool ShowOnAllPages { get; set; }
-
         internal ConfigurationModel ToModel()
         {
             var products = string.IsNullOrEmpty(ProductsJson)
@@ -37,10 +30,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 LeftBannerUrl = LeftBannerUrl,
                 RightBannerUrl = RightBannerUrl,
                 WidgetZone = WidgetZone,
-                Products = products,
-                CategoryIds = CategoryIds,
-                TopicSystemNames = TopicSystemNames,
-                ShowOnAllPages = ShowOnAllPages
+                Products = products
             };
         }
 
@@ -57,10 +47,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Models
                 LeftBannerUrl = model.LeftBannerUrl,
                 RightBannerUrl = model.RightBannerUrl,
                 WidgetZone = model.WidgetZone,
-                ProductsJson = productsJson,
-                CategoryIds = model.CategoryIds,
-                TopicSystemNames = model.TopicSystemNames,
-                ShowOnAllPages = model.ShowOnAllPages
+                ProductsJson = productsJson
             };
         }
 

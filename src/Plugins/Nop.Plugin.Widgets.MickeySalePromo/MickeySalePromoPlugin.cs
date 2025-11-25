@@ -69,13 +69,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo
                 ["Plugins.Widgets.MickeySalePromo.DisclaimerText"] = "Disclaimer Text",
                 ["Plugins.Widgets.MickeySalePromo.DisclaimerText.Hint"] = "Disclaimer text to display at the bottom of the page",
                 ["Plugins.Widgets.MickeySalePromo.WidgetZone"] = "Widget Zone",
-                ["Plugins.Widgets.MickeySalePromo.WidgetZone.Hint"] = "The widget zone where this promotional page will be displayed",
-                ["Plugins.Widgets.MickeySalePromo.CategoryIds"] = "Category IDs",
-                ["Plugins.Widgets.MickeySalePromo.CategoryIds.Hint"] = "Comma-separated list of category IDs where this promo should display (e.g., 1,5,10). Leave empty to show on all categories.",
-                ["Plugins.Widgets.MickeySalePromo.TopicSystemNames"] = "Topic System Names",
-                ["Plugins.Widgets.MickeySalePromo.TopicSystemNames.Hint"] = "Comma-separated list of topic system names where this promo should display (e.g., AboutUs,ContactUs). Leave empty to show on all topics.",
-                ["Plugins.Widgets.MickeySalePromo.ShowOnAllPages"] = "Show on All Pages",
-                ["Plugins.Widgets.MickeySalePromo.ShowOnAllPages.Hint"] = "If checked, the promo will display on all pages regardless of conditions. Uncheck to only show on pages matching the category/topic conditions."
+                ["Plugins.Widgets.MickeySalePromo.WidgetZone.Hint"] = "The widget zone where this promotional page will be displayed"
             });
 
             await base.InstallAsync();

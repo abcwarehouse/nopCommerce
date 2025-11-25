@@ -89,10 +89,7 @@ namespace Nop.Plugin.Widgets.MickeySalePromo.Controllers
                     WidgetZone = model.WidgetZone,
                     ProductsJson = model.Products != null && model.Products.Count > 0
                         ? JsonConvert.SerializeObject(model.Products)
-                        : string.Empty,
-                    CategoryIds = model.CategoryIds,
-                    TopicSystemNames = model.TopicSystemNames,
-                    ShowOnAllPages = model.ShowOnAllPages
+                        : string.Empty
                 };
 
                 // Create the upload directory if it doesn't exist in wwwroot/images
