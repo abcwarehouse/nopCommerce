@@ -9888,7 +9888,7 @@ body .autocomplete-list {
 	}
 
 	body.storeId3 .header-lower {
-		background-color: #595959 !important;
+		background-color: #d3d3d3 !important;
 		height: auto !important;
 	}
 
@@ -10620,7 +10620,7 @@ body.storeId3 .header-lower {
 
 @media screen and (max-width: 1024px) {
 	body.storeId3 .master-wrapper-page .mobile-header-content-row {
-		background-color: #595959 !important;
+		background-color: #d3d3d3 !important;
 	}
 }
 
@@ -10705,7 +10705,7 @@ padding: 40px 10px;
 
 
 body .autocomplete-list {
-        border-color: #595959;
+        border-color: #d3d3d3;
         margin-top: 0px;
     }
 
