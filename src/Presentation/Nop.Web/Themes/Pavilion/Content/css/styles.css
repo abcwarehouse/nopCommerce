@@ -9888,7 +9888,7 @@ body .autocomplete-list {
 	}
 
 	body.storeId3 .header-lower {
-		background-color: #ec232a !important;
+		background-color: #d3d3d3 !important;
 		height: auto !important;
 	}
 
@@ -10620,7 +10620,7 @@ body.storeId3 .header-lower {
 
 @media screen and (max-width: 1024px) {
 	body.storeId3 .master-wrapper-page .mobile-header-content-row {
-		background-color: #ec232a !important;
+		background-color: #d3d3d3 !important;
 	}
 }
 
@@ -10629,24 +10629,6 @@ body.storeId3 .header-lower {
 }
 
 /********************* Black Friday Code ********************* */
-
-.home-index.storeId3 .master-wrapper-page {
-    background-image: url(/images/black-friday-back.jpg) !important;
-    background-size: contain;
-}
-.home-index.storeId3 .WidgetTitle__Header-sc-c581efe-2.jatqWO, .home-index.storeId3 .category-title, .home-index.storeId3 h2.carousel-title.has-navigation,
-.home-index.storeId3 .newsletter-signup {
-    color: #fff;
-} 
-
-
-@media screen and (max-width: 1024px) {
-    .storeId3 .header#header {
-        margin-top: -32px;
-        padding: 1px 0;
-    }
-}
-
 .catalog-category.storeId3 li.mega-menu-categories.hawthorne-link {
     list-style-type: none;
     position: absolute;
@@ -10723,7 +10705,7 @@ padding: 40px 10px;
 
 
 body .autocomplete-list {
-        border-color: #35699a;
+        border-color: #d3d3d3;
         margin-top: 0px;
     }
 
