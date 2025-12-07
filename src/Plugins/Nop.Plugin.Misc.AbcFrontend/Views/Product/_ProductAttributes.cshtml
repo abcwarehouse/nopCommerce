@@ -9,6 +9,7 @@
 @using Nop.Plugin.Misc.AbcCore.Delivery;
 @inject IDownloadService downloadService
 @inject CatalogSettings catalogSettings
+@inject INopHtmlHelper NopHtml
 
 @{
     var isMattress = false;
@@ -289,8 +290,8 @@
                                 }
 
                                 //register CSS and JS
-                                Html.AddCssFileParts(ResourceLocation.Footer, "~/lib_npm/fine-uploader/fine-uploader/fine-uploader.min.css");
-                                Html.AddScriptParts(ResourceLocation.Footer, "~/lib_npm/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.min.js");
+                                NopHtml.AddCssFileParts(ResourceLocation.Footer, "~/lib_npm/fine-uploader/fine-uploader/fine-uploader.min.css");
+                                NopHtml.AddScriptParts(ResourceLocation.Footer, "~/lib_npm/fine-uploader/jquery.fine-uploader/jquery.fine-uploader.min.js");
 
                                 //ex. ['jpg', 'jpeg', 'png', 'gif'] or []
                                 var allowedFileExtensions = string.Join(", ", attribute.AllowedFileExtensions.Select(x => "'" + x.Trim() + "'").ToList());

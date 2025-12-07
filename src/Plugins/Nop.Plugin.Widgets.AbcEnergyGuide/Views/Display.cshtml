@@ -1,7 +1,9 @@
 @model string
 
+@inject INopHtmlHelper NopHtml
+
 @{
-    Html.AddCssFileParts("~/Plugins/Widgets.AbcEnergyGuide/styles/styles.css");
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.AbcEnergyGuide/styles/styles.css");
 }
 
 <div class="energy-guide">
