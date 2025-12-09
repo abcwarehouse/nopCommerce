@@ -259,6 +259,8 @@
         <a href="@productUrl"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
     <div class="picture">
+        @* ABC: removing multi-image functionality *@
+        @*
         @if (Model.PictureModels.Count > 1)
         {
             <div class="swiper" id="swiper-@Model.Id" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())">
@@ -294,72 +296,44 @@
             </script>
         }
         else
-        {
-            var picture = Model.PictureModels.FirstOrDefault();
-            <a href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture?.Title">
-                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
-                {
-                    @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+        {*@
+            <div class="image-container">
+            @{
+                var picture = Model.PictureModels.FirstOrDefault();
+                var hoverPicture = Model.PictureModels.ElementAtOrDefault(1);
+                <a href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture?.Title">
+                    @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                     {
-                        ("src", picture.ImageUrl),
-                        ("alt", picture.AlternateText),
-                        ("title", picture.Title)
-                    })
-                }
-                else
-                {
-                    <img class="picture-img" alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" />
-                }
-            </a>
-        }
-    </div>
-    @* need to integrate this hover image code in the 4.80.0 style
-
-    <div class="picture">
-        <div class="image-container">
-            <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
-                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
-                {
-                    @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
-                    {
-                        ("src", Model.DefaultPictureModel.ImageUrl),
-                        ("alt", Model.DefaultPictureModel.AlternateText),
-                        ("title", Model.DefaultPictureModel.Title)
-                    });
-
-                    if(Model.DefaultPictureModel.HoverImageUrl == "" || Model.DefaultPictureModel.HoverImageUrl == null)
+                        @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
                         {
-                            <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
-                        }
-                }
-                else
-                {
-                    <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
-                }
-                <div class="hover-image">
-                    @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
-                    {
-                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
-                        {
-                            ("src", Model.DefaultPictureModel.HoverImageUrl),
-                            ("alt", Model.DefaultPictureModel.HoverAlternateText + " Hover"),
-                            ("title", Model.DefaultPictureModel.HoverTitle),
-                        });
-
-                        if(Model.DefaultPictureModel.HoverImageUrl == "" || Model.DefaultPictureModel.HoverImageUrl == null)
-                        {
-                            <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
-                        }
+                            ("src", picture.ImageUrl),
+                            ("alt", picture.AlternateText),
+                            ("title", picture.Title)
+                        })
                     }
                     else
                     {
-                        <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
+                        <img class="picture-img" alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" />
                     }
-                </div>
-            </a>
-        </div>
+                    <div class="hover-image">
+                        @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                        {
+                            @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                            {
+                                ("src", hoverPicture.ImageUrl),
+                                ("alt", hoverPicture.AlternateText),
+                                ("title", hoverPicture.Title)
+                            })
+                        }
+                        else
+                        {
+                            <img class="picture-img-hover" alt="@hoverPicture?.AlternateText" src="@hoverPicture?.ImageUrl" title="@hoverPicture?.Title" />
+                        }
+                    </div>
+                </a>
+            }
+            </div>
     </div>
-    *@
     <div class="details">
         @if (Model.ReviewOverviewModel.AllowCustomerReviews)
         {

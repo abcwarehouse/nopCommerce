@@ -31,6 +31,8 @@ using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Services.Orders;
 using Nop.Services.Stores;
+using Nop.Web.Models.Media;
+using Nop.Web.Infrastructure.Cache;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
@@ -184,6 +186,59 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             
 
             return filteredModels;
+        }
+
+        protected override async Task<IList<PictureModel>> PrepareProductOverviewPicturesModelAsync(Product product, int? productThumbPictureSize = null)
+        {
+            ArgumentNullException.ThrowIfNull(product);
+
+            var productName = await _localizationService.GetLocalizedAsync(product, x => x.Name);
+            //If a size has been set in the view, we use it in priority
+            var pictureSize = productThumbPictureSize ?? _mediaSettings.ProductThumbPictureSize;
+
+            //prepare picture model
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductOverviewPicturesModelKey,
+                product, pictureSize, true, _catalogSettings.DisplayAllPicturesOnCatalogPages, await _workContext.GetWorkingLanguageAsync(),
+                _webHelper.IsCurrentConnectionSecured(), await _storeContext.GetCurrentStoreAsync());
+
+            var cachedPictures = await _staticCacheManager.GetAsync(cacheKey, async () =>
+            {
+                async Task<PictureModel> preparePictureModelAsync(Picture picture)
+                {
+                    //we have to keep the url generation order "full size -> preview" because picture can be updated twice
+                    //this section of code requires detailed analysis in the future
+                    (var fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
+                    (var imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, pictureSize);
+
+                    return new PictureModel
+                    {
+                        ImageUrl = imageUrl,
+                        FullSizeImageUrl = fullSizeImageUrl,
+                        //"title" attribute
+                        Title = (picture != null && !string.IsNullOrEmpty(picture.TitleAttribute))
+                            ? picture.TitleAttribute
+                            : string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageLinkTitleFormat"),
+                                productName),
+                        //"alt" attribute
+                        AlternateText = (picture != null && !string.IsNullOrEmpty(picture.AltAttribute))
+                            ? picture.AltAttribute
+                            : string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageAlternateTextFormat"),
+                                productName)
+                    };
+                }
+
+                //all pictures
+                // ABC: get 2 pictures to account for hover image
+                var pictures = (await _pictureService
+                        .GetPicturesByProductIdAsync(product.Id, _catalogSettings.DisplayAllPicturesOnCatalogPages ? 0 : 2))
+                    .DefaultIfEmpty(null);
+                var pictureModels = await pictures
+                    .SelectAwait(async picture => await preparePictureModelAsync(picture))
+                    .ToListAsync();
+                return pictureModels;
+            });
+
+            return cachedPictures;
         }
 
         private async Task<string> AdjustMattressPriceAsync(int productId)
