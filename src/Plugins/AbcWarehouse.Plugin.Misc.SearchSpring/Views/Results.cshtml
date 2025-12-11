@@ -191,10 +191,12 @@ else
                     var productModels = new List<dynamic>();
                     foreach (var item in Model.Results)
                     {
-                        var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
+                        // URL-decode the SKU to handle special characters like parentheses
+                        var decodedSku = HttpUtility.UrlDecode(item.Sku);
+                        var product = productService.GetProductBySkuAsync(decodedSku).GetAwaiter().GetResult();
                         if (product == null)
                         {
-                            product = productService.GetProductBySkuAsync("+" + item.Sku).GetAwaiter().GetResult();
+                            product = productService.GetProductBySkuAsync("+" + decodedSku).GetAwaiter().GetResult();
                         }
                         if (product != null)
                         {
@@ -385,7 +387,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("✗ Geolocation FAILED!");
             console.error("Error code:", error.code);
             console.error("Error message:", error.message);
-            }
         },
         {
             enableHighAccuracy: false,
