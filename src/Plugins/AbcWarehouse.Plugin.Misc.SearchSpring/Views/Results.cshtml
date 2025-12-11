@@ -6,6 +6,8 @@
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Nop.Core.IWebHelper webHelper
+@inject INopHtmlHelper NopHtml
+
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Catalog
 @using Nop.Web.Extensions
@@ -35,7 +37,7 @@
         canonicalUrl += QueryHelpers.AddQueryString("", canonicalParams);
 }
 
-@{ Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />"); }
+@{ NopHtml.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />"); }
 
 @if (!Model.Results.Any())
 {
