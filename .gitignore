@@ -170,6 +170,7 @@ glob:*.user
 *.patch
 *.hg
 src/Presentation/Nop.Web/.config/*
+/App_Data/
 src/Presentation/Nop.Web/App_Data/browscap.crawlersonly.xml
 src/Presentation/Nop.Web/App_Data/installedPlugins.json
 src/Presentation/Nop.Web/App_Data/plugins.json
