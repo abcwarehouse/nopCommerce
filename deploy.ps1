@@ -1,4 +1,8 @@
-$appPoolName = $env:IISAppPoolName
+$appPoolName = if ($env:IISAppPoolName) { 
+    $env:IISAppPoolName 
+} else { 
+    "Stage2_ABC"  # Fallback to hardcoded value
+}
 
 dotnet clean src/NopCommerce.sln
 dotnet build src/NopCommerce.sln
