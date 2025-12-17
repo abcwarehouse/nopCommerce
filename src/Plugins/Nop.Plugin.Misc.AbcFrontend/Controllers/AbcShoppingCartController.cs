@@ -28,6 +28,7 @@ using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Media;
 using Nop.Web.Models.ShoppingCart;
 using Nop.Web.Controllers;
+using Nop.Plugin.Misc.AbcCore.Components;
 using Nop.Web.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Web.Framework.Mvc.Filters;
@@ -792,24 +793,22 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var productId = product.Id;
 
             return new CartSlideoutInfo() {
-                // commented out, we depend on CartSlideout plugin, just bring that into this plugin after
-                ProductInfoHtml = string.Empty, //await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId} ),
-                DeliveryOptionsHtml = string.Empty,
-                // DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
-                //     "CartSlideoutProductAttributes",
-                //     new {
-                //         product = product,
-                //         includedAttributeNames = new string[]
-                //         {
-                //             AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
-                //             AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
-                //             AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
-                //             "Warranty",
-                //             AbcDeliveryConsts.DeliveryAccessoriesProductAttributeName,
-                //             AbcDeliveryConsts.DeliveryInstallAccessoriesProductAttributeName,
-                //             AbcDeliveryConsts.PickupAccessoriesProductAttributeName
-                //         }
-                //     }),
+                ProductInfoHtml = await RenderViewComponentToStringAsync(typeof(CartSlideoutProductInfoViewComponent), new { productId = productId} ),
+                DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
+                    typeof(CartSlideoutProductInfoViewComponent),
+                    new {
+                        product = product,
+                        includedAttributeNames = new string[]
+                        {
+                            AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName,
+                            AbcDeliveryConsts.HaulAwayDeliveryProductAttributeName,
+                            AbcDeliveryConsts.HaulAwayDeliveryInstallProductAttributeName,
+                            "Warranty",
+                            AbcDeliveryConsts.DeliveryAccessoriesProductAttributeName,
+                            AbcDeliveryConsts.DeliveryInstallAccessoriesProductAttributeName,
+                            AbcDeliveryConsts.PickupAccessoriesProductAttributeName
+                        }
+                    }),
                 ShoppingCartItemId = shoppingCartItemId,
                 ProductId = productId
             };

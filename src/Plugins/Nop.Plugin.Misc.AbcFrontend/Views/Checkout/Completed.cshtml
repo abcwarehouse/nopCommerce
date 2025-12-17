@@ -4,19 +4,23 @@
 @using Nop.Services.Directory
 @using Nop.Core.Domain.Common
 @using Nop.Services.Catalog
+@using Nop.Web.Models.Checkout
+@using Nop.Web.Framework.Infrastructure
+
 @inject ICustomerService _customerService
 @inject IOrderService _orderService
 @inject ICountryService _country_service
 @inject IStateProvinceService _stateProvinceService
 @inject IProductService _productService
+@inject INopHtmlHelper NopHtml
 
 @{
     Layout = "_ColumnsOne";
 
     // title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
-    Html.AppendPageCssClassParts("html-checkout-page");
-    Html.AppendPageCssClassParts("html-order-completed-page");
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-order-completed-page");
 
     var orderTotal = ViewBag.OrderTotal as string;
     var orderId = Model.OrderId;
@@ -58,7 +62,7 @@
         <script>
             console.error("Order items are missing or empty.");
         </script>
-        return;
+        //return;
     }
 }
 
@@ -217,7 +221,7 @@
 </div>
 
 <!-- Load Transaction Event and Parameters -->
-<script>
+@* <script>
 window.bvCallback = function (BV) {
   console.log("bvCallback triggered");
   console.log("bvCallback: orderDiscount = @orderDiscount");
@@ -252,4 +256,4 @@ window.bvCallback = function (BV) {
     }
   });
 };
-</script>
+</script> *@

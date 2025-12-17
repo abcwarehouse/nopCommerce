@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using AbcWarehouse.Plugin.Widgets.CartSlideout.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Services;
@@ -9,8 +8,9 @@ using Nop.Services.Common;
 using Nop.Services.Media;
 using Nop.Web.Framework.Components;
 using Nop.Plugin.Misc.AbcCore.Extensions;
+using Nop.Plugin.Misc.AbcCore.Models;
 
-namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
+namespace Nop.Plugin.Misc.AbcCore.Components
 {
     public class CartSlideoutProductInfoViewComponent : NopViewComponent
     {
@@ -59,7 +59,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
                     string.Empty,
             };
 
-            return View("~/Plugins/Widgets.CartSlideout/Views/_ProductInfo.cshtml", model);
+            return View("~/Plugins/Misc.AbcCore/Views/_ProductInfo.cshtml", model);
         }
 
         private async Task<string> GetProductDescriptionAsync(Product product)
