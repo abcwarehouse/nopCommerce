@@ -22,10 +22,11 @@
     NopHtml.AppendPageCssClassParts("html-checkout-page");
     NopHtml.AppendPageCssClassParts("html-order-completed-page");
 
-    var orderTotal = ViewBag.OrderTotal as string;
+    
     var orderId = Model.OrderId;
     var order = await _orderService.GetOrderByIdAsync(orderId);
-    var orderItems = ViewBag.OrderItems as IList<Nop.Core.Domain.Orders.OrderItem>;
+    var orderTotal = order.OrderTotal;
+    var orderItems = await _orderService.GetOrderItemsAsync(orderId);
     decimal orderDiscount = 0;
     var customerEmail = "Unknown";
     
@@ -62,7 +63,6 @@
         <script>
             console.error("Order items are missing or empty.");
         </script>
-        //return;
     }
 }
 
@@ -221,7 +221,7 @@
 </div>
 
 <!-- Load Transaction Event and Parameters -->
-@* <script>
+<script>
 window.bvCallback = function (BV) {
   console.log("bvCallback triggered");
   console.log("bvCallback: orderDiscount = @orderDiscount");
@@ -256,4 +256,4 @@ window.bvCallback = function (BV) {
     }
   });
 };
-</script> *@
+</script>
