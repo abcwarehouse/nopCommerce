@@ -26,6 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- ABC: Added to resolve "System.Data.Odbc.dll not found" runtime error. -->
+    <!-- This ensures the ODBC assembly is included in the build output. -->
     <PackageReference Include="System.Data.Odbc" Version="8.0.1" />
   </ItemGroup>
 
