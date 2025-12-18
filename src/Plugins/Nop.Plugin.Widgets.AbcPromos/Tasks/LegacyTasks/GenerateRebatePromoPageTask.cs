@@ -1,4 +1,4 @@
-﻿using Nop.Services.Tasks;
+﻿using Nop.Services.ScheduleTasks;
 using Nop.Plugin.Misc.AbcCore.Extensions;
 using Nop.Core.Domain.Topics;
 using Nop.Services.Topics;

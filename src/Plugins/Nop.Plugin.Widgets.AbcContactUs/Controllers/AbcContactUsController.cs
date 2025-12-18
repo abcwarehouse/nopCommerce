@@ -83,7 +83,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         public IActionResult Configure()
         {
             return View(
@@ -94,7 +94,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Configure(ContactUsConfigModel model)
         {

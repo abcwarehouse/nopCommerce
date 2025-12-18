@@ -1,8 +1,6 @@
 ﻿@model DiscountModel
-@{
-    Html.AddScriptParts("~/lib_npm/jsrender/jsrender.min.js");
-}
 
+<script src="~/lib_npm/jsrender/jsrender.min.js" asp-location="Head"></script>
 <div class="card-body">
     <div class="cards-group">
         @if (Model.Id > 0)
@@ -12,7 +10,7 @@
             </p>
 
             <script>
-            $(document).ready(function() {
+            $(function() {
                 $("#@Html.IdFor(model => model.AddDiscountRequirement)").change(loadNewRequirementBox);
 
                 //load add requirement box
@@ -120,7 +118,7 @@
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        $("#getDiscountRequirementsAlert").click();
+                        $("#getDiscountRequirementsAlert").trigger("click");
                     }
                 });
             };
@@ -165,7 +163,7 @@
                         $("#discountRequirementContainer").trigger('nopnewdiscountruleadded', [data.NewRequirementId]);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
-                        $("#failedToSave").click();
+                        $("#failedToSave").trigger("click");
                     }
                 });
             };
@@ -215,7 +213,7 @@
                         {{/if}}
                         {{if ParentId}}
                         <button type="button" class="btn btn-link" id="deleterequirement{{>DiscountRequirementId}}" onclick="deleteRequirement({{>DiscountRequirementId}})">
-                            <i class="far fa-trash-alt"></i>
+                            <i class="far fa-trash-can"></i>
                             {{if IsGroup}}
                                 @T("Admin.Promotions.Discounts.Requirements.RemoveGroup")
                             {{else}}

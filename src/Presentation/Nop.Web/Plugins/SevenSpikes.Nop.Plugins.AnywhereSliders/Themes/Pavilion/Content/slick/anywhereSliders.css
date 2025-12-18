@@ -49,6 +49,16 @@
 .anywhere-slider .first-slide img {
     display: block;
 }
+.anywhere-slider .html-slide {
+	display: none;
+}
+.anywhere-slider .first-slide,
+.slick-initialized .html-slide {
+    display: block;
+}
+.anywhere-slider img[data-lazy] {
+	max-height: 1px;
+}
 
 @-webkit-keyframes animate {
 	15% {

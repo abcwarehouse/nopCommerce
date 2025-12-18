@@ -4,8 +4,6 @@
 @using SevenSpikes.Nop.Plugins.MegaMenu
 @using SevenSpikes.Nop.Plugins.MegaMenu.Domain.Enums
 @inject ILocalizationService localizationService
-
-@inject ILocalizationService localizationService
 @inject IWorkContext workContext
 
 @model MenuItemModel
@@ -130,7 +128,7 @@
             </label>
         </p>
 
-        @await Html.PartialAsync(AdminViews.CustomerRolesMultiSelect, Model)
+        @{ await Html.RenderPartialAsync(AdminViews.CustomerRolesMultiSelect, Model); } 
 
         <input type="hidden" class="edit-menu-item-entityId" value="@Model.EntityId" />
 

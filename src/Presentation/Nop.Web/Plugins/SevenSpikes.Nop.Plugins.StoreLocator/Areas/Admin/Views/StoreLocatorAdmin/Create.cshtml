@@ -2,7 +2,7 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.StoreLocator.Admin.Submenus.ManageShops");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.StoreLocator.Admin.Submenus.ManageShops");
 }
 
 <form method="post">
@@ -27,5 +27,5 @@
         </div>
     </div>
 
-    @await Html.PartialAsync(AdminViews.ShopCreateOrUpdate, Model)
+    @{ await Html.RenderPartialAsync(AdminViews.ShopCreateOrUpdate, Model); }
 </form>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using EllaSoftware.Plugin.Misc.CronTasks.Domain;
-using Nop.Core.Domain.Tasks;
+using Nop.Core.Domain.ScheduleTasks;
 using Task = System.Threading.Tasks.Task;
 
 namespace EllaSoftware.Plugin.Misc.CronTasks.Services

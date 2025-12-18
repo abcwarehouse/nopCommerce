@@ -2,7 +2,7 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.RichBlog.Admin.Submenus.Settings");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.RichBlog.Admin.Submenus.Settings");
 }
 
 <form method="post">
@@ -26,25 +26,25 @@
             @await Component.InvokeAsync("SettingMode")
             <nop-tabs id="rich-blog-settings">
                 <nop-tab asp-name="tab-general-settings" asp-default="true" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.GeneralSettings")">
-                        @await Html.PartialAsync(Views.SettingsGeneral, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsGeneral, Model); }
                 </nop-tab>
                     <nop-tab asp-name="home-page-settings" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.HomePageSettings")">
-                        @await Html.PartialAsync(Views.SettingsHomePage, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsHomePage, Model); }
                 </nop-tab>
                     <nop-tab asp-name="category-navigation-settings" class="advanced-setting" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.CategoryNavigationSettings")">
-                        @await Html.PartialAsync(Views.SettingsCategoryNavigation, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsCategoryNavigation, Model); }
                 </nop-tab>
                     <nop-tab asp-name="blog-list-settings" class="advanced-setting" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.BlogListSettings")">
-                        @await Html.PartialAsync(Views.SettingsBlogList, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsBlogList, Model); }
                 </nop-tab>
                     <nop-tab asp-name="blog-details-settings" class="advanced-setting" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.BlogDetailsSettings")">
-                        @await Html.PartialAsync(Views.SettingsBlogDetails, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsBlogDetails, Model); }
                 </nop-tab>
                     <nop-tab asp-name="social-networks-settings" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.SocialNetworksSettings")">
-                        @await Html.PartialAsync(Views.SettingsSocialNetworks, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsSocialNetworks, Model); }
                 </nop-tab>
                     <nop-tab asp-name="search-settings" class="advanced-setting" asp-title="@T("SevenSpikes.RichBlog.Admin.Settings.Common.SearchSettings")">
-                        @await Html.PartialAsync(Views.SettingsSearch, Model)
+                        @{ await Html.RenderPartialAsync(Views.SettingsSearch, Model); }
                 </nop-tab>
             </nop-tabs>
         </div>

@@ -51,6 +51,15 @@
         </div>
         <div class="form-group row">
             <div class="col-md-3">
+                <nop-label asp-for="PauseOnHover" />
+            </div>
+            <div class="col-md-9">
+                <nop-editor asp-for="PauseOnHover" />
+                <span asp-validation-for="PauseOnHover"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
                 <nop-label asp-for="Fade" />
             </div>
             <div class="col-md-9">
@@ -94,14 +103,17 @@
                 <span asp-validation-for="CustomClass"></span>
             </div>
         </div>
-        <div class="form-group row">
-            <div class="col-md-3">
-                <nop-label asp-for="CustomCss" />
+        @if (!Model.DisableCustomCss)
+        {
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <nop-label asp-for="CustomCss" />
+                </div>
+                <div class="col-md-9">
+                    <nop-textarea asp-for="CustomCss" style="height: 450px;" />
+                </div>
             </div>
-            <div class="col-md-9">
-                <nop-textarea asp-for="CustomCss" style="height: 450px;" />
-            </div>
-        </div>
+        }
         <div class="form-group row">
             <div class="col-md-3">
                 <nop-label asp-for="Language" />
@@ -131,27 +143,21 @@
                                     <nop-select asp-for="StoreMappingModel.SelectedStoreIds" asp-items="Model.StoreMappingModel.AvailableStores" asp-multiple="true" />
                                     <script>
                                     $(document).ready(function() {
-                                        var storesIdsInput = $('#@Html.IdFor(model => model.StoreMappingModel.SelectedStoreIds)').data("kendoMultiSelect");
-                                        storesIdsInput.setOptions({
-                                            autoClose: false
-                                        });
-
-                                        @if (Model.StoreMappingModel.AvailableStores.Count == 0)
+                                            var storesIdsInput = $('#@Html.IdFor(model => model.StoreMappingModel.SelectedStoreIds)').select2({
+                                                closeOnSelect: false,
+                                        @if (!Model.StoreMappingModel.AvailableStores.Any())
                                         {
                                             <text>
-                                                storesIdsInput.setOptions({
-                                                    enable: false,
-                                                    placeholder: 'No stores available'
-                                                });
-                                                storesIdsInput._placeholder();
-                                                storesIdsInput._enable();
+                                                    disabled: true,
+                                                    placeholder: 'No stores available',
                                             </text>
                                         }
+                                                                    });
                                     });
                                     </script>
                                 </div>
                                 <div class="col-md-8">
-                                    @await Component.InvokeAsync("MultistoreDisabledWarning")
+                                    @await Component.InvokeAsync(typeof(MultistoreDisabledWarningViewComponent))
                                 </div>
                             </div>
                         </div>

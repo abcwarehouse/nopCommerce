@@ -1,27 +1,28 @@
-using Nop.Core.Domain.Orders;
-using Nop.Plugin.Misc.AbcExportOrder.Models;
-using System.Collections.Generic;
-using Nop.Services.Common;
-using Nop.Services.Orders;
-using System.Linq;
-using Nop.Services.Directory;
-using Nop.Plugin.Misc.AbcCore.Extensions;
-using Nop.Core.Domain.Security;
-using Nop.Services.Security;
-using Nop.Services.Catalog;
-using Nop.Plugin.Misc.AbcCore.Services;
-using Nop.Services.Stores;
-using Nop.Services.Seo;
-using System.Xml.Linq;
-using Nop.Plugin.Misc.AbcFrontend.Services;
-using Nop.Plugin.Misc.AbcCore.Mattresses;
-using Nop.Core.Domain.Catalog;
-using Nop.Plugin.Misc.AbcCore.Domain;
-using Nop.Plugin.Misc.AbcCore.HomeDelivery;
-using Nop.Services.Payments;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Orders;
+using Nop.Core.Domain.Security;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Plugin.Misc.AbcCore.Domain;
+using Nop.Plugin.Misc.AbcCore.Extensions;
+using Nop.Plugin.Misc.AbcCore.HomeDelivery;
+using Nop.Plugin.Misc.AbcCore.Mattresses;
+using Nop.Plugin.Misc.AbcCore.Services;
+using Nop.Plugin.Misc.AbcCore.Services.Custom;
+using Nop.Plugin.Misc.AbcExportOrder.Models;
+using Nop.Plugin.Misc.AbcFrontend.Services;
+using Nop.Services.Catalog;
+using Nop.Services.Common;
+using Nop.Services.Directory;
+using Nop.Services.Orders;
+using Nop.Services.Payments;
+using Nop.Services.Security;
+using Nop.Services.Seo;
+using Nop.Services.Stores;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Services
 {
@@ -38,7 +39,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
         private readonly IAddressService _addressService;
         private readonly IAttributeUtilities _attributeUtilities;
         private readonly ICountryService _countryService;
-        private readonly ICustomOrderService _customOrderService;
+        private readonly IAbcOrderService _customOrderService;
         private readonly ICustomShopService _customShopService;
         private readonly IEncryptionService _encryptionService;
         private readonly IGenericAttributeService _genericAttributeService;
@@ -71,7 +72,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Services
             IAddressService addressService,
             IAttributeUtilities attributeUtilities,
             ICountryService countryService,
-            ICustomOrderService customOrderService,
+            IAbcOrderService customOrderService,
             ICustomShopService customShopService,
             IEncryptionService encryptionService,
             IGenericAttributeService genericAttributeService,

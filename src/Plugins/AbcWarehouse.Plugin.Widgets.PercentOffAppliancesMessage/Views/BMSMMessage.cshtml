@@ -1,7 +1,9 @@
 @model decimal
 
+@inject INopHtmlHelper NopHtml
+
 @{
-    Html.AddCssFileParts("~/Plugins/Widgets.PercentOffAppliancesMessage/styles/style.css");
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.PercentOffAppliancesMessage/styles/style.css");
 }
 
 <div id="percent-off-appliances-message" class="percent-off" style="font-weight: bold;">        

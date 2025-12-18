@@ -4,12 +4,14 @@
 @using Nop.Web.Framework.Infrastructure
 
 @inject IWebHelper webHelper
+@* ABC: custom *@
+@inject INopHtmlHelper NopHtml
 
 @{
     var storeUrl = webHelper.GetStoreLocation(); 
     var searchBaseUrl = $"{storeUrl}search/results?q=";
 
-    Html.AddCssFileParts("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/styles/style.css");
+    NopHtml.AddCssFileParts("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/styles/style.css");
 }
 
 <script src="https://cdn.searchspring.net/intellisuggest/is.min.js" async defer></script>
