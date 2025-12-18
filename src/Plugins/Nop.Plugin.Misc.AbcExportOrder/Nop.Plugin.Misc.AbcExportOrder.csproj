@@ -56,6 +56,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Data.Odbc" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
