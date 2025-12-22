@@ -17,13 +17,13 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
             // AbcCategory - get
-            endpointRouteBuilder.MapControllerRoute("AbcCategoryEdit",
+            endpointRouteBuilder.MapControllerRoute("AbcCategoryEditGet",
                             "Admin/Category/Edit/{id}",
                             new { controller = "AbcCategory", action = "Edit", area = "Admin" });
 
             // AbcCategory - post
-            endpointRouteBuilder.MapControllerRoute("AbcCategoryEdit",
-                            "Admin/Category/Edit/",
+            endpointRouteBuilder.MapControllerRoute("AbcCategoryEditPost",
+                            "Admin/Category/Edit/{id?}",
                             new { controller = "AbcCategory", action = "Edit", area = "Admin" });
 
             endpointRouteBuilder.MapControllerRoute("AbcPromoProductList",
@@ -37,7 +37,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 
             // CustomProduct - post
             endpointRouteBuilder.MapControllerRoute("CustomProductEditPost",
-                            "Admin/Product/Edit/",
+                            "Admin/Product/Edit/{id?}",
                             new { controller = "CustomProduct", action = "Edit", area = "Admin" });
 
             // Add to Cart Slideout
