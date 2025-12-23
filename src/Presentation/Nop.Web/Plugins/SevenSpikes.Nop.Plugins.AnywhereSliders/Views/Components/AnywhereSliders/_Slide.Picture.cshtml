@@ -18,14 +18,14 @@
         <picture>
             <source media="(max-width: @(MobileBreakpoint)px)" srcset="@Model.MobilePicturePath">
 
-            <img src="@Model.PicturePath" alt="@Model.Alt" />
+            <img src="@Model.PicturePath" alt="@Model.Alt" fetchpriority="high" />
         </picture>
     }
     else
     {
         <img alt="@Model.Alt" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAABAQMAAADD8p2OAAAAA1BMVEUAAACnej3aAAAAAXRSTlMAQObYZgAAAApJREFUCNdjYAAAAAIAAeIhvDMAAAAASUVORK5CYII="
              data-lazy="@Model.PicturePath" data-mobilePictureSrc="@Model.MobilePicturePath"
-             data-desktopPictureSrc="@Model.PicturePath" />
+             data-desktopPictureSrc="@Model.PicturePath" loading="lazy" />
     }
 
     @if (!string.IsNullOrEmpty(Model.Url))

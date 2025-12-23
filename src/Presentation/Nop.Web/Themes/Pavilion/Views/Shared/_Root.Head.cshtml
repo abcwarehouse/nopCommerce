@@ -104,6 +104,12 @@
 <!DOCTYPE html>
 <html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(await this.ShouldUseRtlThemeAsync() ? Html.Raw(" dir=\"rtl\"") : null) @Html.NopPageCssClasses()>
 <head>
+    @* Preconnect to critical origins for performance *@
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.searchspring.io" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -140,8 +146,9 @@
     @Html.NopInlineScripts(ResourceLocation.Head)
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
 
-    @* Font Awesome CSS - keep in head for icons to render without FOUC *@
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @* Font Awesome CSS - load async to prevent render blocking *@
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
 
     <noscript>
         <img height="1" width="1"
