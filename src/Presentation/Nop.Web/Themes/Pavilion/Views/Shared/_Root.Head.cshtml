@@ -128,14 +128,12 @@
     <style>
         /* Critical layout styles */
         body { margin: 0; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 1.4; }
-        .master-wrapper-page { position: relative; margin: 0 auto; }
+        .master-wrapper-page { position: relative; margin: 0 auto; opacity: 1; }
         .master-wrapper-content { clear: both; }
         .master-column-wrapper { margin: 0 auto; max-width: 1280px; }
 
         /* Header critical styles */
         .header { background: #fff; position: relative; z-index: 100; }
-        .header-upper { background: #@primaryColor; }
-        .responsive-nav-wrapper-parent { background: #@primaryColor; position: relative; z-index: 1000; }
         .responsive-nav-wrapper { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; }
 
         /* Slider critical styles */
@@ -146,12 +144,8 @@
 
         /* Mobile header */
         @@media (max-width: 1000px) {
-            .mobile-header-content-row { background-color: #@primaryColor; padding: 10px; }
             #mobile-header-logo { flex: 1; text-align: center; }
         }
-
-        /* Prevent FOUC */
-        .master-wrapper-page { opacity: 1; }
     </style>
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css'>
