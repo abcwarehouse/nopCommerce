@@ -30,15 +30,6 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                             "Admin/AbcPromo/Products/{abcPromoId}",
                             new { controller = "AbcPromo", action = "Products", area = "Admin" });
 
-            // CustomProduct - get
-            endpointRouteBuilder.MapControllerRoute("CustomProductEditGet",
-                            "Admin/Product/Edit/{id}",
-                            new { controller = "CustomProduct", action = "Edit", area = "Admin" });
-
-            // CustomProduct - post
-            endpointRouteBuilder.MapControllerRoute("CustomProductEditPost",
-                            "Admin/Product/Edit/{id?}",
-                            new { controller = "CustomProduct", action = "Edit", area = "Admin" });
 
             // Add to Cart Slideout
             endpointRouteBuilder.MapControllerRoute("CartSlideout_GetDeliveryOptions",

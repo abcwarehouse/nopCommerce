@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
@@ -18,6 +19,11 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         /// <param name="configuration">Configuration of the application</param>
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
+            // Register the filter for saving custom product fields
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add<SaveProductCustomFieldsFilter>();
+            });
         }
 
         /// <summary>

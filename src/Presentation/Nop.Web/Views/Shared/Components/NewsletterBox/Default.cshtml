@@ -29,8 +29,24 @@
     const rawPhone = document.getElementById("phone").value.trim();
     const phone = rawPhone.replace(/\D/g, ''); // Only digits
 
+    // Both fields are required
+    if (!email && !rawPhone) {
+      showMessage("Please enter your email address and phone number.", "error");
+      return;
+    }
+
     if (!email) {
       showMessage("Please enter your email address.", "error");
+      return;
+    }
+
+    if (!rawPhone) {
+      showMessage("Please enter your phone number.", "error");
+      return;
+    }
+
+    if (phone.length !== 10) {
+      showMessage("Please enter a valid 10-digit phone number.", "error");
       return;
     }
 
