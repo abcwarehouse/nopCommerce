@@ -256,12 +256,19 @@
     <h2 class="product-title">
         <a href="@productUrl"><span>@man</span><span class="man-no">@manNo</span></a>
     </h2>
+    @{
+        var disableLazyLoad = ViewData["DisableLazyLoad"] as bool? ?? false;
+    }
     <div class="picture">
         <div class="image-container">
             <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
-                @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
+                @if (disableLazyLoad)
                 {
-                    @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                    <img src="@Model.DefaultPictureModel.ImageUrl" alt="@Model.DefaultPictureModel.AlternateText" title="@Model.DefaultPictureModel.Title" />
+                }
+                else if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
+                {
+                    @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[]
                     {
                         ("src", Model.DefaultPictureModel.ImageUrl),
                         ("alt", Model.DefaultPictureModel.AlternateText),
@@ -278,9 +285,13 @@
                     <img alt="Default Image" src="https://www.abcwarehouse.com/images/thumbs/default-image_550.png" title="Default Image" id="default-img"/>
                 }
                 <div class="hover-image">
-                    @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
+                    @if (disableLazyLoad)
                     {
-                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                        <img src="@Model.DefaultPictureModel.HoverImageUrl" alt="@(Model.DefaultPictureModel.HoverAlternateText + " Hover")" title="@Model.DefaultPictureModel.HoverTitle" />
+                    }
+                    else if (viewComponentSelector.SelectComponent("LazyLoadImage") != null || Model.DefaultPictureModel.HoverImageUrl != "" || Model.DefaultPictureModel.HoverImageUrl != null)
+                    {
+                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[]
                         {
                             ("src", Model.DefaultPictureModel.HoverImageUrl),
                             ("alt", Model.DefaultPictureModel.HoverAlternateText + " Hover"),

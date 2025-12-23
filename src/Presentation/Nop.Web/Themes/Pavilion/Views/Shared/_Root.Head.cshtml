@@ -140,215 +140,13 @@
     @Html.NopInlineScripts(ResourceLocation.Head)
     <!--Powered by nopCommerce - https://www.nopCommerce.com-->
 
-    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+    @* Font Awesome CSS - keep in head for icons to render without FOUC *@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- SearchSpring Scripts -->
-    <script src="https://cdn.searchspring.io/script.js"></script>
-    <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
-
-    <!-- Include the uuid library -->
-    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
-
-    <!-- Consolidated Cookie & Session Management -->
-    <script>
-        (function() {
-            // Utility functions
-            function getCookie(name) {
-                var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
-
-            function setCookie(name, value, days) {
-                var expires = "";
-                if (days) {
-                    var date = new Date();
-                    date.setTime(date.getTime() + (days*24*60*60*1000));
-                    expires = "; expires=" + date.toUTCString();
-                }
-                document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
-            }
-
-            function generateUUID() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
-
-            function getOrCreateId(cookieName, days) {
-                let id = getCookie(cookieName);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    setCookie(cookieName, id, days || 365);
-                }
-                return id;
-            }
-
-            // Initialize ssShopperId
-            var ssShopperId = getCookie("ssShopperId");
-            if (!ssShopperId) {
-                ssShopperId = generateUUID();
-                setCookie("ssShopperId", ssShopperId, 365);
-            }
-            console.log("ssShopperId set to:", ssShopperId);
-
-            // Initialize ssSessionIdNamespace
-            var sessionKey = "ssSessionIdNamespace";
-            if (!sessionStorage.getItem(sessionKey)) {
-                console.log("ssSessionIdNamespace not found, creating a new one...");
-                var uuid = uuidv4();
-                sessionStorage.setItem(sessionKey, uuid);
-                setCookie(sessionKey, uuid, 1); // Session cookie
-            }
-            var sessionId = sessionStorage.getItem(sessionKey);
-            console.log("Session ID for this tab:", sessionId);
-
-            // Set intellisuggest configuration
-            window.intellisuggest = window.intellisuggest || [];
-            intellisuggest.push(['setSiteId', '4lt84w']);
-            intellisuggest.push(["setShopperId", ssShopperId]);
-
-            // Make utilities globally available
-            window.ssUtils = {
-                getCookie: getCookie,
-                setCookie: setCookie,
-                generateUUID: generateUUID,
-                getOrCreateId: getOrCreateId
-            };
-        })();
-    </script>
-
-    <!-- SearchSpring Suggest Integration -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#small-searchterms')
-                || document.querySelector('input[type="search"]')
-                || document.querySelector('input[name="q"]');
-
-            if (!searchBox) {
-                console.warn('❌ Search box not found!');
-                return;
-            }
-
-            console.log('✅ Search box found. Setting up event listener.');
-
-            function debounce(func, wait) {
-                let timeout;
-                return function (...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-
-            searchBox.addEventListener('input', debounce(async function () {
-                const query = this.value.trim();
-                if (query.length < 2) {
-                    console.log('ℹ️ Query too short.');
-                    return;
-                }
-
-                const userId = window.ssUtils.getCookie('ssShopperId');
-                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
-
-                console.log('🔍 Suggest Input Triggered');
-                console.log('Query:', query);
-                console.log('userId:', userId);
-                console.log('sessionId:', sessionId);
-
-                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
-                    userId ? `&userId=${encodeURIComponent(userId)}` : ''
-                }${
-                    sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
-                }`;
-
-                console.log('📡 Suggest URL:', suggestUrl);
-
-                try {
-                    const response = await fetch(suggestUrl);
-                    const data = await response.json();
-                    console.log('📦 Suggest API response:', data);
-                } catch (e) {
-                    console.error('❗ Suggest fetch error:', e);
-                }
-            }, 300));
-        });
-    </script>
-
-    
-
-    <!-- Microsoft Clarity Script -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "sewgt4p9qm");
-    </script>
-
-    <!-- Meta Pixel Code -->
-    <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window,document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '279056429645080'); 
-        fbq('track', 'PageView');
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if .storeId8 exists (Hawthorne store)
-            if (document.querySelector('.storeId8')) {
-                // Load Adtaxi Container Tag asynchronously
-                (function(a,b,c,d){
-                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
-                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-                })();
-
-                // Update Instagram link only if .storeId8 is present
-                const instagramLink = document.querySelector('li.instagram a');
-                if (instagramLink) {
-                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
-                }
-            }
-        });    
-    </script>
-
     <noscript>
-        <img height="1" width="1" 
+        <img height="1" width="1"
         src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
     </noscript>
-    <!-- End Meta Pixel Code -->
-
-    <script src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
-
-    <!-- Brand Filter Search -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const brandSearchInput = document.getElementById('brandSearchInput');
-            
-            if (brandSearchInput) {
-                brandSearchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.trim().toLowerCase();
-                    const brandItems = document.querySelectorAll('.brand-list li');
-                    
-                    brandItems.forEach(item => {
-                        const brandName = item.getAttribute('data-brand-name');
-                        if (brandName.includes(searchTerm)) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
-            }
-        });
-    </script>
-
 </head>
 @using Nop.Services.Catalog
 @using Nop.Services.Seo
@@ -540,5 +338,178 @@
     @Html.NopScripts(ResourceLocation.Footer)
     <div id="goToTop"></div>
     @Html.NopInlineScripts(ResourceLocation.Footer)
+
+    @* ===== DEFERRED SCRIPTS (moved from head for performance) ===== *@
+
+    <!-- Bazaarvoice Reviews -->
+    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+
+    <!-- SearchSpring Scripts -->
+    <script defer src="https://cdn.searchspring.io/script.js"></script>
+    <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
+
+    <!-- UUID library + Cookie/Session Management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
+    <script>
+        (function() {
+            // Utility functions
+            function getCookie(name) {
+                var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return match ? match[2] : null;
+            }
+
+            function setCookie(name, value, days) {
+                var expires = "";
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days*24*60*60*1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
+            }
+
+            function generateUUID() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+
+            function getOrCreateId(cookieName, days) {
+                let id = getCookie(cookieName);
+                if (!id) {
+                    id = Math.random().toString(36).substring(2) + Date.now();
+                    setCookie(cookieName, id, days || 365);
+                }
+                return id;
+            }
+
+            // Initialize ssShopperId
+            var ssShopperId = getCookie("ssShopperId");
+            if (!ssShopperId) {
+                ssShopperId = generateUUID();
+                setCookie("ssShopperId", ssShopperId, 365);
+            }
+
+            // Initialize ssSessionIdNamespace
+            var sessionKey = "ssSessionIdNamespace";
+            if (!sessionStorage.getItem(sessionKey)) {
+                var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
+                sessionStorage.setItem(sessionKey, uuid);
+                setCookie(sessionKey, uuid, 1);
+            }
+
+            // Set intellisuggest configuration
+            window.intellisuggest = window.intellisuggest || [];
+            intellisuggest.push(['setSiteId', '4lt84w']);
+            intellisuggest.push(["setShopperId", ssShopperId]);
+
+            // Make utilities globally available
+            window.ssUtils = {
+                getCookie: getCookie,
+                setCookie: setCookie,
+                generateUUID: generateUUID,
+                getOrCreateId: getOrCreateId
+            };
+        })();
+    </script>
+
+    <!-- SearchSpring Suggest Integration -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchBox = document.querySelector('#small-searchterms')
+                || document.querySelector('input[type="search"]')
+                || document.querySelector('input[name="q"]');
+
+            if (!searchBox) return;
+
+            function debounce(func, wait) {
+                let timeout;
+                return function (...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+
+            searchBox.addEventListener('input', debounce(async function () {
+                const query = this.value.trim();
+                if (query.length < 2) return;
+
+                const userId = window.ssUtils.getCookie('ssShopperId');
+                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
+
+                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
+                    userId ? `&userId=${encodeURIComponent(userId)}` : ''
+                }${
+                    sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
+                }`;
+
+                try {
+                    const response = await fetch(suggestUrl);
+                    const data = await response.json();
+                } catch (e) {
+                    console.error('Suggest fetch error:', e);
+                }
+            }, 300));
+        });
+    </script>
+
+    <!-- Microsoft Clarity (Analytics) -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "sewgt4p9qm");
+    </script>
+
+    <!-- Meta Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window,document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '279056429645080');
+        fbq('track', 'PageView');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.querySelector('.storeId8')) {
+                (function(a,b,c,d){
+                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
+                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+                })();
+
+                const instagramLink = document.querySelector('li.instagram a');
+                if (instagramLink) {
+                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+                }
+            }
+        });
+    </script>
+
+    <!-- Font Awesome Kit -->
+    <script defer src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
+
+    <!-- Brand Filter Search -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSearchInput = document.getElementById('brandSearchInput');
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+                    const brandItems = document.querySelectorAll('.brand-list li');
+                    brandItems.forEach(item => {
+                        const brandName = item.getAttribute('data-brand-name');
+                        item.style.display = brandName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
