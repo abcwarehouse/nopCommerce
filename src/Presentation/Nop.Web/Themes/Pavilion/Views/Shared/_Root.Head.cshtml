@@ -110,12 +110,11 @@
     <link rel="preconnect" href="https://cdn.searchspring.io" crossorigin>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
+    <!-- Google Tag Manager - Async optimized -->
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    </script>
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-TBLL3Z89"></script>
     <!-- End Google Tag Manager -->
 
     <title>@shortTitle</title>
@@ -124,6 +123,37 @@
     <meta name="keywords" content="@(Html.NopMetaKeywords())" />
     <meta name="generator" content="nopCommerce" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+
+    @* Inline Critical CSS for above-the-fold content *@
+    <style>
+        /* Critical layout styles */
+        body { margin: 0; font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; line-height: 1.4; }
+        .master-wrapper-page { position: relative; margin: 0 auto; }
+        .master-wrapper-content { clear: both; }
+        .master-column-wrapper { margin: 0 auto; max-width: 1280px; }
+
+        /* Header critical styles */
+        .header { background: #fff; position: relative; z-index: 100; }
+        .header-upper { background: #@primaryColor; }
+        .responsive-nav-wrapper-parent { background: #@primaryColor; position: relative; z-index: 1000; }
+        .responsive-nav-wrapper { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; }
+
+        /* Slider critical styles */
+        .slider-wrapper { position: relative; width: 100%; overflow: hidden; }
+        .anywhere-slider { position: relative; }
+        .picture-slide { display: block; width: 100%; }
+        .picture-slide img { display: block; width: 100%; height: auto; }
+
+        /* Mobile header */
+        @@media (max-width: 1000px) {
+            .mobile-header-content-row { background-color: #@primaryColor; padding: 10px; }
+            #mobile-header-logo { flex: 1; text-align: center; }
+        }
+
+        /* Prevent FOUC */
+        .master-wrapper-page { opacity: 1; }
+    </style>
+
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css'>
 
     @Html.NopHeadCustom()
@@ -355,9 +385,9 @@
     <script defer src="https://cdn.searchspring.io/script.js"></script>
     <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
 
-    <!-- UUID library + Cookie/Session Management -->
+    <!-- UUID library + Cookie/Session Management - Optimized -->
     <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
-    <script>
+    <script defer>
         (function() {
             // Utility functions
             function getCookie(name) {
@@ -421,8 +451,8 @@
         })();
     </script>
 
-    <!-- SearchSpring Suggest Integration -->
-    <script>
+    <!-- SearchSpring Suggest Integration - Deferred -->
+    <script defer>
         document.addEventListener('DOMContentLoaded', function () {
             const searchBox = document.querySelector('#small-searchterms')
                 || document.querySelector('input[type="search"]')
@@ -442,8 +472,8 @@
                 const query = this.value.trim();
                 if (query.length < 2) return;
 
-                const userId = window.ssUtils.getCookie('ssShopperId');
-                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
+                const userId = window.ssUtils?.getCookie('ssShopperId');
+                const sessionId = window.ssUtils?.getCookie('ssSessionIdNamespace');
 
                 const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
                     userId ? `&userId=${encodeURIComponent(userId)}` : ''
@@ -461,27 +491,31 @@
         });
     </script>
 
-    <!-- Microsoft Clarity (Analytics) -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "sewgt4p9qm");
+    <!-- Microsoft Clarity (Analytics) - Deferred -->
+    <script defer>
+        window.addEventListener('load', function() {
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "sewgt4p9qm");
+        });
     </script>
 
-    <!-- Meta Pixel -->
-    <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window,document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '279056429645080');
-        fbq('track', 'PageView');
+    <!-- Meta Pixel - Deferred -->
+    <script defer>
+        window.addEventListener('load', function() {
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window,document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '279056429645080');
+            fbq('track', 'PageView');
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             if (document.querySelector('.storeId8')) {
@@ -502,8 +536,8 @@
     <!-- Font Awesome Kit -->
     <script defer src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
 
-    <!-- Brand Filter Search -->
-    <script>
+    <!-- Brand Filter Search - Deferred -->
+    <script defer>
         document.addEventListener('DOMContentLoaded', function() {
             const brandSearchInput = document.getElementById('brandSearchInput');
             if (brandSearchInput) {
