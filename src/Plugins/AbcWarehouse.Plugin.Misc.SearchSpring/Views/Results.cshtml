@@ -6,7 +6,6 @@
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Nop.Core.IWebHelper webHelper
-@inject Nop.Services.Logging.ILogger logger
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Catalog
 @using Nop.Web.Extensions
@@ -190,9 +189,6 @@ else
             <div class="item-grid">
                 @{
                     var productModels = new List<dynamic>();
-                    var failedSkus = new List<string>();
-                    var foundSkus = new List<string>();
-
                     foreach (var item in Model.Results)
                     {
                         var product = productService.GetProductBySkuAsync(item.Sku).GetAwaiter().GetResult();
@@ -202,7 +198,6 @@ else
                         }
                         if (product != null)
                         {
-                            foundSkus.Add(item.Sku);
                             var productUrl = urlRecordService.GetSeNameAsync(product).GetAwaiter().GetResult();
 
                             var productOverviewModels = productModelFactory.PrepareProductOverviewModelsAsync(
@@ -217,21 +212,6 @@ else
                                 productModels.Add(model);
                             }
                         }
-                        else
-                        {
-                            failedSkus.Add(item.Sku);
-                        }
-                    }
-
-                    // Log diagnostic info if there are failed SKUs
-                    if (failedSkus.Any())
-                    {
-                        logger.WarningAsync($"[SearchSpring Results] SKU lookup failures - Query: '{Model.Query}' | " +
-                            $"SearchSpring returned {Model.Results.Count()} results | " +
-                            $"Found in DB: {foundSkus.Count} | " +
-                            $"NOT found in DB: {failedSkus.Count} | " +
-                            $"Failed SKUs: {string.Join(", ", failedSkus.Take(20))}" +
-                            (failedSkus.Count > 20 ? $"... and {failedSkus.Count - 20} more" : "")).GetAwaiter().GetResult();
                     }
 
                     foreach (var model in productModels)
