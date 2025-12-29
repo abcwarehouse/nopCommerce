@@ -344,115 +344,118 @@
     <!-- Bazaarvoice Reviews -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
-    <!-- SearchSpring Scripts -->
-    <script defer src="https://cdn.searchspring.io/script.js"></script>
-    <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
+    @if (currentStore.Id == 3)
+    {
+        <!-- SearchSpring Scripts (Store 3 only) -->
+        <script defer src="https://cdn.searchspring.io/script.js"></script>
+        <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
 
-    <!-- UUID library + Cookie/Session Management -->
-    <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
-    <script>
-        (function() {
-            // Utility functions
-            function getCookie(name) {
-                var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
-
-            function setCookie(name, value, days) {
-                var expires = "";
-                if (days) {
-                    var date = new Date();
-                    date.setTime(date.getTime() + (days*24*60*60*1000));
-                    expires = "; expires=" + date.toUTCString();
+        <!-- UUID library + Cookie/Session Management -->
+        <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
+        <script>
+            (function() {
+                // Utility functions
+                function getCookie(name) {
+                    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                    return match ? match[2] : null;
                 }
-                document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
-            }
 
-            function generateUUID() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
-
-            function getOrCreateId(cookieName, days) {
-                let id = getCookie(cookieName);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    setCookie(cookieName, id, days || 365);
+                function setCookie(name, value, days) {
+                    var expires = "";
+                    if (days) {
+                        var date = new Date();
+                        date.setTime(date.getTime() + (days*24*60*60*1000));
+                        expires = "; expires=" + date.toUTCString();
+                    }
+                    document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
                 }
-                return id;
-            }
 
-            // Initialize ssShopperId
-            var ssShopperId = getCookie("ssShopperId");
-            if (!ssShopperId) {
-                ssShopperId = generateUUID();
-                setCookie("ssShopperId", ssShopperId, 365);
-            }
+                function generateUUID() {
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                }
 
-            // Initialize ssSessionIdNamespace
-            var sessionKey = "ssSessionIdNamespace";
-            if (!sessionStorage.getItem(sessionKey)) {
-                var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
-                sessionStorage.setItem(sessionKey, uuid);
-                setCookie(sessionKey, uuid, 1);
-            }
+                function getOrCreateId(cookieName, days) {
+                    let id = getCookie(cookieName);
+                    if (!id) {
+                        id = Math.random().toString(36).substring(2) + Date.now();
+                        setCookie(cookieName, id, days || 365);
+                    }
+                    return id;
+                }
 
-            // Set intellisuggest configuration
-            window.intellisuggest = window.intellisuggest || [];
-            intellisuggest.push(['setSiteId', '4lt84w']);
-            intellisuggest.push(["setShopperId", ssShopperId]);
+                // Initialize ssShopperId
+                var ssShopperId = getCookie("ssShopperId");
+                if (!ssShopperId) {
+                    ssShopperId = generateUUID();
+                    setCookie("ssShopperId", ssShopperId, 365);
+                }
 
-            // Make utilities globally available
-            window.ssUtils = {
-                getCookie: getCookie,
-                setCookie: setCookie,
-                generateUUID: generateUUID,
-                getOrCreateId: getOrCreateId
-            };
-        })();
-    </script>
+                // Initialize ssSessionIdNamespace
+                var sessionKey = "ssSessionIdNamespace";
+                if (!sessionStorage.getItem(sessionKey)) {
+                    var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
+                    sessionStorage.setItem(sessionKey, uuid);
+                    setCookie(sessionKey, uuid, 1);
+                }
 
-    <!-- SearchSpring Suggest Integration -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#small-searchterms')
-                || document.querySelector('input[type="search"]')
-                || document.querySelector('input[name="q"]');
+                // Set intellisuggest configuration
+                window.intellisuggest = window.intellisuggest || [];
+                intellisuggest.push(['setSiteId', '4lt84w']);
+                intellisuggest.push(["setShopperId", ssShopperId]);
 
-            if (!searchBox) return;
-
-            function debounce(func, wait) {
-                let timeout;
-                return function (...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
+                // Make utilities globally available
+                window.ssUtils = {
+                    getCookie: getCookie,
+                    setCookie: setCookie,
+                    generateUUID: generateUUID,
+                    getOrCreateId: getOrCreateId
                 };
-            }
+            })();
+        </script>
 
-            searchBox.addEventListener('input', debounce(async function () {
-                const query = this.value.trim();
-                if (query.length < 2) return;
+        <!-- SearchSpring Suggest Integration -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchBox = document.querySelector('#small-searchterms')
+                    || document.querySelector('input[type="search"]')
+                    || document.querySelector('input[name="q"]');
 
-                const userId = window.ssUtils.getCookie('ssShopperId');
-                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
+                if (!searchBox) return;
 
-                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
-                    userId ? `&userId=${encodeURIComponent(userId)}` : ''
-                }${
-                    sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
-                }`;
-
-                try {
-                    const response = await fetch(suggestUrl);
-                    const data = await response.json();
-                } catch (e) {
-                    console.error('Suggest fetch error:', e);
+                function debounce(func, wait) {
+                    let timeout;
+                    return function (...args) {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => func.apply(this, args), wait);
+                    };
                 }
-            }, 300));
-        });
-    </script>
+
+                searchBox.addEventListener('input', debounce(async function () {
+                    const query = this.value.trim();
+                    if (query.length < 2) return;
+
+                    const userId = window.ssUtils.getCookie('ssShopperId');
+                    const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
+
+                    const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
+                        userId ? `&userId=${encodeURIComponent(userId)}` : ''
+                    }${
+                        sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
+                    }`;
+
+                    try {
+                        const response = await fetch(suggestUrl);
+                        const data = await response.json();
+                    } catch (e) {
+                        console.error('Suggest fetch error:', e);
+                    }
+                }, 300));
+            });
+        </script>
+    }
 
     <!-- Microsoft Clarity (Analytics) -->
     <script type="text/javascript">

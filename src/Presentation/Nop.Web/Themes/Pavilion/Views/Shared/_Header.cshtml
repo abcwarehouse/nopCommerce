@@ -263,7 +263,15 @@
                     }
                 }
                 <div class="search-spring-container">
-                    @await Component.InvokeAsync("SearchSpring")
+                    @if (storeId == 3)
+                    {
+                        @await Component.InvokeAsync("SearchBox")
+                        
+                    }
+                    else
+                    {
+                        @await Component.InvokeAsync("SearchSpring")
+                    }
                 </div>
                 @await Component.InvokeAsync("FlyoutShoppingCart")
                 <div class="header-links-wrapper">
