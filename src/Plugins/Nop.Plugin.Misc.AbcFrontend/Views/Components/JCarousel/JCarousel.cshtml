@@ -1,3 +1,11 @@
+@* ABC: custom needed for AbcFrontend *@
+@using Nop.Core
+@using Nop.Services.Configuration
+@using Nop.Services.Logging
+@using Nop.Web.Framework.Themes
+@using SevenSpikes.Nop.Plugins.JCarousel.Domain
+@using Newtonsoft.Json
+
 @model List<SevenSpikes.Nop.Plugins.JCarousel.Models.JCarouselModel>
 @inject IThemeContext themeContext
 @inject IWorkContext workContext
@@ -167,6 +175,7 @@
             </h2>
 
             <div class="slick-carousel item-grid" data-slick='@slickSettingsJson' data-numberOfVisibleItems="@numberOfItemsToShow">
+                @{ var itemIndex = 0; }
                 @foreach (var item in carousel.Items)
                 {
                     <div class="carousel-item">
@@ -174,7 +183,7 @@
                             @switch (carousel.DataSourceTypeClass)
                             {
                                 case "product-grid":
-                                    @await Html.PartialAsync("_ProductBox", item.ProductOverviewModel)
+                                    @await Html.PartialAsync("_ProductBox", item.ProductOverviewModel, new ViewDataDictionary(ViewData) { { "DisableLazyLoad", itemIndex == 0 } })
                                     break;
                                 case "category-grid":
                                     @await Component.InvokeAsync("JCarouselCategoryBox", item.CategoryModel)
@@ -188,6 +197,7 @@
                             }
                         </div>
                     </div>
+                    itemIndex++;
                 }
             </div>
         </div>

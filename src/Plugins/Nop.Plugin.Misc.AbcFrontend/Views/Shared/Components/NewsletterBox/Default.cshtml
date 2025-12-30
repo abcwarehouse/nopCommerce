@@ -1,0 +1,128 @@
+@model NewsletterBoxModel
+<div class="newsletter">
+    <div class="title">
+        <strong>@T("Newsletter.Title")</strong>
+    </div>
+    <div class="newsletter-subscribe" id="newsletter-subscribe-block">
+        <div class="newsletter-email">
+            <input asp-for="NewsletterEmail" id="newsletter-email" class="newsletter-subscribe-text" placeholder=@T("Newsletter.Email.Placeholder") aria-label="@T("Newsletter.Subscribe")" />
+
+            <button type="button" id="newsletter-subscribe-button" class="button-1 newsletter-subscribe-button">@T(Model.AllowToUnsubscribe ? "Newsletter.Options.Send" : "Newsletter.Options.Subscribe")</button>
+
+            @if (Model.AllowToUnsubscribe)
+            {
+                <div class="options">
+                    <span class="subscribe">
+                        <input id="newsletter_subscribe" type="radio" value="newsletter_subscribe" name="newsletter_block" checked="checked" />
+                        <label for="newsletter_subscribe">@T("Newsletter.Options.Subscribe")</label>
+                    </span>
+                    <span class="unsubscribe">
+                        <input id="newsletter_unsubscribe" type="radio" value="newsletter_unsubscribe" name="newsletter_block" />
+                        <label for="newsletter_unsubscribe">@T("Newsletter.Options.Unsubscribe")</label>
+                    </span>
+                </div>
+            }
+            @if (Model.DisplayCaptcha)
+            {
+                <nop-captcha />
+            }
+        </div>
+        <div class="newsletter-validation">
+            <span id="subscribe-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
+            <span asp-validation-for="NewsletterEmail"></span>
+        </div>
+    </div>
+    <div class="newsletter-result" id="newsletter-result-block"></div>
+    <script asp-location="Footer">        
+        async function getCaptchaToken(action, reCaptchaPublicKey, isReCaptchaV3) {
+            var recaptchaToken = '';
+            if (isReCaptchaV3) {
+                grecaptcha.ready(() => {
+                    grecaptcha.execute(reCaptchaPublicKey, { action: action }).then((token) => {
+                        recaptchaToken = token;
+                    });
+                });
+
+                while (recaptchaToken == '') {
+                    await new Promise(t => setTimeout(t, 100));
+                }
+            } else {
+                recaptchaToken = $('#newsletter-subscribe-block .captcha-box textarea[name="g-recaptcha-response"').val();
+            }
+            
+            return recaptchaToken;
+        }       
+
+        async function newsletter_subscribe(subscribe) {
+            var subscribeProgress = $("#subscribe-loading-progress");
+            subscribeProgress.show();
+            var captchaTok = '';
+            if (@Model.DisplayCaptcha.ToString().ToLowerInvariant() == true) {
+                captchaTok = await getCaptchaToken('SubscribeNewsletter', '@Model.ReCaptchaPublicKey', @Model.IsReCaptchaV3.ToString().ToLowerInvariant());
+            }
+            var postData = {
+                subscribe: subscribe,
+                email: $("#newsletter-email").val(),                
+                'g-recaptcha-response': captchaTok
+            };
+            addAntiForgeryToken(postData);
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "@(Url.RouteUrl("SubscribeNewsletter"))",
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    $("#newsletter-result-block").html(data.Result);
+                    if (data.Success) {
+                        $('#newsletter-subscribe-block').hide();
+                        $('#newsletter-result-block').show();
+                    } else {
+                        $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Failed to subscribe.');
+                },
+                complete: function (jqXHR, textStatus) {
+                    subscribeProgress.hide();
+                }
+            });
+        }
+
+    const email = document.getElementById("newsletter-email").value.trim();
+    const rawPhone = document.getElementById("phone").value.trim();
+    const phone = rawPhone.replace(/\D/g, ''); // Only digits
+
+    // Both fields are required
+    if (!email && !rawPhone) {
+      showMessage("Please enter your email address and phone number.", "error");
+      return;
+    }
+
+    if (!email) {
+      showMessage("Please enter your email address.", "error");
+      return;
+    }
+
+    if (!rawPhone) {
+      showMessage("Please enter your phone number.", "error");
+      return;
+    }
+
+    if (phone.length !== 10) {
+      showMessage("Please enter a valid 10-digit phone number.", "error");
+      return;
+    }
+
+    const subscribeToNewsletter = async () => {
+      try {
+        const response = await fetch('@(Url.RouteUrl("SubscribeNewsletter"))', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            subscribe: 'true',
+            email: email
+          })
+        });
+    </script>
+</div>

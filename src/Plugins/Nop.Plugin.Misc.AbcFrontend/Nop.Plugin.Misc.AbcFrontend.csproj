@@ -89,13 +89,13 @@
     <None Remove="Content/scripts/pavilion.js" />
     <None Remove="Content/scripts/public.ajaxcart.js" />
     <None Remove="Content/scripts/public.estimateshipping.popup.js" />
-    
     <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
     <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
     <None Remove="Views\Catalog\ManufacturerAll.cshtml" />
     <None Remove="Views\Checkout\Completed.cshtml" />
     <None Remove="Views\Components\CartSlideoutProductAttributes\Default.cshtml" />
+    <None Remove="Views\Components\JCarousel\JCarousel.cshtml" />
     <None Remove="Views\Home\Index.cshtml" />
     <None Remove="Views\Product\_AddToCart.cshtml" />
     <None Remove="Views\Product\_ProductPrice.cshtml" />
@@ -109,6 +109,7 @@
     <None Remove="Views\Shared\_Root.Head.cshtml" />
     <None Remove="Views\Shared\Components\FlyoutShoppingCart\Default.cshtml" />
     <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
+    <None Remove="Views\Shared\Components\NewsletterBox\Default.cshtml" />
     <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
     <None Remove="Views\Topic\TopicDetails.cshtml" />
   </ItemGroup>
@@ -343,6 +344,9 @@
     <Content Include="Views\Checkout\Completed.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Views\Components\JCarousel\JCarousel.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Views\Components\CartSlideoutProductAttributes\Default.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -383,6 +387,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\Components\Footer\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\NewsletterBox\Default.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Shared\Components\OrderSummary\Default.cshtml">
