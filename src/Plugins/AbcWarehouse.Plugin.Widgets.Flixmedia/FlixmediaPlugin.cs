@@ -44,9 +44,9 @@ namespace AbcWarehouse.Plugin.Widgets.Flixmedia
             return $"{_webHelper.GetStoreLocation()}Admin/Flixmedia/Configure";
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return "WidgetsFlixmedia";
+            return typeof(Components.WidgetsFlixmediaViewComponent);
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
@@ -83,7 +83,7 @@ namespace AbcWarehouse.Plugin.Widgets.Flixmedia
 
         private async Task AddLocalesAsync()
         {
-            await _localizationService.AddLocaleResourceAsync(
+            await _localizationService.AddOrUpdateLocaleResourceAsync(
                 new Dictionary<string, string>
                 {
                     [FlixmediaLocales.FlixID] = "Flix ID",

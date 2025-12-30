@@ -1,4 +1,5 @@
-﻿using Nop.Services.Cms;
+﻿using System;
+using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,10 +10,7 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus
     {
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "WidgetsAbcHomeDeliveryStatus";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.WidgetsAbcHomeDeliveryStatusViewComponent);
 
         public Task<IList<string>> GetWidgetZonesAsync()
         {

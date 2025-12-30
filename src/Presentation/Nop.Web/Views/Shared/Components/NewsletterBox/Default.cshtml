@@ -1,132 +1,115 @@
 ﻿@model NewsletterBoxModel
+<div class="newsletter">
+    <div class="title">
+        <strong>@T("Newsletter.Title")</strong>
+    </div>
+    <div class="newsletter-subscribe" id="newsletter-subscribe-block">
+        <div class="newsletter-email">
+            <input asp-for="NewsletterEmail" id="newsletter-email" class="newsletter-subscribe-text" placeholder=@T("Newsletter.Email.Placeholder") aria-label="@T("Newsletter.Subscribe")" />
 
-<form id="marketingForm" novalidate>
-  <input type="email" id="newsletter-email" name="email" placeholder="Email Address" required />
-  <input type="tel" id="phone" name="phoneNumber" placeholder="Phone Number" required
-         pattern="^(\(\d{3}\)|\d{3})[-.\s]?\d{3}[-.\s]?\d{4}$" />
-  <button type="submit">Subscribe</button>
-  <div id="form-message" style="margin-top: 10px; color: #fff; padding: 10px; display: none; border-radius: 5px;"></div>
-</form>
+            <button type="button" id="newsletter-subscribe-button" class="button-1 newsletter-subscribe-button">@T(Model.AllowToUnsubscribe ? "Newsletter.Options.Send" : "Newsletter.Options.Subscribe")</button>
 
- <script>
-  const formMessage = document.getElementById("form-message");
+            @if (Model.AllowToUnsubscribe)
+            {
+                <div class="options">
+                    <span class="subscribe">
+                        <input id="newsletter_subscribe" type="radio" value="newsletter_subscribe" name="newsletter_block" checked="checked" />
+                        <label for="newsletter_subscribe">@T("Newsletter.Options.Subscribe")</label>
+                    </span>
+                    <span class="unsubscribe">
+                        <input id="newsletter_unsubscribe" type="radio" value="newsletter_unsubscribe" name="newsletter_block" />
+                        <label for="newsletter_unsubscribe">@T("Newsletter.Options.Unsubscribe")</label>
+                    </span>
+                </div>
+            }
+            @if (Model.DisplayCaptcha)
+            {
+                <nop-captcha />
+            }
+        </div>
+        <div class="newsletter-validation">
+            <span id="subscribe-loading-progress" style="display: none;" class="please-wait">@T("Common.Wait")</span>
+            <span asp-validation-for="NewsletterEmail"></span>
+        </div>
+    </div>
+    <div class="newsletter-result" id="newsletter-result-block"></div>
+    <script asp-location="Footer">        
+        async function getCaptchaToken(action, reCaptchaPublicKey, isReCaptchaV3) {
+            var recaptchaToken = '';
+            if (isReCaptchaV3) {
+                grecaptcha.ready(() => {
+                    grecaptcha.execute(reCaptchaPublicKey, { action: action }).then((token) => {
+                        recaptchaToken = token;
+                    });
+                });
 
-  function showMessage(message, type = "success") {
-    const colors = {
-      success: "#28a745",
-      error: "#dc3545",
-      warning: "#ffc107"
-    };
-    formMessage.style.display = "block";
-    formMessage.style.backgroundColor = colors[type] || colors.success;
-    formMessage.textContent = message;
-  }
+                while (recaptchaToken == '') {
+                    await new Promise(t => setTimeout(t, 100));
+                }
+            } else {
+                recaptchaToken = $('#newsletter-subscribe-block .captcha-box textarea[name="g-recaptcha-response"').val();
+            }
+            
+            return recaptchaToken;
+        }       
 
-  document.getElementById("marketingForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+        async function newsletter_subscribe(subscribe) {
+            var subscribeProgress = $("#subscribe-loading-progress");
+            subscribeProgress.show();
+            var captchaTok = '';
+            if (@Model.DisplayCaptcha.ToString().ToLowerInvariant() == true) {
+                captchaTok = await getCaptchaToken('SubscribeNewsletter', '@Model.ReCaptchaPublicKey', @Model.IsReCaptchaV3.ToString().ToLowerInvariant());
+            }
+            var postData = {
+                subscribe: subscribe,
+                email: $("#newsletter-email").val(),                
+                'g-recaptcha-response': captchaTok
+            };
+            addAntiForgeryToken(postData);
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "@(Url.RouteUrl("SubscribeNewsletter"))",
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    $("#newsletter-result-block").html(data.Result);
+                    if (data.Success) {
+                        $('#newsletter-subscribe-block').hide();
+                        $('#newsletter-result-block').show();
+                    } else {
+                        $('#newsletter-result-block').fadeIn("slow").delay(2000).fadeOut("slow");
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Failed to subscribe.');
+                },
+                complete: function (jqXHR, textStatus) {
+                    subscribeProgress.hide();
+                }
+            });
+        }
 
-    const email = document.getElementById("newsletter-email").value.trim();
-    const rawPhone = document.getElementById("phone").value.trim();
-    const phone = rawPhone.replace(/\D/g, ''); // Only digits
-
-    // Both fields are required
-    if (!email && !rawPhone) {
-      showMessage("Please enter your email address and phone number.", "error");
-      return;
-    }
-
-    if (!email) {
-      showMessage("Please enter your email address.", "error");
-      return;
-    }
-
-    if (!rawPhone) {
-      showMessage("Please enter your phone number.", "error");
-      return;
-    }
-
-    if (phone.length !== 10) {
-      showMessage("Please enter a valid 10-digit phone number.", "error");
-      return;
-    }
-
-    const subscribeToNewsletter = async () => {
-      try {
-        const response = await fetch('@(Url.RouteUrl("SubscribeNewsletter"))', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams({
-            subscribe: 'true',
-            email: email
-          })
+        $(function() {
+            $('#newsletter-subscribe-button').on('click', function () {
+                @if (Model.AllowToUnsubscribe)
+                {
+                    <text>if ($('#newsletter_subscribe').is(':checked')) {
+                    newsletter_subscribe('true');
+                } else {
+                    newsletter_subscribe('false');
+                }</text>
+                }
+                else
+                {
+                    <text>newsletter_subscribe('true');</text>
+                }
+            });
+            $("#newsletter-email").on("keydown", function (event) {
+                if (event.keyCode == 13) {
+                    $("#newsletter-subscribe-button").trigger("click");
+                    return false;
+                }
+            });
         });
-
-        const result = await response.json();
-        if (result.Success) {
-          showMessage(result.Result || "Thanks for subscribing to our newsletter!");
-        } else {
-          showMessage(result.Result || "We couldn't complete your newsletter signup. Please try again.", "error");
-        }
-      } catch (error) {
-        showMessage("Sorry! Something went wrong with the newsletter signup.", "error");
-      }
-    };
-
-    const subscribeToSms = async () => {
-      if (phone.length === 0) return;
-
-      if (phone.length !== 10) {
-        showMessage("Please enter a valid 10-digit phone number.", "warning");
-        return;
-      }
-
-      try {
-        const response = await fetch('/api/marketingSms/subscribe', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ emailAddress: email, phoneNumber: phone })
-        });
-
-        let result = await response.json();
-
-        // Handle stringified JSON in result.message
-        let parsedMessage = result.message;
-        try {
-          const maybeParsed = JSON.parse(result.message);
-          if (maybeParsed && typeof maybeParsed.message === "string") {
-            parsedMessage = maybeParsed.message;
-          }
-        } catch (e) {
-          // result.message is not JSON, proceed as-is
-        }
-
-        if (response.status === 400) {
-          // Friendly override for known error
-          if (result.error === "ERROR_SUBSCRIBED_PHONE_NUMBER") {
-            parsedMessage = "You're already subscribed to SMS alerts at this number.";
-          }
-
-          showMessage(parsedMessage, "warning");
-        } else if (!response.ok) {
-          showMessage("Something went wrong with SMS signup. Please try again later.", "error");
-        } else {
-          showMessage(parsedMessage || "You're signed up for SMS alerts!");
-        }
-
-      } catch (error) {
-        showMessage("Sorry! We couldn't complete your SMS signup.", "error");
-      }
-    };
-
-
-    await subscribeToNewsletter();
-    await subscribeToSms();
-  });
-
-  document.getElementById("newsletter-email").addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      document.getElementById("marketingForm").requestSubmit();
-    }
-  });
-</script>
+    </script>
+</div>

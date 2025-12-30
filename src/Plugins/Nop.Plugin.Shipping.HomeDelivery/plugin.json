@@ -3,7 +3,7 @@
   "FriendlyName": "Home Delivery",
   "SystemName": "Shipping.HomeDelivery",
   "Version": "4.40.0",
-  "SupportedVersions": [ "4.40" ],
+  "SupportedVersions": [ "4.80" ],
   "Author": "X By 2",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Shipping.HomeDelivery.dll",

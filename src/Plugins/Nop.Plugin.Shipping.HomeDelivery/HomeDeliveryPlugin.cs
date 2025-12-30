@@ -230,6 +230,16 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             return Task.FromResult<decimal?>(null);
         }
 
-        public IShipmentTracker ShipmentTracker => _baseShippingComputation.ShipmentTracker;
+        /// <summary>
+        /// Get associated shipment tracker
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the shipment tracker
+        /// </returns>
+        public Task<IShipmentTracker> GetShipmentTrackerAsync()
+        {
+            return Task.FromResult<IShipmentTracker>(null);
+        }
     }
 }

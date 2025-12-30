@@ -2,13 +2,11 @@
 @using Nop.Web.Models.Catalog
 
 @model ProductDetailsModel
-@{
-    Html.AddScriptParts(ResourceLocation.Footer, "~/lib_npm/magnific-popup/jquery.magnific-popup.min.js");
-    Html.AddCssFileParts("~/lib_npm/magnific-popup/magnific-popup.css");
 
-    // custom
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/jquery.jcarousel.min.js");
-}
+<link rel="stylesheet" href="~/lib_npm/magnific-popup/magnific-popup.css" />
+<script asp-exclude-from-bundle="true" src="~/lib_npm/magnific-popup/jquery.magnific-popup.min.js" asp-location="Footer"></script>
+@* ABC: custom to allow PDP jcarousel *@
+<script asp-exclude-from-bundle="true" src="~/Plugins/Misc.AbcFrontend/Content/scripts/jquery.jcarousel.min.js" asp-location="Footer"></script>
 
 <div class="gallery">
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })

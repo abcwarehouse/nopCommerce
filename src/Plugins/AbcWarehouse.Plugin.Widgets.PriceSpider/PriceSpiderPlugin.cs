@@ -25,9 +25,9 @@ namespace AbcWarehouse.Plugin.Widgets.PriceSpider
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public System.Type GetWidgetViewComponent(string widgetZone)
         {
-            return "PriceSpider";
+            return typeof(Components.PriceSpiderViewComponent);
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
@@ -65,7 +65,7 @@ namespace AbcWarehouse.Plugin.Widgets.PriceSpider
 
         private async Task UpdateLocales()
         {
-            await _localizationService.AddLocaleResourceAsync(
+            await _localizationService.AddOrUpdateLocaleResourceAsync(
                 new Dictionary<string, string>
                 {
                     [PriceSpiderLocales.MerchantId] = "Merchant ID",

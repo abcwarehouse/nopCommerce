@@ -69,30 +69,21 @@ namespace Nop.Plugin.Misc.AbcCore.Services
                 );
             }
 
-            var webRequest = HttpWebRequest.CreateHttp(AbcConstants.StatusAPIUrl);
-            webRequest.Method = "POST";
-            webRequest.ContentType = "text/xml; charset=utf-8";
+            using (var httpClient = new System.Net.Http.HttpClient())
+            {
+                var content = new System.Net.Http.StringContent(xml, Encoding.UTF8, "text/xml");
+                System.Net.Http.HttpResponseMessage response;
+                try
+                {
+                    response = await httpClient.PostAsync(AbcConstants.StatusAPIUrl, content);
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (System.Net.Http.HttpRequestException e)
+                {
+                    throw new IsamException($"Error when connecting to Term Lookup API: {e.Message}");
+                }
 
-            byte[] byteArray = Encoding.UTF8.GetBytes(xml);
-            webRequest.ContentLength = byteArray.Length;
-            using (System.IO.Stream requestStream = webRequest.GetRequestStream())
-            {
-                requestStream.Write(byteArray, 0, byteArray.Length);
-            }
-            WebResponse response = null;
-            try
-            {
-                response = webRequest.GetResponse();
-            }
-            catch (WebException e)
-            {
-                throw new IsamException($"Error when connecting to Term Lookup API: {e.Message}");
-            }
-            Stream r_stream = response.GetResponseStream();
-
-            using (StreamReader reader = new StreamReader(r_stream))
-            {
-                string strResponse = reader.ReadToEnd();
+                string strResponse = await response.Content.ReadAsStringAsync();
 
                 if (_settings.IsDebugMode)
                 {

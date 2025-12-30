@@ -1,15 +1,10 @@
 ﻿@model CustomerSearchModel
 
-@using System.Globalization;
-@using Nop.Core.Domain.Media
-
-@inject MediaSettings _mediaSettings
-
 @{
     //page title
     ViewBag.PageTitle = T("Admin.Customers.Customers").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Customers list");
+    NopHtml.SetActiveMenuItemSystemName("Customers list");
 }
 
 @{
@@ -24,7 +19,7 @@
         </h1>
         <div class="float-right">
             <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus-square"></i>
+                <i class="fas fa-square-plus"></i>
                 @T("Admin.Common.AddNew")
             </a>
             <div class="btn-group">
@@ -65,7 +60,11 @@
                 </ul>
 
             </div>
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.CustomerListButtons })
+            <button type="button" name="importexcel" class="btn bg-olive" data-toggle="modal" data-target="#importexcel-window">
+                <i class="fas fa-upload"></i>
+                @T("Admin.Common.Import")
+            </button>
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.CustomerListButtons, additionalData = Model })
         </div>
     </div>
 
@@ -77,7 +76,7 @@
                         <div class="card-body">
                             <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
                                 <div class="search-text">@T("Admin.Common.Search")</div>
-                                <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                                <div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
                                 <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
                             </div>
                             <div class="search-body @(hideSearchBlock ? "closed" : "")">
@@ -118,6 +117,14 @@
                                                 <nop-editor asp-for="SearchLastName" />
                                             </div>
                                         </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchIsActive" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-select asp-for="SearchIsActive" class="form-control" asp-items="Model.AvailableActiveValues" />
+                                            </div>
+                                        </div>
                                         @if (Model.DateOfBirthEnabled)
                                         {
                                             <div class="form-group row">
@@ -150,8 +157,40 @@
                                                 </div>
                                             </div>
                                         }
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchRegistrationDateFrom" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchRegistrationDateFrom" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchRegistrationDateTo" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchRegistrationDateTo" />
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-7">
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchLastActivityFrom" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchLastActivityFrom" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <nop-label asp-for="SearchLastActivityTo" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <nop-editor asp-for="SearchLastActivityTo" />
+                                            </div>
+                                        </div>
                                         @if (Model.CompanyEnabled)
                                         {
                                             <div class="form-group row">
@@ -200,28 +239,19 @@
                                             <div class="col-md-8">                                               
                                                     <nop-select asp-for="SelectedCustomerRoleIds" asp-items="Model.AvailableCustomerRoles" asp-multiple="true" />                                                                                                                                              
                                                 <script>
-                                            $(document).ready(function() {
-                                                var rolesIdsInput =
-                                                    $('#@Html.IdFor(model => model.SelectedCustomerRoleIds)')
-                                                        .data("kendoMultiSelect");
-                                                rolesIdsInput.setOptions({
-                                                    autoClose: false,
-                                                    filter: "contains"
-                                                });
-
-                                                @if (Model.AvailableCustomerRoles.Count == 0)
-                                                {
-                                                    <text>
-                                                        rolesIdsInput.setOptions({
-                                                            enable: false,
-                                                            placeholder:
-                                                                '@T("Admin.Catalog.Products.CustomerRoles.NoCustomerRolesAvailable")'
-                                                        });
-                                                        rolesIdsInput._placeholder();
-                                                        rolesIdsInput._enable();
-                                                    </text>
-                                                }
-                                            });
+                                                    $(function() {
+                                                        var rolesIdsInput =
+                                                            $('#@Html.IdFor(model => model.SelectedCustomerRoleIds)').select2({
+                                                                closeOnSelect: false,
+                                                                @if (!Model.AvailableCustomerRoles.Any())
+                                                                {
+                                                                <text>
+                                                                disabled: true,
+                                                                placeholder: '@T("Admin.Configuration.ACL.NoCustomerRolesAvailable")',
+                                                                </text>
+                                                                }
+                                                            });
+                                                    });
                                                 </script>
                                             </div>
                                             </div>
@@ -230,7 +260,7 @@
                                 <div class="row">
                                     <div class="text-center col-12">
                                         <button type="button" id="search-customers" class="btn btn-primary btn-search">
-                                            <i class="fas fa-search"></i>
+                                            <i class="fas fa-magnifying-glass"></i>
                                             @T("Admin.Common.Search")
                                         </button>
                                     </div>
@@ -252,18 +282,23 @@
                                     Length = Model.PageSize,
                                     LengthMenu = Model.AvailablePageSizes,
                                     Filters = new List<FilterParameter>
-                                                        {
-                                    new FilterParameter(nameof(Model.SelectedCustomerRoleIds)),
-                                    new FilterParameter(nameof(Model.SearchEmail)),
-                                    new FilterParameter(nameof(Model.SearchUsername)),
-                                    new FilterParameter(nameof(Model.SearchFirstName)),
-                                    new FilterParameter(nameof(Model.SearchLastName)),
-                                    new FilterParameter(nameof(Model.SearchDayOfBirth)),
-                                    new FilterParameter(nameof(Model.SearchMonthOfBirth)),
-                                    new FilterParameter(nameof(Model.SearchCompany)),
-                                    new FilterParameter(nameof(Model.SearchPhone)),
-                                    new FilterParameter(nameof(Model.SearchZipPostalCode)),
-                                    new FilterParameter(nameof(Model.SearchIpAddress)),
+                                    {
+                                        new FilterParameter(nameof(Model.SelectedCustomerRoleIds)),
+                                        new FilterParameter(nameof(Model.SearchEmail)),
+                                        new FilterParameter(nameof(Model.SearchUsername)),
+                                        new FilterParameter(nameof(Model.SearchFirstName)),
+                                        new FilterParameter(nameof(Model.SearchLastName)),
+                                        new FilterParameter(nameof(Model.SearchDayOfBirth)),
+                                        new FilterParameter(nameof(Model.SearchMonthOfBirth)),
+                                        new FilterParameter(nameof(Model.SearchCompany)),
+                                        new FilterParameter(nameof(Model.SearchRegistrationDateFrom)),
+                                        new FilterParameter(nameof(Model.SearchRegistrationDateTo)),
+                                        new FilterParameter(nameof(Model.SearchLastActivityFrom)),
+                                        new FilterParameter(nameof(Model.SearchLastActivityTo)),
+                                        new FilterParameter(nameof(Model.SearchPhone)),
+                                        new FilterParameter(nameof(Model.SearchZipPostalCode)),
+                                        new FilterParameter(nameof(Model.SearchIpAddress)),
+                                        new FilterParameter(nameof(Model.SearchIsActive)),
                                     }
                                 };
 
@@ -336,7 +371,7 @@
                                     Title = T("Admin.Common.Edit").Text,
                                     Width = "80",
                                     ClassName = NopColumnClassDefaults.Button,
-                                    Render = new RenderButtonEdit(new DataUrl("Edit"))
+                                    Render = new RenderButtonEdit(new DataUrl("~/Admin/Customer/Edit"))
                                 });
                             }
                             @await Html.PartialAsync("Table", gridModel)
@@ -353,13 +388,13 @@
     <input type="hidden" id="selectedIds" name="selectedIds" value="" />
 </form>
 <script>
-    $(document).ready(function () {
+    $(function() {
         $('#exportxml-selected').click(function (e) {
             e.preventDefault();
             var ids = selectedIds.join(",");
             if (!ids) {
                 $('#exportXmlSelected-info').text("@T("Admin.Customers.NoCustomers")");
-                $("#exportXmlSelected").click();
+                $("#exportXmlSelected").trigger("click");
             }
             else {
                 $('#export-xml-selected-form #selectedIds').val(ids);
@@ -372,18 +407,61 @@
 </script>
 <nop-alert asp-alert-id="exportXmlSelected" />
 
+@*import products form*@
+<div id="importexcel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="importexcel-window-title">@T("Admin.Common.ImportFromExcel")</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form asp-controller="Customer" asp-action="ImportExcel" method="post" enctype="multipart/form-data">
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        <ul class="common-list">
+                            <li>
+                                <em>@T("Admin.Customers.Customers.ImportFromExcelTip")</em>
+                            </li>
+                            <li>
+                                <em>@T("Admin.Common.ImportFromExcel.ManyRecordsWarning")</em>
+                            </li>
+                        </ul>
+                        <div class="form-group row">
+                            <div class="col-md-2">
+                                <div class="label-wrapper">
+                                    <label class="col-form-label">
+                                        @T("Admin.Common.ExcelFile")
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="file" id="importexcelfile" name="importexcelfile" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            @T("Admin.Common.ImportFromExcel")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @*export selected (Excel). We don't use GET approach because it's limited to 2K-4K chars and won't work for large number of entities*@
 <form asp-controller="Customer" asp-action="ExportExcelSelected" method="post" id="export-excel-selected-form">
     <input type="hidden" id="selectedIds" name="selectedIds" value="" />
 </form>
 <script>
-    $(document).ready(function () {
+    $(function() {
         $('#exportexcel-selected').click(function (e) {
             e.preventDefault();
             var ids = selectedIds.join(",");
             if (!ids) {
                 $('#exportExcelSelected-info').text("@T("Admin.Customers.NoCustomers")");
-                $("#exportExcelSelected").click();
+                $("#exportExcelSelected").trigger("click");
             }
             else {
                 $('#export-excel-selected-form #selectedIds').val(ids);

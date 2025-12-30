@@ -1,4 +1,6 @@
 @model TopicModel
+
+@using Nop.Core.Domain.Topics
 @using Nop.Web.Framework.Models.AdminAreaTour
 
 @{
@@ -7,7 +9,7 @@
     //tour step
     ViewBag.TourStep = TourStep.Topic;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Topics");
+    NopHtml.SetActiveMenuItemSystemName("Topics");
 }
 
 @await Html.PartialAsync("_AdminTour")
@@ -22,23 +24,20 @@
             </small>
         </h1>
         <div class="float-right">
-            <button type="button" onclick="javascript:OpenWindow('@Url.RouteUrl("Topic", new {SeName = Model.SeName})', 800, 600, true); return false;" class="btn btn-info" id="preview-topic-button">
-                <i class="far fa-eye"></i>
-                @T("Admin.Common.Preview")
-            </button>
+            @await Component.InvokeAsync(typeof(MultistorePreviewViewComponent), Model)
             <button type="submit" name="save" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.Save")
             </button>
             <button type="submit" name="save-continue" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
             <span id="topic-delete" class="btn btn-danger">
-                <i class="far fa-trash-alt"></i>
+                <i class="far fa-trash-can"></i>
                 @T("Admin.Common.Delete")
             </span>
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.TopicDetailsButtons, additionalData = Model })
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TopicDetailsButtons, additionalData = Model })
         </div>
     </div>
     @await Html.PartialAsync("_CreateOrUpdate", Model)

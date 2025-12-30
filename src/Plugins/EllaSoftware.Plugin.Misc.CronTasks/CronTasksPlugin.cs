@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Routing;
 using Nop.Core;
 using Nop.Core.Domain.Cms;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
+using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Plugins;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
+using Nop.Web.Areas.Admin.Models;
 using Nop.Web.Framework.Infrastructure;
+using Task = System.Threading.Tasks.Task;
 using Nop.Web.Framework.Menu;
-using Task = System.Threading.Tasks.Task; 
 
 namespace EllaSoftware.Plugin.Misc.CronTasks
 {
@@ -47,13 +50,13 @@ namespace EllaSoftware.Plugin.Misc.CronTasks
         }
 
         /// <summary>
-        /// Gets a name of a view component for displaying widget
+        /// Gets a type of a view component for displaying widget
         /// </summary>
         /// <param name="widgetZone">Name of the widget zone</param>
-        /// <returns>View component name</returns>
-        public string GetWidgetViewComponentName(string widgetZone)
+        /// <returns>View component type</returns>
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return CronTasksDefaults.ScheduleTaskListViewComponentName;
+            return typeof(Components.ScheduleTaskListViewComponent);
         }
 
         public bool HideInWidgetList => true;
@@ -103,34 +106,28 @@ namespace EllaSoftware.Plugin.Misc.CronTasks
             await base.UninstallAsync();
         }
 
-        public Task ManageSiteMapAsync(SiteMapNode rootNode)
+        public System.Threading.Tasks.Task ManageSiteMapAsync(AdminMenuItem rootNode)
         {
-            return Task.Run(() => 
+            return System.Threading.Tasks.Task.Run(() => 
             {
-                var pluginRootNode = rootNode.ChildNodes.FirstOrDefault(n => n.SystemName == "EllaSoftware");
-                if (pluginRootNode == null)
+                var rootMenuItem = new AdminMenuItem()
                 {
-                    pluginRootNode = new SiteMapNode()
-                    {
-                        SystemName = "EllaSoftware",
-                        Title = "Ella Software",
-                        Visible = true,
-                        IconClass = "fa-plug"
-                    };
-                    rootNode.ChildNodes.Add(pluginRootNode);
-                }
-
-                var pluginNode = new SiteMapNode()
-                {
-                    SystemName = "CRONTasks",
-                    Title = "CRON Tasks",
+                    SystemName = "EllaSoftware",
+                    Title = "Ella Software",
                     Visible = true,
-                    IconClass = "fa-dot-circle-o",
-                    ControllerName = "CronTasks",
-                    ActionName = "Configure",
-                    RouteValues = new RouteValueDictionary { { "area", "Admin" } },
+                    ChildNodes = new List<AdminMenuItem>()
+                    {
+                        new AdminMenuItem()
+                        {
+                            SystemName = "CRONTasks",
+                            Title = "CRON Tasks",
+                            Visible = true,
+                            Url = "Admin/CronTasks/Configure"
+                        }
+                    }
                 };
-                pluginRootNode.ChildNodes.Add(pluginNode);
+
+                rootNode.ChildNodes.Add(rootMenuItem);
             });
         }
     }

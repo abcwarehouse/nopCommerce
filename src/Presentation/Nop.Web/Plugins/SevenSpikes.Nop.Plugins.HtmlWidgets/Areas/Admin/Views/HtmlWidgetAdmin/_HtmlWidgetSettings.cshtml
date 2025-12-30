@@ -68,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-            @await Html.PartialAsync(Views.StoreSettings, Model)
+            @{ await Html.RenderPartialAsync(Views.StoreSettings, Model); }
     </section>
 </div>
 

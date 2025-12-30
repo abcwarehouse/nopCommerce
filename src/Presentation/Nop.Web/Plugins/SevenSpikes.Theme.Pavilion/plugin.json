@@ -2,11 +2,11 @@
   "Group": "7Spikes",
   "FriendlyName": "Nop Pavilion Theme",
   "SystemName": "SevenSpikes.Theme.Pavilion",
-  "Version": "4.4",
-  "SupportedVersions": [ "4.40" ],
+  "Version": "4.8",
+  "SupportedVersions": [ "4.80" ],
   "DependsOnSystemNames": [ "SevenSpikes.Core" ],
   "Author": "Seven Spikes Ltd",
-  "DisplayOrder": 2,
+  "DisplayOrder": 10,
   "FileName": "SevenSpikes.Theme.Pavilion.dll",
   "Description": "This plugin allows you to configure the Pavilion theme settings"
 }
