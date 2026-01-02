@@ -265,7 +265,7 @@
                 <div class="search-spring-container">
                     @if (storeId == 3)
                     {
-                        @await Component.InvokeAsync("SearchBox")
+                        @Url.RouteUrl("InstantSearch")
                         
                     }
                     else
