@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,8 @@ public class MarketingController : ControllerBase
             }
 
             var content = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, new { message = $"Subscription failed: {content}" });
+            var friendlyMessage = GetFriendlyErrorMessage(content);
+            return StatusCode((int)response.StatusCode, new { message = friendlyMessage });
         }
         catch (Exception ex)
         {
@@ -38,6 +40,35 @@ public class MarketingController : ControllerBase
             Console.WriteLine(ex);
             return StatusCode(500, new { message = "An unexpected error occurred." });
         }
+    }
+
+    private string GetFriendlyErrorMessage(string apiResponse)
+    {
+        try
+        {
+            var errorResponse = JsonSerializer.Deserialize<ListrakErrorResponse>(apiResponse,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return errorResponse?.Error switch
+            {
+                "ERROR_PHONE_NUMBER_FOUND" => "This phone number is already subscribed.",
+                "ERROR_INVALID_PHONE_NUMBER" => "Please enter a valid phone number.",
+                "ERROR_PHONE_NUMBER_OPTED_OUT" => "This phone number has previously opted out. Please text JOIN to resubscribe.",
+                "ERROR_PHONE_NUMBER_BLOCKED" => "This phone number cannot be subscribed at this time.",
+                _ => "Unable to subscribe. Please try again later."
+            };
+        }
+        catch
+        {
+            return "Unable to subscribe. Please try again later.";
+        }
+    }
+
+    private class ListrakErrorResponse
+    {
+        public int Status { get; set; }
+        public string Error { get; set; }
+        public string Message { get; set; }
     }
 }
 
