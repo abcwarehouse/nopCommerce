@@ -1,5 +1,5 @@
 @model SearchBoxModel
-<form asp-route="ProductSearch" method="get" id="small-search-box-form">
+<form asp-route="ProductSearch" method="get" id="small-search-box-form-test">
     @if (Model.ShowSearchBox)
     {
         <input type="text" class="search-box-text" id="small-searchterms" autocomplete="off" name="q" placeholder="@T("Search.SearchBox.Tooltip")" aria-label="@T("Search.SearchBox.Text.Label")" />
