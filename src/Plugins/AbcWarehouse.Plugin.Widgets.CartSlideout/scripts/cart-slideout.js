@@ -162,6 +162,11 @@ function updateCartSlideoutHtml(response) {
         setAttributeListeners(response.slideoutInfo.ShoppingCartItemId);
         productId = response.slideoutInfo.ProductId;
         cartSlideoutShoppingCartItemId = response.slideoutInfo.ShoppingCartItemId;
+
+        // If pickup in store HTML is included (e.g., in edit mode), inject it
+        if (response.slideoutInfo.PickupInStoreHtml) {
+            $('.cart-slideout__pickup-in-store').html(response.slideoutInfo.PickupInStoreHtml);
+        }
     } else {
         addToCartButton.style.display = "none";
         title.style.display = "block";
