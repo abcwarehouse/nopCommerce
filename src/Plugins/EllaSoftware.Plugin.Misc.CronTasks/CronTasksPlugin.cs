@@ -14,10 +14,11 @@ using Nop.Web.Areas.Admin.Models;
 using Nop.Web.Framework.Infrastructure;
 using Task = System.Threading.Tasks.Task;
 using Nop.Web.Framework.Menu;
+using Nop.Web.Framework.Events;
 
 namespace EllaSoftware.Plugin.Misc.CronTasks
 {
-    public class CronTasksPlugin : BasePlugin, IWidgetPlugin, IAdminMenuPlugin
+    public class CronTasksPlugin : BasePlugin, IWidgetPlugin, IConsumer<AdminMenuCreatedEvent>
     {
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
@@ -106,29 +107,28 @@ namespace EllaSoftware.Plugin.Misc.CronTasks
             await base.UninstallAsync();
         }
 
-        public System.Threading.Tasks.Task ManageSiteMapAsync(AdminMenuItem rootNode)
+        public System.Threading.Tasks.Task HandleEventAsync(AdminMenuCreatedEvent eventMessage)
         {
-            return System.Threading.Tasks.Task.Run(() => 
+            var rootMenuItem = new AdminMenuItem()
             {
-                var rootMenuItem = new AdminMenuItem()
+                SystemName = "EllaSoftware",
+                Title = "Ella Software",
+                Visible = true,
+                ChildNodes = new List<AdminMenuItem>()
                 {
-                    SystemName = "EllaSoftware",
-                    Title = "Ella Software",
-                    Visible = true,
-                    ChildNodes = new List<AdminMenuItem>()
+                    new AdminMenuItem()
                     {
-                        new AdminMenuItem()
-                        {
-                            SystemName = "CRONTasks",
-                            Title = "CRON Tasks",
-                            Visible = true,
-                            Url = "Admin/CronTasks/Configure"
-                        }
+                        SystemName = "CRONTasks",
+                        Title = "CRON Tasks",
+                        Visible = true,
+                        Url = eventMessage.GetMenuItemUrl("CronTasks", "Configure")
                     }
-                };
+                }
+            };
 
-                rootNode.ChildNodes.Add(rootMenuItem);
-            });
+            eventMessage.RootMenuItem.ChildNodes.Add(rootMenuItem);
+            
+            return System.Threading.Tasks.Task.CompletedTask;
         }
     }
 }

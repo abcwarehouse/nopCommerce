@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Shipping;
-using System.Net;
 using Nop.Data;
 using System.Data;
 using Nop.Services.Plugins;
@@ -159,22 +158,10 @@ namespace Nop.Plugin.Shipping.HomeDelivery
             //if there are items to be shipped, use the base calculation service if items remain that will be shipped by ups
             if (fedexDeliveryItems.Count > 0)
             {
-                var oldProtocol = ServicePointManager.SecurityProtocol;
-                try
-                {
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
-                    // only check fedex items
-                    getShippingOptionRequest.Items = fedexDeliveryItems;
-                    response = await _baseShippingComputation.GetShippingOptionsAsync(getShippingOptionRequest);
-                }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    ServicePointManager.SecurityProtocol = oldProtocol;
-                }
+                // only check fedex items
+                getShippingOptionRequest.Items = fedexDeliveryItems;
+                response = await _baseShippingComputation.GetShippingOptionsAsync(getShippingOptionRequest);
+                
                 if (legacyHomeDeliveryItems.Count > 0)
                 {
                     var zip = getShippingOptionRequest.ShippingAddress.ZipPostalCode;
