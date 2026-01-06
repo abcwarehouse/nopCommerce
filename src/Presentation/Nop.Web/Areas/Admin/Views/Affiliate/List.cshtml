@@ -1,11 +1,10 @@
-@using OfficeOpenXml.FormulaParsing.Excel.Functions.Math
 @model AffiliateSearchModel
 
 @{
     //page title
     ViewBag.PageTitle = T("Admin.Affiliates").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Affiliates");
+    NopHtml.SetActiveMenuItemSystemName("Affiliates");
 }
 
 @{
@@ -19,29 +18,12 @@
     </h1>
     <div class="float-right">
         <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus-square"></i>
+            <i class="fas fa-square-plus"></i>
             @T("Admin.Common.AddNew")
         </a>
-        @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.AffiliateListButtons })
+        @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.AffiliateListButtons, additionalData = Model })
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-        $("#@Html.IdFor(model => model.LoadOnlyWithOrders)").click(toggleLoadOnlyWithOrders);
-        toggleLoadOnlyWithOrders();
-    });
-
-    function toggleLoadOnlyWithOrders() {
-        if ($('#@Html.IdFor(model => model.LoadOnlyWithOrders)').is(':checked')) {
-            $('#pnlOrdersCreatedFromUtc').showElement();
-            $('#pnlOrdersCreatedToUtc').showElement();
-        } else {
-            $('#pnlOrdersCreatedFromUtc').hideElement();
-            $('#pnlOrdersCreatedToUtc').hideElement();
-        }
-    }
-</script>
 
 <section class="content">
     <div class="container-fluid">
@@ -51,7 +33,7 @@
                 <div class="card-body">
                     <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
                         <div class="search-text">@T("Admin.Common.Search")</div>
-                        <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                        <div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
                         <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
                     </div>
 
@@ -93,7 +75,7 @@
                                     </div>
                                 </div>
                                 <nop-nested-setting asp-for="LoadOnlyWithOrders">
-                                    <div class="form-group row" id="pnlOrdersCreatedFromUtc">
+                                    <div class="form-group row">
                                         <div class="col-md-4">
                                             <nop-label asp-for="OrdersCreatedFromUtc" />
                                         </div>
@@ -101,7 +83,7 @@
                                             <nop-editor asp-for="OrdersCreatedFromUtc" />
                                         </div>
                                     </div>
-                                    <div class="form-group row" id="pnlOrdersCreatedToUtc">
+                                    <div class="form-group row">
                                         <div class="col-md-4">
                                             <nop-label asp-for="OrdersCreatedToUtc" />
                                         </div>
@@ -115,7 +97,7 @@
                         <div class="row">
                             <div class="text-center col-12">
                                 <button type="button" id="search-affiliates" class="btn btn-primary btn-search">
-                                    <i class="fas fa-search"></i>
+                                    <i class="fas fa-magnifying-glass"></i>
                                     @T("Admin.Common.Search")
                                 </button>
                             </div>
@@ -171,7 +153,7 @@
                                 Title = T("Admin.Common.Edit").Text,
                                 Width = "100",
                                 ClassName = NopColumnClassDefaults.Button,
-                                Render = new RenderButtonEdit(new DataUrl("Edit"))
+                                Render = new RenderButtonEdit(new DataUrl("~/Admin/Affiliate/Edit"))
                             }
                         }
                     })

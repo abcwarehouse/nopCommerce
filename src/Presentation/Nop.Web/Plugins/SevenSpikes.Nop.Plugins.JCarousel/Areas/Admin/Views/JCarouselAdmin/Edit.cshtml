@@ -2,7 +2,7 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.JCarousel.Admin.Submenus.ManageSettings");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.JCarousel.Admin.Submenus.ManageSettings");
 }
 
 <form method="post">
@@ -30,6 +30,6 @@
             }
         </div>
     </div>
-    @await Html.PartialAsync(Views.CreateOrUpdate, Model)
+    @{ await Html.RenderPartialAsync(Views.CreateOrUpdate, Model); }
 </form>
 <nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="carousel-delete" />

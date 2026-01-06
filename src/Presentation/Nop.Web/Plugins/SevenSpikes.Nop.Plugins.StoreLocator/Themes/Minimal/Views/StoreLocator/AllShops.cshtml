@@ -2,31 +2,39 @@
 @model AllShopsModel
 @inject IWebHelper webHelper
 @inject StoreLocatorSettings storeLocatorSettings
+@inject IWorkContext workContext
+
 @{
     Layout = "~/Views/Shared/_ColumnsOne.cshtml";
 
     //title, meta
-    Html.AddTitleParts(T("SevenSpikes.StoreLocator.Public.AllShops.PageTitle").Text);
-    Html.AddMetaDescriptionParts(T("SevenSpikes.StoreLocator.Public.AllShops.PageMetaDescription").Text);
-    Html.AddMetaKeywordParts(T("SevenSpikes.StoreLocator.Public.AllShops.PageMetaKeywords").Text);
+    NopHtml.AddTitleParts(T("SevenSpikes.StoreLocator.Public.AllShops.PageTitle").Text);
+    NopHtml.AddMetaDescriptionParts(T("SevenSpikes.StoreLocator.Public.AllShops.PageMetaDescription").Text);
+    NopHtml.AddMetaKeywordParts(T("SevenSpikes.StoreLocator.Public.AllShops.PageMetaKeywords").Text);
 
     var themeName = await ThemeHelper.GetPluginThemeAsync(Plugin.FolderName);
-    var supportRtl = await ShouldUseRtlThemeAsync();
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
 
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.css");
-    if (supportRtl)
-    {
-        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.rtl.css");
-    }
-
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorCore.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorAllShops.min.js");
+    var storeLocatorCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.css";
 
     string units = (storeLocatorSettings.UnitsSystem == UnitsSystems.Metric ? T("SevenSpikes.StoreLocator.Public.Units.Kilometers") : T("SevenSpikes.StoreLocator.Public.Units.Miles")).ToString();
 
     var storeLocation = webHelper.GetStoreLocation();
 }
-<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+<link rel="stylesheet" href="@storeLocatorCssFilePath" />
+
+@if (supportRtl)
+{
+    var storeLocatorRtlCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.rtl.css";
+
+    <link rel="stylesheet" href="@storeLocatorRtlCssFilePath" />
+}
+
+<script src="~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorCore.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorAllShops.min.js" asp-location="Footer"></script>
+<script src=@("https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js")></script>
 
 <div class="page all-shops-page">
     <div class="page-title">
@@ -87,7 +95,7 @@
             }
             <div class="shops-list-wrapper">
                 <ul class="shops-list">
-                    @await Html.PartialAsync(Views.ShopsList, Model.Shops)
+                    @{ await Html.RenderPartialAsync(Views.ShopsList, Model.Shops); } 
                 </ul>
 
                 <div id="all-shops-list-panel-loader" class="shops-list-loader" style="display: none"></div>

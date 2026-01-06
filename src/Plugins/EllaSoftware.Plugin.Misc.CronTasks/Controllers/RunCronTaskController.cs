@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using EllaSoftware.Plugin.Misc.CronTasks.Services;
 using Microsoft.AspNetCore.Mvc;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Quartz;
 
 namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers

@@ -27,6 +27,10 @@ namespace AbcWarehouse.Plugin.Payments.UniFi
 {
     public class UniFiPaymentsProcessor : BasePlugin, IPaymentMethod
     {
+        public string GetPublicViewComponentName() => "UnifiPaymentsProcessor";
+
+        public Type GetPublicViewComponent() => typeof(Components.UnifiPaymentsProcessorViewComponent);
+
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILocalizationService _localizationService;
@@ -246,11 +250,6 @@ namespace AbcWarehouse.Plugin.Payments.UniFi
             return Task.FromResult(paymentInfo);
         }
 
-        public string GetPublicViewComponentName()
-        {
-            return "UniFiPaymentsProcessor";
-        }
-
         public Task<string> GetPaymentMethodDescriptionAsync() => Task.FromResult("Pay with your ABC Warehouse card and Synchrony Pay Later");
 
         public bool SupportCapture
@@ -336,18 +335,22 @@ namespace AbcWarehouse.Plugin.Payments.UniFi
 
         private async Task UpdateLocales()
         {
-            await _localizationService.AddLocaleResourceAsync(
-                new Dictionary<string, string>
-                {
-                    [UniFiPaymentsLocales.ClientId] = "Client ID",
-                    [UniFiPaymentsLocales.ClientIdHint] = "Client ID provided by Synchrony.",
-                    [UniFiPaymentsLocales.ClientSecret] = "Client Secret",
-                    [UniFiPaymentsLocales.ClientSecretHint] = "Client Secret provided by Synchrony.",
-                    [UniFiPaymentsLocales.UseIntegration] = "Use Integration",
-                    [UniFiPaymentsLocales.UseIntegrationHint] = "Use the integration region (for testing).",
-                    [UniFiPaymentsLocales.IsDebugMode] = "Is Debug Mode",
-                    [UniFiPaymentsLocales.IsDebugModeHint] = "Track API calls in the nopCommerce logger.",
-                });
+            var resources = new Dictionary<string, string>
+            {
+                [UniFiPaymentsLocales.ClientId] = "Client ID",
+                [UniFiPaymentsLocales.ClientIdHint] = "Client ID provided by Synchrony.",
+                [UniFiPaymentsLocales.ClientSecret] = "Client Secret",
+                [UniFiPaymentsLocales.ClientSecretHint] = "Client Secret provided by Synchrony.",
+                [UniFiPaymentsLocales.UseIntegration] = "Use Integration",
+                [UniFiPaymentsLocales.UseIntegrationHint] = "Use the integration region (for testing).",
+                [UniFiPaymentsLocales.IsDebugMode] = "Is Debug Mode",
+                [UniFiPaymentsLocales.IsDebugModeHint] = "Track API calls in the nopCommerce logger.",
+            };
+
+            foreach (var resource in resources)
+            {
+                await _localizationService.AddOrUpdateLocaleResourceAsync(resource.Key, resource.Value);
+            }
         }
     }
 }

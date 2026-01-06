@@ -3,7 +3,7 @@
   "FriendlyName": "ABC Export Order",
   "SystemName": "Misc.AbcExportOrder",
   "Version": "4.40.0",
-  "SupportedVersions": [ "4.40" ],
+  "SupportedVersions": [ "4.80" ],
   "Author": "Dave Farinelli",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Misc.AbcExportOrder.dll",
