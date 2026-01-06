@@ -22,7 +22,7 @@
 	// }
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "dotnet dev-certs https --trust && dotnet restore src/NopCommerce.sln && cd e2e && npm install && npx playwright install --with-deps",
+	"postCreateCommand": "bash .devcontainer/post-create.sh",
 
 	// Configure tool-specific properties.
 	"customizations": {

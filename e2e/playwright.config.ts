@@ -12,7 +12,11 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   /* Maximum time one test can run for */
-  timeout: 60 * 1000,
+  timeout: 120 * 1000,
+  /* Expect timeout for assertions */
+  expect: {
+    timeout: 10 * 1000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -33,6 +37,12 @@ export default defineConfig({
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
+
+    /* Navigation timeout - increased for production sites with many external resources */
+    navigationTimeout: 60 * 1000,
+
+    /* Action timeout - time for click, fill, etc. */
+    actionTimeout: 15 * 1000,
   },
 
   /* Configure projects for major browsers */
