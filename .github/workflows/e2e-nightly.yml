@@ -1,4 +1,4 @@
-ame: E2E Tests - Nightly
+name: E2E Tests - Nightly
 
 on:
   schedule:
