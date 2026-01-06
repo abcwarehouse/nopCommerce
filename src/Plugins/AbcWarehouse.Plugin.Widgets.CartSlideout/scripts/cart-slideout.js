@@ -51,7 +51,7 @@ async function checkDeliveryShippingAvailabilityAsync() {
     checkButton.disabled = true;
 
     const zip = zipCodeInput.value;
-    document.cookie = `customerZipCode=${zip}`;
+    document.cookie = `customerZipCode=${zip}; path=/`;
     const response = await fetch(`/AddToCart/GetDeliveryOptions?zip=${zip}&productId=${productId}`);
     if (response.status != 200) {
         alert('Error occurred when checking delivery options.');
