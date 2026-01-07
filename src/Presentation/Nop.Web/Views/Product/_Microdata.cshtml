@@ -46,13 +46,6 @@
         <meta itemprop="priceValidUntil" content="@Model.AvailableEndDate"/>
         <meta itemprop="availability" content="http://schema.org/@(Model.InStock ? "InStock" : "OutOfStock")" />
     </div>
-    <div itemprop="review" itemscope itemtype="http://schema.org/Review">
-        <div itemprop="itemReviewed" itemscope itemtype="http://schema.org/Product">
-            <meta itemprop="name" content="@Model.Name"/>
-        </div>
-        <meta itemprop="author" content="ALL"/>
-        <meta itemprop="url" content="@Url.RouteUrl("ProductReviews", new { productId = Model.ProductReviewOverview.ProductId })"/>
-    </div>
     @foreach (var product in Model.AssociatedProducts)
     {
         var viewDataDictionary = new ViewDataDictionary(ViewData);
