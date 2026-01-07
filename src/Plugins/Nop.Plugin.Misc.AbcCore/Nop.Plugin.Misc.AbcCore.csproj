@@ -134,5 +134,8 @@
     <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
   </Target>
 
-  <!-- PostBuild temporarily removed to fix build issue with git commands -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="git rev-parse --abbrev-ref HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)branch.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
+    <Exec Command="git rev-parse --short HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)sha.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
+  </Target>
 </Project>
