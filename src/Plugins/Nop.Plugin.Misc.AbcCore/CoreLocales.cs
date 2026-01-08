@@ -38,5 +38,10 @@ namespace Nop.Plugin.Misc.AbcCore
             Base + "StagingDbConnectionString";
         public const string StagingDbConnectionStringHint =
             StagingDbConnectionString + ".Hint";
+
+        public const string BazaarvoiceApiPasskey =
+            Base + "BazaarvoiceApiPasskey";
+        public const string BazaarvoiceApiPasskeyHint =
+            BazaarvoiceApiPasskey + ".Hint";
     }
 }

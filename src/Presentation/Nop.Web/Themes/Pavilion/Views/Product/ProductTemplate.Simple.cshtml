@@ -29,6 +29,7 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @inject Nop.Services.Seo.IUrlRecordService urlRecordService
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
+@inject IBazaarvoiceService bazaarvoiceService
 
 @{
     Layout = "_ColumnsOne";
@@ -236,7 +237,7 @@
                     </div>
 
                     <script>
-                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
+                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute.
                         window.bvCallback = function (BV) {
 
                     // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
@@ -245,10 +246,10 @@
                             $('#review_tab').show();
                         });
 
-                    // Register a function to be called when a BV feature needs to 
+                    // Register a function to be called when a BV feature needs to
                     // display the Q&A element, such as when selecting the number of questions link
                         BV.questions.on('show', function () {
-                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
+                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab)
                             $('#questions_tab').show();
                         });
                         };
@@ -397,13 +398,8 @@
         offerPrice = Model.ProductPrice.PriceValue.ToString();
     }
 
-    // Calculate rating value (1-5 scale) from rating sum and total reviews
-    decimal? ratingValue = null;
-    if (Model.ProductReviewOverview.TotalReviews > 0)
-    {
-        var ratingPercent = ((Model.ProductReviewOverview.RatingSum * 100) / Model.ProductReviewOverview.TotalReviews) / 5;
-        ratingValue = ratingPercent / (decimal)20;
-    }
+    // Fetch BV ratings server-side for structured data
+    var bvRating = await bazaarvoiceService.GetProductRatingAsync(Model.Id);
 
     var schema = new Dictionary<string, object>
     {
@@ -423,12 +419,12 @@
                     ["price"] = offerPrice
                 }
             : null,
-        ["aggregateRating"] = ratingValue.HasValue
+        ["aggregateRating"] = bvRating.HasRatings
             ? new Dictionary<string, object>
                 {
                     ["@type"] = "AggregateRating",
-                    ["ratingValue"] = ratingValue.Value.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture),
-                    ["reviewCount"] = Model.ProductReviewOverview.TotalReviews,
+                    ["ratingValue"] = bvRating.AverageRating.ToString("0.0", CultureInfo.InvariantCulture),
+                    ["reviewCount"] = bvRating.ReviewCount,
                     ["bestRating"] = "5",
                     ["worstRating"] = "1"
                 }
@@ -442,8 +438,11 @@
 
     var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
 }
-    <script type="application/ld+json">
+    <script id="product-jsonld" type="application/ld+json">
         @Html.Raw(jsonLd)
+    </script>
+    <script>
+        console.log('Product JSON-LD Schema:', JSON.parse(document.getElementById('product-jsonld').textContent));
     </script>
     <!--BV injected code-->
     <script>
