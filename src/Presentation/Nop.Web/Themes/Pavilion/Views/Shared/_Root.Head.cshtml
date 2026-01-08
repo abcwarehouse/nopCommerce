@@ -112,6 +112,23 @@
     })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
     <!-- End Google Tag Manager -->
 
+    <!-- Brand Filter Search -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSearchInput = document.getElementById('brandSearchInput');
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.trim().toLowerCase();
+                    const brandItems = document.querySelectorAll('.brand-list li');
+                    brandItems.forEach(item => {
+                        const brandName = item.getAttribute('data-brand-name');
+                        item.style.display = brandName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                });
+            }
+        });
+    </script>
+
     <title>@shortTitle</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="description" content="@(Html.NopMetaDescription())" />
@@ -217,7 +234,7 @@
         var routeData = ViewContext.RouteData;
         var controller = routeData.Values["controller"]?.ToString() ?? "home";
         var action = routeData.Values["action"]?.ToString() ?? "index";
-        
+
         return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
     }
 }
@@ -495,21 +512,6 @@
     <!-- Font Awesome Kit -->
     <script defer src="https://kit.fontawesome.com/6f12e215e1.js" crossorigin="anonymous"></script>
 
-    <!-- Brand Filter Search -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const brandSearchInput = document.getElementById('brandSearchInput');
-            if (brandSearchInput) {
-                brandSearchInput.addEventListener('input', function() {
-                    const searchTerm = this.value.trim().toLowerCase();
-                    const brandItems = document.querySelectorAll('.brand-list li');
-                    brandItems.forEach(item => {
-                        const brandName = item.getAttribute('data-brand-name');
-                        item.style.display = brandName.includes(searchTerm) ? 'block' : 'none';
-                    });
-                });
-            }
-        });
-    </script>
+
 </body>
 </html>
