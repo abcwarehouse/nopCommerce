@@ -29,7 +29,6 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @inject Nop.Services.Seo.IUrlRecordService urlRecordService
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
-@inject IBazaarvoiceService bazaarvoiceService
 
 @{
     Layout = "_ColumnsOne";
@@ -398,9 +397,6 @@
         offerPrice = Model.ProductPrice.PriceValue.ToString();
     }
 
-    // Fetch BV ratings server-side for structured data
-    var bvRating = await bazaarvoiceService.GetProductRatingAsync(Model.Id);
-
     var schema = new Dictionary<string, object>
     {
         ["@context"] = "https://schema.org",
@@ -417,16 +413,6 @@
                     ["@type"] = "Offer",
                     ["priceCurrency"] = "USD",
                     ["price"] = offerPrice
-                }
-            : null,
-        ["aggregateRating"] = bvRating.HasRatings
-            ? new Dictionary<string, object>
-                {
-                    ["@type"] = "AggregateRating",
-                    ["ratingValue"] = bvRating.AverageRating.ToString("0.0", CultureInfo.InvariantCulture),
-                    ["reviewCount"] = bvRating.ReviewCount,
-                    ["bestRating"] = "5",
-                    ["worstRating"] = "1"
                 }
             : null
     };

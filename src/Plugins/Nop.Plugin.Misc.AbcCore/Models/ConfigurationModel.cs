@@ -21,8 +21,5 @@ namespace Nop.Plugin.Misc.AbcCore.Models
 
         [NopResourceDisplayName(CoreLocales.StagingDbConnectionString)]
         public string StagingDbConnectionString { get; set; }
-
-        [NopResourceDisplayName(CoreLocales.BazaarvoiceApiPasskey)]
-        public string BazaarvoiceApiPasskey { get; set; }
     }
 }
