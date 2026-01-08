@@ -397,6 +397,14 @@
         offerPrice = Model.ProductPrice.PriceValue.ToString();
     }
 
+    // Calculate rating value (1-5 scale) from rating sum and total reviews
+    decimal? ratingValue = null;
+    if (Model.ProductReviewOverview.TotalReviews > 0)
+    {
+        var ratingPercent = ((Model.ProductReviewOverview.RatingSum * 100) / Model.ProductReviewOverview.TotalReviews) / 5;
+        ratingValue = ratingPercent / (decimal)20;
+    }
+
     var schema = new Dictionary<string, object>
     {
         ["@context"] = "https://schema.org",
@@ -413,6 +421,16 @@
                     ["@type"] = "Offer",
                     ["priceCurrency"] = "USD",
                     ["price"] = offerPrice
+                }
+            : null,
+        ["aggregateRating"] = ratingValue.HasValue
+            ? new Dictionary<string, object>
+                {
+                    ["@type"] = "AggregateRating",
+                    ["ratingValue"] = ratingValue.Value.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture),
+                    ["reviewCount"] = Model.ProductReviewOverview.TotalReviews,
+                    ["bestRating"] = "5",
+                    ["worstRating"] = "1"
                 }
             : null
     };
