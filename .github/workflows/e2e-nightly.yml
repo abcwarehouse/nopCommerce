@@ -63,7 +63,11 @@ jobs:
       - name: Send email notification via Resend
         env:
           TO_EMAILS: |
+            adarin@abcwarehouse.com
             d@dfar.io
+            dr22494@abcwarehouse.com
+            johnjh@abcwarehouse.com
+            ms22418@abcwarehouse.com
           EMAIL_HTML: |
             <h2>E2E Test Failure</h2>
             <p>The nightly E2E tests have failed.</p>
