@@ -80,7 +80,7 @@ jobs:
           
           # Create JSON payload using jq to properly escape HTML content
           PAYLOAD=$(jq -n \
-            --arg from "E2E Tests <noreply@abcwarehouse.com>" \
+            --arg from "E2E Tests <noreply@resend.dev>" \
             --argjson to "$TO_EMAILS_JSON" \
             --arg subject "❌ E2E Tests Failed - Nightly Build" \
             --arg html "$EMAIL_HTML" \
