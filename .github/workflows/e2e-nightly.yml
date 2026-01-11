@@ -54,3 +54,30 @@ jobs:
           name: playwright-screenshots-${{ matrix.browser }}
           path: e2e/test-results/
           retention-days: 30
+  
+  notify:
+    needs: test
+    runs-on: ubuntu-latest
+    #if: failure()
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "❌ E2E Tests Failed - Nightly Build"
+          to: d@dfar.io
+          from: noreply@abcwarehouse.com
+          body: |
+            The nightly E2E tests have failed.
+            
+            Workflow: ${{ github.workflow }}
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            Please check the test results and screenshots in the artifacts.
+          priority: high

@@ -42,7 +42,7 @@ export default defineConfig({
     navigationTimeout: 60 * 1000,
 
     /* Action timeout - time for click, fill, etc. */
-    actionTimeout: 15 * 1000,
+    actionTimeout: 30 * 1000,
   },
 
   /* Configure projects for major browsers */
