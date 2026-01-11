@@ -58,7 +58,7 @@ jobs:
   notify:
     needs: test
     runs-on: ubuntu-latest
-    #if: failure()
+    if: failure()
     steps:
       - name: Send email notification via Resend
         env:
