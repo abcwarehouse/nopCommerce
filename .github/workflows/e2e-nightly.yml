@@ -87,4 +87,3 @@ jobs:
               \"subject\": \"❌ E2E Tests Failed - Nightly Build\",
               \"html\": \"$EMAIL_HTML\"
             }"
-            }"
