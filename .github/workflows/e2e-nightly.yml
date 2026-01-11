@@ -60,24 +60,31 @@ jobs:
     runs-on: ubuntu-latest
     #if: failure()
     steps:
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "❌ E2E Tests Failed - Nightly Build"
-          to: d@dfar.io
-          from: noreply@abcwarehouse.com
-          body: |
-            The nightly E2E tests have failed.
-            
-            Workflow: ${{ github.workflow }}
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.ref_name }}
-            Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            
-            Please check the test results and screenshots in the artifacts.
-          priority: high
+      - name: Send email notification via Resend
+        env:
+          TO_EMAILS: |
+            d@dfar.io
+          EMAIL_HTML: |
+            <h2>E2E Test Failure</h2>
+            <p>The nightly E2E tests have failed.</p>
+            <ul>
+              <li><strong>Workflow:</strong> ${{ github.workflow }}</li>
+              <li><strong>Repository:</strong> ${{ github.repository }}</li>
+              <li><strong>Branch:</strong> ${{ github.ref_name }}</li>
+              <li><strong>Run:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Results</a></li>
+            </ul>
+            <p>Please check the test results and screenshots in the artifacts.</p>
+        run: |
+          # Convert line-separated emails to JSON array
+          TO_EMAILS_JSON=$(echo "$TO_EMAILS" | sed '/^$/d' | sed 's/^/"/;s/$/"/' | paste -sd ',' | sed 's/^/[/;s/$/]/')
+          
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"from\": \"E2E Tests <noreply@abcwarehouse.com>\",
+              \"to\": $TO_EMAILS_JSON,
+              \"subject\": \"❌ E2E Tests Failed - Nightly Build\",
+              \"html\": \"$EMAIL_HTML\"
+            }"
+            }"
