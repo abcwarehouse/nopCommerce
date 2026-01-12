@@ -104,8 +104,11 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             // Get pickup in store HTML if zip code is available
             if (Request.Cookies.TryGetValue("customerZipCode", out var zip) && !string.IsNullOrEmpty(zip) && zip.Length == 5)
             {
-                var pickupHtml = await GetPickupInStoreHtmlAsync(product.Id, zip);
-                slideoutInfo = slideoutInfo with { PickupInStoreHtml = pickupHtml };
+                var pickupResult = await GetPickupInStoreResultAsync(product.Id, zip);
+                slideoutInfo = slideoutInfo with {
+                    PickupInStoreHtml = pickupResult.Html,
+                    PickupInStoreAvailableCount = pickupResult.AvailableCount
+                };
             }
 
             return Json(new

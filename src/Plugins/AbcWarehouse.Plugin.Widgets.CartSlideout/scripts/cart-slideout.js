@@ -79,6 +79,11 @@ function updatePickupNotAvailableMessage(availableCount) {
 
     console.log('Pickup available count:', availableCount);
 
+    // If undefined, don't show message (count not available)
+    if (availableCount === undefined || availableCount === null) {
+        return;
+    }
+
     var existingMessage = pickupContainer.querySelector('.pickup-not-available-message');
     if (availableCount === 0) {
         if (!existingMessage) {
@@ -200,6 +205,7 @@ function updateCartSlideoutHtml(response) {
         // If pickup in store HTML is included (e.g., in edit mode), inject it
         if (response.slideoutInfo.PickupInStoreHtml) {
             $('.cart-slideout__pickup-in-store').html(response.slideoutInfo.PickupInStoreHtml);
+            updatePickupNotAvailableMessage(response.slideoutInfo.PickupInStoreAvailableCount);
         }
     } else {
         addToCartButton.style.display = "none";
