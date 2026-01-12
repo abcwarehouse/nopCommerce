@@ -72,15 +72,31 @@ async function checkDeliveryShippingAvailabilityAsync() {
 
 function updatePickupNotAvailableMessage(availableCount) {
     var pickupContainer = document.querySelector('.cart-slideout__pickup-in-store');
-    if (!pickupContainer) return;
+    if (!pickupContainer) {
+        console.log('Pickup container not found');
+        return;
+    }
+
+    console.log('Pickup available count:', availableCount);
 
     var existingMessage = pickupContainer.querySelector('.pickup-not-available-message');
     if (availableCount === 0) {
         if (!existingMessage) {
             var messageDiv = document.createElement('p');
             messageDiv.className = 'pickup-not-available-message';
+            messageDiv.style.color = '#c00';
+            messageDiv.style.fontWeight = 'bold';
+            messageDiv.style.margin = '1rem 0';
             messageDiv.textContent = 'Call store to schedule pickup';
-            pickupContainer.insertBefore(messageDiv, pickupContainer.querySelector('h2')?.nextSibling);
+            // Insert after h2 if it exists, otherwise prepend
+            var h2 = pickupContainer.querySelector('h2');
+            if (h2 && h2.nextSibling) {
+                pickupContainer.insertBefore(messageDiv, h2.nextSibling);
+            } else if (h2) {
+                h2.after(messageDiv);
+            } else {
+                pickupContainer.prepend(messageDiv);
+            }
         }
     } else if (existingMessage) {
         existingMessage.remove();
