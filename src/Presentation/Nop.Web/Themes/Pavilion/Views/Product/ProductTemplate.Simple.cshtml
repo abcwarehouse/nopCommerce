@@ -238,19 +238,19 @@
                     <script>
                         // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute.
                         window.bvCallback = function (BV) {
+                            // Register a function to be called when a BV feature needs to display the R&R element
+                            if (BV.reviews && BV.reviews.on) {
+                                BV.reviews.on('show', function () {
+                                    $('#review_tab').show();
+                                });
+                            }
 
-                    // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
-                        BV.reviews.on('show', function () {
-                            // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                            $('#review_tab').show();
-                        });
-
-                    // Register a function to be called when a BV feature needs to
-                    // display the Q&A element, such as when selecting the number of questions link
-                        BV.questions.on('show', function () {
-                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                            $('#questions_tab').show();
-                        });
+                            // Register a function to be called when a BV feature needs to display the Q&A element
+                            if (BV.questions && BV.questions.on) {
+                                BV.questions.on('show', function () {
+                                    $('#questions_tab').show();
+                                });
+                            }
                         };
                     </script>
 
