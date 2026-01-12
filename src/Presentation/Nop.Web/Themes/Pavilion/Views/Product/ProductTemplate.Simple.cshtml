@@ -236,21 +236,21 @@
                     </div>
 
                     <script>
-                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute. 
+                        // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute.
                         window.bvCallback = function (BV) {
+                            // Register a function to be called when a BV feature needs to display the R&R element
+                            if (BV.reviews && BV.reviews.on) {
+                                BV.reviews.on('show', function () {
+                                    $('#review_tab').show();
+                                });
+                            }
 
-                    // Register a function to be called when a BV feature needs to display the R&R element, such as Rating Summary's stars
-                        BV.reviews.on('show', function () {
-                            // If the R&R container is hidden (such as behind a tab), put code here to make it visible (open the tab)
-                            $('#review_tab').show();
-                        });
-
-                    // Register a function to be called when a BV feature needs to 
-                    // display the Q&A element, such as when selecting the number of questions link
-                        BV.questions.on('show', function () {
-                            // If the container is hidden (such as behind a tab), put code here to make it visible (open the tab) 
-                            $('#questions_tab').show();
-                        });
+                            // Register a function to be called when a BV feature needs to display the Q&A element
+                            if (BV.questions && BV.questions.on) {
+                                BV.questions.on('show', function () {
+                                    $('#questions_tab').show();
+                                });
+                            }
                         };
                     </script>
 
@@ -424,7 +424,7 @@
 
     var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
 }
-    <script type="application/ld+json">
+    <script id="product-jsonld" type="application/ld+json">
         @Html.Raw(jsonLd)
     </script>
     <!--BV injected code-->
@@ -435,6 +435,9 @@
                 bvRender : function (data) {
                 // JavaScript code that executes when the Bazaarvoice application renders.
                 }
+            },
+            seo: {
+                enabled: false // Disable BV's automatic structured data - we have our own Product schema
             }
         });
     </script>
@@ -455,10 +458,17 @@
     </script>
 <script>
 (function() {
+    var retryCount = 0;
+    var maxRetries = 50; // Stop after 5 seconds (50 * 100ms)
+
     // Wait for DOM and searchSpringRecs to be ready
     function initRecommendations() {
         if (typeof searchSpringRecs === 'undefined') {
-            console.log('searchSpringRecs not loaded yet, retrying...');
+            retryCount++;
+            if (retryCount >= maxRetries) {
+                console.warn('SearchSpring recommendations failed to load after ' + maxRetries + ' retries');
+                return;
+            }
             setTimeout(initRecommendations, 100);
             return;
         }
