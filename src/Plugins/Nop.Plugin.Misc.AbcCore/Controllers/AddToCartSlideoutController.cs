@@ -77,10 +77,13 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                 return BadRequest("Product ID must be provided.");
             }
 
+            var pickupResult = await GetPickupInStoreResultAsync(productId.Value, zip);
+
             return Json(new {
                 isDeliveryAvailable = await _deliveryService.CheckZipcodeAsync(zip),
                 isFedExAvailable = await HasFedExProductAttributeAsync(productId.Value),
-                pickupInStoreHtml = await GetPickupInStoreHtmlAsync(productId.Value, zip)
+                pickupInStoreHtml = pickupResult.Html,
+                pickupInStoreAvailableCount = pickupResult.AvailableCount
             });
         }
 
@@ -184,6 +187,12 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
 
         private async Task<string> GetPickupInStoreHtmlAsync(int productId, string zip)
         {
+            var result = await GetPickupInStoreResultAsync(productId, zip);
+            return result.Html;
+        }
+
+        private async Task<(string Html, int AvailableCount)> GetPickupInStoreResultAsync(int productId, string zip)
+        {
             // pickup in store options
             StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId);
 
@@ -202,11 +211,15 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                     .Take(5).ToList();
             }
 
-            return await RenderViewComponentToStringAsync(
+            var availableCount = stockResponse.ProductStocks.Count(s => s.Available);
+
+            var html = await RenderViewComponentToStringAsync(
                 "CartSlideoutPickupInStore",
                 new {
                     productStock = stockResponse.ProductStocks
                 });
+
+            return (html, availableCount);
         }
 
         private async Task<bool> HasFedExProductAttributeAsync(int productId)

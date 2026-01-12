@@ -64,9 +64,27 @@ async function checkDeliveryShippingAvailabilityAsync() {
     if (responseJson.pickupInStoreHtml) {
         $('.cart-slideout__pickup-in-store').html(responseJson.pickupInStoreHtml);
     }
+    updatePickupNotAvailableMessage(responseJson.pickupInStoreAvailableCount);
     setInformationalIconListeners();
     updateCheckDeliveryAvailabilityButton();
     updateAttributes();
+}
+
+function updatePickupNotAvailableMessage(availableCount) {
+    var pickupContainer = document.querySelector('.cart-slideout__pickup-in-store');
+    if (!pickupContainer) return;
+
+    var existingMessage = pickupContainer.querySelector('.pickup-not-available-message');
+    if (availableCount === 0) {
+        if (!existingMessage) {
+            var messageDiv = document.createElement('p');
+            messageDiv.className = 'pickup-not-available-message';
+            messageDiv.textContent = 'Call store to schedule pickup';
+            pickupContainer.insertBefore(messageDiv, pickupContainer.querySelector('h2')?.nextSibling);
+        }
+    } else if (existingMessage) {
+        existingMessage.remove();
+    }
 }
 
 function openDeliveryOptions(response) {
