@@ -64,9 +64,48 @@ async function checkDeliveryShippingAvailabilityAsync() {
     if (responseJson.pickupInStoreHtml) {
         $('.cart-slideout__pickup-in-store').html(responseJson.pickupInStoreHtml);
     }
+    updatePickupNotAvailableMessage(responseJson.pickupInStoreAvailableCount);
     setInformationalIconListeners();
     updateCheckDeliveryAvailabilityButton();
     updateAttributes();
+}
+
+function updatePickupNotAvailableMessage(availableCount) {
+    var pickupContainer = document.querySelector('.cart-slideout__pickup-in-store');
+    if (!pickupContainer) {
+        console.log('Pickup container not found');
+        return;
+    }
+
+    console.log('Pickup available count:', availableCount);
+
+    // If undefined, don't show message (count not available)
+    if (availableCount === undefined || availableCount === null) {
+        return;
+    }
+
+    var existingMessage = pickupContainer.querySelector('.pickup-not-available-message');
+    if (availableCount === 0) {
+        if (!existingMessage) {
+            var messageDiv = document.createElement('p');
+            messageDiv.className = 'pickup-not-available-message';
+            messageDiv.style.color = '#c00';
+            messageDiv.style.fontWeight = 'bold';
+            messageDiv.style.margin = '1rem 0';
+            messageDiv.textContent = 'Call store to schedule pickup';
+            // Insert after h2 if it exists, otherwise prepend
+            var h2 = pickupContainer.querySelector('h2');
+            if (h2 && h2.nextSibling) {
+                pickupContainer.insertBefore(messageDiv, h2.nextSibling);
+            } else if (h2) {
+                h2.after(messageDiv);
+            } else {
+                pickupContainer.prepend(messageDiv);
+            }
+        }
+    } else if (existingMessage) {
+        existingMessage.remove();
+    }
 }
 
 function openDeliveryOptions(response) {
@@ -166,6 +205,7 @@ function updateCartSlideoutHtml(response) {
         // If pickup in store HTML is included (e.g., in edit mode), inject it
         if (response.slideoutInfo.PickupInStoreHtml) {
             $('.cart-slideout__pickup-in-store').html(response.slideoutInfo.PickupInStoreHtml);
+            updatePickupNotAvailableMessage(response.slideoutInfo.PickupInStoreAvailableCount);
         }
     } else {
         addToCartButton.style.display = "none";
