@@ -201,7 +201,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId);
 
             // get 5 closest based on zip code
-            var coords = _geocodeService.GeocodeZip(zip);
+            var coords = await _geocodeService.GeocodeZipAsync(zip);
             if (stockResponse == null)
             {
                 stockResponse = new StockResponse();
@@ -218,7 +218,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             var availableCount = stockResponse.ProductStocks.Count(s => s.Available);
 
             var html = await RenderViewComponentToStringAsync(
-                "CartSlideoutPickupInStore",
+                typeof(CartSlideoutPickupInStoreViewComponent),
                 new {
                     productStock = stockResponse.ProductStocks
                 });

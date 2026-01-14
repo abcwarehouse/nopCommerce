@@ -6,13 +6,13 @@ using Nop.Plugin.Misc.AbcCore.Factories;
 using Nop.Plugin.Misc.AbcCore.Models;
 using Nop.Web.Framework.Components;
 
-namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Components
+namespace Nop.Plugin.Misc.AbcCore.Components
 {
     public class CartSlideoutPickupInStoreViewComponent : NopViewComponent
     {
         public IViewComponentResult Invoke(List<ProductStock> productStock)
         {
-            return View("~/Plugins/Widgets.CartSlideout/Views/_PickupInStore.cshtml", productStock);
+            return View("~/Plugins/Misc.AbcCore/Views/CartSlideout/_PickupInStore.cshtml", productStock);
         }
     }
 }

@@ -33,6 +33,7 @@
     <None Remove="Areas\Admin\Views\NewProduct\List.cshtml" />
     <None Remove="Areas\Admin\PageNotFound\Frequency.cshtml" />
     <None Remove="Areas\Admin\PageNotFound\List.cshtml" />
+    <None Remove="Views/CartSlideout/_PickupInStore.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,6 +83,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Areas\Admin\PageNotFound\List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views/CartSlideout/_PickupInStore.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
