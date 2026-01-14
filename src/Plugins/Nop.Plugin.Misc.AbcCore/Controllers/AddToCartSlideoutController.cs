@@ -78,34 +78,13 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                 return BadRequest("Product ID must be provided.");
             }
 
-            // pickup in store options
-            StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId.Value);
-                
-            // get 5 closest based on zip code
-            var coords = await _geocodeService.GeocodeZipAsync(zip);
-            if (stockResponse == null)
-            {
-                stockResponse = new StockResponse();
-                stockResponse.ProductStocks = new List<ProductStock>();
-            }
-            else
-            {
-                stockResponse.ProductStocks = stockResponse.ProductStocks
-                    .Select(s => s)
-                    .OrderBy(s => Distance(Double.Parse(s.Shop.Latitude), Double.Parse(s.Shop.Longitude), coords.lat, coords.lng))
-                    .Take(5).ToList();
-            }
-            
-            return Json(new
-            {
+            var pickupResult = await GetPickupInStoreResultAsync(productId.Value, zip);
+
+            return Json(new {
                 isDeliveryAvailable = await _deliveryService.CheckZipcodeAsync(zip),
                 isFedExAvailable = await HasFedExProductAttributeAsync(productId.Value),
-                // commented out since we have circular dependency issues with view component
-                // pickupInStoreHtml = await RenderViewComponentToStringAsync(
-                //     "CartSlideoutPickupInStore",
-                //     new {
-                //         productStock = stockResponse.ProductStocks
-                //     })
+                pickupInStoreHtml = pickupResult.Html,
+                pickupInStoreAvailableCount = pickupResult.AvailableCount
             });
         }
 
@@ -123,12 +102,22 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
 
             CartSlideoutInfo slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M);
 
+            // Get pickup in store HTML if zip code is available
+            if (Request.Cookies.TryGetValue("customerZipCode", out var zip) && !string.IsNullOrEmpty(zip) && zip.Length == 5)
+            {
+                var pickupResult = await GetPickupInStoreResultAsync(product.Id, zip);
+                slideoutInfo = slideoutInfo with {
+                    PickupInStoreHtml = pickupResult.Html,
+                    PickupInStoreAvailableCount = pickupResult.AvailableCount
+                };
+            }
+
             return Json(new
             {
                 slideoutInfo
-            }, new JsonSerializerSettings() 
-            { 
-                NullValueHandling = NullValueHandling.Ignore 
+            }, new JsonSerializerSettings()
+            {
+                NullValueHandling = NullValueHandling.Ignore
             });
         }
 
@@ -200,6 +189,43 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             };
         }
 
+        private async Task<string> GetPickupInStoreHtmlAsync(int productId, string zip)
+        {
+            var result = await GetPickupInStoreResultAsync(productId, zip);
+            return result.Html;
+        }
+
+        private async Task<(string Html, int AvailableCount)> GetPickupInStoreResultAsync(int productId, string zip)
+        {
+            // pickup in store options
+            StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId);
+
+            // get 5 closest based on zip code
+            var coords = _geocodeService.GeocodeZip(zip);
+            if (stockResponse == null)
+            {
+                stockResponse = new StockResponse();
+                stockResponse.ProductStocks = new List<ProductStock>();
+            }
+            else
+            {
+                stockResponse.ProductStocks = stockResponse.ProductStocks
+                    .Select(s => s)
+                    .OrderBy(s => Distance(Double.Parse(s.Shop.Latitude), Double.Parse(s.Shop.Longitude), coords.lat, coords.lng))
+                    .Take(5).ToList();
+            }
+
+            var availableCount = stockResponse.ProductStocks.Count(s => s.Available);
+
+            var html = await RenderViewComponentToStringAsync(
+                "CartSlideoutPickupInStore",
+                new {
+                    productStock = stockResponse.ProductStocks
+                });
+
+            return (html, availableCount);
+        }
+
         private async Task<bool> HasFedExProductAttributeAsync(int productId)
         {
             var product = await _productService.GetProductByIdAsync(productId);
@@ -215,7 +241,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                     }
                 }
             }
-            
+
             return false;
         }
     }

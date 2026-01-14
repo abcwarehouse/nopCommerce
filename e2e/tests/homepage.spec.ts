@@ -12,8 +12,15 @@ test.describe('Homepage', () => {
     // Check that the page title is set
     await expect(page).toHaveTitle(/./);
     
-    // Take a screenshot for visual verification
-    await page.screenshot({ path: 'test-results/homepage.png', fullPage: true });
+    // Wait for page to settle before taking screenshot
+    await page.waitForLoadState('load');
+    
+    // Take a screenshot for visual verification with increased timeout
+    await page.screenshot({ 
+      path: 'test-results/homepage.png', 
+      fullPage: true,
+      timeout: 30000 // 30 seconds timeout for full-page screenshot
+    });
   });
 
   test('should have a working navigation', async ({ page }) => {

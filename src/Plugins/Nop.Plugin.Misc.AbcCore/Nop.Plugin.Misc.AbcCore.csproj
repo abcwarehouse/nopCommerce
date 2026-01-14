@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -141,8 +141,8 @@
     <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
   </Target>
 
-  <Target Name="PostBuild" BeforeTargets="PostBuildEvent">
-    <Exec Command="git rev-parse --abbrev-ref HEAD > $(MSBuildProjectDirectory)\$(OutDir)branch.txt" />
-    <Exec Command="git rev-parse --short HEAD > $(MSBuildProjectDirectory)\$(OutDir)sha.txt" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="git rev-parse --abbrev-ref HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)branch.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
+    <Exec Command="git rev-parse --short HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)sha.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
   </Target>
 </Project>
