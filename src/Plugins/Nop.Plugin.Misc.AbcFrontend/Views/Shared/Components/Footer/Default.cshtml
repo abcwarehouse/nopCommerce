@@ -102,7 +102,7 @@
                     @* custom *@
                     @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn1).ToList())
                     {
-                        <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                        <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
                     }
 
                     @* more custom *@
@@ -126,7 +126,7 @@
                     <ul class="list">
                         @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn2).ToList())
                         {
-                            <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                            <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
                         }
                         @if (shouldDisplayContractSales)
                         {
@@ -171,7 +171,7 @@
                     }
                     @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn3).ToList())
                     {
-                        <li><a href="@Url.RouteUrl("Topic", new { SeName = topic.SeName })">@topic.Name</a></li>
+                        <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
                     }
                 </ul>
             </div>
