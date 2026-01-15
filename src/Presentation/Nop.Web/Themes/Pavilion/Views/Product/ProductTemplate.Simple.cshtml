@@ -429,12 +429,17 @@
     </script>
     <!--BV injected code-->
     <script>
+        // Flag to prevent global config from disabling BV SEO on product pages
+        window.bvSeoEnabled = true;
         // Make sure that BV.configure is defined before running this script
         BV.configure('global', {
             events : {
                 bvRender : function (data) {
                 // JavaScript code that executes when the Bazaarvoice application renders.
                 }
+            },
+            seo: {
+                enabled: true // Enable BV's structured data on product detail pages
             }
         });
     </script>

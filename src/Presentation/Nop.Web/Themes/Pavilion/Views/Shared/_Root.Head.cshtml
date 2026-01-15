@@ -343,6 +343,19 @@
 
     <!-- Bazaarvoice Reviews -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+    <script>
+        // Global BV config - disable SEO on listing pages to prevent incomplete Review schema
+        // Product detail pages set window.bvSeoEnabled = true before this runs
+        window.addEventListener('load', function() {
+            if (typeof BV !== 'undefined' && typeof BV.configure === 'function' && !window.bvSeoEnabled) {
+                BV.configure('global', {
+                    seo: {
+                        enabled: false
+                    }
+                });
+            }
+        });
+    </script>
 
     <!-- SearchSpring Scripts -->
     <script defer src="https://cdn.searchspring.io/script.js"></script>
