@@ -767,7 +767,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 customerEnteredPriceConverted
             );
             
-            var slideoutInfo = await GetSlideoutInfoAsync(product, sci.Id);
+            var slideoutInfo = await GetSlideoutInfoAsync(product, customerEnteredPriceConverted, sci.Id);
 
             return Json(new
             {
@@ -785,6 +785,7 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
 
         private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(
             Product product,
+            decimal customerEnteredPrice,
             int shoppingCartItemId)
         {
             var isSlideoutActive = await _widgetPluginManager.IsPluginActiveAsync("Widgets.CartSlideout");
@@ -793,9 +794,9 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             var productId = product.Id;
 
             return new CartSlideoutInfo() {
-                ProductInfoHtml = await RenderViewComponentToStringAsync(typeof(CartSlideoutProductInfoViewComponent), new { productId = productId} ),
+                ProductInfoHtml = await RenderViewComponentToStringAsync(typeof(CartSlideoutProductInfoViewComponent), new { productId = productId, customerEnteredPrice = customerEnteredPrice } ),
                 DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
-                    typeof(CartSlideoutProductInfoViewComponent),
+                    typeof(CartSlideoutProductAttributesViewComponent),
                     new {
                         product = product,
                         includedAttributeNames = new string[]

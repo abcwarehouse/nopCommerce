@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Nop.Core;
 using Nop.Core.Domain.Catalog;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
@@ -36,6 +37,11 @@ namespace Nop.Plugin.Misc.AbcCore.Components
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, int productId, decimal customerEnteredPrice)
         {
+            if (productId <= 0)
+            {
+                throw new NopException($"Product ID is required. Provided value: {productId}");
+            }
+
             var product = await _productService.GetProductByIdAsync(productId);
             var productName = product.Name;
             var productPicture = (await _productService.GetProductPicturesByProductIdAsync(product.Id)).FirstOrDefault();
