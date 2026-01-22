@@ -429,6 +429,8 @@
     </script>
     <!--BV injected code-->
     <script>
+        // Flag to prevent global config from disabling BV SEO on product pages
+        window.bvSeoEnabled = true;
         // Make sure that BV.configure is defined before running this script
         BV.configure('global', {
             events : {
@@ -437,7 +439,7 @@
                 }
             },
             seo: {
-                enabled: false // Disable BV's automatic structured data - we have our own Product schema
+                enabled: true // Enable BV's structured data on product detail pages
             }
         });
     </script>
