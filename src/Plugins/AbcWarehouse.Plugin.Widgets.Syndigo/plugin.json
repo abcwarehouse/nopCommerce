@@ -1,0 +1,11 @@
+{
+    "Group": "Widgets",
+    "FriendlyName": "Syndigo",
+    "SystemName": "Widgets.Syndigo",
+    "Version": "4.40.0",
+    "SupportedVersions": [ "4.40" ],
+    "Author": "Dave Farinelli",
+    "DisplayOrder": 1,
+    "FileName": "AbcWarehouse.Plugin.Widgets.Syndigo.dll",
+    "Description": "Displays Syndigo content if RWS content is not available on a product."
+}
