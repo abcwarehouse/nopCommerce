@@ -1,5 +1,5 @@
 {
-  "DataConnectionString": "Data Source={IP_ADDRESS},1433;Initial Catalog=NOPCommerce;User ID=sa;Password={PASSWORD}",
+  "DataConnectionString": "Data Source={IP_ADDRESS},1433;Initial Catalog=NOPCommerce_440;User ID=sa;Password={PASSWORD}",
   "DataProvider": "sqlserver",
   "RawDataSettings": {}
 }
