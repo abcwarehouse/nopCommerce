@@ -11,26 +11,19 @@
         nopAjaxFiltersSettings.EnableOnSaleFilter ||
         nopAjaxFiltersSettings.EnableVendorsFilter)
     {
-        var kendoVersion = "2020.1.406";
+        <script src="~/Plugins/SevenSpikes.Core/Scripts/lib/kendo/2024.1.130/js/kendo.public.min.js" asp-location="Footer"></script>        
 
-        Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.core.min.js");
-        Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.userevents.min.js");
-        Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.draganddrop.min.js");
-        Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.popup.min.js");
-        Html.AddScriptParts(ResourceLocation.Footer, $"~/lib/kendo/{kendoVersion}/js/kendo.window.min.js");
-
-        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js");
-        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
-
-        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/jquery.address-1.6.min.js");
+        <script src="~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js" asp-location="Footer"></script>
+        <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+        <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/jquery.address-1.6.min.js" asp-location="Footer"></script>        
 
         if (nopAjaxFiltersSettings.EnableInfiniteScroll)
         {
-            Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/ReverseInfiniteScroll.min.js");
+            <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/ReverseInfiniteScroll.min.js" asp-location="Footer"></script>           
         }
 
-        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/HistoryState.min.js");
-        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/Filters.min.js");
+        <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/HistoryState.min.js" asp-location="Footer"></script>
+        <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/Filters.min.js" asp-location="Footer"></script>        
     }
     else
     {
@@ -104,15 +97,15 @@
     // Include css files only if there are products for filtering and at least one of the filter panel is visible
     var theme = await ThemeHelper.GetPluginThemeAsync(Plugin.FolderName);
 
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Themes/" + theme + "/Content/AjaxFilters.css");
+    <link rel="stylesheet" href="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Themes/@theme/Content/AjaxFilters.css"/>
 
     var supportRtl = (await EngineContext.Current.Resolve<IWorkContext>().GetWorkingLanguageAsync()).Rtl;
     if (supportRtl)
     {
-        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Themes/" + theme + "/Content/AjaxFilters.rtl.css");
+       <link rel="stylesheet" href="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Themes/@theme/Content/AjaxFilters.rtl.css"/>
     }
 
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/FiltersQuery.min.js");
+    <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/FiltersQuery.min.js" asp-location="Footer"></script>
 
     var isMobileDevice = userAgentHelper.IsMobileDevice();
 
@@ -167,21 +160,22 @@
     
     @if (!noFilters)
     {
+        <div class="close-filters">
+            <span>@T("SevenSpikes.NopAjaxFilters.Client.Common.Close")</span>
+        </div>
         <div class="filtersTitlePanel">
-            <p class="filtersTitle">@T("SevenSpikes.NopAjaxFilters.Client.Common.FilterBy"):</p>
+            <span class="filtersTitle">@T("SevenSpikes.NopAjaxFilters.Client.Common.FilterBy")</span>
             <a class="clearFilterOptionsAll">@T("SevenSpikes.NopAjaxFilters.Client.Common.ClearAll")</a>
         </div>
         <div class="filtersPanel">
             @priceRangeFilter
-            @* ABC: Moving manufacturers higher up the list *@
-            @manufacturersFilter
             @onSaleFilter
             @inStockFilter
             @specificationsFilter
             @attributesFilter
+            @manufacturersFilter
             @vendorsFilter
         </div>
-
         <div class="block filter-block selected-options" style="display: none;">
             <div class="title">
                 <a class="toggleControl">@T("SevenSpikes.NopAjaxFilters.SelectedOptions.PanelTitle")</a>

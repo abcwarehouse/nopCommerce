@@ -1,96 +1,100 @@
-﻿@model ProductDetailsModel
+﻿@model ProductDetailsModel.AddToCartModel
 @using Nop.Core.Domain.Orders
-@using Nop.Web.Framework.Infrastructure
-@using Nop.Web.Models.Catalog
-
-@* ABC: custom *@
-@using Nop.Plugin.Misc.AbcCore.Nop
-@inject IAbcProductAttributeService abcProductAttributeService
-
-@if (Model.AddToCart.UpdatedShoppingCartItemId > 0)
+@if (Model.UpdatedShoppingCartItemId > 0)
 {
-    <input asp-for="AddToCart.UpdatedShoppingCartItemId" type="hidden" />
+    <input asp-for="UpdatedShoppingCartItemId" type="hidden" />
 }
-@if (!Model.AddToCart.DisableBuyButton || Model.AddToCart.CustomerEntersPrice)
+@if (!Model.DisableBuyButton || Model.CustomerEntersPrice)
 {
-    if (Model.AddToCart.CustomerEntersPrice)
+	if (Model.CustomerEntersPrice)
     {
         <div class="customer-entered-price">
             <div class="price-input">
-                <label asp-for="AddToCart.CustomerEnteredPrice" asp-postfix=":" class="enter-price-label"></label>
-                <input name="addtocart_@(Model.AddToCart.ProductId + ".CustomerEnteredPrice")" asp-for="AddToCart.CustomerEnteredPrice" 
-                       value="@Convert.ToInt32(Math.Ceiling(Model.AddToCart.CustomerEnteredPrice))" 
-                       class="enter-price-input"/>
+                <label asp-for="CustomerEnteredPrice" asp-postfix=":" class="enter-price-label"></label>
+                @*round price*@
+                <input asp-for="CustomerEnteredPrice" value="@Convert.ToInt32(Math.Ceiling(Model.CustomerEnteredPrice))" class="enter-price-input"/>
             </div>
             <div class="price-range">
-                @Model.AddToCart.CustomerEnteredPriceRange
+                @Model.CustomerEnteredPriceRange
             </div>
         </div>
     }
     <div class="add-to-cart">
-        @if (!string.IsNullOrEmpty(Model.AddToCart.MinimumQuantityNotification))
+        @if (!string.IsNullOrEmpty(Model.MinimumQuantityNotification))
         {
-            <div class="min-qty-notification">@Model.AddToCart.MinimumQuantityNotification</div>
+            <div class="min-qty-notification">@Model.MinimumQuantityNotification</div>
         }
-        @if (!Model.AddToCart.DisableBuyButton)
+        @if (!Model.DisableBuyButton)
         {
-            if(!Model.ProductPrice.CallForPrice)
-            {
-                <div class="add-to-cart-panel">
-                    @{
-                        var addToCartText = "";
+            <div class="add-to-cart-panel">
+                <label asp-for="EnteredQuantity" asp-postfix=":" class="qty-label"></label>
+                @if (Model.AllowedQuantities.Count > 0)
+                {
+                    <select asp-for="EnteredQuantity" asp-items="Model.AllowedQuantities" id="product_enteredQuantity_@Model.ProductId" class="qty-dropdown" aria-label=@T("Products.Qty.AriaLabel")></select>
+                    <script asp-location="Footer">
+                        $(function() {
+                            $("#product_enteredQuantity_@Model.ProductId").on("change", function () {
+                                var data = {
+                                    productId: @Model.ProductId,
+                                    quantity: $('#product_enteredQuantity_@Model.ProductId').find(":selected").text()
+                                };
+                                $(document).trigger({ type: "product_quantity_changed", changedData: data });
+                            });
+                        });
+                    </script>
+                }
+                else
+                {
+                    <input asp-for="EnteredQuantity" id="product_enteredQuantity_@Model.ProductId" class="qty-input" type="text" aria-label=@T("Products.Qty.AriaLabel")/>
+                    //when a customer clicks 'Enter' button we submit the "add to cart" button (if visible)
+                    <script asp-location="Footer">
+                        $(function() {
+                            $("#@Html.IdFor(model => model.EnteredQuantity)").on("keydown", function(event) {
+                                if (event.keyCode == 13) {
+                                    $("#add-to-cart-button-@Model.ProductId").trigger("click");
+                                    return false;
+                                }
+                            });
 
-                        // Delivery options
-                        if (await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.AddToCart.ProductId))
+                            $("#product_enteredQuantity_@Model.ProductId").on("input propertychange paste", function () {
+                                var data = {
+                                    productId: @Model.ProductId,
+                                    quantity: $('#product_enteredQuantity_@Model.ProductId').val()
+                                };
+                                $(document).trigger({ type: "product_quantity_changed", changedData: data });
+                            });
+                        });
+                    </script>
+                }
+                @{
+                    var addToCartText = "";
+                    if (Model.UpdatedShoppingCartItemId > 0 && Model.UpdateShoppingCartItemType.HasValue && Model.UpdateShoppingCartItemType.Value == ShoppingCartType.ShoppingCart)
+                    {
+                        addToCartText = T("ShoppingCart.AddToCart.Update").Text;
+                    }
+                    else
+                    {
+                        addToCartText = T("ShoppingCart.AddToCart").Text;
+                        if (Model.IsRental)
                         {
-                            <button type="button"
-                                    id="add-to-cart-button-@Model.AddToCart.ProductId"
-                                    class="button-1 add-to-cart-button"
-                                    onclick="addCartItemAsync(@Model.AddToCart.ProductId)">
-                                <span>Add To Cart</span>
-                            </button>
+                            addToCartText = T("ShoppingCart.Rent").Text;
                         }
-                        else if (Model.AddToCart.UpdatedShoppingCartItemId > 0 
-                                && Model.AddToCart.UpdateShoppingCartItemType.HasValue 
-                                && Model.AddToCart.UpdateShoppingCartItemType.Value == ShoppingCartType.ShoppingCart)
+                        if (Model.AvailableForPreOrder)
                         {
-                            addToCartText = T("ShoppingCart.AddToCart.Update").Text;
-                            <input type="button" 
-                                id="add-to-cart-button-@Model.AddToCart.ProductId" 
-                                class="button-1 add-to-cart-button" 
-                                value="@addToCartText" 
-                                data-productid="@Model.AddToCart.ProductId" 
-                                onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
-                        }
-                        else
-                        {
-                            addToCartText = T("ShoppingCart.AddToCart").Text;
-                            if (Model.AddToCart.IsRental)
-                            {
-                                addToCartText = T("ShoppingCart.Rent").Text;
-                            }
-                            if (Model.AddToCart.AvailableForPreOrder)
-                            {
-                                addToCartText = T("ShoppingCart.PreOrder").Text;
-                            }
-                            <input type="button" 
-                                id="add-to-cart-button-@Model.AddToCart.ProductId" 
-                                class="button-1 add-to-cart-button" 
-                                value="@addToCartText" 
-                                data-productid="@Model.AddToCart.ProductId" 
-                                onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
+                            addToCartText = T("ShoppingCart.PreOrder").Text;
                         }
                     }
-                </div>
-                @if (!string.IsNullOrEmpty(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime))
-                {
-                    <div class="pre-order-availability-date">
-                        <label>@T("ShoppingCart.PreOrderAvailability"):</label>
-                        <span>@Html.Raw(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime)</span>
-                    </div>
+                    <button type="button" id="add-to-cart-button-@Model.ProductId" class="button-1 add-to-cart-button" data-productid="@Model.ProductId" onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new {productId = Model.ProductId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#product-details-form');return false;">@addToCartText</button>
                 }
+            </div>
+            if (!string.IsNullOrEmpty(Model.PreOrderAvailabilityStartDateTimeUserTime))
+            {
+                <div class="pre-order-availability-date">
+                    <label>@T("ShoppingCart.PreOrderAvailability"):</label>
+                    <span>@Html.Raw(Model.PreOrderAvailabilityStartDateTimeUserTime)</span>
+                </div>
             }
         }
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model.AddToCart })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model })
     </div>
 }

@@ -1,9 +1,10 @@
-﻿using Nop.Core;
-using Nop.Core.Domain.Tasks;
+﻿using System;
+using Nop.Core;
+using Nop.Core.Domain.ScheduleTasks;
 using Nop.Plugin.Widgets.AbcBonusBundle.Tasks;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using System.Collections.Generic;
 using Task = System.Threading.Tasks.Task;
 
@@ -32,10 +33,7 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle
             return $"{_webHelper.GetStoreLocation()}Admin/AbcBonusBundle/Configure";
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "AbcBonusBundle";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.AbcBonusBundleViewComponent);
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
         {

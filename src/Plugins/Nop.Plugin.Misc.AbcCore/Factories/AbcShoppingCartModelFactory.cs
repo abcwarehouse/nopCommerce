@@ -41,13 +41,17 @@ using Nop.Web.Infrastructure.Cache;
 using Nop.Web.Models.Common;
 using Nop.Web.Models.Media;
 using Nop.Services.Logging;
+using Nop.Web.Areas.Admin.Factories;
+using IShoppingCartModelFactory = Nop.Web.Factories.IShoppingCartModelFactory;
+using ShoppingCartModelFactory = Nop.Web.Factories.ShoppingCartModelFactory;
+using IAddressModelFactory = Nop.Web.Factories.IAddressModelFactory;
+using Nop.Services.Attributes;
+
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
     public class AbcShoppingCartModelFactory : ShoppingCartModelFactory, IShoppingCartModelFactory
     {
-        private readonly IPriceFormatter _priceFormatter;
-        
         public AbcShoppingCartModelFactory(
             AddressSettings addressSettings,
             CaptchaSettings captchaSettings,
@@ -55,9 +59,10 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             CommonSettings commonSettings,
             CustomerSettings customerSettings,
             IAddressModelFactory addressModelFactory,
+            IAddressService addressService,
+            IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser,
+            IAttributeService<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeService,
             ICheckoutAttributeFormatter checkoutAttributeFormatter,
-            ICheckoutAttributeParser checkoutAttributeParser,
-            ICheckoutAttributeService checkoutAttributeService,
             ICountryService countryService,
             ICurrencyService currencyService,
             ICustomerService customerService,
@@ -79,6 +84,7 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             IProductService productService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
+            IShortTermCacheManager shortTermCacheManager,
             IStateProvinceService stateProvinceService,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
@@ -94,8 +100,7 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             ShippingSettings shippingSettings,
             ShoppingCartSettings shoppingCartSettings,
             TaxSettings taxSettings,
-            VendorSettings vendorSettings,
-            ILogger logger) :
+            VendorSettings vendorSettings) :
             base(
                 addressSettings,
                 captchaSettings,
@@ -103,9 +108,10 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 commonSettings,
                 customerSettings,
                 addressModelFactory,
-                checkoutAttributeFormatter,
+                addressService,
                 checkoutAttributeParser,
                 checkoutAttributeService,
+                checkoutAttributeFormatter,
                 countryService,
                 currencyService,
                 customerService,
@@ -127,6 +133,7 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 productService,
                 shippingService,
                 shoppingCartService,
+                shortTermCacheManager,
                 stateProvinceService,
                 staticCacheManager,
                 storeContext,
@@ -142,11 +149,8 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
                 shippingSettings,
                 shoppingCartSettings,
                 taxSettings,
-                vendorSettings,
-                logger)
-        {
-            _priceFormatter = priceFormatter;
-        }
+                vendorSettings)
+        { }
         
         protected override async Task<ShoppingCartModel.ShoppingCartItemModel> PrepareShoppingCartItemModelAsync(
             IList<ShoppingCartItem> cart, ShoppingCartItem sci)

@@ -2,10 +2,10 @@
 
 @if (Model.Count > 0)
 {
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Core/Styles/slick-slider-1.6.0.css");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/swipeEvents.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/slick-slider-1.6.0.min.js");
+    <link rel="stylesheet" href="~/Plugins/SevenSpikes.Core/Styles/slick-slider-1.6.0.css" />
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/swipeEvents.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Core/Scripts/slick-slider-1.6.0.min.js" asp-location="Footer"></script>
 
     <div class="product-grid bestsellers @if (Model.Count > 6){<text>carousel</text>}">
         <div class="title">

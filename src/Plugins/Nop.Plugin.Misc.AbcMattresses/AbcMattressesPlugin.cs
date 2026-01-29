@@ -1,8 +1,8 @@
 using Nop.Services.Plugins;
 using Nop.Services.Common;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Plugin.Misc.AbcMattresses.Tasks;
-using Nop.Core.Domain.Tasks;
+using Nop.Core.Domain.ScheduleTasks;
 using Nop.Services.Catalog;
 using Nop.Core.Domain.Catalog;
 using System.Linq;

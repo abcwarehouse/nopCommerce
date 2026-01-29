@@ -1,5 +1,5 @@
 using Nop.Services.Logging;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Services.Catalog;
@@ -8,7 +8,7 @@ using Nop.Services.Stores;
 using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Core.Domain.Catalog;
 using System;
-using Nop.Plugin.Misc.AbcCore.Data;
+using Nop.Data;
 
 namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 {
@@ -18,7 +18,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
 
         private readonly IAbcMattressModelService _abcMattressModelService;
         private readonly IAbcMattressProductService _abcMattressProductService;
-        private readonly ICustomNopDataProvider _customNopDataProvider;
+        private readonly INopDataProvider _nopDataProvider;
         private readonly IProductService _productService;
         private readonly IProductAbcDescriptionService _productAbcDescriptionService;
         private readonly IStoreService _storeService;
@@ -28,7 +28,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             ILogger logger,
             IAbcMattressModelService abcMattressModelService,
             IAbcMattressProductService abcMattressProductService,
-            ICustomNopDataProvider customNopDataProvider,
+            INopDataProvider nopDataProvider,
             IProductService productService,
             IProductAbcDescriptionService productAbcDescriptionService,
             IStoreService storeService,
@@ -38,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
             _logger = logger;
             _abcMattressModelService = abcMattressModelService;
             _abcMattressProductService = abcMattressProductService;
-            _customNopDataProvider = customNopDataProvider;
+            _nopDataProvider = nopDataProvider;
             _productService = productService;
             _productAbcDescriptionService = productAbcDescriptionService;
             _storeService = storeService;
@@ -88,7 +88,7 @@ namespace Nop.Plugin.Misc.AbcMattresses.Tasks
                 WHERE [Id] NOT IN
                 (SELECT MAX([Id]) FROM [Product_Manufacturer_Mapping]
                 GROUP BY [ProductId], [ManufacturerId])";
-            await _customNopDataProvider.ExecuteNonQueryAsync(sql);
+            await _nopDataProvider.ExecuteNonQueryAsync(sql);
         }
 
         private async System.Threading.Tasks.Task ClearOldMattressProductsAsync()

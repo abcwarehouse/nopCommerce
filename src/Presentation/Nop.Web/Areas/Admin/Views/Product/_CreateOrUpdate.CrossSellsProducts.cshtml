@@ -31,7 +31,7 @@
                     }
                 }
             })
-            <script>
+            <script asp-location="Footer">
                 function renderColumnCrossSellProductName(data, type, row, meta) {
                     var textRenderer = $.fn.dataTable.render.text().display;
                     return '<a href="@Url.Content("~/Admin/Product/Edit/")' + row.ProductId2 + '">' + textRenderer(row.Product2Name) + '</a>';
@@ -44,7 +44,7 @@
             </button>
             <button type="submit" id="btnRefreshCrossSellProducts" style="display: none"></button>
             <script>
-                $(document).ready(function () {
+                $(function() {
                     $('#btnRefreshCrossSellProducts').click(function () {
                         //refresh grid
                         updateTable('#crosssellproducts-grid');

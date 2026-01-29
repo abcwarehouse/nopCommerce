@@ -3,6 +3,10 @@
 <div asp-validation-summary="All"></div>
 <input type="hidden" asp-for="@Model.Id" />
 
+<link rel="stylesheet" href="~/lib_npm/jquery-tageditor/jquery.tag-editor.css" />
+<script src="~/lib_npm/jquery-tagEditor/jquery.caret.min.js"></script>
+<script src="~/lib_npm/jquery-tagEditor/jquery.tag-editor.min.js"></script>
+
 <section class="content">
     <div class="form-horizontal">
         @await Html.TrialMessageAsync(Model.StoreLocatorSettings.IsTrialVersion, Plugin.Name, Plugin.UrlInStore)

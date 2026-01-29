@@ -3,7 +3,7 @@
   "FriendlyName": "CRON Tasks",
   "SystemName": "EllaSoftware.CronTasks",
   "Version": "4.40.0",
-  "SupportedVersions": [ "4.40" ],
+  "SupportedVersions": [ "4.80" ],
   "Author": "Ella Software",
   "DisplayOrder": 1,
   "FileName": "EllaSoftware.Plugin.Misc.CronTasks.dll",

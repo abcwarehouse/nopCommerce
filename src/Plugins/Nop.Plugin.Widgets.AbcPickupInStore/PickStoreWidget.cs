@@ -1,4 +1,5 @@
-﻿using Nop.Core;
+﻿using System;
+using Nop.Core;
 using Nop.Plugin.Misc.AbcCore.Infrastructure;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
@@ -36,10 +37,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore
             });
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "AbcPickupInStore";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.AbcPickupInStoreViewComponent);
 
         public override string GetConfigurationPageUrl()
         {

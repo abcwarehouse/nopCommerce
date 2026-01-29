@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks;
 using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Tasks;
+using Nop.Core.Domain.ScheduleTasks;
 using Nop.Plugin.Misc.AbcCore.Delivery;
 using Nop.Services.Catalog;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Plugins;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Web.Framework.Infrastructure;
 using Nop.Services.Localization;
 
@@ -38,12 +39,11 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "CartSlideout";
-        }
+        public string GetWidgetViewComponentName(string widgetZone) => "CartSlideout";
 
-        public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.CartSlideoutViewComponent);
+
+        public Task<IList<string>> GetWidgetZonesAsync()
         {
             return System.Threading.Tasks.Task.FromResult<IList<string>>(new List<string> { PublicWidgetZones.BodyStartHtmlTagAfter });
         }

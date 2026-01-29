@@ -1,8 +1,10 @@
 @using Nop.Plugin.Misc.AbcCore.Domain
 @model IEnumerable<AbcPromo>
 
+@inject INopHtmlHelper NopHtml
+
 @{
-    Html.AddCssFileParts("~/Plugins/Widgets.AbcPromos/styles/product-details.css");
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.AbcPromos/styles/product-details.css");
 }
 
 @foreach (var promo in Model)

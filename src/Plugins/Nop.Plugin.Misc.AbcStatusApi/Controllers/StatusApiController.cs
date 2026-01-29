@@ -165,7 +165,7 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public ActionResult Configure()
         {
@@ -179,7 +179,7 @@ namespace Nop.Plugin.Misc.AbcStatusApi.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public async Task<ActionResult> Configure(ConfigModel model)
         {

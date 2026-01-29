@@ -112,6 +112,19 @@
         });
     }
 
+    function handleMobileCartQuantity() {
+        var cartLink = $('.shopping-cart-link > span');
+        var cartQty = Number($('.cart-qty').html());
+        if (cartQty > 0) {
+            cartLink.html('<span class="cart-qty-mobile">' + cartQty + '</span>');
+        }
+        else {
+            cartLink.children('.cart-qty-mobile').remove();
+        }
+    }
+    $(document).on('flyoutCartReloadedEvent', handleMobileCartQuantity);
+
+
     function handleFooterBlocksCollapse() {
         $(".footer-block .title").click(function (e) {
             if (ssCore.getViewPort().width <= window.themeSettings.themeBreakpoint) {
@@ -352,11 +365,11 @@
                     $(window).off('resize.SevenSpikesPavilionBestSellerCarousel');
                 }
             }
-        }
 
-        lazyLoadBestSellersCarousel();
-        $(window).on('scroll.SevenSpikesPavilionBestSellerCarousel', lazyLoadBestSellersCarousel);
-        $(window).on('resize.SevenSpikesPavilionBestSellerCarousel', lazyLoadBestSellersCarousel);
+            lazyLoadBestSellersCarousel();
+            $(window).on('scroll.SevenSpikesPavilionBestSellerCarousel', lazyLoadBestSellersCarousel);
+            $(window).on('resize.SevenSpikesPavilionBestSellerCarousel', lazyLoadBestSellersCarousel);
+        }
     }
 
     function handleRichBlogSearch() {
@@ -451,9 +464,9 @@
         });
     }
 
-    function hideProductCollateralIfEmpry() {
+    function hideProductCollateralIfEmpty() {
 
-        // we should hide the product-collateral if it is empty or all its children are hidden in case of quick tabs are enabled.
+        // we should hide the product-collateral if it is empty or all its children are hidden in case Quick Tabs are enabled.
         var productCollateral = $('.product-details-page .product-collateral');
         var productCollateralChildren = productCollateral.children();
         if (productCollateralChildren.length == 0) {
@@ -557,6 +570,7 @@
         };
 
         handleReponsiveHeaderLinks();
+        handleMobileCartQuantity();
         handleFooterBlocksCollapse();
         handleHeaderMenuCategories();
         handleCustomerBlocksTitle();
@@ -566,7 +580,7 @@
         handleInstantSearchHiding();
         handleFlyoutCartScroll();
         handleAddToCartOverlayFromQuickView();
-        hideProductCollateralIfEmpry();
+        hideProductCollateralIfEmpty();
         handleHeaderSelectorsHoverState();
         handleStickyFlyoutHeight();
         handleShippingAddressForm();

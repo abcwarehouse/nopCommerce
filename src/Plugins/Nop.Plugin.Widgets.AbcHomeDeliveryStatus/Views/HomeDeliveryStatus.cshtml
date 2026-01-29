@@ -6,8 +6,10 @@
 
 @model HomeDeliveryStatusModel
 
+@inject INopHtmlHelper NopHtml
+
 @{ 
-    Html.AddCssFileParts("~/Plugins/AbcWarehouse.HomeDeliveryStatusWidget/Content/loading.css");
+    NopHtml.AddCssFileParts("~/Plugins/AbcWarehouse.HomeDeliveryStatusWidget/Content/loading.css");
     string autoFillScript = "";
 }
 

@@ -44,7 +44,7 @@
 		@await Component.InvokeAsync("SettingMode")
 		<nop-tabs id="product-tab-edit">
 			<nop-tab asp-name="tab-info" asp-title="@T("SevenSpikes.NopQuickTabs.Admin.Tabs.InfoTab")" asp-default="true">
-				@await Html.PartialAsync(AdminViews.ViewAdminTabsCreateOrUpdateInfoPartial, Model)
+				@{ await Html.RenderPartialAsync(AdminViews.ViewAdminTabsCreateOrUpdateInfoPartial, Model); }
 			</nop-tab>
 			@if (Model.Id > 0)
 			{

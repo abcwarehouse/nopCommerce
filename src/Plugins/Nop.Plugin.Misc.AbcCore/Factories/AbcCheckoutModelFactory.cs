@@ -23,6 +23,8 @@ using Nop.Services.Tax;
 using Nop.Web.Models.Checkout;
 using Nop.Web.Models.Common;
 using Nop.Web.Factories;
+using Nop.Core.Domain.Tax;
+using Nop.Core.Domain.Security;
 
 namespace Nop.Plugin.Misc.AbcCore.Factories
 {
@@ -33,71 +35,92 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
         private const int US_COUNTRY_ID = 1;
 
         public AbcCheckoutModelFactory(AddressSettings addressSettings,
-            CommonSettings commonSettings,
-            IAddressModelFactory addressModelFactory,
-            IAddressService addressService,
-            ICountryService countryService,
-            ICurrencyService currencyService,
-            ICustomerService customerService,
-            IGenericAttributeService genericAttributeService,
-            ILocalizationService localizationService,
-            IOrderProcessingService orderProcessingService,
-            IOrderTotalCalculationService orderTotalCalculationService,
-            IPaymentPluginManager paymentPluginManager,
-            IPaymentService paymentService,
-            IPickupPluginManager pickupPluginManager,
-            IPriceFormatter priceFormatter,
-            IRewardPointService rewardPointService,
-            IShippingPluginManager shippingPluginManager,
-            IShippingService shippingService,
-            IShoppingCartService shoppingCartService,
-            IStateProvinceService stateProvinceService,
-            IStoreContext storeContext,
-            IStoreMappingService storeMappingService,
-            ITaxService taxService,
-            IWorkContext workContext,
-            OrderSettings orderSettings,
-            PaymentSettings paymentSettings,
-            RewardPointsSettings rewardPointsSettings,
-            ShippingSettings shippingSettings
-        ) : base(
-            addressSettings, commonSettings, addressModelFactory,
-            addressService, countryService, currencyService, customerService,
-            genericAttributeService, localizationService, orderProcessingService,
-            orderTotalCalculationService, paymentPluginManager, paymentService,
-            pickupPluginManager, priceFormatter, rewardPointService,
-            shippingPluginManager, shippingService, shoppingCartService,
-            stateProvinceService, storeContext, storeMappingService, taxService,
-            workContext, orderSettings, paymentSettings, rewardPointsSettings,
-            shippingSettings
+        CaptchaSettings captchaSettings,
+        CommonSettings commonSettings,
+        IAddressModelFactory addressModelFactory,
+        IAddressService addressService,
+        ICountryService countryService,
+        ICurrencyService currencyService,
+        ICustomerService customerService,
+        IGenericAttributeService genericAttributeService,
+        ILocalizationService localizationService,
+        IOrderProcessingService orderProcessingService,
+        IOrderTotalCalculationService orderTotalCalculationService,
+        IPaymentPluginManager paymentPluginManager,
+        IPaymentService paymentService,
+        IPickupPluginManager pickupPluginManager,
+        IPriceFormatter priceFormatter,
+        IRewardPointService rewardPointService,
+        IShippingPluginManager shippingPluginManager,
+        IShippingService shippingService,
+        IShoppingCartService shoppingCartService,
+        IStateProvinceService stateProvinceService,
+        IStoreContext storeContext,
+        IStoreMappingService storeMappingService,
+        ITaxService taxService,
+        IWorkContext workContext,
+        OrderSettings orderSettings,
+        PaymentSettings paymentSettings,
+        RewardPointsSettings rewardPointsSettings,
+        ShippingSettings shippingSettings,
+        TaxSettings taxSettings
+        ) : base
+        (
+            addressSettings,
+            captchaSettings,
+            commonSettings,
+            addressModelFactory,
+            addressService,
+            countryService,
+            currencyService,
+            customerService,
+            genericAttributeService,
+            localizationService,
+            orderProcessingService,
+            orderTotalCalculationService,
+            paymentPluginManager,
+            paymentService,
+            pickupPluginManager,
+            priceFormatter,
+            rewardPointService,
+            shippingPluginManager,
+            shippingService,
+            shoppingCartService,
+            stateProvinceService,
+            storeContext,
+            storeMappingService,
+            taxService,
+            workContext,
+            orderSettings,
+            paymentSettings,
+            rewardPointsSettings,
+            shippingSettings,
+            taxSettings
         )
             {}
 
-        public override async Task<CheckoutBillingAddressModel> PrepareBillingAddressModelAsync(
-            IList<ShoppingCartItem> cart,
-            int? selectedCountryId = null,
-            bool prePopulateNewAddressWithCustomerFields = false,
-            string overrideAttributesXml = "")
+        public override async Task PrepareBillingAddressModelAsync(
+            CheckoutBillingAddressModel model, IList<ShoppingCartItem> cart,
+            int? selectedCountryId = null, bool prePopulateNewAddressWithCustomerFields = false, string overrideAttributesXml = "")
         {
-            
-            var model = await base.PrepareBillingAddressModelAsync(cart,
+            await base.PrepareBillingAddressModelAsync(
+                model,
+                cart,
                 US_COUNTRY_ID,
                 prePopulateNewAddressWithCustomerFields,
                 overrideAttributesXml);
-            return model;
         }
 
-        public override async Task<CheckoutShippingAddressModel> PrepareShippingAddressModelAsync(
-            IList<ShoppingCartItem> cart,
-            int? selectedCountryId = null,
-            bool prePopulateNewAddressWithCustomerFields = false,
-            string overrideAttributesXml = "")
+        public override async Task PrepareShippingAddressModelAsync(
+            CheckoutShippingAddressModel model, IList<ShoppingCartItem> cart,
+            int? selectedCountryId = null, bool prePopulateNewAddressWithCustomerFields = false, string overrideAttributesXml = "")
         {
-            var model = await base.PrepareShippingAddressModelAsync(cart,
+            await base.PrepareShippingAddressModelAsync(
+                model,
+                cart,
                 US_COUNTRY_ID,
                 prePopulateNewAddressWithCustomerFields,
                 overrideAttributesXml);
-            return model;
         }
     }
 }

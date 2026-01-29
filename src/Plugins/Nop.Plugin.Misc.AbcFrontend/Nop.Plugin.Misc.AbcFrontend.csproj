@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <!-- warns against potential bugs, updates to latest possible -->
     <AnalysisLevel>latest</AnalysisLevel>
     <Authors>Dave Farinelli</Authors>
@@ -13,12 +13,12 @@
     You need to set this parameter to true if your plugin has a nuget package 
     to ensure that the dlls copied from the NuGet cache to the output of your project-->
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="logo.png" />
     <None Remove="plugin.json" />
-    <None Remove="scripts\jquery.jcarousel.min.js" />
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
@@ -58,6 +58,61 @@
     <None Remove="Images\mobile-sprite-mic.png" />
     <None Remove="Images\SaleAdButton.png" />
     <None Remove="Images\search-button.png" />
+    <!-- Pavilion overwrites -->
+    <None Remove="Content/css/768.css" />
+    <None Remove="Content/css/1024.css" />
+    <None Remove="Content/css/1024.rtl.css" />
+    <None Remove="Content/css/1280.css" />
+    <None Remove="Content/css/1280.rtl.css" />
+    <None Remove="Content/css/custom_front_product.css" />
+    <None Remove="Content/css/hawthorne.css" />
+    <None Remove="Content/css/mobile-categories.css" />
+    <None Remove="Content/css/mobile-header.css" />
+    <None Remove="Content/css/mobile.css" />
+    <None Remove="Content/css/mobile.rtl.css" />
+    <None Remove="Content/css/pavilion-styles.css" />
+    <None Remove="Content/css/product-box.css" />
+    <None Remove="Content/css/product-details-template.css" />
+    <None Remove="Content/css/product-listings.css" />
+    <None Remove="Content/css/product-price.css" />
+    <None Remove="Content/css/rebates-promos.css" />
+    <None Remove="Content/css/styles.css" />
+    <None Remove="Content/css/styles.rtl.css" />
+    <None Remove="Content/css/synchrony.css" />
+    <None Remove="Content/css/synchronyrespon.css" />
+    <None Remove="Content/css/tooltip.css" />
+    <None Remove="Content/img/category-nav.png" />
+    <None Remove="Content/img/flyout-cart.png" />
+    <None Remove="Content/scripts/jquery.jcarousel.min.js" />
+    <None Remove="Content/scripts/mattress.js" />
+    <None Remove="Content/scripts/mobileFilters.js" />
+    <None Remove="Content/scripts/mobileMenu.js" />
+    <None Remove="Content/scripts/pavilion.js" />
+    <None Remove="Content/scripts/public.ajaxcart.js" />
+    <None Remove="Content/scripts/public.estimateshipping.popup.js" />
+    <None Remove="Views\Catalog\_CatalogSelectors.cshtml" />
+    <None Remove="Views\Catalog\_ProductsInGridOrLines.cshtml" />
+    <None Remove="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml" />
+    <None Remove="Views\Catalog\ManufacturerAll.cshtml" />
+    <None Remove="Views\Checkout\Completed.cshtml" />
+    <None Remove="Views\Components\CartSlideoutProductAttributes\Default.cshtml" />
+    <None Remove="Views\Components\JCarousel\JCarousel.cshtml" />
+    <None Remove="Views\Home\Index.cshtml" />
+    <None Remove="Views\Product\_AddToCart.cshtml" />
+    <None Remove="Views\Product\_ProductPrice.cshtml" />
+    <None Remove="Views\Product\ProductTemplate.Simple.cshtml" />
+    <None Remove="Views\Shared\Head.cshtml" />
+    <None Remove="Views\Shared\_AttributeInfo.cshtml" />
+    <None Remove="Views\Shared\_EstimateShippingPopup.cshtml" />
+    <None Remove="Views\Shared\_Header.cshtml" />
+    <None Remove="Views\Shared\_ProductBox.cshtml" />
+    <None Remove="Views\Shared\_Root.cshtml" />
+    <None Remove="Views\Shared\_Root.Head.cshtml" />
+    <None Remove="Views\Shared\Components\FlyoutShoppingCart\Default.cshtml" />
+    <None Remove="Views\Shared\Components\Footer\Default.cshtml" />
+    <None Remove="Views\Shared\Components\NewsletterBox\Default.cshtml" />
+    <None Remove="Views\Shared\Components\OrderSummary\Default.cshtml" />
+    <None Remove="Views\Topic\TopicDetails.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,9 +120,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="plugin.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="scripts/jquery.jcarousel.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml">
@@ -187,6 +239,169 @@
     <Content Include="Images\search-button.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <!-- Pavilion overwrites -->
+    <Content Include="Content/css/768.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/1024.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/1024.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/1280.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/1280.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/custom_front_product.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/hawthorne.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/mobile-categories.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/mobile-header.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/mobile.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/mobile.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/pavilion-styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-box.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-details-template.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-listings.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/product-price.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/rebates-promos.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/styles.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/styles.rtl.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/synchrony.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/synchronyrespon.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/css/tooltip.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/img/category-nav.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/img/flyout-cart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/jquery.jcarousel.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/mattress.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/mobileFilters.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/mobileMenu.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/pavilion.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/public.ajaxcart.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/scripts/public.estimateshipping.popup.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\_CatalogSelectors.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\_ProductsInGridOrLines.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\CategoryTemplate.ProductsInGridOrLines.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Catalog\ManufacturerAll.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Checkout\Completed.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\JCarousel\JCarousel.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Components\CartSlideoutProductAttributes\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Home\Index.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Product\_AddToCart.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Product\_ProductPrice.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Product\ProductTemplate.Simple.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Head.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_AttributeInfo.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_EstimateShippingPopup.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Header.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_ProductBox.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Root.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\_Root.Head.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\FlyoutShoppingCart\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\Footer\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\NewsletterBox\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Shared\Components\OrderSummary\Default.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\Topic\TopicDetails.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -203,6 +418,8 @@
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
     <ProjectReference Include="..\..\Presentation\Nop.Web\Nop.Web.csproj" />
+    <!-- for NopHtml usage? -->
+    <ProjectReference Include="..\..\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
     <ProjectReference Include="..\Nop.Plugin.Misc.AbcCore\Nop.Plugin.Misc.AbcCore.csproj" />
   </ItemGroup>
 

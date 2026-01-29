@@ -4,24 +4,31 @@
 
 @model MegaMenuWidgetModel
 
+@inject IWorkContext workContext;
+
 @{
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Themes/" + Model.Theme + "/Content/MegaMenu.css");
-
-    var supportRtl = await ShouldUseRtlThemeAsync();
-    if (supportRtl)
-    {
-        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Themes/" + Model.Theme + "/Content/MegaMenu.rtl.css");
-    }
-
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Scripts/MegaMenu.min.js");
+    var megaMenuCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Themes/" + Model.Theme + "/Content/MegaMenu.css";
+    
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
 }
+
+<link rel="stylesheet" href="@megaMenuCssFilePath" />
+
+@if (supportRtl)
+{
+    var megaMenuRtlCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Themes/" + Model.Theme + "/Content/MegaMenu.rtl.css";
+
+    <link rel="stylesheet" href="@megaMenuRtlCssFilePath" />
+}
+
+<script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.MegaMenu/Scripts/MegaMenu.min.js" asp-location="Footer"></script>
 
 @foreach (var menu in Model.MegaMenus)
 {
     List<string> responsiveMenuItems = new List<string>();
 
-    <ul role="menu" class="mega-menu @menu.CssClass"
+    <ul class="mega-menu @menu.CssClass"
         data-isRtlEnabled="@supportRtl.ToString().ToLowerInvariant()"
         data-enableClickForDropDown="@menu.ShowDropdownsOnClick.ToString().ToLowerInvariant()">
         @foreach (var item in menu.Items)

@@ -4,6 +4,6 @@
     Layout = null;
 }
 
-<div class="html-slide">
+<div class="anywhereslider-slide html-slide @if (Model.IsFirstSlide) {<text>first-slide</text>}">
     @Html.Raw(Model.Content)
 </div>

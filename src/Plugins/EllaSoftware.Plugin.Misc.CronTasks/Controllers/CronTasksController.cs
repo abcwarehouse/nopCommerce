@@ -9,7 +9,7 @@ using Nop.Services.Configuration;
 using Nop.Services.Helpers;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Web.Areas.Admin.Infrastructure.Mapper.Extensions;
 using Nop.Web.Areas.Admin.Models.Tasks;
 using Nop.Web.Framework;
@@ -24,7 +24,7 @@ using System.Collections.Generic;
 namespace EllaSoftware.Plugin.Misc.CronTasks.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class CronTasksController : BasePluginController
     {

@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <!-- warns against potential bugs, updates to latest possible -->
     <AnalysisLevel>latest</AnalysisLevel>
     <Authors>Dave Farinelli</Authors>
@@ -13,6 +13,7 @@
     You need to set this parameter to true if your plugin has a nuget package 
     to ensure that the dlls copied from the NuGet cache to the output of your project-->
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
     <None Remove="UpdateAbcPromos.StoredProc.sql" />
     <None Remove="Views\BuildInfo.cshtml" />
     <None Remove="Views\Configure.cshtml" />
+    <None Remove="Views\_ProductInfo.cshtml" />
     <None Remove="Views\_ViewImports.cshtml" />
     <None Remove="Views\ProductDetails.cshtml" />
     <None Remove="Views\CategoryDetails.cshtml" />
@@ -31,6 +33,7 @@
     <None Remove="Areas\Admin\Views\NewProduct\List.cshtml" />
     <None Remove="Areas\Admin\PageNotFound\Frequency.cshtml" />
     <None Remove="Areas\Admin\PageNotFound\List.cshtml" />
+    <None Remove="Views/CartSlideout/_PickupInStore.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +50,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Configure.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views\_ProductInfo.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\_ViewImports.cshtml">
@@ -77,6 +83,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Areas\Admin\PageNotFound\List.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Views/CartSlideout/_PickupInStore.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -125,7 +134,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.Odbc" Version="5.0.0" />
+    <!-- ABC: Added to resolve "System.Data.Odbc.dll not found" runtime error. -->
+    <!-- This ensures the ODBC assembly is included in the build output. -->
+    <PackageReference Include="System.Data.Odbc" Version="8.0.1" />
   </ItemGroup>
 
   <!-- This target execute after "Build" target -->

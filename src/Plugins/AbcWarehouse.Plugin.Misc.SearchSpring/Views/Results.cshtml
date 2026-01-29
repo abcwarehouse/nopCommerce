@@ -6,7 +6,9 @@
 @inject Nop.Web.Factories.IProductModelFactory productModelFactory
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
 @inject Nop.Core.IWebHelper webHelper
+@inject INopHtmlHelper NopHtml
 @inject Nop.Services.Logging.ILogger logger
+
 @using Nop.Web.Models.Catalog
 @using Nop.Core.Domain.Catalog
 @using Nop.Web.Extensions
@@ -36,7 +38,7 @@
         canonicalUrl += QueryHelpers.AddQueryString("", canonicalParams);
 }
 
-@{ Html.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />"); }
+@{ NopHtml.AddHeadCustomParts("<meta name=\"robots\" content=\"noindex,follow\" />"); }
 
 @if (!Model.Results.Any())
 {
@@ -405,6 +407,17 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("✗ Geolocation FAILED!");
             console.error("Error code:", error.code);
             console.error("Error message:", error.message);
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Location permission denied. Please enable location access in your browser settings.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("Location request timed out.");
+                    break;
             }
         },
         {

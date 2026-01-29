@@ -5,12 +5,12 @@ using EllaSoftware.Plugin.Misc.CronTasks.Domain;
 using EllaSoftware.Plugin.Misc.CronTasks.Infrastructure;
 using Nop.Core.Caching;
 using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Tasks;
+using Nop.Core.Domain.ScheduleTasks;
 using Nop.Core.Infrastructure;
 using Nop.Data;
 using Nop.Services.Common;
 using Nop.Services.Logging;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Quartz;
 using Task = System.Threading.Tasks.Task;
 

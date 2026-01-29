@@ -4,6 +4,9 @@
 .anywhere-page-map {
     margin: 0 0 50px;
 }
+.anywhere-page-map .map {
+	height: 350px;
+}
 .anywhere-page-map .map-title {
     margin: 0 0 20px;
     border-bottom: 1px solid #ddd;
@@ -13,9 +16,9 @@
 	text-transform: uppercase;
 }
 .map-wrapper #shop-address-input {
-	top: 10px !important;
 	width: 160px;
 	height: 30px;
+	margin: 10px;
 	border: none;
 	border-radius: 2px;
 	box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);

@@ -17,40 +17,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Nop.Services.Logging;
+using Nop.Services.Attributes;
 
 namespace Nop.Plugin.Tax.AbcTax.Services
 {
     public class CustomOrderTotalCalculationService : OrderTotalCalculationService, IOrderTotalCalculationService
     {
-        private readonly CatalogSettings _catalogSettings;
-        private readonly IAddressService _addressService;
-        private readonly ICheckoutAttributeParser _checkoutAttributeParser;
-        private readonly ICustomerService _customerService;
-        private readonly IDiscountService _discountService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly IGiftCardService _giftCardService;
-        private readonly IOrderService _orderService;
-        private readonly IPaymentService _paymentService;
-        private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IProductService _productService;
-        private readonly IRewardPointService _rewardPointService;
-        private readonly IShippingPluginManager _shippingPluginManager;
-        private readonly IShippingService _shippingService;
-        private readonly IShoppingCartService _shoppingCartService;
-        private readonly IStoreContext _storeContext;
-        private readonly ITaxService _taxService;
-        private readonly IWorkContext _workContext;
-        private readonly RewardPointsSettings _rewardPointsSettings;
-        private readonly ShippingSettings _shippingSettings;
-        private readonly ShoppingCartSettings _shoppingCartSettings;
-        private readonly TaxSettings _taxSettings;
-
         private readonly IWarrantyTaxService _warrantyTaxService;
         private readonly ILogger _logger;
 
         public CustomOrderTotalCalculationService(CatalogSettings catalogSettings,
             IAddressService addressService,
-            ICheckoutAttributeParser checkoutAttributeParser,
+            IAttributeParser<CheckoutAttribute, CheckoutAttributeValue> checkoutAttributeParser,
             ICustomerService customerService,
             IDiscountService discountService,
             IGenericAttributeService genericAttributeService,
@@ -74,36 +52,12 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             IWarrantyTaxService warrantyTaxService,
             ILogger logger
         )
-            : base(catalogSettings, addressService, checkoutAttributeParser, customerService,
-                discountService, genericAttributeService, giftCardService, orderService,
-                paymentService, priceCalculationService, productService, rewardPointService,
-                shippingPluginManager, shippingService, shoppingCartService,
-                storeContext, taxService, workContext, rewardPointsSettings,
-                shippingSettings, shoppingCartSettings, taxSettings, logger)
+            : base(catalogSettings, addressService, checkoutAttributeParser, customerService, discountService, genericAttributeService,
+                  giftCardService, orderService, paymentService, priceCalculationService,
+                  productService, rewardPointService, shippingPluginManager, shippingService,
+                  shoppingCartService, storeContext, taxService, workContext,
+                  rewardPointsSettings, shippingSettings, shoppingCartSettings, taxSettings)
         {
-            _catalogSettings = catalogSettings;
-            _addressService = addressService;
-            _checkoutAttributeParser = checkoutAttributeParser;
-            _customerService = customerService;
-            _discountService = discountService;
-            _genericAttributeService = genericAttributeService;
-            _giftCardService = giftCardService;
-            _orderService = orderService;
-            _paymentService = paymentService;
-            _priceCalculationService = priceCalculationService;
-            _productService = productService;
-            _rewardPointService = rewardPointService;
-            _shippingPluginManager = shippingPluginManager;
-            _shippingService = shippingService;
-            _shoppingCartService = shoppingCartService;
-            _storeContext = storeContext;
-            _taxService = taxService;
-            _workContext = workContext;
-            _rewardPointsSettings = rewardPointsSettings;
-            _shippingSettings = shippingSettings;
-            _shoppingCartSettings = shoppingCartSettings;
-            _taxSettings = taxSettings;
-
             // custom
             _warrantyTaxService = warrantyTaxService;
             _logger = logger;
@@ -158,8 +112,9 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             //checkout attributes
             if (customer != null)
             {
-                var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
-                var attributeValues = _checkoutAttributeParser.ParseCheckoutAttributeValues(checkoutAttributesXml);
+                var store = await _storeContext.GetCurrentStoreAsync();
+                var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(customer, NopCustomerDefaults.CheckoutAttributes, store.Id);
+                var attributeValues = _checkoutAttributeParser.ParseAttributeValues(checkoutAttributesXml);
                 if (attributeValues != null)
                 {
                     await foreach (var (attribute, values) in attributeValues)

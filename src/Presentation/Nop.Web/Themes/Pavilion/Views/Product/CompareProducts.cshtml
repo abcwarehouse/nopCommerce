@@ -1,11 +1,14 @@
 ﻿@model CompareProductsModel
+
+@using Nop.Core.Domain.Catalog
+
 @{
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(T("PageTitle.CompareProducts").Text);
+    NopHtml.AddTitleParts(T("PageTitle.CompareProducts").Text);
     //page class
-    Html.AppendPageCssClassParts("html-compare-products-page");
+    NopHtml.AppendPageCssClassParts("html-compare-products-page");
 }
 @{
     var columnWidth = "";
@@ -45,8 +48,9 @@
                             <td class="empty">&nbsp;</td>
                             @foreach (var product in Model.Products)
                             {
+                                var picture = product.PictureModels.FirstOrDefault();
                                 <td style="width: @columnWidth;">
-                                    <a class="picture" href="@Url.RouteUrl("Product", new { SeName = product.SeName })"><img alt="@product.DefaultPictureModel.AlternateText" src="@product.DefaultPictureModel.ImageUrl" title="@product.DefaultPictureModel.Title" /></a>
+                                    <a class="picture" href="@(Url.RouteUrl<Product>(new { SeName = product.SeName }))"><img alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" /></a>
                                 </td>
                             }
                         </tr>
@@ -57,7 +61,7 @@
                             @foreach (var product in Model.Products)
                             {
                                 <td style="width: @columnWidth;">
-                                    <a href="@Url.RouteUrl("Product", new { SeName = product.SeName })">@product.Name</a>
+                                    <a href="@(Url.RouteUrl<Product>(new { SeName = product.SeName }))">@product.Name</a>
                                 </td>
                             }
                         </tr>
@@ -151,8 +155,8 @@
                 <thead>
                     <tr>
                         <th><span class="item-count">#</span></th>
-                        <th data-hide="w480, w580, w768">@T("SevenSpikes.Themes.ProductRemove")</th>
-                        <th data-hide="w410">@T("SevenSpikes.Themes.Picture")</th>
+                        <th>@T("SevenSpikes.Themes.ProductRemove")</th>
+                        <th data-hide="w410, w480">@T("SevenSpikes.Themes.Picture")</th>
                         <th>@T("SevenSpikes.Themes.ProductCompareName")</th>
                         <th data-hide="w410, w480, w580">@T("Products.Compare.Price")</th>
                         @if (Model.IncludeShortDescriptionInCompareProducts)
@@ -179,16 +183,17 @@
                     @foreach (var product in Model.Products)
                     {
                         counter++;
+                        var picture = product.PictureModels.FirstOrDefault();
                         <tr>
                             <td><span class="item-count">@counter</span></td>
                             <td>
                                 <button type="button" title="@T("Common.Remove")" class="button-2 remove-button" onclick="setLocation('@Url.RouteUrl("RemoveProductFromCompareList", new { productId = product.Id })')">@T("Common.Remove")</button>
                             </td>
                             <td>
-                                <img alt="@product.DefaultPictureModel.AlternateText" src="@product.DefaultPictureModel.ImageUrl" title="@product.DefaultPictureModel.Title" />
+                                <img alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" />
                             </td>
                             <td>
-                                <a class="link" href="@Url.RouteUrl("Product", new { SeName = product.SeName })">@product.Name</a>
+                                <a class="link" href="@(Url.RouteUrl<Product>(new { SeName = product.SeName }))">@product.Name</a>
                             </td>
                             <td>
                                 @product.ProductPrice.Price

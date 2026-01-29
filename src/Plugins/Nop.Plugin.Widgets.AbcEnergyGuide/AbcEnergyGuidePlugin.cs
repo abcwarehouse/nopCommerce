@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
@@ -13,10 +14,7 @@ namespace Nop.Plugin.Widgets.AbcEnergyGuide
             return Task.FromResult<IList<string>>(new List<string> { CustomPublicWidgetZones.ProductDetailsDescriptionTabTop });
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "WidgetsAbcEnergyGuide";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Nop.Plugin.Widgets.AbcBonusBundle.Components.WidgetsAbcEnergyGuideViewComponent);
 
         public bool HideInWidgetList => false;
     }

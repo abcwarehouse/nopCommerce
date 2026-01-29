@@ -7,7 +7,7 @@
 @inject NopAjaxFiltersSettings nopAjaxFiltersSettings
 
 @{
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/ManufacturerFilter.min.js");
+   <script src="~/Plugins/SevenSpikes.Nop.Plugins.AjaxFilters/Scripts/ManufacturerFilter.min.js" asp-location="Footer"></script>
 
     string toggleStateClass = "toggleControl";
     string toggleStateStyles = string.Empty;

@@ -24,10 +24,9 @@ namespace AbcWarehouse.Plugin.Widgets.AddressAutocomplete
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "AddressAutocomplete";
-        }
+        public string GetWidgetViewComponentName(string widgetZone) => "AddressAutocomplete";
+
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.AddressAutocompleteViewComponent);
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
         {
@@ -65,11 +64,15 @@ namespace AbcWarehouse.Plugin.Widgets.AddressAutocomplete
 
         private async Task UpdateLocales()
         {
-            await _localizationService.AddLocaleResourceAsync(
-                new Dictionary<string, string>
-                {
-                    [AddressAutocompleteLocales.GooglePlacesApiKey] = "Google Places API Key"
-                });
+            var resources = new Dictionary<string, string>
+            {
+                [AddressAutocompleteLocales.GooglePlacesApiKey] = "Google Places API Key"
+            };
+
+            foreach (var resource in resources)
+            {
+                await _localizationService.AddOrUpdateLocaleResourceAsync(resource.Key, resource.Value);
+            }
         }
     }
 }

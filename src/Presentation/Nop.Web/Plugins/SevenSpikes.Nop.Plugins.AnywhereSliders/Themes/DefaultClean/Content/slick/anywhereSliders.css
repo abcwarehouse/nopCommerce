@@ -1,13 +1,23 @@
 
-.picture-slide a {
+.anywhere-slider .picture-slide a {
     display: block;
 }
-.picture-slide img {
+.anywhere-slider .picture-slide img {
     width: 100%;
-    display: none;
+	display: none;
 }
-.first-slide img {
+.anywhere-slider .first-slide img {
     display: block;
+}
+.anywhere-slider .html-slide {
+	display: none;
+}
+.anywhere-slider .first-slide,
+.slick-initialized .html-slide {
+    display: block;
+}
+.anywhere-slider img[data-lazy] {
+	max-height: 1px;
 }
 
 @media all and (min-width: 1001px) {

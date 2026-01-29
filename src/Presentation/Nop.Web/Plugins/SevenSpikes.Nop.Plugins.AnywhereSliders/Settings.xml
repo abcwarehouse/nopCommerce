@@ -3,4 +3,7 @@
   <Setting Name="NivoSettings.MobileBreakpoint">
     <Value>767</Value>
   </Setting>
+  <Setting Name="AnywhereSlidersSettings.PauseOnHover">
+    <Value>false</Value>
+  </Setting>
 </Settings>

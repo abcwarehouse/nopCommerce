@@ -18,9 +18,6 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
 {
     public class AbcCategoryService : CategoryService, IAbcCategoryService
     {
-        private readonly IRepository<Category> _categoryRepository;
-        private readonly IUrlRecordService _urlRecordService;
-
         public AbcCategoryService(
             IAclService aclService,
             ICustomerService customerService,
@@ -47,10 +44,7 @@ namespace Nop.Plugin.Misc.AbcCore.Nop
             storeMappingService,
             workContext
         )
-        {
-            _categoryRepository = categoryRepository;
-            _urlRecordService = urlRecordService;
-        }
+        { }
 
         public async Task<Category> GetCategoryByNameAsync(string name)
         {

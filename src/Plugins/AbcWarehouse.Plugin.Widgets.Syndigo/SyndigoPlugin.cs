@@ -24,9 +24,9 @@ namespace AbcWarehouse.Plugin.Widgets.Syndigo
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return "WidgetsSyndigo";
+            return typeof(Components.WidgetsSyndigoViewComponent);
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()

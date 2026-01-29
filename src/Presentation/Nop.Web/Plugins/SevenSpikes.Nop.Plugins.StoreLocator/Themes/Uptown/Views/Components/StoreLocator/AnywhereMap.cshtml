@@ -1,22 +1,29 @@
 ﻿@model MapModel
 @inject IWebHelper webHelper
 @inject StoreLocatorSettings storeLocatorSettings
+@inject IWorkContext workContext
+
 @{
     var themeName = await ThemeHelper.GetPluginThemeAsync(Plugin.FolderName);
-    var supportRtl = await ShouldUseRtlThemeAsync();
+    var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
 
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.css");
-    if (supportRtl)
-    {
-        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.rtl.css");
-    }
-    
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorCore.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorAnywhereMap.min.js");
+    var storeLocatorCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.css";
 
     var storeLocation = webHelper.GetStoreLocation();
 }
-<script asp-location="Footer" src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+<link rel="stylesheet" href="@storeLocatorCssFilePath" />
+
+@if (supportRtl)
+{
+    var storeLocatorRtlCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Themes/" + themeName + "/Content/StoreLocator.rtl.css";
+
+    <link rel="stylesheet" href="@storeLocatorRtlCssFilePath" />
+}
+
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorCore.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.StoreLocator/Scripts/StoreLocatorAnywhereMap.min.js" asp-location="Footer"></script>
+<script src=@("https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js")></script>
 
 <div class="anywhere-page-map">
     <div class="map-title">

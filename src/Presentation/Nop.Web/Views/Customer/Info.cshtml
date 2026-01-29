@@ -5,15 +5,15 @@
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Account").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Account").Text);
     //page class
-    Html.AppendPageCssClassParts("html-account-page");
-    Html.AppendPageCssClassParts("html-customer-info-page");
+    NopHtml.AppendPageCssClassParts("html-account-page");
+    NopHtml.AppendPageCssClassParts("html-customer-info-page");
 }
 
 @section left
-    {
-    @await Component.InvokeAsync("CustomerNavigation", new { selectedTabId = CustomerNavigationEnum.Info })
+{
+    @await Component.InvokeAsync(typeof(CustomerNavigationViewComponent), new { selectedTabId = CustomerNavigationEnum.Info })
 }
 
 <div class="page account-page customer-info-page">
@@ -21,6 +21,7 @@
         <h1>@T("Account.MyAccount") - @T("Account.CustomerInfo")</h1>
     </div>
     <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerInfoTop, additionalData = Model })
         <form asp-route="CustomerInfo" method="post">
             <div asp-validation-summary="ModelOnly" class="message-error"></div>
             <div class="fieldset">
@@ -41,6 +42,13 @@
                                     <input type="radio" asp-for="Gender" value="F" checked="@(Model.Gender == "F")" id="gender-female" />
                                     <label class="forcheckbox" for="gender-female">@T("Account.Fields.Gender.Female")</label>
                                 </span>
+                                @if (Model.NeutralGenderEnabled)
+                                {
+                                    <span class="Neutral">
+                                        <input type="radio" asp-for="Gender" value="N" checked="@(Model.Gender == "N")" id="gender-neutral" />
+                                        <label class="forcheckbox" for="gender-neutral">@T("Account.Fields.Gender.Neutral")</label>
+                                    </span>
+                                }
                             </div>
                         </div>
                     }
@@ -75,11 +83,10 @@
                             <nop-date-picker asp-day-name="@Html.NameFor(x => x.DateOfBirthDay)"
                                              asp-month-name="@Html.NameFor(x => x.DateOfBirthMonth)"
                                              asp-year-name="@Html.NameFor(x => x.DateOfBirthYear)"
-                                             asp-begin-year="@(DateTime.Now.Year - 110)"
-                                             asp-end-year="@(DateTime.Now.Year)"
-                                             asp-selected-day="@Model.DateOfBirthDay"
-                                             asp-selected-month="@Model.DateOfBirthMonth"
-                                             asp-selected-year="@Model.DateOfBirthYear" />
+                                             asp-begin-year="@(DateTime.Now.AddYears(-110))"
+                                             asp-end-year="@(DateTime.UtcNow)"
+                                             asp-selected-date="@Model.ParseDateOfBirth()" />
+
                             @if (Model.DateOfBirthRequired)
                             {
                                 <nop-required />
@@ -154,6 +161,11 @@
                             <div class="inputs">
                                 <label asp-for="VatNumber" asp-postfix=":"></label>
                                 <input asp-for="VatNumber" />
+                                @if (Model.VatNumberRequired)
+                                {
+                                    <nop-required />
+                                }
+                                <span asp-validation-for="VatNumber"></span>
                                 <span class="vat-status">@Model.VatNumberStatusNote</span>
                                 <span class="vat-note">
                                     <em>@T("Account.Fields.VatNumber.Note")</em>
@@ -432,7 +444,7 @@
                             if (consent.IsRequired)
                             {
                                 <script asp-location="Footer">
-                                    $(document).ready(function() {
+                                    $(function() {
                                         $('#save-info-button').on('click', function() {
                                             if ($('#consent@(consent.Id)').is(':checked')) {
                                                     //do some stuff
@@ -458,6 +470,7 @@
                 <button type="submit" id="save-info-button" name="save-info-button" class="button-1 save-customer-info-button">@T("Common.Save")</button>
             </div>
         </form>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CustomerInfoBottom, additionalData = Model })
     </div>
 </div>
 
@@ -471,7 +484,7 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "@Url.Action("RemoveExternalAssociation", "Customer")",
+                url: "@Url.RouteUrl("CustomerRemoveExternalAssociation")",
                 data: postData,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {

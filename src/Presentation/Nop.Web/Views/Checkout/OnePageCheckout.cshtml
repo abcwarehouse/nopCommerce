@@ -7,16 +7,12 @@
 @{
     Layout = "_ColumnsOne";
 
-    //scripts
-    Html.AddScriptParts(ResourceLocation.Footer, "~/js/public.accordion.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/js/public.onepagecheckout.js");
-
     var storeLocation = webHelper.GetStoreLocation();
 
     //title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
     //page class
-    Html.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
 }
 @{
     //step numbers
@@ -41,13 +37,16 @@
         confirmOrderStepNumber--;
     }
 }
-@await Component.InvokeAsync("Widget", new { widgetZone = "cart_popup" })
+
+<script src="~/js/public.accordion.js" asp-location="Footer"></script>
+<script src="~/js/public.onepagecheckout.js" asp-location="Footer"></script>
+
 <div class="page checkout-page">
     <div class="page-title">
         <h1>@T("Checkout")</h1>
     </div>
     <div class="page-body checkout-data">
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpcContentBefore })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OpcContentBefore, additionalData = Model })
         <ol class="opc" id="checkout-steps">
             <li id="opc-billing" class="tab-section allow">
                 <div class="step-title">
@@ -55,7 +54,7 @@
                     <h2 class="title">@T("Checkout.BillingAddress")</h2>
                 </div>
                 <div id="checkout-step-billing" class="step a-item" style="display: none;">
-                    <form id="co-billing-form" action="">
+                    <form id="co-billing-form" action="" method="post">
                         <div id="checkout-billing-load">
                             @await Html.PartialAsync("OpcBillingAddress", Model.BillingAddress)
                             @*billing address content will be loaded here*@
@@ -70,11 +69,7 @@
                         }
                     </script>
                     <div class="buttons" id="billing-buttons-container">
-                        <button id="edit-address-button" type="button" class="button-1" style="display: none" onclick="Billing.editAddress('@(storeLocation)checkout/GetAddressById/'); return false;">@T("Common.Edit")</button>
-
-                        <button id="delete-address-button" type="button" class="button-1" style="display: none" onclick="Billing.deleteAddress('@(storeLocation)checkout/DeleteEditAddress/'); return false;">@T("Common.Delete")</button>
-
-                        <button id="save-address-button" type="button" class="button-1" style="display: none" onclick="Billing.saveEditAddress('@(storeLocation)checkout/SaveEditAddress/'); return false;">@T("Common.Save")</button>
+                        <button id="save-billing-address-button" type="button" class="button-1" style="display: none" onclick="Billing.saveEditAddress('@(storeLocation)checkout/SaveEditBillingAddress/'); return false;">@T("Common.Save")</button>
 
                         <button type="button" name="save" class="button-1 new-address-next-step-button" onclick="Billing.save()">@T("Common.Continue")</button>
 
@@ -90,7 +85,7 @@
                         <h2 class="title">@T("Checkout.ShippingAddress")</h2>
                     </div>
                     <div id="checkout-step-shipping" class="step a-item" style="display: none;">
-                        <form action="" id="co-shipping-form">
+                        <form action="" id="co-shipping-form" method="post">
                             <div id="checkout-shipping-load">
                                 @*shipping address content will be loaded here*@
                             </div>
@@ -98,7 +93,7 @@
                         <script asp-location="Footer">
                             Shipping.init('#co-shipping-form', '@(storeLocation)checkout/OpcSaveShipping/');
                             if ($("#shipping-address-select").length > 0) {
-                                Shipping.newAddress(!$('#shipping-address-select').val());
+                                Shipping.newAddress($('#shipping-address-select').val(), @Model.BillingAddress.BillingNewAddress.Id);
                             }
                         </script>
                         <div class="buttons" id="shipping-buttons-container">
@@ -108,6 +103,11 @@
                                     <a href="#" onclick="Checkout.back(); return false; "><small>&laquo; </small>@T("Common.Back")</a>
                                 </p>
                             }
+
+                            <span id="edit-shipping-address-buttons">
+                                <button id="save-shipping-address-button" type="button" class="button-1" style="display: none" onclick="Shipping.saveEditAddress('@(storeLocation)checkout/SaveEditShippingAddress/'); return false;">@T("Common.Save")</button>
+                            </span>
+
                             <button type="button" class="button-1 new-address-next-step-button" onclick="Shipping.save()">@T("Common.Continue")</button>
                             <span id="shipping-please-wait" class="please-wait" style="display: none;"> @T("Common.LoadingNextStep")</span>
                         </div>
@@ -119,7 +119,7 @@
                         <h2 class="title">@T("Checkout.ShippingMethod")</h2>
                     </div>
                     <div id="checkout-step-shipping-method" class="step a-item" style="display: none;">
-                        <form id="co-shipping-method-form" action="">
+                        <form id="co-shipping-method-form" action="" method="post">
                             <div id="checkout-shipping-method-load">
                                 @*shipping methods content will be loaded here*@
                             </div>
@@ -147,7 +147,7 @@
                     <h2 class="title">@T("Checkout.PaymentMethod")</h2>
                 </div>
                 <div id="checkout-step-payment-method" class="step a-item" style="display: none;">
-                    <form action="" id="co-payment-method-form">
+                    <form action="" id="co-payment-method-form" method="post">
                         <div id="checkout-payment-method-load">
                             @*payment methods content will be loaded here*@ Payment is not required
                         </div>
@@ -174,7 +174,7 @@
                     <h2 class="title">@T("Checkout.PaymentInfo")</h2>
                 </div>
                 <div id="checkout-step-payment-info" class="step a-item" style="display: none;">
-                    <form action="" id="co-payment-info-form">
+                    <form action="" id="co-payment-info-form" method="post">
                         <div id="checkout-payment-info-load">
                             @*payment info content will be loaded here*@ Payment is not required
                         </div>
@@ -201,19 +201,19 @@
                         @*confirm order content will be loaded here*@
                     </div>
                     <script asp-location="Footer">
-                        ConfirmOrder.init('@(storeLocation)checkout/OpcConfirmOrder/', '@Url.RouteUrl("CheckoutCompleted")');
+                        ConfirmOrder.init('@(storeLocation)checkout/OpcConfirmOrder/', '@Url.RouteUrl("CheckoutCompleted")', @Model.DisplayCaptcha.ToString().ToLowerInvariant(), @Model.IsReCaptchaV3.ToString().ToLowerInvariant(), '@Model.ReCaptchaPublicKey', '#checkout-step-confirm-order');
                     </script>
                     <div class="buttons" id="confirm-order-buttons-container">
                         <p class="back-link">
                             <a href="#" onclick="Checkout.back(); return false;"><small>&laquo; </small>@T("Common.Back")</a>
                         </p>
-                        <button type="button" class="button-1 confirm-order-next-step-button" onclick="ConfirmOrder.save()">@T("Common.Confirm")</button>
+                        <button type="button" class="button-1 confirm-order-next-step-button" onclick="ConfirmOrder.save()">@T("Checkout.ConfirmButton")</button>
                         <span class="please-wait" id="confirm-order-please-wait" style="display: none;">@T("Checkout.SubmittingOrder")</span>
                     </div>
                 </div>
             </li>
         </ol>
-        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OpcContentAfter })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OpcContentAfter, additionalData = Model })
     </div>
     <script asp-location="Footer">
         Accordion.init('checkout-steps', '.step-title', true);

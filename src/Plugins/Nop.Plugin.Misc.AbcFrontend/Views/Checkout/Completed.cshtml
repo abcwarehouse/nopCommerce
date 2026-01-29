@@ -1,0 +1,259 @@
+@model CheckoutCompletedModel
+@using Nop.Services.Customers
+@using Nop.Services.Orders
+@using Nop.Services.Directory
+@using Nop.Core.Domain.Common
+@using Nop.Services.Catalog
+@using Nop.Web.Models.Checkout
+@using Nop.Web.Framework.Infrastructure
+
+@inject ICustomerService _customerService
+@inject IOrderService _orderService
+@inject ICountryService _country_service
+@inject IStateProvinceService _stateProvinceService
+@inject IProductService _productService
+@inject INopHtmlHelper NopHtml
+
+@{
+    Layout = "_ColumnsOne";
+
+    // title
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-order-completed-page");
+
+    
+    var orderId = Model.OrderId;
+    var order = await _orderService.GetOrderByIdAsync(orderId);
+    var orderTotal = order.OrderTotal;
+    var orderItems = await _orderService.GetOrderItemsAsync(orderId);
+    decimal orderDiscount = 0;
+    var customerEmail = "Unknown";
+    
+    Address billingAddress = null;
+    Address shippingAddress = null;
+    Address pickupAddress = null;
+
+    if (order != null)
+    {
+        var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
+        customerEmail = customer?.Email ?? "Unknown";
+        orderDiscount = order.OrderSubTotalDiscountInclTax;
+        
+        // Load addresses
+        billingAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.BillingAddressId);
+        if (order.ShippingAddressId.HasValue)
+        {
+            shippingAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.ShippingAddressId.Value);
+        }
+        if (order.PickupAddressId.HasValue)
+        {
+            pickupAddress = await _customerService.GetCustomerAddressAsync(order.CustomerId, order.PickupAddressId.Value);
+        }
+    }
+    else
+    {
+        <script>
+            console.error("Invalid order or missing CustomerId.");
+        </script>
+    }
+
+    if (orderItems == null || !orderItems.Any())
+    {
+        <script>
+            console.error("Order items are missing or empty.");
+        </script>
+    }
+}
+
+<div class="page checkout-page order-completed-page">
+    @if (!Model.OnePageCheckoutEnabled)
+    {
+        @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Complete })
+    }
+    <div class="page-title">
+        <h1>@T("Checkout.ThankYou")</h1>
+    </div>
+    <div class="page-body checkout-data">
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedTop, additionalData = Model })
+        <div class="section order-completed">
+            <div class="title">
+                <strong>@T("Checkout.YourOrderHasBeenSuccessfullyProcessed")</strong>
+            </div>
+            <div class="details">
+                <div class="order-number">
+                    <strong>@T("Checkout.OrderNumber"): @Model.CustomOrderNumber</strong>
+                </div>
+                <div class="details-link">
+                    <a href="@Url.RouteUrl("OrderDetails", new { orderID = Model.OrderId })">@T("Checkout.PlacedOrderDetails")</a>
+                </div>
+            </div>
+        </div>
+
+        @if (order != null)
+        {
+
+            <!-- Order Items Table -->
+            @if (orderItems != null && orderItems.Count > 0)
+            {
+                <div class="section products">
+                    <div class="title">
+                        <strong>@T("Order.Product(s)")</strong>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><span class="item-count">#</span></th>
+                                    <th class="name">@T("Order.Product(s).Name")</th>
+                                    <th class="price">@T("Order.Product(s).Price")</th>
+                                    <th class="quantity">@T("Order.Product(s).Quantity")</th>
+                                    <th class="total">@T("Order.Product(s).Total")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{var counter = 0;}
+                                @foreach (var item in orderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            @{counter++;}
+                                        </td>
+                                        <td class="product">
+                                            @{
+                                                var product = await _productService.GetProductByIdAsync(item.ProductId);
+                                            }
+                                            <a href="@Url.Action("Product", "Catalog", new { productId = item.ProductId })">@product?.Name (Product #: @item.ProductId)</a>
+                                        </td>
+                                        <td class="unit-price">@item.UnitPriceInclTax.ToString("C")</td>
+                                        <td class="quantity">@item.Quantity</td>
+                                        <td class="total">@item.PriceInclTax.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Order Totals -->
+                <div class="section totals">
+                    <div class="total-info">
+                        <table class="cart-total">
+                            <tbody>
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@T("Order.SubTotal"):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span>@order.OrderSubtotalInclTax.ToString("C")</span>
+                                    </td>
+                                </tr>
+                                @if (order.OrderSubTotalDiscountInclTax > 0)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.SubTotalDiscount"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>-@order.OrderSubTotalDiscountInclTax.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (order.ShippingStatus != Nop.Core.Domain.Shipping.ShippingStatus.ShippingNotRequired)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.Shipping"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>@order.OrderShippingInclTax.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (order.PaymentMethodAdditionalFeeInclTax > 0)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.PaymentMethodAdditionalFee"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>@order.PaymentMethodAdditionalFeeInclTax.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@T("Order.Tax"):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span>@order.OrderTax.ToString("C")</span>
+                                    </td>
+                                </tr>
+                                @if (order.OrderDiscount > 0)
+                                {
+                                    <tr>
+                                        <td class="cart-total-left">
+                                            <label>@T("Order.TotalDiscount"):</label>
+                                        </td>
+                                        <td class="cart-total-right">
+                                            <span>-@order.OrderDiscount.ToString("C")</span>
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="cart-total-left">
+                                        <label>@T("Order.OrderTotal"):</label>
+                                    </td>
+                                    <td class="cart-total-right">
+                                        <span><strong>@order.OrderTotal.ToString("C")</strong></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        }
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutCompletedBottom, additionalData = Model })
+    </div>
+</div>
+
+<!-- Load Transaction Event and Parameters -->
+<script>
+window.bvCallback = function (BV) {
+  console.log("bvCallback triggered");
+  console.log("bvCallback: orderDiscount = @orderDiscount");
+
+  BV.pixel.trackTransaction({
+    currency: "USD",
+    orderId: "@Model.CustomOrderNumber",
+    total: "@(Convert.ToDecimal(orderTotal).ToString("0.00"))",
+    items: [
+      @for (int i = 0; i < orderItems.Count; i++)
+      {
+          var item = orderItems[i];
+          @: {
+          @:   "price": "@item.UnitPriceInclTax.ToString("0.00")",
+          @:   "quantity": "@item.Quantity",
+          @:   "productId": "@item.ProductId"
+          @: }@(i < orderItems.Count - 1 || (order != null && order.OrderShippingInclTax > 0) ? "," : "")
+      }
+      @if (order != null && order.OrderShippingInclTax > 0)
+      {
+          @: {
+          @:   "price": "@order.OrderShippingInclTax.ToString("0.00")",
+          @:   "quantity": 1,
+          @:   "productId": "SHIPPING"
+          @: }
+      }
+    ],
+    email: "@customerEmail"
+    @if (orderDiscount > 0)
+    {
+      @:,"discount": "@orderDiscount"
+    }
+  });
+};
+</script>

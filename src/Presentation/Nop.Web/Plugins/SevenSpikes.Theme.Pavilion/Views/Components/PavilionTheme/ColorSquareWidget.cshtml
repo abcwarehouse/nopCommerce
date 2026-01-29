@@ -1,8 +1,6 @@
-﻿@{
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/color-squares.min.js");
-}
+﻿<script src="~/Plugins/SevenSpikes.Core/Scripts/jquery.json-2.4.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Core/Scripts/color-squares.min.js" asp-location="Footer"></script>
 
 <div id="color-squares-info"
      data-retrieve-color-squares-url="@Url.Action("RetrieveColorSquares", "PavilionTheme")"

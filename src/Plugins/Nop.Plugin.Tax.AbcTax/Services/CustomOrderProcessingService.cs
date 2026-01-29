@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
 using Nop.Core;
 using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
 using Nop.Core.Domain.Localization;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Tax;
+
 using Nop.Services.Affiliates;
 using Nop.Services.Catalog;
 using Nop.Services.Common;
@@ -25,30 +26,15 @@ using Nop.Services.Security;
 using Nop.Services.Shipping;
 using Nop.Services.Tax;
 using Nop.Services.Vendors;
-using Nop.Core.Domain.Discounts;
+using Nop.Core.Domain.Directory;
 using Nop.Core.Events;
-using System.Threading.Tasks;
+using Nop.Core.Caching;
+using Nop.Services.Stores;
 
 namespace Nop.Plugin.Tax.AbcTax.Services
 {
     public class CustomOrderProcessingService : OrderProcessingService, IOrderProcessingService
     {
-        private readonly ICustomerActivityService _customerActivityService;
-        private readonly ICustomerService _customerService;
-        private readonly IDiscountService _discountService;
-        private readonly IEventPublisher _eventPublisher;
-        private readonly ILocalizationService _localizationService;
-        private readonly ILogger _logger;
-        private readonly IOrderService _orderService;
-        private readonly IPaymentService _paymentService;
-        private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IProductAttributeFormatter _productAttributeFormatter;
-        private readonly IProductService _productService;
-        private readonly IShippingService _shippingService;
-        private readonly IShoppingCartService _shoppingCartService;
-        private readonly ITaxService _taxService;
-        private readonly PaymentSettings _paymentSettings;
-
         // custom
         private readonly IWarrantyTaxService _warrantyTaxService;
 
@@ -80,11 +66,15 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             IProductAttributeFormatter productAttributeFormatter,
             IProductAttributeParser productAttributeParser,
             IProductService productService,
+            IReturnRequestService returnRequestService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
+            IStaticCacheManager staticCacheManager,
+            IStoreMappingService storeMappingService,
+            IStoreService storeService,
             ITaxService taxService,
             IVendorService vendorService,
             IWebHelper webHelper,
@@ -97,36 +87,55 @@ namespace Nop.Plugin.Tax.AbcTax.Services
             ShippingSettings shippingSettings,
             TaxSettings taxSettings,
             // custom
-            IWarrantyTaxService warrantyTaxService
-        ) : base(currencySettings, addressService, affiliateService, checkoutAttributeFormatter,
-                   countryService, currencyService, customerActivityService, customerService,
-                   customNumberFormatter, discountService, encryptionService,
-                   eventPublisher, genericAttributeService, giftCardService,
-                   languageService, localizationService, logger, orderService,
-                   orderTotalCalculationService, paymentPluginManager, paymentService,
-                   pdfService, priceCalculationService, priceFormatter,
-                   productAttributeFormatter, productAttributeParser, productService,
-                   rewardPointService, shipmentService, shippingService, shoppingCartService,
-                   stateProvinceService, taxService, vendorService, webHelper, workContext,
-                   workflowMessageService, localizationSettings, orderSettings,
-                   paymentSettings, rewardPointsSettings, shippingSettings, taxSettings)
+            IWarrantyTaxService warrantyTaxService)
+            : base(currencySettings,
+                  addressService,
+                  affiliateService,
+                  checkoutAttributeFormatter,
+                  countryService,
+                  currencyService,
+                  customerActivityService,
+                  customerService,
+                  customNumberFormatter,
+                  discountService,
+                  encryptionService,
+                  eventPublisher,
+                  genericAttributeService,
+                  giftCardService,
+                  languageService,
+                  localizationService,
+                  logger,
+                  orderService,
+                  orderTotalCalculationService,
+                  paymentPluginManager,
+                  paymentService,
+                  pdfService,
+                  priceCalculationService,
+                  priceFormatter,
+                  productAttributeFormatter,
+                  productAttributeParser,
+                  productService,
+                  returnRequestService,
+                  rewardPointService,
+                  shipmentService,
+                  shippingService,
+                  shoppingCartService,
+                  stateProvinceService,
+                  staticCacheManager,
+                  storeMappingService,
+                  storeService,
+                  taxService,
+                  vendorService,
+                  webHelper,
+                  workContext,
+                  workflowMessageService,
+                  localizationSettings,
+                  orderSettings,
+                  paymentSettings,
+                  rewardPointsSettings,
+                  shippingSettings,
+                  taxSettings)
         {
-            _customerActivityService = customerActivityService;
-            _customerService = customerService;
-            _discountService = discountService;
-            _eventPublisher = eventPublisher;
-            _localizationService = localizationService;
-            _logger = logger;
-            _orderService = orderService;
-            _paymentService = paymentService;
-            _priceCalculationService = priceCalculationService;
-            _productAttributeFormatter = productAttributeFormatter;
-            _productService = productService;
-            _shippingService = shippingService;
-            _shoppingCartService = shoppingCartService;
-            _taxService = taxService;
-            _paymentSettings = paymentSettings;
-
             // custom
             _warrantyTaxService = warrantyTaxService;
         }
@@ -166,8 +175,8 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 
 
                 //attributes
-                var attributeDescription =
-                    await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.Customer);
+                var store = await _storeService.GetStoreByIdAsync(sc.StoreId);
+                var attributeDescription = await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.Customer, store);
 
                 var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(sc);
 

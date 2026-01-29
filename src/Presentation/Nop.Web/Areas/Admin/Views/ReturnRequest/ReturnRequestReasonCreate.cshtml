@@ -4,7 +4,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Configuration.Settings.Order.ReturnRequestReasons.AddNew").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Order settings");
+    NopHtml.SetActiveMenuItemSystemName("Order settings");
 }
 
 
@@ -19,14 +19,14 @@
         </h1>
         <div class="float-right">
             <button type="submit" name="save" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.Save")
             </button>
             <button type="submit" name="save-continue" class="btn btn-primary">
-                <i class="far fa-save"></i>
+                <i class="far fa-floppy-disk"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.ReturnRequestReasonDetailsButtons })
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.ReturnRequestReasonDetailsButtons, additionalData = Model })
         </div>
     </div>
 

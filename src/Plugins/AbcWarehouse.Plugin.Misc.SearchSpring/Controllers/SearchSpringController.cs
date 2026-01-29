@@ -446,7 +446,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         }
         
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public ActionResult Configure()
         {
@@ -457,7 +457,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public async Task<ActionResult> Configure(ConfigurationModel model)
         {

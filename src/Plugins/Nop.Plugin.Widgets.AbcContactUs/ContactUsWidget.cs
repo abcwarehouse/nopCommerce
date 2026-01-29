@@ -1,4 +1,5 @@
-﻿using Nop.Core;
+﻿using System;
+using Nop.Core;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Plugins;
@@ -32,10 +33,7 @@ namespace Nop.Plugin.Widgets.AbcContactUs
             return Task.FromResult<IList<string>>(new List<string> { "topic_page_after_body" });
         }
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "AbcContactUs";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.AbcContactUsViewComponent);
 
         public override string GetConfigurationPageUrl()
         {

@@ -12,7 +12,7 @@ using Nop.Core;
 namespace AbcWarehouse.Plugin.Widgets.Flixmedia.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class FlixmediaController : BasePluginController
     {

@@ -23,9 +23,9 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public System.Type GetWidgetViewComponent(string widgetZone)
         {
-            return "Listrak";
+            return typeof(Components.ListrakViewComponent);
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
@@ -63,7 +63,7 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak
 
         private async Task UpdateLocales()
         {
-            await _localizationService.AddLocaleResourceAsync(
+            await _localizationService.AddOrUpdateLocaleResourceAsync(
                 new Dictionary<string, string>
                 {
                     [ListrakLocales.MerchantId] = "Merchant ID",

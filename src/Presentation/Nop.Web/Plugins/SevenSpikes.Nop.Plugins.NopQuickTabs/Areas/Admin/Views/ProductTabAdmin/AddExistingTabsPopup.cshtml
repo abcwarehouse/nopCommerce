@@ -47,25 +47,27 @@
 		<div class="form-horizontal">
 			<div class="cards-group">
 				<div class="card-body">
-					@await Html.PartialAsync("Table", new DataTablesModel
-					{
-						Name = "product-specific-tabs-grid",
-						UrlRead = new DataUrl("AddExistingTabsList", "ProductTabAdmin", new RouteValueDictionary { ["id"] = Model }),
-						Length = defaultGridPageSize,
-						LengthMenu = gridPageSizes,
-						ColumnCollection = new List<ColumnProperty>
+					@{
+						await Html.RenderPartialAsync("Table", new DataTablesModel
 						{
-							new ColumnProperty(nameof(TabModel.Id))
+							Name = "product-specific-tabs-grid",
+							UrlRead = new DataUrl("AddExistingTabsList", "ProductTabAdmin", new RouteValueDictionary { ["id"] = Model }),
+							Length = defaultGridPageSize,
+							LengthMenu = gridPageSizes,
+							ColumnCollection = new List<ColumnProperty>
 							{
-								Render = new RenderCustom("renderCheckbox"),
-								Width = "50"
-							},
-							new ColumnProperty(nameof(TabModel.SystemName))
-							{
-								Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.SystemName").Text
+								new ColumnProperty(nameof(TabModel.Id))
+								{
+									Render = new RenderCustom("renderCheckbox"),
+									Width = "50"
+								},
+								new ColumnProperty(nameof(TabModel.SystemName))
+								{
+									Title = T("SevenSpikes.NopQuickTabs.Admin.Tabs.Fields.SystemName").Text
+								}
 							}
-						}
-					})
+						});
+					}
 				</div>
 			</div>
 		</div>

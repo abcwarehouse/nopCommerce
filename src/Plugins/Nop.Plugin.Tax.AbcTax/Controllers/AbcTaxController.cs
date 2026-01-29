@@ -25,7 +25,7 @@ using Nop.Web.Framework.Mvc.Filters;
 namespace Nop.Plugin.Tax.AbcTax.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class AbcTaxController : BasePluginController
     {
@@ -71,12 +71,10 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
 
         }
 
+        [CheckPermission(StandardPermission.Configuration.MANAGE_TAX_SETTINGS)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> Configure(bool showtour = false)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return AccessDeniedView();
-
             var taxCategories = await _taxCategoryService.GetAllTaxCategoriesAsync();
 
             if (!taxCategories.Any())
@@ -93,7 +91,7 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
             }
 
             var model = new ConfigurationModel();
-            
+
             //stores
             model.AvailableStores.Add(new SelectListItem { Text = "*", Value = "0" });
             var stores = await _storeService.GetAllStoresAsync();
@@ -154,12 +152,10 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_TAX_SETTINGS)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> RatesByCountryStateZipList(ConfigurationModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return await AccessDeniedDataTablesJson();
-
             var records = await _abcTaxService.GetAllTaxRatesAsync(searchModel.Page - 1, searchModel.PageSize);
 
             var gridModel = await new CountryStateZipListModel().PrepareToGridAsync(searchModel, records, () =>
@@ -186,12 +182,10 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_TAX_SETTINGS)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> AddRateByCountryStateZip(ConfigurationModel model)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return Content("Access denied");
-
             await _abcTaxService.InsertTaxRateAsync(new AbcTaxRate
             {
                 StoreId = model.AddStoreId,
@@ -207,12 +201,10 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_TAX_SETTINGS)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> UpdateRateByCountryStateZip(CountryStateZipModel model)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return Content("Access denied");
-
             var taxRate = await _abcTaxService.GetTaxRateByIdAsync(model.Id);
             taxRate.Zip = model.Zip == "*" ? null : model.Zip;
             taxRate.Percentage = model.Percentage;
@@ -223,12 +215,10 @@ namespace Nop.Plugin.Tax.AbcTax.Controllers
         }
 
         [HttpPost]
+        [CheckPermission(StandardPermission.Configuration.MANAGE_TAX_SETTINGS)]
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task<IActionResult> DeleteRateByCountryStateZip(int id)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
-                return Content("Access denied");
-
             var taxRate = await _abcTaxService.GetTaxRateByIdAsync(id);
             if (taxRate != null)
                 await _abcTaxService.DeleteTaxRateAsync(taxRate);

@@ -9,26 +9,36 @@
 
     var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     var customCssFileVersion = await settingService.GetSettingByKeyAsync(Plugin.CustomCssFileNameSettingKey, 1, storeId, false);
-    var customCssFilePath = string.Format("~/css/Slick/anywhereSlidersCustomCss-{0}-{1}.css", storeId, customCssFileVersion);
+    var doNotUseCustomCSSInAnywhereSliders = await settingService.GetSettingByKeyAsync("AnywhereSliderSettings.DoNotUseCustomCSSInAnywhereSliders", false, (await storeContext.GetCurrentStoreAsync()).Id, true);
 
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js");
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Scripts/AnywhereSliders.min.js");
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Core/Scripts/slick-slider-1.6.0.min.js");
-
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Styles/nivo/nivo-slider.css");
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Core/Styles/slick-slider-1.6.0.css");
-    Html.AddCssFileParts(customCssFilePath);
-
-    Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Themes/" + Model.Theme + "/Content/slick/anywhereSliders.css");
+    var cssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Themes/" + Model.Theme + "/Content/slick/anywhereSliders.css";
 
     var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
-    if (supportRtl)
-    {
-        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Themes/" + Model.Theme + "/Content/slick/anywhereSliders.rtl.css");
-    }
 
     var slidesCounter = 0;
 }
+
+<link rel="stylesheet" href="~/Plugins/SevenSpikes.Core/Styles/slick-slider-1.6.0.css" />
+
+@if (doNotUseCustomCSSInAnywhereSliders == false)
+{
+    var customCssFilePath = string.Format("~/css/Slick/anywhereSlidersCustomCss-{0}-{1}.css", storeId, customCssFileVersion);
+        
+    <link rel="stylesheet" href="@customCssFilePath" />
+}
+
+<link rel="stylesheet" href="@cssFilePath" />    
+
+@if (supportRtl)
+{
+    var rtlCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Themes/" + Model.Theme + "/Content/slick/anywhereSliders.rtl.css";
+
+    <link rel="stylesheet" href="@rtlCssFilePath" />
+}
+
+<script src="~/Plugins/SevenSpikes.Core/Scripts/sevenspikes.core.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Nop.Plugins.AnywhereSliders/Scripts/AnywhereSliders.min.js" asp-location="Footer"></script>
+<script src="~/Plugins/SevenSpikes.Core/Scripts/slick-slider-1.6.0.min.js" asp-location="Footer"></script>
 
 @foreach (var slider in Model.Sliders)
 {
@@ -45,25 +55,25 @@
 
     var slickSettingsDictionary = new Dictionary<string, object>()
 {
-        { "adaptiveWidth", true},
-        { "adaptiveHeight", true},
-        { "zIndex", 0},
-        { "autoplay", slider.Autoplay},
-        { "autoplaySpeed", slider.AutoplaySpeed},
-        { "speed", slider.Speed},
-        { "fade", slider.Fade},
-        { "infinite", true},
-        { "dots", slider.Dots},
-        { "arrows", slider.Arrows},
-        { "appendArrows", arrowsContainer},
-        { "slide", ".picture-slide, .html-slide" }, // explicitly define slides to prevent the arrow container from sliding
-        { "slidesToShow", 1},
-        { "slidesToScroll", 1},
-        { "responsive", breakpoints},
-        { "lazyLoad", "ondemand"},
-        { "centerPadding", "0px"},
-        { "centerMode", true },
-        { "rtl", supportRtl }
+        {"adaptiveHeight", false},
+        {"zIndex", 0},
+        {"autoplay", slider.Autoplay},
+        {"autoplaySpeed", slider.AutoplaySpeed},
+        {"speed", slider.Speed},
+        {"pauseOnHover", slider.PauseOnHover},
+        {"fade", slider.Fade},
+        {"infinite", true},
+        {"dots", slider.Dots},
+        {"arrows", slider.Arrows},
+        {"appendArrows", arrowsContainer},
+        {"slide", ".picture-slide, .html-slide"}, // explicitly define slides to prevent the arrow container from sliding
+        {"slidesToShow", 1},
+        {"slidesToScroll", 1},
+        {"responsive", breakpoints},
+        {"lazyLoad", "ondemand"},
+        {"centerPadding", "0px"},
+        {"centerMode", true},
+        {"rtl", supportRtl}
     };
 
     var slickSettingsJson = JsonConvert.SerializeObject(slickSettingsDictionary);

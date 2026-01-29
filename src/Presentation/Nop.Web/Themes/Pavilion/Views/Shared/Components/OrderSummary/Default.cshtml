@@ -1,274 +1,19 @@
-@* ABC: needs customizations still *@
-
-@model ShoppingCartModel
+﻿@model ShoppingCartModel
 
 @using Nop.Core
+@using Nop.Core.Domain.Catalog
+@using Nop.Core.Domain.Media
 @using Nop.Core.Domain.Orders
 @using Nop.Core.Domain.Tax
-@* ABC: custom *@
-@using Microsoft.AspNetCore.Mvc.ViewComponents
-@using Nop.Core.Domain.Catalog
-@using Nop.Data
-@using Nop.Plugin.Misc.AbcCore
-@using Nop.Plugin.Misc.AbcCore.Domain
-@using Nop.Plugin.Misc.AbcCore.Extensions
-@using Nop.Plugin.Misc.AbcCore.Services
-@using Nop.Plugin.Misc.AbcCore.Delivery
-@using Nop.Services.Catalog
-@using Nop.Services.Common
-@using Nop.Web.Extensions
-@using Nop.Web.Framework.Infrastructure
-@using Nop.Web.Models.ShoppingCart
-@using Nop.Plugin.Misc.AbcCore.Infrastructure
-@using Nop.Services.Configuration
-@using Nop.Plugin.Misc.AbcCore.Nop
 
 @inject IWebHelper webHelper
 @inject IWorkContext workContext
+@inject MediaSettings mediaSettings
 @inject OrderSettings orderSettings
 @inject IViewComponentSelector viewComponentSelector
-@* ABC: custom *@
-@inject FrontEndService frontEndService
-@inject IGenericAttributeService genericAttributeService
-@inject IProductService productService
-@inject IRepository<Product> productRepository
-@inject IRepository<ProductAbcDescription> productAbcDescriptionRepository
-@inject IStoreContext storeContext
-@inject ISettingService settingService
-@* ABC: adjusting item price *@
-@inject IRepository<ShoppingCartItem> shoppingCartItemRepository
-@inject IProductAttributeParser productAttributeParser
-@inject IProductAttributeService productAttributeService
-@inject IPriceFormatter priceFormatter
-@* ABC: checking cart eligibility *@
-@inject IAbcShoppingCartService abcShoppingCartService
-
-
-@* ABC: custom *@
-@{
-    bool isAbc = frontEndService.StoreIsAbc(await storeContext.GetCurrentStoreAsync());
-    bool isHawthorne = frontEndService.StoreIsHawthorne(await storeContext.GetCurrentStoreAsync());
-    string changeDeliveryMethodButtonColor = isHawthorne ?
-                                                await HtmlHelpers.GetPavilionPrimaryColorAsync() :
-                                                await HtmlHelpers.GetPavilionAccentColorAsync();
-
-    Html.AddCssFileParts("~/Plugins/AbcWarehouse.HomeDeliveryStatusWidget/Content/loading.css");
-    var isFedExMode = await settingService.GetSettingByKeyAsync<bool>("coresettings.isfedexmode");
-
-    var isCartEligibleForCheckout = await abcShoppingCartService.IsCartEligibleForCheckoutAsync(Model);
-}
-<style>
-   .spinner > div {
-    	background-color: #@await HtmlHelpers.GetPavilionPrimaryColorAsync();
-    }
-
-    .product-mini-description {
-        font-size: 9pt;
-        display: block;
-        font-style: italic;
-        margin-bottom: 7px;
-    }
-    .change-delivery-method {
-    	outline: 1px solid transparent;
-        padding: 5px 10px;
-    	border: none;
-    	color: white;
-    	font-weight: bold;
-    	background: #@changeDeliveryMethodButtonColor;
-    }
-
-    .change-delivery-method:hover {
-    	outline-color: #@changeDeliveryMethodButtonColor;
-    }
-
-    .delivery-method-error {
-        display: none;
-        color: red;
-    }
-
-    .attributes {
-        display: inline-block;
-    }
-
-    .edit-item {
-        margin-left: 12px;
-    }
-
-    .edit-item.edit-item a {
-        color: blue;
-    }
-    .attributes.attributes.attributes {
-        margin: 0px;
-        margin-bottom: 7px;
-    }
-
-	.prices-bottom-message-mobile {
-		color: #4f4f4f;
-		margin-top: 0.5rem;
-		font-size: 0.65rem;
-		font-style: italic;
-	}
-
-	.message-error {
-		font-weight: bold;
-	}
-
-	.shopping-cart-page .message-error-mobile {
-		margin-bottom: 0;
-	}
-
-	button#checkout:disabled {
-		background-color: #f2f2f2;
-		color: #d9d9d9;
-		cursor: not-allowed;
-	}
-
-	button#checkout:disabled:hover {
-		outline-color: transparent;
-	}
-
-	.checkout-disabled-message {
-		font-weight: bold;
-		color: red;
-		margin: 1rem 3rem;
-	}
-
-	button.remove-link {
-	    font-weight: normal;
-		text-decoration: underline;
-		font-size: 0.7rem;
-		display: block;
-		background-color: transparent;
-		border: 0;
-		margin: 1rem auto 0 auto;
-	}
-
-	@@media (min-width: 523px) {
-		.prices-bottom-message-mobile,
-		.shopping-cart-page .message-error-mobile {
-			display: none;
-		}
-	}
-
-	@@media (min-width: 811px) {
-		td.product {
-			width: 100%;
-		}
-
-		button.remove-link {
-			margin: 1rem 0 0 0;
-		}
-	}
-
-     @* trashcan *@
-     @@media (max-width: 768px) {
-     .remove-item-btn {
-         padding: 3px;
-     }
-     
-     .remove-item-btn svg {
-         width: 18px;
-         height: 18px;
-     }
-     
-     /* Hide desktop buttons on mobile */
-     .desktop-cart-buttons {
-         display: none;
-     }
-     
-     /* Style mobile cart action buttons after order summary */
-     .cart-action-buttons {
-         margin-top: 1rem;
-         text-align: center;
-     }
-     
-     .cart-action-buttons .common-buttons {
-         display: flex;
-         gap: 1rem;
-         justify-content: center;
-         flex-wrap: wrap;
-     }
- }
- 
- /* Show desktop buttons on larger screens */
- @@media (min-width: 769px) {
-     .desktop-cart-buttons {
-         display: block;
-     }
-     
-     .cart-action-buttons {
-         display: none;
-     }
- }
-
-
-
-
-</style>
-<script>
-    $(document).on('click', '.change-delivery-method', function () {
-            $('.change-delivery-method').attr('disabled', 'disabled');
-            $('.spinner').show();
-            $.ajax({
-                cache: false,
-                url: '/SwapDeliveryMethod/Change',
-                data: { 'shoppingCartItemId': $(this).val() },
-                type: 'post',
-                success: success,
-                error: error
-            });
-            return false;
-        });
-
-		$(document).on('click', '.remove-link', function () {
-            $('.remove-link').attr('disabled', 'disabled');
-            $('.spinner').show();
-            $.ajax({
-                cache: false,
-                url: '/ShoppingCart/RemoveItem',
-                data: { 'shoppingCartItemId': $(this).val() },
-                type: 'post',
-                success: success,
-                error: error
-            });
-            return false;
-        });
-
-        function success(data) {
-            $('.spinner').hide();
-            if (data.RedirectUrl) {
-                location.href = data.RedirectUrl;
-            }
-            else if (data.ErrorMessage) {
-                $(data.ErrorMessageRecipient).show();
-                $(data.ErrorMessageRecipient).empty();
-                $(data.ErrorMessageRecipient).append(data.ErrorMessage);
-                $('.change-delivery-method').removeAttr('disabled');
-                return false;
-            }
-            else {
-                location.href = "/cart";
-            }
-        }
-
-        function error() {
-            $('.spinner').hide();
-            $('.change-delivery-method').removeAttr('disabled');
-            alert('error');
-        }
-</script>
 
 <div class="order-summary-content">
-    <!-- ABC: custom -->
-    <div class="spinner hidden-loading">
-        <div class="rect1"></div>
-        <div class="rect2"></div>
-        <div class="rect3"></div>
-        <div class="rect4"></div>
-        <div class="rect5"></div>
-    </div>
-    
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore })
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryContentBefore, additionalData = Model })
     @await Html.PartialAsync("_OrderReviewData", Model.OrderReviewData)
     @if (Model.Items.Count > 0)
     {
@@ -317,7 +62,7 @@
 			                </th>
                             @if (Model.IsEditable)
                             {
-                                <th class="remove-from-cart" data-hide="w410, w480, w580">
+                                <th class="remove-from-cart">
                                     @T("ShoppingCart.Remove")
                                 </th>
                             }
@@ -329,11 +74,11 @@
                             }
                             @if (Model.ShowProductImages)
                             {
-                                <th class="product-picture">
+                                <th class="product-picture" data-hide="w410, w480, w580">
                                     @T("ShoppingCart.Image")
                                 </th>
                             }
-                            <th class="product" data-hide="w410, w480">
+                            <th class="product">
                                 @T("ShoppingCart.Product(s)")
                             </th>
                             @if (Model.ShowVendorName)
@@ -348,16 +93,8 @@
                             <th class="quantity" data-hide="w410, w480, w580, w768">
                                 @T("ShoppingCart.Quantity")
                             </th>
-                            <th class="subtotal">
-                                @if (isAbc || isHawthorne)
-                                {
-                                    <span>Item Sub-total<br />(Including Shipping)</span>
-                                }
-                                else
-                                {
-                                    @T("ShoppingCart.ItemTotal")
-                                }
-                                
+                            <th class="subtotal" data-hide="w410">
+                                @T("ShoppingCart.ItemTotal")
                             </th>
                         </tr>
                     </thead>
@@ -365,100 +102,25 @@
                         @{var counter = 0;}
                         @foreach (var item in Model.Items)
                         {
-                            // ABC: Adjust item price to remove delivery options
-                            var sci = shoppingCartItemRepository.Table.Where(sci => sci.Id == item.Id).FirstOrDefault();
-                            var pams = await productAttributeParser.ParseProductAttributeMappingsAsync(sci.AttributesXml);
-                            var strippedUnitPrice = item.UnitPrice.Replace("$", "").Replace(",", "");
-                            var adjustedUnitPrice = Convert.ToDecimal(strippedUnitPrice);
-                            var isPickup = item.AttributeInfo.Contains("Pickup");
-
-                            foreach (var pam in pams)
-                            {
-                                var pa = await productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
-                                if (pa.Name.Contains(AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName) ||
-                                    pa.Name.Contains("Haul Away") ||
-                                    pa.Name.Contains("Warranty") ||
-                                    pa.Name.Contains("Accessories"))
-                                {
-                                    var pavs = await productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml, pam.Id);
-                                    foreach (var pav in pavs)
-                                    {
-                                        adjustedUnitPrice -= pav.PriceAdjustment;
-                                    }
-                                }
-                            }
-
-                            var adjustedUnitPriceString = await priceFormatter.FormatPriceAsync(adjustedUnitPrice);
-
-                            // ABC: custom
-                            var miniDesc = "";
-                            var pad = productAbcDescriptionRepository.Table.Where(p => p.Product_Id == item.ProductId).FirstOrDefault();
-                            var product = await productService.GetProductByIdAsync(item.ProductId);
-                            var plpDescription = await genericAttributeService.GetAttributeAsync<string>(
-                                product, "PLPDescription");
-                            if (!string.IsNullOrWhiteSpace(plpDescription))
-                            {
-                                miniDesc = plpDescription;
-                            }
-                            else if (pad != null)
-                            {
-                                miniDesc = pad.AbcDescription;
-                            }
-                            else
-                            {
-                                miniDesc = productRepository.Table.Where(p => p.Id == item.ProductId).FirstOrDefault().ShortDescription;
-                            }
-
-                            ProductFlag productFlag = frontEndService.GetProductFlag(item.ProductId);
-                            string stockMessage = "";
-                            string attributeInfo = item.AttributeInfo;
-                            
-                            if (productFlag != null)
-                            {
-                                stockMessage = productFlag.StockMessage;
-                            }
-                            else if (!frontEndService.ProductIsAbc(item.ProductId))
-                            {
-                                stockMessage = "Normally ships in 2-3 weeks.";
-                            }
-
                             counter++;
                             <tr class="cart-item-row">
                                 <td>
 		                            <span class="item-count">@counter</span>
 		                        </td>
-
-
-
-
-
-                               @if (Model.IsEditable)
-            {
-                <td class="remove-from-cart">
-                    @if (item.DisableRemoval)
-                    {
-                        <text>&nbsp;</text>
-                    }
-                    else
-                    {
-                        <!-- Hide the checkbox but keep it for the functionality that is happening in the background -->
-                        <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" style="display: none;" />
-                        
-                        <!-- Add trashcan icon that triggers removal -->
-                        <button type="button" class="remove-item-btn" data-item-id="@item.Id" aria-label="@T("ShoppingCart.Remove")">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    }
-                </td>
-            }
-
-
-
+                                @if (Model.IsEditable)
+                                {
+                                    <td class="remove-from-cart">
+                                        @if (item.DisableRemoval)
+                                        {
+                                            <text>&nbsp;</text>
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="removefromcart" id="removefromcart@(item.Id)" value="@(item.Id)" aria-label="@T("ShoppingCart.Remove")" />
+											<button type="button" name="updatecart" class="remove-btn" onclick="$('#removefromcart@(item.Id)').attr('checked', true); $('#updatecart').trigger('click');"></button>
+                                        }
+                                    </td>
+                                }
                                 @if (Model.ShowSku)
                                 {
                                     <td class="sku">
@@ -468,7 +130,7 @@
                                 @if (Model.ShowProductImages)
                                 {
                                     <td class="product-picture">
-                                        <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})">
+                                        <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))">
                                             @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                                             {
                                                 @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
@@ -480,35 +142,19 @@
                                             }
                                             else
                                             {
-                                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
+                                                <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" width="@mediaSettings.DefaultImageQuality" />
                                             }
                                         </a>
                                     </td>
                                 }
                                 <td class="product">
-                                    <a href="@Url.RouteUrl("Product", new {SeName = item.ProductSeName})" class="product-name">@item.ProductName</a>
-                                    <div class="product-mini-description">@Html.Raw(miniDesc)</div>
-                                    @await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.OrderSummaryAfterProductMiniDescription, additionalData = item.ProductId })
+                                    <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))" class="product-name">@item.ProductName</a>
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
-                                        <!-- ABC: use custom attribute info listing -->
-                                            
-                                            <!-- @Html.Raw(item.AttributeInfo) -->
-                                            
-                                            @await Html.PartialAsync("_AttributeInfo", (item.Id, item.AttributeInfo))
+                                            @Html.Raw(item.AttributeInfo)
                                         </div>
                                     }
-                                    <!-- ABC: custom -->
-                                    @if (!string.IsNullOrEmpty(stockMessage))
-                                    {
-                                        <div class="prices-bottom-message">@stockMessage</div>
-                                    }
-                                    @if (stockMessage == "Normally ships in 2-3 weeks.")
-                                    {
-                                        <div style="font-size: 80%">Hold your place in line by purchasing now.  Deliveries are first come, first served.  There is potential for longer wait times due to manufacturer delays.</div>
-                                    }
-                                    <!-- ABC: end custom -->
                                     @if (!string.IsNullOrEmpty(item.RecurringInfo))
                                     {
                                         <div class="recurring-info">
@@ -521,31 +167,13 @@
                                             @Html.Raw(item.RentalInfo)
                                         </div>
                                     }
-                                    @if (Model.IsEditable)
+                                    @if (Model.IsEditable && item.AllowItemEditing)
                                     {
-                                        var editCartItemUrl = Url.RouteUrl("Product", new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
+                                        var editCartItemUrl = Url.RouteUrl<Product>(new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
                                         editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
-                                        @* <div class="edit-item">
+                                        <div class="edit-item">
                                             <a href="@editCartItemUrl">@T("Common.Edit")</a>
-                                        </div> *@
-                                        if (!(await product.HasDeliveryOptionsAsync()))
-                                        {
-                                            if ((isFedExMode && await product.HasFedExAttributeAsync()) &&
-                                                 await product.IsPickupAsync())
-                                            {
-                                                string buttonMsg = isPickup ? "Change to FedEx" : "Change to Pickup in Store";
-                                                <div class="change">
-                                                    <button class="change-delivery-method" value="@item.Id">@buttonMsg</button>
-                                                    <span id="change_method_error_@item.Id" class="delivery-method-error"></span>
-                                                </div>
-                                            }
-                                            if (isPickup)
-                                            {
-                                                <span class="edit-item">
-                                                    <a href="@editCartItemUrl">Change store</a>
-                                                </span>
-                                            }
-                                        }
+                                        </div>
                                     }
                                     @if (item.Warnings.Count > 0)
                                     {
@@ -566,56 +194,32 @@
                                     </td>
                                 }
                                 <td class="unit-price">
-                                    <span class="product-unit-price">@adjustedUnitPriceString</span>
+                                    <span class="product-unit-price">@item.UnitPrice</span>
                                 </td>
 
 
                                 <td class="quantity">
-    @if (Model.IsEditable)
-    {
-        <div class="qty-control" data-item-id="@item.Id">
-            <button type="button" formnovalidate
-                    class="qty-btn qty-minus"
-                    aria-label="Decrease quantity"
-                    data-item-id="@item.Id">−</button>
-
-            @if (item.AllowedQuantities.Count > 0)
-            {
-                <select name="itemquantity@(item.Id)"
-                        id="itemquantity@(item.Id)"
-                        class="qty-dropdown"
-                        aria-label="@T("ShoppingCart.Quantity")">
-                    @foreach (var qty in item.AllowedQuantities)
-                    {
-                        <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
-                    }
-                </select>
-            }
-            else
-            {
-                <input  name="itemquantity@(item.Id)"
-                        id="itemquantity@(item.Id)"
-                        type="text"
-                        value="@(item.Quantity)"
-                        class="qty-input"
-                        aria-label="@T("ShoppingCart.Quantity")" />
-            }
-
-            <button type="button" formnovalidate
-                    class="qty-btn qty-plus"
-                    aria-label="Increase quantity"
-                    data-item-id="@item.Id">+</button>
-        </div>
-    }
-    else
-    {
-        <span>@item.Quantity</span>
-    }
-</td>
-
-
-
-                                
+                                    @if (Model.IsEditable)
+                                    {
+                                        if (item.AllowedQuantities.Count > 0)
+                                        {
+                                            <select name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" class="qty-dropdown" onchange="$('#updatecart').trigger('click');">
+                                                @foreach (var qty in item.AllowedQuantities)
+                                                {
+                                                    <option selected="@qty.Selected" value="@qty.Value">@qty.Value</option>
+                                                }
+                                            </select>
+                                        }
+                                        else
+                                        {
+                                            <input name="itemquantity@(item.Id)" id="itemquantity@(item.Id)" type="text" value="@(item.Quantity)" class="qty-input" aria-label="@T("ShoppingCart.Quantity")" onchange="$('#updatecart').trigger('click');" />
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>@item.Quantity</span>
+                                    }
+                                </td>
                                 <td class="subtotal">
                                     <span class="product-subtotal">@item.SubTotal</span>
                                     @if (!string.IsNullOrEmpty(item.Discount))
@@ -623,24 +227,6 @@
                                         <div class="discount">
                                             @T("ShoppingCart.ItemYouSave", item.Discount)
                                         </div>
-                                        // ABC: custom
-                                        @if (!string.IsNullOrEmpty(stockMessage))
-                                        {
-                                            <div class="prices-bottom-message prices-bottom-message-mobile">@stockMessage</div>
-                                        }
-                                        @if (item.Warnings.Count > 0)
-                                        {
-                                            <div class="message-error message-error-mobile">
-                                                <ul>
-                                                    @foreach (var warning in item.Warnings)
-                                                    {
-                                                        <li>@warning</li>
-                                                    }
-                                                </ul>
-                                            </div>
-                                        }
-                                        <button value="@item.Id" class="remove-link">Remove</button>
-                                        // ABC: end custom
                                         if (item.MaximumDiscountedQty.HasValue)
                                         {
                                             <div class="discount-additional-info">
@@ -658,15 +244,14 @@
             <div class="cart-options">
                 @if (Model.IsEditable)
                 {
-                    <div class="common-buttons desktop-cart-buttons">
-                        <button type="button" class="button-2 empty-cart-button">Empty cart</button>
-                        <button type="submit" name="updatecart" class="button-2 update-cart-button" style="display:none">@T("ShoppingCart.UpdateCart")</button>
+                    <div class="common-buttons">
+                        <button type="submit" name="updatecart" id="updatecart" class="button-2 update-cart-button">@T("ShoppingCart.UpdateCart")</button>
                         <button type="submit" name="continueshopping" class="button-2 continue-shopping-button">@T("ShoppingCart.ContinueShopping")</button>
                     </div>
                 }
                 @if (Model.CheckoutAttributes.Count > 0)
                 {
-                    @await Component.InvokeAsync("SelectedCheckoutAttributes")
+                    @await Component.InvokeAsync(typeof(SelectedCheckoutAttributesViewComponent))
                 }
             </div>
         
@@ -676,12 +261,12 @@
                 //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
                 //of course, you can modify appropriate locales to include VAT info there
                 <div class="tax-shipping-info">
-                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
+                    @T(inclTax ? "ShoppingCart.TaxShipping.InclTax" : "ShoppingCart.TaxShipping.ExclTax", Url.RouteTopicUrl("shippinginfo"))
                 </div>
             }
         
             <div class="cart-footer">
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter })
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryCartFooter, additionalData = Model })
                 @if (Model.IsEditable)
                 {
                     <div class="cart-collaterals">                        
@@ -696,7 +281,7 @@
                                     <strong>@T("SevenSpikes.Themes.Pavilion.EstimateShipping")</strong>
                                 </div>
                                 <div class="accordion-tab-content">
-                        			@await Component.InvokeAsync("ShoppingCartEstimateShipping")
+                        			@await Component.InvokeAsync(typeof(ShoppingCartEstimateShippingViewComponent))
                                 </div>
                             </div>
                         }
@@ -723,12 +308,12 @@
                             </div>
                         }
 						@await Html.PartialAsync("_CheckoutAttributes", Model)
-                        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentDeals })
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryContentDeals, additionalData = Model })
                     </div>
                 } 
                 <div class="totals">
-                	@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryTotals })
-                    @await Component.InvokeAsync("OrderTotals", new { isEditable = Model.IsEditable })
+                	@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryTotals, additionalData = Model })
+                	@await Component.InvokeAsync(typeof(OrderTotalsViewComponent), new { isEditable = Model.IsEditable })
                     @if (Model.IsEditable)
                     {
                         if (!string.IsNullOrEmpty(Model.MinOrderSubtotalWarning))
@@ -753,7 +338,7 @@
 	                                {
 	                                    <a class="read" id="read-terms">@T("Checkout.TermsOfService.Read")</a>
                                         <script asp-location="Footer">
-	                                        $(document).ready(function() {
+	                                        $(function() {
 	                                            $('#read-terms').on('click',
 	                                                function(e) {
 	                                                    e.preventDefault();
@@ -766,7 +351,7 @@
 	                                }
 	                                else
 	                                {
-	                                    <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new {SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+	                                    <a class="read" id="read-terms" href="@Url.RouteTopicUrl("conditionsofuse")">@T("Checkout.TermsOfService.Read")</a>
 	                                }
                                 </div>
                             </div>
@@ -775,7 +360,7 @@
                             @if (string.IsNullOrEmpty(Model.MinOrderSubtotalWarning) && !Model.HideCheckoutButton)
                             {
                                 <script asp-location="Footer">
-                                    $(document).ready(function () {
+                                    $(function() {
                                         $('#checkout').on('click', function () {
                                             //terms of service
                                             var termOfServiceOk = true;
@@ -798,13 +383,6 @@
                                         @T("Checkout.Disabled")
                                     </div>
                                 }
-                                @* ABC: Need to disable if ineligible *@
-                                else if (!isCartEligibleForCheckout)
-                                {
-                                    <div class="checkout-disabled">
-                                        Please remove ineligible items from cart to checkout.
-                                    </div>
-                                }
                                 else
                                 {
 	                                <button type="submit" id="checkout" name="checkout" value="checkout" class="button-1 checkout-button">
@@ -813,18 +391,16 @@
                                 }
                             }
                         </div>
-                        
-                        if (Model.ButtonPaymentMethodViewComponentNames.Count > 0)
+                        if (Model.ButtonPaymentMethodViewComponents.Count > 0)
                         {
                             <div class="addon-buttons">
 	                            @*Payment method buttons (e.g. GoogleCheckoutButton, Paypal Express)*@
-	                            @foreach (var pm in Model.ButtonPaymentMethodViewComponentNames)
+	                            @foreach (var pm in Model.ButtonPaymentMethodViewComponents)
 	                            {
 	                                @await Component.InvokeAsync(pm)
 	                            }
 	                        </div>
                         }
-                        
                     }
                 </div>
             </div>
@@ -843,7 +419,7 @@
             
             @if (Model.IsEditable)
             {
-                @await Component.InvokeAsync("CrossSellProducts")
+                @await Component.InvokeAsync(typeof(CrossSellProductsViewComponent))
             }
         </form>
     }
@@ -853,206 +429,5 @@
             @T("ShoppingCart.CartIsEmpty")
         </div>
     }
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter })
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderSummaryContentAfter, additionalData = Model })
 </div>
-
-@* ABC: expands products on mobile... can we move this and remove the need for
-    the custom Cart.cshtml? *@
-<script>
-    $(document).ready(function() {
-        const isMobile = window.innerWidth <= 1000;
-        const hasCartItems = document.getElementsByClassName("cart-item-row");
-        if (!isMobile || !hasCartItems) {
-            return;
-        }
-
-        // Expand only the first cart item once (mobile only)
-        setTimeout(function () {
-            var toggles = document.getElementsByClassName("footable-toggle");
-            if (toggles && toggles.length > 0) {
-                // Click only the first toggle
-                toggles[0].click();
-            }
-        }, 600);
-    });
-</script>
-
-
-
-<script>
-(function () {
-  // Debounce to avoid multiple rapid submits
-  let submitTimer = null;
-
-  function submitCartUpdate() {
-    if (submitTimer) { clearTimeout(submitTimer); }
-    submitTimer = setTimeout(function () {
-      $('.spinner').removeClass('hidden-loading').show();
-      $('.qty-btn').prop('disabled', true);
-      $('#shopping-cart-form .update-cart-button').trigger('click');
-    }, 250);
-  }
-
-  // NEW: direct remove using your existing AJAX endpoint & handlers
-  function removeCartItem(itemId) {
-    $('.spinner').removeClass('hidden-loading').show();
-    $.ajax({
-      cache: false,
-      url: '/ShoppingCart/RemoveItem',
-      data: { 'shoppingCartItemId': itemId },
-      type: 'post',
-      success: success, 
-      error: error      
-    });
-  }
-
-  function adjustInput($input, delta) {
-    const current = parseInt($input.val(), 10);
-    let next = isNaN(current) ? 1 : current + delta;
-    if (next < 1) next = 1;
-    $input.val(next);
-    submitCartUpdate();
-  }
-
-  function adjustSelect($select, delta) {
-    const idx = $select.prop('selectedIndex');
-    let nextIdx = idx + delta;
-    const maxIdx = $select[0].options.length - 1;
-    if (nextIdx < 0) nextIdx = 0;
-    if (nextIdx > maxIdx) nextIdx = maxIdx;
-    if (nextIdx !== idx) {
-      $select.prop('selectedIndex', nextIdx).trigger('change');
-      submitCartUpdate();
-    }
-  }
-
-  (function () {
-  
-  // Deduplicate touchend → click on mobile
-  let lastTouchTs = 0;
-  function isTouchDedup(e) {
-    const now = Date.now();
-    if (e.type === 'touchend') { lastTouchTs = now; return false; }
-    if (e.type === 'click' && now - lastTouchTs < 400) return true;
-    return false;
-  }
-
-  // MOBILE-SAFE, HANDLER
-  $(document).on('touchend click', '.qty-minus, .qty-plus', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();      // block theme form-submit handlers
-    if (isTouchDedup(e)) return;
-
-    const $btn  = $(this);
-    if ($btn.prop('disabled')) return; // “minus disabled at 1”
-
-    const $wrap = $btn.closest('.qty-control');
-    // find the input/select inside THIS qty-control only (no global IDs)
-    const $ctrl = $wrap.find('.qty-input, .qty-dropdown').first();
-    if (!$ctrl.length) return;
-
-    const isPlus  = $btn.hasClass('qty-plus');
-    const isMinus = !isPlus;
-
-    // Enforce: minus is inactive at 1 (do nothing)
-    const val = parseInt($ctrl.val(), 10);
-    if (isMinus && (( $ctrl.is('select') && !isNaN(val) && val <= 1 )
-                 || ( !$ctrl.is('select') && (isNaN(val) || val <= 1) ))) {
-      return;
-    }
-
-    if ($ctrl.is('select')) {
-      adjustSelect($ctrl, isPlus ? 1 : -1);
-    } else {
-      adjustInput($ctrl, isPlus ? 1 : -1);
-    }
-  });
-})();
-
-
-
-
-
-
-  // this is for manual edits if someone types a number for the quantity it will still register
-  $(document).on('blur keydown', '.qty-input', function (e) {
-    if (e.type === 'keydown' && e.key !== 'Enter') return;
-    let v = parseInt(this.value, 10);
-    if (isNaN(v) || v < 1) v = 1;
-    this.value = v;
-    submitCartUpdate();
-  });
-})();
-</script>
-
-
-
-
-@* Disables the minus button when the quantity is at 1 to prevent people from emoving an item from cart by mistake *@
-<script>
-(function(){
-  function getVal($ctrl){
-    // Works for both input and select
-    var v = parseInt(($ctrl.val() || '').toString(), 10);
-    return isNaN(v) ? 1 : v;
-  }
-
-  function syncMinus($wrap){
-    var $minus = $wrap.find('.qty-minus');
-    var itemId = $minus.data('item-id');
-    var $ctrl  = $('#itemquantity' + itemId);
-    if (!$ctrl.length) return;
-
-    var val = getVal($ctrl);
-    var disable = val <= 1;
-
-    // Disable/enable the minus button + ARIA
-    $minus.prop('disabled', disable)
-          .attr('aria-disabled', disable ? 'true' : 'false')
-          .attr('title', disable ? 'Minimum quantity is 1' : 'Decrease');
-  }
-
-  function syncAll(){
-    $('.qty-control').each(function(){ syncMinus($(this)); });
-  }
-
-  // Initial sync
-  $(document).ready(syncAll);
-
-  // When user types or chooses a new quantity
-  $(document).on('input change', '.qty-input, .qty-dropdown', function(){
-    syncMinus($(this).closest('.qty-control'));
-  });
-
-  // After +/− is clicked (value is changed by your other handler)
-  $(document).on('click', '.qty-plus, .qty-minus', function(){
-    var $wrap = $(this).closest('.qty-control');
-    // let your existing handler run first, then re-check
-    setTimeout(function(){ syncMinus($wrap); }, 0);
-  });
-})();
-</script>
-
-<script>
-// Empty cart: checks all remove checkboxes and triggers submit
-$(document).on('click', '.empty-cart-button', function (e) {
-    e.preventDefault();
-    $('#shopping-cart-form input[name="removefromcart"]').prop('checked', true);
-    $('.spinner').removeClass('hidden-loading').show();
-    $('#shopping-cart-form .update-cart-button').trigger('click');
-});
-
-
-
-$(document).on('click', '.remove-item-btn', function () {
-    var itemId = $(this).data('item-id');
-    $('.spinner').show();
-    
-    // Check the hidden checkbox
-    $('#removefromcart' + itemId).prop('checked', true);
-    
-    // Submit the form to remove the item
-    $('#shopping-cart-form .update-cart-button').trigger('click');
-});
-</script>

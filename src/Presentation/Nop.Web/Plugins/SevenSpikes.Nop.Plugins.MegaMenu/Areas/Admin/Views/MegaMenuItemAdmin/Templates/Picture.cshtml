@@ -54,7 +54,7 @@
             </label>
         </p>
         
-        @await Html.PartialAsync(AdminViews.CustomerRolesMultiSelect, Model)
+        @{ await Html.RenderPartialAsync(AdminViews.CustomerRolesMultiSelect, Model);} 
 
         <div class="menu-item-actions description-wide submitbox">
             <a class="item-delete submitdelete deletion" id="menu-item-delete-@Model.Id"><i class="far fa-trash-alt"></i>@T("SevenSpikes.MegaMenu.Admin.MenuItem.Remove")</a>

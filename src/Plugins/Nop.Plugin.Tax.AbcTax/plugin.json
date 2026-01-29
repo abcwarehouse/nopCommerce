@@ -3,7 +3,7 @@
   "FriendlyName": "ABC Warehouse Tax",
   "SystemName": "Tax.AbcTax",
   "Version": "4.40.1",
-  "SupportedVersions": [ "4.40" ],
+  "SupportedVersions": [ "4.80" ],
   "Author": "Dave Farinelli",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Tax.AbcTax.dll",

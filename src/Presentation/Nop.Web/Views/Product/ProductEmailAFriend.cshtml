@@ -1,12 +1,15 @@
 ﻿@model ProductEmailAFriendModel
+
+@using Nop.Core.Domain.Catalog
+
 @{
     Layout = "_ColumnsOne";
 
     //title
-    Html.AddTitleParts(Model.ProductName);
+    NopHtml.AddTitleParts(Model.ProductName);
     //page class
-    Html.AddTitleParts(T("PageTitle.ProductEmailAFriend").Text);
-    Html.AppendPageCssClassParts("html-email-a-friend-page");
+    NopHtml.AddTitleParts(T("PageTitle.ProductEmailAFriend").Text);
+    NopHtml.AppendPageCssClassParts("html-email-a-friend-page");
 }
 <div class="page email-a-friend-page">
     <div class="page-title">
@@ -14,7 +17,7 @@
     </div>
     <div class="page-body">
         <div class="title">
-            <h2><a href="@Url.RouteUrl("Product", new { SeName = Model.ProductSeName })" class="product">@Model.ProductName</a></h2>
+            <h2><a href="@(Url.RouteUrl<Product>(new { SeName = Model.ProductSeName }))" class="product">@Model.ProductName</a></h2>
         </div>
         @if (Model.SuccessfullySent)
         {

@@ -4,7 +4,12 @@
 @using Nop.Services
 
 @{
-    Html.SetActiveMenuItemSystemName("Products");
+    NopHtml.SetActiveMenuItemSystemName("Products");
+
+    if(Model.SpecificationId == 0)
+        ViewBag.PageTitle = T("Admin.Catalog.Products.SpecificationAttributes.AddNew").Text;
+    else
+        ViewBag.PageTitle = T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.EditAttributeDetails").Text;
 }
 
 <form asp-controller="Product" asp-action="ProductSpecAttrUpdate" id="spec-form" method="post">
@@ -33,7 +38,7 @@
                         formaction="@Url.Action("ProductSpecificationAttributeAdd")"
                         formmethod="post"
                         class="btn btn-primary">
-                    <i class="far fa-save"></i>
+                    <i class="far fa-floppy-disk"></i>
                     @T("Admin.Common.Save")
                 </button>
                 <button type="submit"
@@ -41,18 +46,18 @@
                         formaction="@Url.Action("ProductSpecificationAttributeAdd")"
                         formmethod="post"
                         class="btn btn-primary">
-                    <i class="far fa-save"></i>
+                    <i class="far fa-floppy-disk"></i>
                     @T("Admin.Common.SaveContinue")
                 </button>
             }
             else
             {
                 <button type="submit" name="save" class="btn btn-primary">
-                    <i class="far fa-save"></i>
+                    <i class="far fa-floppy-disk"></i>
                     @T("Admin.Common.Save")
                 </button>
                 <button type="submit" name="save-continue" class="btn btn-primary">
-                    <i class="far fa-save"></i>
+                    <i class="far fa-floppy-disk"></i>
                     @T("Admin.Common.SaveContinue")
                 </button>
                 <button type="submit"
@@ -60,7 +65,7 @@
                         formaction="@Url.Action("ProductSpecAttrDelete")"
                         formmethod="post"
                         class="btn btn-danger">
-                    <i class="far fa-trash-alt"></i>
+                    <i class="far fa-trash-can"></i>
                     @T("Admin.Common.Delete")
                 </button>
             }
@@ -70,7 +75,7 @@
         <div class="container-fluid">
             <div class="form-horizontal">
                 <div class="cards-group">
-                    @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.ProductDetailsSpecificationAttributeDetailsTop, additionalData = Model })
+                    @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.ProductDetailsSpecificationAttributeDetailsTop, additionalData = Model })
                     <div class="card card-default">
                         <div class="card-body">
                             <div class="form-group row">
@@ -80,11 +85,11 @@
                                 <div class="col-md-9">
                                     @if (Model.SpecificationId != 0)
                                     {
-                                        <nop-editor asp-for="AttributeTypeName" asp-disabled="true" />
+                                        <nop-editor asp-for="AttributeTypeName" html-attributes="@(new { disabled = true })" />
                                     }
                                     else
                                     {
-                                        <nop-select asp-for="AttributeTypeId" asp-items="@await (((SpecificationAttributeType) Model.AttributeTypeId).ToSelectListAsync())" />
+                                        <nop-select asp-for="AttributeTypeId" asp-items="@(await ((SpecificationAttributeType) Model.AttributeTypeId).ToSelectListAsync())" />
                                     }
                                     <span asp-validation-for="AttributeTypeId"></span>
                                 </div>
@@ -96,7 +101,7 @@
                                 <div class="col-md-9">
                                     @if (Model.SpecificationId != 0)
                                     {
-                                        <nop-editor asp-for="AttributeName" asp-disabled="true" />
+                                        <nop-editor asp-for="AttributeName" html-attributes="@(new { disabled = true })" />
                                     }
                                     else
                                     {
@@ -106,7 +111,7 @@
                             </div>
 
                             <script>
-                                $(document).ready(function() {
+                                $(function() {
                                     var valueContainers = {
                                         @((int) SpecificationAttributeType.Option): $('#AttributeValueOptionSection'),
                                         @((int) SpecificationAttributeType.CustomText): $('#AttributeValueCustomTextSection'),
@@ -144,7 +149,7 @@
                             @if (Model.SpecificationId == 0)
                             {
                                 <script>
-                                    $(document).ready(function() {
+                                    $(function() {
                                         $("#@Html.IdFor(model => model.AttributeId)").change(function() {
                                             var selectedAttributeId = $(this).val();
                                             //get options list
@@ -165,7 +170,7 @@
                                                         });
                                                 },
                                                 error: function (jqXHR, textStatus, errorThrown) {
-                                                    $("#getOptionsByAttributeIdAlert").click();
+                                                    $("#getOptionsByAttributeIdAlert").trigger("click");
                                                 }
                                             });
                                         });
@@ -252,8 +257,14 @@
                                     <nop-label asp-for="AllowFiltering" />
                                 </div>
                                 <div class="col-md-9">
-                                    <nop-editor asp-disabled="@(Model.AttributeTypeId != (int) SpecificationAttributeType.Option)"
-                                                asp-for="AllowFiltering" />
+                                    @if(Model.AttributeTypeId != (int)SpecificationAttributeType.Option)
+                                    {
+                                        <nop-editor asp-for="AllowFiltering" html-attributes="@(new { disabled = "true" })" />
+                                    }
+                                    else
+                                    {
+                                        <nop-editor asp-for="AllowFiltering" />
+                                    }
                                     <span asp-validation-for="AllowFiltering"></span>
                                 </div>
                             </div>
@@ -277,7 +288,7 @@
                             </div>
                         </div>
                     </div>
-                    @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.ProductDetailsSpecificationAttributeDetailsBottom, additionalData = Model })
+                    @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.ProductDetailsSpecificationAttributeDetailsBottom, additionalData = Model })
                 </div>
             </div>
         </div>

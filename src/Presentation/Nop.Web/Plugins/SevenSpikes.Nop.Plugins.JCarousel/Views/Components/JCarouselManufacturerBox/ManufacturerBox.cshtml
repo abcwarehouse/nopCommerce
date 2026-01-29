@@ -1,5 +1,6 @@
 ﻿@model ManufacturerModel
 @inject IViewComponentSelector viewComponentSelector
+
 <div class="manufacturer-item">
     <h2 class="title">
         <a href="@Url.RouteUrl("Manufacturer", new { SeName = Model.SeName })" title="@Model.PictureModel.Title">

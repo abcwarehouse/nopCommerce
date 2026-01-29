@@ -1,9 +1,9 @@
-﻿{
+{
   "Group": "Misc",
   "FriendlyName": "ABC Warehouse Core",
   "SystemName": "Misc.AbcCore",
-  "Version": "4.40.5",
-  "SupportedVersions": [ "4.40" ],
+  "Version": "0.0.0",
+  "SupportedVersions": [ "4.80" ],
   "Author": "Dave Farinelli",
   "DisplayOrder": -1,
   "FileName": "Nop.Plugin.Misc.AbcCore.dll",

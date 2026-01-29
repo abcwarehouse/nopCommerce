@@ -64,12 +64,12 @@
 }
 
 .store-locator-map-holder {
-    height: 300px;
+    height: 350px;
 }
 #shop-address-input {
-    top: 10px !important;
 	width: 160px;
 	height: 30px;
+    margin: 10px;
 	border: none;
 	border-radius: 2px;
 	box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);

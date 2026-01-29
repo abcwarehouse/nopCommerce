@@ -24,9 +24,9 @@ namespace AbcWarehouse.Plugin.Widgets.GA4
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public System.Type GetWidgetViewComponent(string widgetZone)
         {
-            return "GA4";
+            return typeof(Components.GA4ViewComponent);
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
@@ -67,7 +67,7 @@ namespace AbcWarehouse.Plugin.Widgets.GA4
 
         private async Task UpdateLocales()
         {
-            await _localizationService.AddLocaleResourceAsync(
+            await _localizationService.AddOrUpdateLocaleResourceAsync(
                 new Dictionary<string, string>
                 {
                     [GA4Locales.GoogleTag] = "Google Tag",

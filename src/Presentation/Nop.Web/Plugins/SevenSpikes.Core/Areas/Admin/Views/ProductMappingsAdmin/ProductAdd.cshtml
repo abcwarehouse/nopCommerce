@@ -5,7 +5,7 @@
     Layout = "";
 
     var entityType = Model.CustomProperties.ContainsKey("EntityType") ? Model.CustomProperties["EntityType"] : null;
-    var entityId = Model.CustomProperties.ContainsKey("EntityId") ? Model.CustomProperties["EntityId"] : 0;
+    var entityId = Model.CustomProperties.ContainsKey("EntityId") ? int.Parse(Model.CustomProperties["EntityId"]) : 0;
 
     var prefix = string.Format("prefix{0}", entityId);
 
@@ -152,7 +152,7 @@
 								return '<i class="fa fa-check true-icon"></i>';
 							} else {
 
-								return '<i class="fa fa-close false-icon"></i>';
+								return '<i class="fa fa-times false-icon"></i>';
 							}
 						}
 
@@ -160,7 +160,7 @@
 
 							console.log(row.CustomProperties.Selected)
 
-							var checked = row.CustomProperties.Selected ? 'checked' : '';
+							var checked = row.CustomProperties.Selected == 'True' ? 'checked' : '';
 
 							return '<input type="checkbox" id="SelectedProductIds" name="SelectedProductIds" value="' + row.Id + '" class="checkboxGroups" ' + checked + '>';
 						}

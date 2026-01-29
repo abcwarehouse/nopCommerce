@@ -56,25 +56,17 @@
                                             $(document).ready(function() {
                                                 var rolesIdsInput =
                                                     $('#@Html.IdFor(model => model.SearchCustomerRoleIds)')
-                                                        .data("kendoMultiSelect");
-                                                rolesIdsInput.setOptions({
-                                                    autoClose: false,
-                                                    filter: "contains"
-                                                });
-
-                                                @if (Model.AvailableCustomerRoles.Count == 0)
-                                                {
-                                                    <text>
-                                                        rolesIdsInput.setOptions({
-                                                            enable: false,
-                                                            placeholder:
-                                                                '@T("Admin.Catalog.Products.CustomerRoles.NoCustomerRolesAvailable")'
-                                                        });
-                                                        rolesIdsInput._placeholder();
-                                                        rolesIdsInput._enable();
-                                                    </text>
-                                                }
-                                            });
+                                                        .select2({
+                                                            closeOnSelect: false,
+                                            @if (!Model.AvailableCustomerRoles.Any())
+                                            {
+                                                <text>
+                                                                disabled: true,
+                                                                placeholder: '@T("Admin.Catalog.Products.CustomerRoles.NoCustomerRolesAvailable")',
+                                                </text>
+                                            }
+                                                                        });
+                                            });                                            
                                         </script>
                                     </div>
                                 </div>
@@ -163,7 +155,7 @@
 
                         function renderSelectedCheckBox(data, type, row, meta) {
 
-                            var checked = row.CustomProperties.Selected ? 'checked' : '';
+                            var checked = row.Selected == 'True' ? 'checked' : '';
 
                             return '<input type="checkbox" id="SelectedCustomerIds" name="SelectedCustomerIds" value="' + row.CustomerId + '" class="checkboxGroups" ' + checked + '>';
                         }
@@ -176,7 +168,7 @@
                             }
                             else {
 
-                                return '<i class="fa fa-close false-icon"></i>';
+                                return '<i class="fa fa-times false-icon"></i>';
                             }
                         }
 

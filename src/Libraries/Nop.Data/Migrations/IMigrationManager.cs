@@ -1,40 +1,43 @@
-﻿using System;
-using System.Reflection;
-using FluentMigrator.Builders.Create;
-using FluentMigrator.Expressions;
+﻿using System.Reflection;
+using FluentMigrator.Infrastructure;
 
-namespace Nop.Data.Migrations
+namespace Nop.Data.Migrations;
+
+/// <summary>
+/// Represents a migration manager
+/// </summary>
+public partial interface IMigrationManager
 {
     /// <summary>
-    /// Represents a migration manager
+    /// Executes an Up for all found unapplied migrations
     /// </summary>
-    public interface IMigrationManager
-    {
-        /// <summary>
-        /// Executes all found (and unapplied) migrations
-        /// </summary>
-        /// <param name="assembly">Assembly to find the migration</param>
-        /// <param name="isUpdateProcess">Indicates whether the upgrade or installation process is ongoing. True - if an upgrade process</param>
-        void ApplyUpMigrations(Assembly assembly, bool isUpdateProcess = false);
+    /// <param name="assembly">Assembly to find migrations</param>
+    /// <param name="migrationProcessType">Type of migration process</param>
+    /// <param name="commitVersionOnly">Commit only version information</param>
+    void ApplyUpMigrations(Assembly assembly, MigrationProcessType migrationProcessType = MigrationProcessType.Installation, bool commitVersionOnly = false);
 
-        /// <summary>
-        /// Executes an Down migration
-        /// </summary>
-        /// <param name="assembly">Assembly to find the migration</param>
-        void ApplyDownMigrations(Assembly assembly);
+    /// <summary>
+    /// Executes an Up for schema unapplied migrations
+    /// </summary>
+    /// <param name="assembly">Assembly to find migrations</param>
+    void ApplyUpSchemaMigrations(Assembly assembly);
 
-        /// <summary>
-        /// Retrieves expressions into ICreateExpressionRoot
-        /// </summary>
-        /// <param name="expressionRoot">The root expression for a CREATE operation</param>
-        /// <typeparam name="TEntity">Entity type</typeparam>
-        void BuildTable<TEntity>(ICreateExpressionRoot expressionRoot);
+    /// <summary>
+    /// Executes a Down for all found (and applied) migrations
+    /// </summary>
+    /// <param name="assembly">Assembly to find the migration</param>
+    void ApplyDownMigrations(Assembly assembly);
 
-        /// <summary>
-        /// Gets create table expression for entity type
-        /// </summary>
-        /// <param name="type">Entity type</param>
-        /// <returns>Expression to create a table</returns>
-        CreateTableExpression GetCreateTableExpression(Type type);
-    }
+    /// <summary>
+    /// Executes down expressions for the passed migration
+    /// </summary>
+    /// <param name="migration">Migration to rollback</param>
+    void ApplyDownMigration(IMigrationInfo migration);
+
+    /// <summary>
+    /// Executes up expressions for the passed migration
+    /// </summary>
+    /// <param name="migration">Migration to apply</param>
+    /// <param name="commitVersionOnly">Commit only version information</param>
+    void ApplyUpMigration(IMigrationInfo migration, bool commitVersionOnly = false);
 }

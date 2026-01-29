@@ -1,23 +1,24 @@
-﻿using Nop.Core;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Nop.Core;
+using Nop.Plugin.Misc.AbcCore.Services.Custom;
 using Nop.Plugin.Misc.AbcExportOrder.Extensions;
-using Nop.Plugin.Misc.AbcExportOrder.Services;
 using Nop.Services.Catalog;
 using Nop.Services.Logging;
-using Nop.Services.Tasks;
-using System;
-using System.Linq;
+using Nop.Services.ScheduleTasks;
 
 namespace Nop.Plugin.Misc.AbcExportOrder.Tasks
 {
     public class ResubmitOrdersTask : IScheduleTask
     {
-        private readonly ICustomOrderService _customOrderService;
+        private readonly IAbcOrderService _customOrderService;
         private readonly ExportOrderSettings _settings;
         private readonly ILogger _logger;
         private readonly IProductService _productService;
 
         public ResubmitOrdersTask(
-            ICustomOrderService orderService,
+            IAbcOrderService orderService,
             ExportOrderSettings settings,
             ILogger logger,
             IProductService productService
@@ -29,7 +30,7 @@ namespace Nop.Plugin.Misc.AbcExportOrder.Tasks
             _productService = productService;
         }
 
-        public async System.Threading.Tasks.Task ExecuteAsync()
+        public async Task ExecuteAsync()
         {
             if (!_settings.IsValid)
             {

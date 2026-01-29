@@ -4,7 +4,7 @@
     <label>
         <span>@T("SevenSpikes.MegaMenu.Admin.MenuItem.CustomerRoles")</span>
         @Html.ListBoxFor(model => model.SelectedCustomerRoleIds, Model.AvailableCustomerRoles, new { style = "width: 350px" })
-        <script>
+        <script type="text/javascript" asp-location="Footer">
             $(document).ready(function () {
                 $('#menu-item-' + @Model.Id + ' #@Html.IdFor(model => model.SelectedCustomerRoleIds)').kendoMultiSelect({
                     select: function (e) {

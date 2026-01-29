@@ -1,0 +1,32 @@
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Nop.Core.Infrastructure;
+using Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Services;
+
+namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Infrastructure
+{
+    public class NopStartup : INopStartup
+    {
+        /// <summary>
+        /// Gets order of this startup configuration implementation
+        /// </summary>
+        public int Order => int.MaxValue;
+
+        /// <summary>
+        /// Add and configure any of the middleware
+        /// </summary>
+        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<IFreshAddressService, FreshAddressService>();
+        }
+
+        /// <summary>
+        /// Configure the using of added middleware
+        /// </summary>
+        public void Configure(IApplicationBuilder application)
+        {
+            // Nothing to configure for this plugin on application pipeline
+        }
+    }
+}

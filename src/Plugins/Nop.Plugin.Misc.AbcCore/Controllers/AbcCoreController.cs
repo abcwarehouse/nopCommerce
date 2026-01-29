@@ -11,7 +11,7 @@ using Nop.Web.Framework.Mvc.Filters;
 namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class AbcCoreController : BasePluginController
     {

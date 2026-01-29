@@ -26,10 +26,9 @@ namespace AbcWarehouse.Plugin.Widgets.UniFi
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "UniFi";
-        }
+        public string GetWidgetViewComponentName(string widgetZone) => "UniFi";
+
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.UniFiViewComponent);
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
         {
@@ -67,16 +66,20 @@ namespace AbcWarehouse.Plugin.Widgets.UniFi
 
         private async Task UpdateLocales()
         {
-            await _localizationService.AddLocaleResourceAsync(
-                new Dictionary<string, string>
-                {
-                    [UniFiLocales.IsEnabled] = "Is Enabled",
-                    [UniFiLocales.IsEnabledHint] = "Turns Unifi on or off.",
-                    [UniFiLocales.PartnerId] = "Partner ID",
-                    [UniFiLocales.PartnerIdHint] = "The partner ID provided by SYF.",
-                    [UniFiLocales.UseIntegration] = "Use Integration",
-                    [UniFiLocales.UseIntegrationHint] = "Whether to use sandbox or production values.",
-                });
+            var resources = new Dictionary<string, string>
+            {
+                [UniFiLocales.IsEnabled] = "Is Enabled",
+                [UniFiLocales.IsEnabledHint] = "Turns Unifi on or off.",
+                [UniFiLocales.PartnerId] = "Partner ID",
+                [UniFiLocales.PartnerIdHint] = "The partner ID provided by SYF.",
+                [UniFiLocales.UseIntegration] = "Use Integration",
+                [UniFiLocales.UseIntegrationHint] = "Whether to use sandbox or production values.",
+            };
+
+            foreach (var resource in resources)
+            {
+                await _localizationService.AddOrUpdateLocaleResourceAsync(resource.Key, resource.Value);
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ using AbcWarehouse.Plugin.Widgets.PriceSpider.Models;
 namespace AbcWarehouse.Plugin.Widgets.PriceSpider.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class PriceSpiderController : BasePluginController
     {

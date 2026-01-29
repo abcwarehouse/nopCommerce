@@ -1,12 +1,5 @@
 ﻿@model ShopAdminModel
 
-@{
-    //resources for product tags input
-    Html.AppendCssFileParts("~/lib/tagEditor/jquery.tag-editor.css");
-    Html.AppendScriptParts("~/lib/tagEditor/jquery.tag-editor.min.js");
-    Html.AppendScriptParts("~/lib/tagEditor/jquery.caret.min.js");
-}
-
 <div class="raw clearfix">
     <div class="card-body">
         <div class="form-group row">
@@ -107,10 +100,10 @@
 
 @if (Model.Id > 0)
 {
-    @await Html.PartialAsync(AdminViews.ShopTabStoreSettings, @Model)
+    await Html.RenderPartialAsync(AdminViews.ShopTabStoreSettings, @Model);
 }
 
-<script type="text/javascript">
+<script asp-location="Footer">
     $(document).ready(function () {
         var shopTagsField = $("#@Html.IdFor(model => model.Tags)");
 

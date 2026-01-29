@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class FreshAddressNewsletterIntegrationController : BasePluginController
     {

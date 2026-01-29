@@ -1,28 +1,27 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+
 using Nop.Core;
+using Nop.Core.Caching;
+using Nop.Core.Domain.Common;
 using Nop.Data;
 using Nop.Plugin.Tax.AbcTax.Domain;
 using Nop.Plugin.Tax.AbcTax.Infrastructure.Cache;
-using Nop.Core.Caching;
-using Nop.Services.Tax;
-using Nop.Core.Domain.Common;
-using System;
 
 namespace Nop.Plugin.Tax.AbcTax.Services
 {
     public partial class AbcTaxService : IAbcTaxService
     {
         private readonly IRepository<AbcTaxRate> _abcTaxRateRepository;
-
-        private readonly IStaticCacheManager _staticCacheManager;
+        protected readonly IShortTermCacheManager _shortTermCacheManager;
 
         public AbcTaxService(
             IRepository<AbcTaxRate> abcTaxRateRepository,
-            IStaticCacheManager staticCacheManager
+            IShortTermCacheManager shortTermCacheManager
         ) {
             _abcTaxRateRepository = abcTaxRateRepository;
-            _staticCacheManager = staticCacheManager;
+            _shortTermCacheManager = shortTermCacheManager;
         }
 
         public virtual async Task DeleteTaxRateAsync(AbcTaxRate taxRate)
@@ -32,12 +31,11 @@ namespace Nop.Plugin.Tax.AbcTax.Services
 
         public virtual async Task<IPagedList<AbcTaxRate>> GetAllTaxRatesAsync(int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var rez = await _abcTaxRateRepository.GetAllAsync(query =>
-            {
-                return from tr in query
-                    orderby tr.StoreId, tr.CountryId, tr.StateProvinceId, tr.Zip, tr.TaxCategoryId
-                    select tr;
-            }, cache => cache.PrepareKeyForShortTermCache(ModelCacheEventConsumer.TAXRATE_ALL_KEY));
+            var cacheKey = _shortTermCacheManager.PrepareKeyForDefaultCache(ModelCacheEventConsumer.TAXRATE_ALL_KEY);
+            var rez = await _shortTermCacheManager.GetAsync<IList<AbcTaxRate>>(async () => await _abcTaxRateRepository.GetAllAsync(query =>
+                from tr in query
+                orderby tr.StoreId, tr.CountryId, tr.StateProvinceId, tr.Zip, tr.TaxCategoryId
+                select tr), cacheKey);
 
             var records = new PagedList<AbcTaxRate>(rez, pageIndex, pageSize);
 
@@ -64,8 +62,8 @@ namespace Nop.Plugin.Tax.AbcTax.Services
         )
         {
             //first, load all tax rate records (cached) - loaded only once
-            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(ModelCacheEventConsumer.ALL_TAX_RATES_MODEL_KEY);
-            var allTaxRates = await _staticCacheManager.GetAsync(cacheKey, async () => (await GetAllTaxRatesAsync()).Select(taxRate => new AbcTaxRate
+            var cacheKey = _shortTermCacheManager.PrepareKeyForDefaultCache(ModelCacheEventConsumer.ALL_TAX_RATES_MODEL_KEY);
+            var allTaxRates = await _shortTermCacheManager.GetAsync<IList<AbcTaxRate>>(async () => (await GetAllTaxRatesAsync()).Select(taxRate => new AbcTaxRate
             {
                 Id = taxRate.Id,
                 StoreId = taxRate.StoreId,
@@ -75,7 +73,7 @@ namespace Nop.Plugin.Tax.AbcTax.Services
                 Zip = taxRate.Zip,
                 Percentage = taxRate.Percentage,
                 IsTaxJarEnabled = taxRate.IsTaxJarEnabled
-            }).ToList());
+            }).ToList(), cacheKey);
 
             var countryId = address.CountryId;
             var stateProvinceId = address.StateProvinceId;
