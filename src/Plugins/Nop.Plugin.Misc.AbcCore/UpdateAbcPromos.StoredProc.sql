@@ -19,7 +19,7 @@ BEGIN
 	IF OBJECT_ID('tempdb..#tmpPromos') IS NOT NULL DROP TABLE #tmpPromos;
 	IF OBJECT_ID('tempdb..#tmpPromoProductMappings') IS NOT NULL DROP TABLE #tmpPromoProductMappings;
 
-	DECLARE @TSQL varchar(10000), @CurrentMonth varchar(8), @PreviousMonth varchar(8)
+	DECLARE @TSQL varchar(8000), @CurrentMonth varchar(8), @PreviousMonth varchar(8)
 
 	-- 2 weeks ahead to get upcoming promos
 	SELECT @CurrentMonth = FORMAT(DATEADD(week, 2, GETDATE()), 'yyyyMMdd')
