@@ -344,6 +344,7 @@
     <!-- Bazaarvoice Reviews -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
+    @* Store 3 now uses InstantSearch instead of SearchSpring - disabled SearchSpring scripts
     @if (currentStore.Id == 3)
     {
         <!-- SearchSpring Scripts (Store 3 only) -->
@@ -456,6 +457,7 @@
             });
         </script>
     }
+    *@
 
     <!-- Microsoft Clarity (Analytics) -->
     <script type="text/javascript">
