@@ -28,38 +28,41 @@
     <h1 class="search-page-title">Shop By Category</h1>
 
 
+    if(storeId == 3) 
+    {
     // List of only specific categores to display 
     List<string> parentCategories = new List<string>
             { "Appliances", "TV - Video", "Mattresses", "Furniture", "Car Audio/Video" };
 
-    int x = 0;
-    @foreach (var category in parentCategories) 
-    {
-        var topParentCategory = await categoryService.GetCategoryByNameAsync(parentCategories[x++]);
-        if (topParentCategory == null) {
-          continue;  
-        }
-        var childCategories = await categoryService.GetAllCategoriesByParentCategoryIdAsync(topParentCategory.Id);
+        int x = 0;
+        @foreach (var category in parentCategories) 
+        {
+            var topParentCategory = await categoryService.GetCategoryByNameAsync(parentCategories[x++]);
+            if (topParentCategory == null) {
+            continue;  
+            }
+            var childCategories = await categoryService.GetAllCategoriesByParentCategoryIdAsync(topParentCategory.Id);
 
-        <div class="search-category-container">
-            <div class="search-content-container">
-                @{
-                    var categoryUrl = await urlRecordService.GetSeNameAsync(topParentCategory);
-                }
-                <a href="/@categoryUrl"><h2>@topParentCategory.Name</h2></a>
-
-
-                <ul class="search-sub-list">
-                    
-                    @foreach (var subCategory in childCategories)
-                    {
-                        var subCategoryUrl = await urlRecordService.GetSeNameAsync(subCategory);
-                        var firstSubCategory = categoryService.GetCategoryByIdAsync(subCategory.Id);
-                        <a href="/@subCategoryUrl"><li>@firstSubCategory.Result.Name</li></a>
+            <div class="search-category-container">
+                <div class="search-content-container">
+                    @{
+                        var categoryUrl = await urlRecordService.GetSeNameAsync(topParentCategory);
                     }
-                </ul>
+                    <a href="/@categoryUrl"><h2>@topParentCategory.Name</h2></a>
+
+
+                    <ul class="search-sub-list">
+                        
+                        @foreach (var subCategory in childCategories)
+                        {
+                            var subCategoryUrl = await urlRecordService.GetSeNameAsync(subCategory);
+                            var firstSubCategory = categoryService.GetCategoryByIdAsync(subCategory.Id);
+                            <a href="/@subCategoryUrl"><li>@firstSubCategory.Result.Name</li></a>
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
+        }
     }
 }
 </div>
