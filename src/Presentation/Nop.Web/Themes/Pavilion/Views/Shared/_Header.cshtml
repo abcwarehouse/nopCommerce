@@ -265,8 +265,13 @@
                 <div class="search-spring-container">
                     @if (storeId == 3)
                     {
-                        <div class="test">Test 4 Test 4 Test 4 Test 4 Test 4 Test 4 Test 4 Test 4 Test 4 Test 4 </div>
-                        @await Component.InvokeAsync("SearchBox")
+                        <div class="search-box store-search-box">
+                            <form asp-route="ProductSearch" method="get" id="small-search-box-form">
+                                <input type="text" class="search-box-text" id="small-searchterms"
+                                       autocomplete="off" name="q" placeholder="What can we help you find?" />
+                                <button type="submit" class="button-1 search-box-button">Search</button>
+                            </form>
+                        </div>
                         @await Component.InvokeAsync("InstantSearch")
                     }
                     else
