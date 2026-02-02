@@ -1,10 +1,18 @@
 ﻿@model Nop.Web.Models.Catalog.SearchModel
 
+@using Nop.Core
 @using Nop.Plugin.Misc.AbcCore.Nop;
-@inject IAbcCategoryService categoryService;
 @using Nop.Services.Seo;
+
+@inject IStoreContext storeContext
+@inject IAbcCategoryService categoryService;
 @inject ISitemapGenerator sitemapGenerator;
 @inject IUrlRecordService urlRecordService;
+
+@{
+    var currentStore = await storeContext.GetCurrentStoreAsync();
+    int storeId = currentStore.Id;
+}
 
 <div class="search-page-banner">
     <a href="/sale-ad"><img src="/images/SaleAdShop.jpg" alt ="Shop Sale Ad"/></a>
