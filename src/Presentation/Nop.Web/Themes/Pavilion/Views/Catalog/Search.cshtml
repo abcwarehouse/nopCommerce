@@ -14,9 +14,7 @@
     int storeId = currentStore.Id;
 }
 
-<div class="search-page-banner">
-    <a href="/sale-ad"><img src="/images/SaleAdShop.jpg" alt ="Shop Sale Ad"/></a>
-</div>
+
 <div class="search-page-container">
 @{
     Layout = "_ColumnsTwo";
@@ -32,12 +30,15 @@
     {
         searchPageTitle = T("Search").ToString();
     }
-    
-    <h1 class="search-page-title">Shop By Category</h1>
-
 
     if(storeId != 3) 
     {
+        <div class="search-page-banner">
+            <a href="/sale-ad"><img src="/images/SaleAdShop.jpg" alt ="Shop Sale Ad"/></a>
+        </div>
+        <h1 class="search-page-title">Shop By Category</h1>
+
+
     // List of only specific categores to display 
     List<string> parentCategories = new List<string>
             { "Appliances", "TV - Video", "Mattresses", "Furniture", "Car Audio/Video" };
