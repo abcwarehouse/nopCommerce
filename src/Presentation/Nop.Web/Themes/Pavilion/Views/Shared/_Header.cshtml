@@ -265,15 +265,13 @@
                 <div class="search-spring-container">
                     @if (storeId == 3)
                     {
-                        @{
-                            Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Themes/Pavilion/Content/InstantSearch.css");
-                            Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.core.min.js");
-                            Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.data.min.js");
-                            Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.popup.min.js");
-                            Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.list.min.js");
-                            Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.autocomplete.min.js");
-                            Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Scripts/InstantSearch.min.js");
-                        }
+                        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Themes/Pavilion/Content/InstantSearch.css");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.core.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.data.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.popup.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.list.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.autocomplete.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Scripts/InstantSearch.min.js");
                         <div class="search-box store-search-box">
                             <form asp-route="ProductSearch" method="get" id="small-search-box-form">
                                 <input type="text" class="search-box-text" id="small-searchterms"
