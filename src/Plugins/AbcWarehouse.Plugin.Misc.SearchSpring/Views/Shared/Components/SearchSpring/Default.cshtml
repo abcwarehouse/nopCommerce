@@ -34,8 +34,10 @@
 
     updateZeroPrices();
 
-    const observer = new MutationObserver(updateZeroPrices);
-    observer.observe(document.body, { childList: true, subtree: true });
+    if (document.body) {
+        const observer = new MutationObserver(updateZeroPrices);
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
 </script>
 
 <style>
