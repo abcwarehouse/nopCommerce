@@ -18,24 +18,25 @@
      // Featured filter list
     var allowedManufacturers = new HashSet<string>
     {
-        "AIRELOOM","ASHLEY","CAFE","COZZIA","ELECTROLUX","FRIGIDAIRE",
-        "FRIGIDAIRE GALLERY","GE APPLIANCES","GE PROFILE",
-        "HOTPOINT","JBL","KITCHENAID","LG","LG SIGNATURE","LG STUDIO","MAYTAG",
-        "NATUZZI","PROFILE","SAMSUNG","SEALY","SERTA RESTOKRAFT MATT INC",
-        "SIMMONS BEAUTYREST","SCOTT LIVING","SPEED QUEEN","SUNBRITE TV",
-        "TCL","TEMPUR-PEDIC","VIZIO","WHIRLPOOL"
+        "AIRELOOM","ASHLEY", "BLUE STAR","CAFE", "COVE","COZZIA", "DACOR","ELECTROLUX","FRIGIDAIRE",
+        "FRIGIDAIRE GALLERY", "FULGOR","GE APPLIANCES","GE PROFILE",
+        "HOTPOINT","JBL","JENN-AIR","KITCHENAID","LG","LG SIGNATURE","LG STUDIO","MAYTAG", "MIELE", "MONOGRAM",
+        "NATUZZI","PROFILE","SAMSUNG","SEALY","SERTA RESTOKRAFT MATT INC", "SIGNATURE KITCHEN SUITE",
+        "SIMMONS BEAUTYREST","SCOTT LIVING","SPEED QUEEN", "SUBZERO", "SUNBRITE TV",
+        "TCL","TEMPUR-PEDIC","THERMADOR","VIZIO","WHIRLPOOL", "WOLF"
     };
+
 
     var orderedList = Model.Where(it => allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
     var trueOrderedList = Model.OrderBy(it => it.SeName);
-    
+
 
     // old code
     @* var orderedList = Model.OrderBy(it => it.SeName); *@
 }
 
 
-    
+
 
 @* custom style *@
 <style>
@@ -127,7 +128,7 @@ h2.explore {
                                 <a href="@Url.RouteUrl("Manufacturer", new {SeName = item.SeName})" title="@item.PictureModel.Title">
                                     @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                                     {
-                                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[]
                                         {
                                             ("src", item.PictureModel.ImageUrl),
                                             ("alt", item.PictureModel.AlternateText),

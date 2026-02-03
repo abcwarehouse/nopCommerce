@@ -1,0 +1,14 @@
+/*
+    Provides overwrite rules to improve RWS content in Product Full Description
+*/
+
+@media all and (max-width: 768px) {
+  div.image-feature-wrapper.row > div.col-md-3 {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+}
+
+div.image-feature-wrapper.row > div.col-md-3 img.img-responsive {
+  height: auto;
+}
