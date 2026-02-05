@@ -83,6 +83,7 @@
     <None Remove="Content/css/tooltip.css" />
     <None Remove="Content/img/category-nav.png" />
     <None Remove="Content/img/flyout-cart.png" />
+    <None Remove="Content/img/header-sprite-2.png" />
     <None Remove="Content/scripts/jquery.jcarousel.min.js" />
     <None Remove="Content/scripts/mattress.js" />
     <None Remove="Content/scripts/mobileFilters.js" />
@@ -310,6 +311,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content/img/flyout-cart.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/img/header-sprite-2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content/scripts/jquery.jcarousel.min.js">
