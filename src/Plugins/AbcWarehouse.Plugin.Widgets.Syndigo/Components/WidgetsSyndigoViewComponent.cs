@@ -35,9 +35,9 @@ namespace AbcWarehouse.Plugin.Widgets.Syndigo.Components
                 var fullDescription = product.FullDescription;
 
                 // Only load Syndigo content if RWS content is not in full description
-                return !fullDescription.Contains("<div class=\"basic-overview\">") ?
-                    View("~/Plugins/Widgets.Syndigo/Views/ContentDisplay.cshtml") :
-                    Content("");
+                return fullDescription.Contains("<div id=\"rws-description-panel\" class=\"basic-overview\">") ?
+                    Content("") :
+                    View("~/Plugins/Widgets.Syndigo/Views/ContentDisplay.cshtml");
             }
 
             await _logger.WarningAsync($"Widgets.Syndigo: No view provided for widget zone {widgetZone}");
