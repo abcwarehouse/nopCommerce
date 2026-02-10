@@ -175,7 +175,7 @@
 .overlayOffCanvas.show {
 	background: rgba(0,0,0,0.6);
 }
-.storeId3 .header-menu {
+.header-menu {
     position: fixed;
     top: 0;
 	left: 0;
