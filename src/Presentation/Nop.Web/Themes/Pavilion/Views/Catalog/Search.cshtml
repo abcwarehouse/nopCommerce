@@ -31,7 +31,7 @@
         searchPageTitle = T("Search").ToString();
     }
 
-    if(storeId != 3) 
+    if(storeId == 3)
     {
         <div class="search-page-banner">
             <a href="/sale-ad"><img src="/images/SaleAdShop.jpg" alt ="Shop Sale Ad"/></a>
@@ -39,16 +39,16 @@
         <h1 class="search-page-title">Shop By Category</h1>
 
 
-    // List of only specific categores to display 
+    // List of only specific categores to display
     List<string> parentCategories = new List<string>
             { "Appliances", "TV - Video", "Mattresses", "Furniture", "Car Audio/Video" };
 
         int x = 0;
-        @foreach (var category in parentCategories) 
+        @foreach (var category in parentCategories)
         {
             var topParentCategory = await categoryService.GetCategoryByNameAsync(parentCategories[x++]);
             if (topParentCategory == null) {
-            continue;  
+            continue;
             }
             var childCategories = await categoryService.GetAllCategoriesByParentCategoryIdAsync(topParentCategory.Id);
 
@@ -61,7 +61,7 @@
 
 
                     <ul class="search-sub-list">
-                        
+
                         @foreach (var subCategory in childCategories)
                         {
                             var subCategoryUrl = await urlRecordService.GetSeNameAsync(subCategory);

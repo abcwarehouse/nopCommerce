@@ -1,0 +1,96 @@
+name: E2E Tests - Nightly
+
+on:
+  schedule:
+    # Run at 2 AM UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: e2e/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./e2e
+        run: npm ci
+      
+      - name: Install Playwright Browsers
+        working-directory: ./e2e
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      
+      - name: Run Playwright tests
+        working-directory: ./e2e
+        env:
+          BASE_URL: https://www.abcwarehouse.com
+        run: npx playwright test --project=${{ matrix.browser }}
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: e2e/playwright-report/
+          retention-days: 30
+      
+      - name: Upload test screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-screenshots-${{ matrix.browser }}
+          path: e2e/test-results/
+          retention-days: 30
+  
+  notify:
+    needs: test
+    runs-on: ubuntu-latest
+    if: failure()
+    steps:
+      - name: Send email notification via Resend
+        env:
+          TO_EMAILS: |
+            adarin@abcwarehouse.com
+            d@dfar.io
+            dr22494@abcwarehouse.com
+            johnjh@abcwarehouse.com
+            ms22418@abcwarehouse.com
+          EMAIL_HTML: |
+            <h2>E2E Test Failure</h2>
+            <p>The nightly E2E tests have failed.</p>
+            <ul>
+              <li><strong>Workflow:</strong> ${{ github.workflow }}</li>
+              <li><strong>Repository:</strong> ${{ github.repository }}</li>
+              <li><strong>Branch:</strong> ${{ github.ref_name }}</li>
+              <li><strong>Run:</strong> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View Results</a></li>
+            </ul>
+            <p>Please check the test results and screenshots in the artifacts.</p>
+        run: |
+          # Convert line-separated emails to JSON array
+          TO_EMAILS_JSON=$(echo "$TO_EMAILS" | sed '/^$/d' | sed 's/^/"/;s/$/"/' | paste -sd ',' | sed 's/^/[/;s/$/]/')
+          
+          # Create JSON payload using jq to properly escape HTML content
+          PAYLOAD=$(jq -n \
+            --arg from "E2E Tests <noreply@resend.dev>" \
+            --argjson to "$TO_EMAILS_JSON" \
+            --arg subject "❌ E2E Tests Failed - Nightly Build" \
+            --arg html "$EMAIL_HTML" \
+            '{from: $from, to: $to, subject: $subject, html: $html}')
+          
+          curl -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD"

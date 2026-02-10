@@ -35,6 +35,9 @@
 
     // Try to remove this down the road
     var manufacturer = Model.ProductModel.ProductManufacturers.FirstOrDefault();
+
+    // ABC: RWS styles
+    Html.AppendCssFileParts("~/Themes/Pavilion/Content/css/rws-content.css");
 }
 
 <div class="productTabs-header">
@@ -89,9 +92,6 @@
                             additionalData = Model
                         }
                     )
-                    <div id="wc-power-page"></div>
-                    <div id="ccs-inline-content" style="position: relative; top: 69px;"></div>
-                    <div id="sp_inline"></div>
                 }
                 @Html.Raw(tabInfo.Content)
             </div>
