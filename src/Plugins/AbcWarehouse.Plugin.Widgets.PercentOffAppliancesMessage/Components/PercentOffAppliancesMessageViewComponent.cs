@@ -23,7 +23,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         private readonly IStoreContext _storeContext;
 
         private static readonly string[] LGBuyMoreBrands = { 
-            "LG SIGNATURE", "LG STUDIO", "LG XBOOM", "LG", "LG APPLIANCES", 
+            "LG SIGNATURE", "LG XBOOM", "LG", "LG APPLIANCES", 
         };
         private static readonly string[] BuyMoreBrands = {
             "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery",
