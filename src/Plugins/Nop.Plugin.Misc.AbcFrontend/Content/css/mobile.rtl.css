@@ -84,7 +84,7 @@
 	display: inline-block;
 	border-left: 1px solid #eee;
 	background-color: #f74258;
-	background-image: url('../img/mobile-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/mobile-sprite.png');
 	background-repeat: no-repeat;
 	vertical-align: middle;
 }
@@ -170,7 +170,7 @@
 .header-menu .back-button span {
 	display: block;
 	height: 50px;
-	background: url('../img/close.png') left center no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/close.png') left center no-repeat;
 	font-size: 0;
 }
 .header-menu > ul li {
@@ -203,7 +203,7 @@
 	float: left;
 	width: 50px;
 	height: 60px;
-	background: #f74258 url('../img/pointer-color.rtl.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/pointer-color.rtl.png') center no-repeat;
 	cursor: pointer;
 }
 .header-menu .sublist-wrap {

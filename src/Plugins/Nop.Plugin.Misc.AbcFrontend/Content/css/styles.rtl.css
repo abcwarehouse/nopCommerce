@@ -196,7 +196,7 @@ label, label + * {
 	display: none;
 	width: 32px;
 	height: 32px;
-	background: #f74258 url('../img/rss-icon.png') no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/rss-icon.png') no-repeat;
 	font-size: 0 !important;
 }
 .category-description ul,
@@ -404,7 +404,7 @@ label, label + * {
 	height: 37px;
 	margin: auto;
 	border: none;
-	background: #777 url('../img/account-sprite.png') center -37px no-repeat;
+	background: #777 url('~/Themes/Pavilion/Content/img/account-sprite.png') center -37px no-repeat;
 	transition: all 0.2s ease;
 }
 .cart .remove-from-cart button:hover {
@@ -481,7 +481,7 @@ label, label + * {
 	width: 31px;
 	height: 31px;
 	margin: 6px;
-	background: #fff url('../img/close.png') center no-repeat;
+	background: #fff url('~/Themes/Pavilion/Content/img/close.png') center no-repeat;
 	cursor: pointer;
 }
 .bar-notification .close:hover {
@@ -502,7 +502,7 @@ label, label + * {
 	width: 32px;
 	height: 32px;
 	margin: -16px 0 0 -16px;
-	background: url('../img/loading.gif') center no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/loading.gif') center no-repeat;
 }*/
 .ajax-loading-block-window {
 	position: fixed;
@@ -623,7 +623,7 @@ label, label + * {
 	margin: 13px;
 	overflow: hidden;
 	border: none;
-	background: url('../img/close.png') center no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/close.png') center no-repeat;
 	font-size: 0;
 	opacity: 0.8;
 }
@@ -680,7 +680,7 @@ label, label + * {
     width: 50px;
     height: 50px;
     overflow: hidden;
-	background: rgba(225,225,225,0.75) url('../img/scroll-page.png') no-repeat center 48%;
+	background: rgba(225,225,225,0.75) url('~/Themes/Pavilion/Content/img/scroll-page.png') no-repeat center 48%;
     transition: all 0.2s ease;
 	cursor: pointer;
 }
@@ -713,7 +713,7 @@ label, label + * {
 	clear: both;
 }
 .header-links a {
-	background-image: url('../img/header-sprite-1.png');
+	background-image: url('~/Themes/Pavilion/Content/img/header-sprite-1.png');
 	background-repeat: no-repeat;
 }
 .header-links a span {
@@ -910,7 +910,7 @@ label, label + * {
 	height: 47px;
 	margin: 0 5px;
 	border: none;
-	background: #f74258 url('../img/search-button.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/search-button.png') center no-repeat;
 	vertical-align: middle;
 	font-size: 0;
 	outline: 1px solid transparent;
@@ -1002,7 +1002,7 @@ label, label + * {
 	height: 47px;
 	margin: 0 5px;
 	border: none;
-	background: #f74258 url('../img/subscribe-button.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/subscribe-button.png') center no-repeat;
 	vertical-align: middle;
 	font-size: 0;
 	outline: 1px solid transparent;
@@ -1039,7 +1039,7 @@ label, label + * {
 	display: block;
 	width: 32px;
 	height: 32px;
-	background: url('../img/social-sprite-1.png') no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/social-sprite-1.png') no-repeat;
 }
 .social-sharing .facebook a {
 	background-position: 0 0;
@@ -1081,7 +1081,7 @@ label, label + * {
 	left: 15px;
 	width: 10px;
 	height: 10px;
-	background: #f74258 url('../img/toggle-button.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/toggle-button.png') center no-repeat;
 }
 .footer-block ul {
 	display: none;
@@ -1107,7 +1107,7 @@ label, label + * {
 	width: 16px;
 	height: 16px;
 	background-color: #f74258;
-	background-image: url('../img/footer-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/footer-sprite.png');
 	background-repeat: no-repeat;
 }
 .footer-block .address span:before {
@@ -1134,7 +1134,7 @@ label, label + * {
 	display: inline-block;
 	width: 50px;
 	height: 30px;
-	background: url('../img/payment-sprite.png') no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/payment-sprite.png') no-repeat;
 }
 .accepted-payments .method1 {
 	background-position: 0 0;
@@ -1191,7 +1191,7 @@ label, label + * {
 }
 .block .title {
 	border: 1px solid #e9e9e9;
-	background: #fff url('../img/toggle-arrow.png') left center no-repeat;
+	background: #fff url('~/Themes/Pavilion/Content/img/toggle-arrow.png') left center no-repeat;
 	padding: 15px 25px;
 	font-size: 15px;
 	color: #333;
@@ -1330,7 +1330,7 @@ label, label + * {
 	width: 46px;
 	height: 45px;
 	margin: 0 0 0 -23px;
-	background: url('../img/polls.png') no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/polls.png') no-repeat;
 }
 .home-page-polls .title {
 	display: none;
@@ -1375,7 +1375,7 @@ label, label + * {
 	color: #f74258;
 }
 .filters :checked + label:before {
-    background: #fff url(../img/selected.png) no-repeat center;
+    background: #fff url(~/Themes/Pavilion/Content/img/s/Pavilion/Content/img/selected.png) no-repeat center;
 }
 .filters .group {
 	margin: 10px 0;
@@ -1416,7 +1416,7 @@ label, label + * {
 	height: 15px;
 	margin-left: -4px;
 	outline: 2px solid #fff;
-	background: #f74258 url('../img/handle.png') bottom no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/handle.png') bottom no-repeat;
 }
 .filters .attribute-squares {
 	margin: -5px 0 5px;
@@ -1469,12 +1469,12 @@ label, label + * {
 }
 .breadcrumb .delimiter {
 	width: 15px;
-	background: url('../img/pointer-grey.png') center no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/pointer-grey.png') center no-repeat;
 	font-size: 0;
 }
 .breadcrumb li:first-child a {
 	width: 20px;
-	background: url('../img/breadcrumb.png') center no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/breadcrumb.png') center no-repeat;
 	font-size: 0;
 }
 .breadcrumb li:first-child > span:first-child { /*this is on product page*/
@@ -1594,12 +1594,12 @@ label, label + * {
 	margin: 0 0 10px;
 }
 .item-box .rating {
-	background: url('../img/rating-sprite.png') right top repeat-x;
+	background: url('~/Themes/Pavilion/Content/img/rating-sprite.png') right top repeat-x;
 	width: 80px;
     height: 13px;
 }
 .item-box .rating div {
-	background: #f74258 url('../img/rating-sprite.png') right bottom repeat-x;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/rating-sprite.png') right bottom repeat-x;
     height: 13px;
 }
 .item-box .product-title {
@@ -1661,7 +1661,7 @@ label, label + * {
 	margin: 0 8px;
 	border: none;
 	background-color: #888;
-	background-image: url('../img/product-box-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/product-box-sprite.png');
     background-repeat: no-repeat;
     font-size: 0;
 	transition: all 0.2s ease;
@@ -1889,7 +1889,7 @@ label, label + * {
 .pager li.next-page a,
 .pager li.first-page a,
 .pager li.last-page a {
-	background-image: url('../img/pager-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/pager-sprite.png');
 	background-repeat: no-repeat;
 	font-size: 0;
 }
@@ -2003,11 +2003,11 @@ label, label + * {
 .product-review-box .rating {
 	width: 80px;
 	height: 13px;
-	background: url('../img/rating-sprite.png') left top repeat-x;
+	background: url('~/Themes/Pavilion/Content/img/rating-sprite.png') left top repeat-x;
 }
 .product-review-box .rating div {
 	height: 13px; 
-	background: #f74258 url('../img/rating-sprite.png') left bottom repeat-x;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/rating-sprite.png') left bottom repeat-x;
 }
 
 .overview .prices,
@@ -2083,7 +2083,7 @@ label, label + * {
 	display: inline-block;
 	height: 40px;
 	border: none;
-	background: #777 url('../img/product-sprite-2.rtl.png') right -40px no-repeat;
+	background: #777 url('~/Themes/Pavilion/Content/img/s/Pavilion/Content/img/product-sprite-2.rtl.png') right -40px no-repeat;
 	padding: 10px 35px 10px 15px;
 	color: #777;
 	transition: all 0.2s ease;
@@ -2111,7 +2111,7 @@ label, label + * {
 }
 .back-in-stock-subscription .subscribe-button {
 	border: none;
-	background: #888 url('../img/product-sprite-2.rtl.png') right 0 no-repeat;
+	background: #888 url('~/Themes/Pavilion/Content/img/product-sprite-2.rtl.png') right 0 no-repeat;
 	padding: 10px 35px 10px 15px;
 	color: #777;
 	transition: all 0.2s ease;
@@ -2207,7 +2207,7 @@ label, label + * {
 .variant-overview .add-to-cart-button {
 	height: 45px;
     border: none;
-    background: #f74258 url('../img/cart-button-2.png') no-repeat right center;
+    background: #f74258 url('~/Themes/Pavilion/Content/img/cart-button-2.png') no-repeat right center;
 	padding: 0 48px 0 28px;
     font-size: 13px;
     font-weight: bold;
@@ -2244,7 +2244,7 @@ label, label + * {
     width: 37px;
 	border: none;
 	background-color: #888;
-	background-image: url('../img/product-sprite-1.png');
+	background-image: url('~/Themes/Pavilion/Content/img/product-sprite-1.png');
 	background-repeat: no-repeat;
 	font-size: 0;
 	transition: all 0.2s ease;
@@ -2292,7 +2292,7 @@ label, label + * {
 .product-social-buttons li a {
 	width: 26px;
 	height: 24px;
-	background: url('../img/social-sprite-2.png') no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/social-sprite-2.png') no-repeat;
 	outline: 1px solid transparent;
 	transition: all 0.2s ease;
 }
@@ -2343,7 +2343,7 @@ label, label + * {
 .variant-overview .delivery > div {
 	display: inline-block;
 	margin: 8px 50px;
-	background-image: url('../img/delivery-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/delivery-sprite.png');
 	background-repeat: no-repeat;
 	padding: 0 25px 0 0;
 	font-size: 13px;
@@ -2571,7 +2571,7 @@ label, label + * {
 	z-index: 1;
 	width: 32px;
 	height: 35px;
-	background-image: url('../img/calendar-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/calendar-sprite.png');
 	background-repeat: no-repeat;
 	font-size: 0;
 }
@@ -2662,7 +2662,7 @@ label, label + * {
     left: 0; right: 0;
 	margin: auto;
 	border: 1px solid #e9e9e9;
-	background: #fff url('../img/close.png') center no-repeat;
+	background: #fff url('~/Themes/Pavilion/Content/img/close.png') center no-repeat;
 }
 .attribute-squares .tooltip-container {
 	display: none;
@@ -3165,7 +3165,7 @@ label, label + * {
 	transition: all 0.2s ease;
 }
 .update-wishlist-button {
-	background: #f74258 url('../img/cart-sprite.rtl.png') right -45px no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-sprite.rtl.png') right -45px no-repeat;
 	color: #777;
 }
 .update-wishlist-button:hover {
@@ -3173,7 +3173,7 @@ label, label + * {
 	color: #f74258;
 }
 .wishlist-add-to-cart-button {
-	background: #f74258 url('../img/cart-button-2.png') right center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-button-2.png') right center no-repeat;
 	color: #fff;
 }
 .wishlist-add-to-cart-button:hover {
@@ -3216,7 +3216,7 @@ label, label + * {
 	width: 37px;
 	height: 37px;
 	border: none;
-	background: #777 url('../img/account-sprite.png') center -37px no-repeat;
+	background: #777 url('~/Themes/Pavilion/Content/img/account-sprite.png') center -37px no-repeat;
 	font-size: 0;
 	transition: all 0.2s ease;
 }
@@ -3469,7 +3469,7 @@ label, label + * {
 #check-availability-button {
 	margin: 10px 0 0;
 	border: none;
-	background: #888 url('../img/product-sprite-2.rtl.png') right -80px no-repeat;
+	background: #888 url('~/Themes/Pavilion/Content/img/product-sprite-2.rtl.png') right -80px no-repeat;
 	padding: 10px 35px 10px 15px;
 	color: #777;
 	transition: all 0.2s ease;
@@ -3649,7 +3649,7 @@ label, label + * {
 	width: 220px;
 	height: 35px;
 	margin-top: -15px;
-	background: url('../img/fb-login.png') center no-repeat !important;
+	background: url('~/Themes/Pavilion/Content/img/fb-login.png') center no-repeat !important;
 }
 .password-recovery-page .tooltip {
 	margin: 0 0 30px;
@@ -3696,7 +3696,7 @@ label, label + * {
 	margin: 13px;
 	border: none;
 	overflow: hidden;
-	background: #f0f0f0 url('../img/close.png') center no-repeat;
+	background: #f0f0f0 url('~/Themes/Pavilion/Content/img/close.png') center no-repeat;
 	font-size: 0;
 	cursor: pointer;
 }
@@ -3764,7 +3764,7 @@ label, label + * {
 	width: 52px;
 	height: 52px;
 	background-color: transparent;
-	background-image: url('../img/account-nav-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/account-nav-sprite.png');
 	background-repeat: no-repeat;
 	vertical-align: top;
 	opacity: 0.5;
@@ -3938,7 +3938,7 @@ label, label + * {
 	margin: 0 2px;
 	border: none;
 	background-color: #777;
-	background-image: url('../img/account-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/account-sprite.png');
 	background-repeat: no-repeat;
 	font-size: 0;
 	transition: all 0.2s ease;
@@ -3957,7 +3957,7 @@ label, label + * {
 }
 .account-page .return-items-button {
 	width: auto !important;
-	background-image: url('../img/product-sprite-2.rtl.png') !important;
+	background-image: url('~/Themes/Pavilion/Content/img/product-sprite-2.rtl.png') !important;
 	background-position: right -120px;
 	padding: 10px 35px 10px 15px;
 	vertical-align: middle;
@@ -3975,7 +3975,7 @@ label, label + * {
 	width: 37px;
 	height: 37px;
 	border: none;
-	background: #f6f6f6 url('../img/close.png') center no-repeat;
+	background: #f6f6f6 url('~/Themes/Pavilion/Content/img/close.png') center no-repeat;
 	font-size: 0;
 }
 
@@ -4010,7 +4010,7 @@ label, label + * {
 	width: 40px;
 	height: 40px;
 	border: none;
-	background: #777 url('../img/product-sprite-2.rtl.png') right -40px no-repeat;
+	background: #777 url('~/Themes/Pavilion/Content/img/product-sprite-2.rtl.png') right -40px no-repeat;
 	transition: all 0.2s ease;
 }
 .downloadable-products-page .download a:hover {
@@ -4218,10 +4218,10 @@ label, label + * {
 	font-size: 0;
 }
 .common-buttons .update-cart-button {
-	background: #f74258 url('../img/cart-sprite.rtl.png') right -45px no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-sprite.rtl.png') right -45px no-repeat;
 }
 .common-buttons .continue-shopping-button {
-	background: #f74258 url('../img/cart-sprite.rtl.png') right 0 no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-sprite.rtl.png') right 0 no-repeat;
 }
 .common-buttons button:hover {
 	outline-color: #fff;
@@ -4272,7 +4272,7 @@ label, label + * {
 	left: 15px;
 	width: 10px;
 	height: 10px;
-	background: #f74258 url('../img/toggle-button.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/toggle-button.png') center no-repeat;
 }
 .cart-collaterals .active .accordion-tab-title {
 	border-bottom-color: #f74258;
@@ -4389,7 +4389,7 @@ label, label + * {
 	height: 17px;
 	margin: 0 8px -1px 0;
 	border: none;
-	background: #fff url('../img/close.png') center no-repeat;
+	background: #fff url('~/Themes/Pavilion/Content/img/close.png') center no-repeat;
 	vertical-align: middle;
 	cursor: pointer;
 }
@@ -4757,7 +4757,7 @@ label, label + * {
 	height: 40px;	
 	margin: 5px 5px 10px;
 	background-color: #f74258;
-	background-image: url('../img/order-sprite.rtl.png');
+	background-image: url('~/Themes/Pavilion/Content/img/order-sprite.rtl.png');
 	background-repeat: no-repeat;
 	padding: 0 35px 0 15px;
 	line-height: 40px;
@@ -4848,11 +4848,11 @@ label, label + * {
 	transition: all 0.2s ease 0s;
 }
 .order-details-page .actions .re-order-button {
-	background: #f74258 url('../img/cart-sprite.rtl.png') right 0 no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-sprite.rtl.png') right 0 no-repeat;
 	color: #777;
 }
 .order-details-page .actions .return-items-button {
-	background: #f74258 url('../img/cart-sprite.rtl.png') right -45px no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-sprite.rtl.png') right -45px no-repeat;
 	color: #777;
 }
 .order-details-page .actions button:hover {
@@ -4967,7 +4967,7 @@ label, label + * {
 	display: block;
 	width: 48px;
 	height: 48px;
-	background: #777 url('../img/back-link.rtl.png') center no-repeat;
+	background: #777 url('~/Themes/Pavilion/Content/img/back-link.rtl.png') center no-repeat;
 }
 .opc .back-link a:hover {
 	background-color: #f74258;
@@ -5059,7 +5059,7 @@ label, label + * {
 	left: 19px;
 	width: 10px;
 	height: 10px;
-	background: #f74258 url('../img/toggle-button.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/toggle-button.png') center no-repeat;
 }
 .advanced-search {
 	background-color: #f9f9f9;
@@ -5317,7 +5317,7 @@ label, label + * {
 	width: 26px;
 	height: 20px;
 	margin: -1px 0 0 -25px;
-	background: #777 url('../img/pointer-color.rtl.png') center no-repeat;
+	background: #777 url('~/Themes/Pavilion/Content/img/pointer-color.rtl.png') center no-repeat;
 	vertical-align: middle;
 	transition: all 0.2s ease;
 }
@@ -5504,7 +5504,7 @@ label, label + * {
 	width: 40px;
 	height: 40px;
 	border: none;
-	background: #f74258 url('../img/search-button.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/search-button.png') center no-repeat;
 	font-size: 0;
 }
 .forum-search-box .advanced a {
@@ -5585,7 +5585,7 @@ label, label + * {
 	width: 40px;
 	height: 35px;
 	margin: auto;
-	background-image: url('../img/forum-sprite-1.png');
+	background-image: url('~/Themes/Pavilion/Content/img/forum-sprite-1.png');
 	background-repeat: no-repeat;
 }
 .forums-table-section .image div.sticky {
@@ -5656,7 +5656,7 @@ label, label + * {
 	display: inline-block;
 	margin: 5px;
 	background-color: #888;
-	background-image: url('../img/forum-sprite-2.rtl.png');
+	background-image: url('~/Themes/Pavilion/Content/img/forum-sprite-2.rtl.png');
 	background-repeat: no-repeat;
 	padding: 0 30px 0 10px;
 	line-height: 35px;
@@ -5758,7 +5758,7 @@ label, label + * {
 .topic-post .pm-button,
 .profile-info-box .pm-button {
 	display: inline-block;
-	background: #888 url('../img/forum-sprite-2.rtl.png') right -210px no-repeat;
+	background: #888 url('~/Themes/Pavilion/Content/img/forum-sprite-2.rtl.png') right -210px no-repeat;
 	padding: 0 30px 0 10px;
 	line-height: 35px;
 	font-size: 13px;
@@ -5793,7 +5793,7 @@ label, label + * {
 	margin: 5px;
 	box-shadow: inset 0 0 20px #e9e9e9;
 	background-color: #888;
-	background-image: url('../img/forum-sprite-2.rtl.png');
+	background-image: url('~/Themes/Pavilion/Content/img/forum-sprite-2.rtl.png');
 	background-repeat: no-repeat;
 	padding: 0 30px 0 10px;
 	line-height: 35px;
@@ -5854,7 +5854,7 @@ label, label + * {
 	width: 32px;
 	height: 32px;
 	background-color: #f93b54;
-	background-image: url('../img/table-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/img/table-sprite.png');
 	background-repeat: no-repeat;
 	cursor: pointer;
 }

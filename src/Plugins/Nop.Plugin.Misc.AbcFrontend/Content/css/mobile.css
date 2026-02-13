@@ -238,7 +238,7 @@
 .header-menu .back-button span {
 	display: block;
 	height: 50px;
-	background: url('../img/close.png') right center no-repeat;
+	background: url('~/Themes/Pavilion/Content/img/close.png') right center no-repeat;
 	font-size: 0;
 }
 .header-menu > ul li {
@@ -271,7 +271,7 @@
 	float: right;
 	width: 50px;
 	height: 60px;
-	background: #f74258 url('../img/pointer-color.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/pointer-color.png') center no-repeat;
 	cursor: pointer;
 }
 .header-menu .sublist-wrap {

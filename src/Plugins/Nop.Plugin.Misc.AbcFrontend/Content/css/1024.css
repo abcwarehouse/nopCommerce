@@ -151,7 +151,7 @@
 .header-selectors-wrapper label {
 	display: block;
 	padding: 0 0 0 20px;
-	background-image: url('../img/header-sprite-2.png');
+	background-image: url('~/Themes/Pavilion/Content/img/header-sprite-2.png');
 	background-repeat: no-repeat;
 	line-height: 42px;
 }
@@ -432,7 +432,7 @@
 	right: 19px;
 	width: 17px;
 	height: 15px;
-	background: #f74258 url('../img/category-nav.png') center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/category-nav.png') center no-repeat;
 }
 .home-page-body .category-navigation-title {
 	cursor: auto;

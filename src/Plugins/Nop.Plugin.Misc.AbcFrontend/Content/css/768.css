@@ -110,7 +110,7 @@
 	height: 36px !important;
 	margin: 0 3px 0 0 !important;
 	background-color: #888;
-	background-image: url('../img/product-box-sprite-big.png') !important;
+	background-image: url('~/Themes/Pavilion/Content/img/product-box-sprite-big.png') !important;
 }
 .bestsellers .add-to-wishlist-button {
 	background-position: -36px center !important;
@@ -142,12 +142,12 @@
 }
 .bestsellers .slick-prev {
 	left: 0;
-    background-image: url('../img/arrow-prev.png');
+    background-image: url('~/Themes/Pavilion/Content/arrow-prev.png');
 	background-position: right center;
 }
 .bestsellers .slick-next {
 	right: 0;
-    background-image: url('../img/arrow-next.png');
+    background-image: url('~/Themes/Pavilion/Content/arrow-next.png');
 	background-position: left center;
 }
 .bestsellers .slick-prev:hover {
@@ -194,7 +194,7 @@
 	height: 16px;
 	margin: 0 8px 0 0;
 	background-color: #777;
-	background-image: url('../img/viewmode-sprite.png');
+	background-image: url('~/Themes/Pavilion/Content/viewmode-sprite.png');
 	background-position: center top;
 	background-repeat: no-repeat;
 	vertical-align: middle;
@@ -273,7 +273,7 @@
 	width: 37px;
 	height: 37px;
 	margin: 0 2px;
-	background-image: url('../img/product-sprite-1.png');
+	background-image: url('~/Themes/Pavilion/Content/product-sprite-1.png');
 }
 .product-list .item-box .add-to-compare-list-button {
 	background-position: -37px 0;
@@ -289,7 +289,7 @@
 	display: inline-block;
 	width: auto;
 	outline: 1px solid transparent;
-	background: #f74258 url('../img/cart-button-2.png') left center no-repeat;
+	background: #f74258 url('~/Themes/Pavilion/Content/img/cart-button-2.png') left center no-repeat;
 	padding: 0 28px 0 48px;
 	vertical-align: middle;
 }
