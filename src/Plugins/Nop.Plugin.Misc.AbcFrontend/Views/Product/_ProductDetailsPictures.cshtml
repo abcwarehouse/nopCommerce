@@ -8,7 +8,7 @@
 @* ABC: custom to allow PDP jcarousel *@
 <script asp-exclude-from-bundle="true" src="~/Plugins/Misc.AbcFrontend/Content/scripts/jquery.jcarousel.min.js" asp-location="Footer"></script>
 
-<div class="gallery">
+<div class="picture-gallery">
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
 
     <div class="picture">
