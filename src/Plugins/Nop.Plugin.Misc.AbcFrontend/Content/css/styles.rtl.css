@@ -1706,7 +1706,7 @@ label, label + * {
 	right: 0;
 	width: 15px;
 	height: 18px;
-	background: #f74258 url('../img/cart-button-1.png') right top no-repeat;
+	background: #f74258 url('../../Themes/Pavilion/Content/img/cart-button-1.png') right top no-repeat;
 	transition: all 0.2s ease;
 }
 .item-box .buttons-lower button span:after {
@@ -1716,7 +1716,7 @@ label, label + * {
 	right: 0;
 	width: 15px;
 	height: 18px;
-	background: #f74258 url('../img/cart-button-1.png') right bottom no-repeat;
+	background: #f74258 url('../../Themes/Pavilion/Content/img/cart-button-1.png') right bottom no-repeat;
 	transition: all 0.2s ease;
 	opacity: 0;
 }
