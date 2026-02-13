@@ -26,6 +26,7 @@
     <None Remove="Views\CustomCheckout\WarrantySelection.cshtml" />
     <None Remove="Views\CustomCheckout\PaymentMethod.cshtml" />
     <!-- <None Remove="Views\Product\_ProductDetailsPictures.cshtml" /> -->
+    <!-- <None Remove="Views\Product\_ProductDetailsVideos.cshtml" /> -->
     <None Remove="Images\abc\BestDeal.jpg" />
     <None Remove="Images\abc\CallUs.jpg" />
     <None Remove="Images\abc\InStore.jpg" />
@@ -144,6 +145,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <!--<Content Include="Views\Product\_ProductDetailsPictures.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content> -->
+    <!-- <Content Include="Views\Product\_ProductDetailsVideos.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content> -->
     <Content Include="Images\abc\BestDeal.jpg">
