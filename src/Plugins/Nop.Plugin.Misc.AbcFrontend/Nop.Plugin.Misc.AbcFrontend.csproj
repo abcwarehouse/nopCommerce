@@ -25,7 +25,7 @@
     <None Remove="Views\CustomCheckout\Warranty.cshtml" />
     <None Remove="Views\CustomCheckout\WarrantySelection.cshtml" />
     <None Remove="Views\CustomCheckout\PaymentMethod.cshtml" />
-    <!-- <None Remove="Views\Product\_ProductDetailsPictures.cshtml" /> -->
+    <None Remove="Views\Product\_ProductDetailsPictures.cshtml" />
     <!-- <None Remove="Views\Product\_ProductDetailsVideos.cshtml" /> -->
     <None Remove="Images\abc\BestDeal.jpg" />
     <None Remove="Images\abc\CallUs.jpg" />
@@ -82,6 +82,8 @@
     <None Remove="Content/css/synchrony.css" />
     <None Remove="Content/css/synchronyrespon.css" />
     <None Remove="Content/css/tooltip.css" />
+    <None Remove="Content/img/arrow-left-solid.png" />
+    <None Remove="Content/img/arrow-right-solid.png" />
     <None Remove="Content/img/category-nav.png" />
     <None Remove="Content/img/flyout-cart.png" />
     <None Remove="Content/img/header-sprite-2.png" />
@@ -144,9 +146,9 @@
     <Content Include="Views\CustomCheckout\PaymentMethod.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!--<Content Include="Views\Product\_ProductDetailsPictures.cshtml">
+    <Content Include="Views\Product\_ProductDetailsPictures.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> -->
+    </Content>
     <!-- <Content Include="Views\Product\_ProductDetailsVideos.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content> -->
@@ -311,6 +313,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content/css/tooltip.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/img/arrow-left-solid.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content/img/arrow-right-solid.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content/img/category-nav.png">
