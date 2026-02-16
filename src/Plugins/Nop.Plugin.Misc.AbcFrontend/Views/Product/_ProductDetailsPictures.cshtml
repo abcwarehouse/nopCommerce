@@ -38,14 +38,12 @@
                     }
                     @foreach (var picture in Model.PictureModels)
                     {
-                        var isVideo = picture.Title?.Contains("video", System.StringComparison.OrdinalIgnoreCase) ?? false;
-                        var typeClass = isVideo ? "mfp-iframe" : "mfp-image";
                         <li>
-                            <a class="jcarousel-item @typeClass"
+                            <a class="jcarousel-item mfp-image"
                                href="@picture.FullSizeImageUrl"
                                data-index="@idx"
                                title="@picture.Title">
-                                <img class="@typeClass"
+                                <img class="mfp-image"
                                      src="@picture.ThumbImageUrl"
                                      alt="@picture.AlternateText"
                                      title="@picture.Title"
