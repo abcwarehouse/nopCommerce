@@ -15,6 +15,10 @@
             @foreach (var video in Model.VideoModels)
             {
                 <a class="thumb-item" href="#video-popup-@Model.Id" data-video-url="@video.VideoUrl" data-video-allow="@video.Allow">
+                    @if (!string.IsNullOrWhiteSpace(video.ThumbnailUrl))
+                    {
+                        <img class="thumb-image" src="@video.ThumbnailUrl" alt="@Model.Name" loading="lazy" />
+                    }
                     <span class="thumb-icon" aria-hidden="true">▶</span>
                 </a>
             }
@@ -61,17 +65,26 @@
     }
 
     .video-thumbs .thumb-item {
+        position: relative;
         width: 56px;
         height: 56px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
         border: 1px solid;
         border-radius: 4px;
         text-decoration: none;
     }
 
+    .video-thumbs .thumb-item .thumb-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
     .video-thumbs .thumb-item .thumb-icon {
+        position: absolute;
         font-size: 24px;
         line-height: 1;
     }

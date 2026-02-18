@@ -1,14 +1,15 @@
 --1. Add RWS videos to NOPCommerce
 MERGE Video AS t
 USING (
-	SELECT DISTINCT video_file_name
-	FROM [StagingDb].dbo.rws_product_video
-	WHERE video_type = 'youtube'
+	SELECT DISTINCT video_file_name, thumbnail_image_file_name
+	FROM [StagingDb].dbo.rws_product_video pv
+	WHERE video_type = 'youtube' and thumbnail_image_file_name IS NOT NULL
 ) AS s
 ON s.video_file_name = t.VideoUrl COLLATE DATABASE_DEFAULT
+	AND CONCAT('https://images.webfronts.com/cache/', s.thumbnail_image_file_name) = t.ThumbnailUrl COLLATE DATABASE_DEFAULT
 WHEN NOT MATCHED BY TARGET THEN
-    INSERT (VideoUrl)
-    VALUES (s.video_file_name)
+    INSERT (VideoUrl, ThumbnailUrl)
+    VALUES (s.video_file_name, CONCAT('https://images.webfronts.com/cache/', s.thumbnail_image_file_name))
 WHEN NOT MATCHED BY SOURCE THEN
     DELETE;
 
@@ -21,7 +22,7 @@ USING (
 	FROM [StagingDb].dbo.rws_product_video pv  
 	JOIN Video v on v.VideoUrl = pv.video_file_name COLLATE DATABASE_DEFAULT
 	JOIN [StagingDb].dbo.rws_product rp on rp.id = pv.rws_product_id
-	JOIN Product p on p.Sku = rp.manufacturer_pn
+	JOIN Product p on p.Sku = rp.manufacturer_pn and p.Deleted = 0
 	WHERE video_type = 'youtube'
 ) AS s
 ON s.VideoId = t.VideoId and s.ProductId = t.ProductId

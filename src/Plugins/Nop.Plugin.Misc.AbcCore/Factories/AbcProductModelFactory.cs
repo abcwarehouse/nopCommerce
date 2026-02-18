@@ -241,6 +241,99 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             return cachedPictures;
         }
 
+        protected override async Task<(PictureModel pictureModel, IList<PictureModel> allPictureModels, IList<VideoModel> allVideoModels)> PrepareProductDetailsPictureModelAsync(Product product, bool isAssociatedProduct)
+        {
+            ArgumentNullException.ThrowIfNull(product);
+
+            //default picture size
+            var defaultPictureSize = isAssociatedProduct ?
+                _mediaSettings.AssociatedProductPictureSize :
+                _mediaSettings.ProductDetailsPictureSize;
+
+            //prepare picture models
+            var productPicturesCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(NopModelCacheDefaults.ProductDetailsPicturesModelKey
+                , product, defaultPictureSize, isAssociatedProduct,
+                await _workContext.GetWorkingLanguageAsync(), _webHelper.IsCurrentConnectionSecured(), await _storeContext.GetCurrentStoreAsync());
+            var cachedPictures = await _staticCacheManager.GetAsync(productPicturesCacheKey, async () =>
+            {
+                var productName = await _localizationService.GetLocalizedAsync(product, x => x.Name);
+
+                var pictures = await _pictureService.GetPicturesByProductIdAsync(product.Id);
+                var defaultPicture = pictures.FirstOrDefault();
+
+                (var fullSizeImageUrl, defaultPicture) = await _pictureService.GetPictureUrlAsync(defaultPicture, 0, !isAssociatedProduct);
+                (var imageUrl, defaultPicture) = await _pictureService.GetPictureUrlAsync(defaultPicture, defaultPictureSize, !isAssociatedProduct);
+
+                var defaultPictureModel = new PictureModel
+                {
+                    ImageUrl = imageUrl,
+                    FullSizeImageUrl = fullSizeImageUrl,
+                    //"title" attribute
+                    Title = (defaultPicture != null && !string.IsNullOrEmpty(defaultPicture.TitleAttribute)) ?
+                        defaultPicture.TitleAttribute :
+                        string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageLinkTitleFormat.Details"), productName),
+                    //"alt" attribute
+                    AlternateText = (defaultPicture != null && !string.IsNullOrEmpty(defaultPicture.AltAttribute)) ?
+                        defaultPicture.AltAttribute :
+                        string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageAlternateTextFormat.Details"), productName)
+                };
+
+                //all pictures
+                var pictureModels = new List<PictureModel>();
+                for (var i = 0; i < pictures.Count; i++)
+                {
+                    var picture = pictures[i];
+
+                    (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
+                    (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, defaultPictureSize, !isAssociatedProduct);
+                    (var thumbImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.ProductThumbPictureSizeOnProductDetailsPage);
+
+                    var pictureModel = new PictureModel
+                    {
+                        Id = picture.Id,
+                        ImageUrl = imageUrl,
+                        ThumbImageUrl = thumbImageUrl,
+                        FullSizeImageUrl = fullSizeImageUrl,
+                        Title = string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageLinkTitleFormat.Details"), productName),
+                        AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageAlternateTextFormat.Details"), productName),
+                    };
+                    //"title" attribute
+                    pictureModel.Title = !string.IsNullOrEmpty(picture.TitleAttribute) ?
+                        picture.TitleAttribute :
+                        string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageLinkTitleFormat.Details"), productName);
+                    //"alt" attribute
+                    pictureModel.AlternateText = !string.IsNullOrEmpty(picture.AltAttribute) ?
+                        picture.AltAttribute :
+                        string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageAlternateTextFormat.Details"), productName);
+
+                    pictureModels.Add(pictureModel);
+                }
+
+                return new { DefaultPictureModel = defaultPictureModel, PictureModels = pictureModels };
+            });
+
+            var allPictureModels = cachedPictures.PictureModels;
+
+            //all videos
+            var allvideoModels = new List<VideoModel>();
+            var videos = await _videoService.GetVideosByProductIdAsync(product.Id);
+            foreach (var video in videos)
+            {
+                var videoModel = new VideoModel
+                {
+                    VideoUrl = video.VideoUrl,
+                    // ABC: custom to allow thumbnails for videos
+                    ThumbnailUrl = video.ThumbnailUrl,
+                    Allow = _mediaSettings.VideoIframeAllow,
+                    Width = _mediaSettings.VideoIframeWidth,
+                    Height = _mediaSettings.VideoIframeHeight
+                };
+
+                allvideoModels.Add(videoModel);
+            }
+            return (cachedPictures.DefaultPictureModel, allPictureModels, allvideoModels);
+        }
+
         private async Task<string> AdjustMattressPriceAsync(int productId)
         {
             var mattressPrice = await _abcMattressListingPriceService.GetListingPriceForMattressProductAsync(
