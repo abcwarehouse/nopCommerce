@@ -49,7 +49,7 @@ public class ListrakService : IListrakService
         {
             ShortCodeId = "1026",
             PhoneNumber = phoneNumber,
-            PhoneListId = "152"
+            PhoneListId = "151"
         };
 
         return await client.PostAsJsonAsync(
