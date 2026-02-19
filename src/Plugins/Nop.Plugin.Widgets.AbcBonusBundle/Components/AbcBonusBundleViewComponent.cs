@@ -66,7 +66,7 @@ namespace Nop.Plugin.Widgets.AbcBonusBundle.Components
                 var model = new AbcBonusBundleModel
                 {
                     BundleDescription = bundle.Comment,
-                    PopupCommand = imageUrl != null ? bundle.GetPopupCommand(imageUrl) : null,
+                    PopupCommand = imageUrl,
                     StoreName = _abcBonusBundleSettings.StoreName,
                     PhoneNumber = _abcBonusBundleSettings.PhoneNumber,
                     EndDate = bundle.GetEndDateTime().ToString("M/d/yy")

@@ -9,5 +9,5 @@
 
 @foreach (var promo in Model)
 {
-    <a href="@promo.GetPopupCommand()" class="prices-bottom-message promo-rebate-message">@promo.Description</a>
+    <a href="@promo.GetPdfPath()" target="_blank" rel="noopener" class="prices-bottom-message promo-rebate-message">@promo.Description</a>
 }

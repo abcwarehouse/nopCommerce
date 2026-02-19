@@ -13,10 +13,10 @@
 {
     var promo = Model[i];
     if (promo != null) {
-        <a class="product-box-specials" href="@promo.GetPopupCommand()">@promo.Description</a>
+        <a class="product-box-specials" href="@promo.GetPdfPath()" target="_blank" rel="noopener">@promo.Description</a>
     }
     else
     {
-        <a class="product-box-specials">&nbsp;</a>
+        <span class="product-box-specials">&nbsp;</span>
     }
 }
