@@ -122,13 +122,13 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var errorResponseContent = await response.Content.ReadAsStringAsync();
                 await _logger.ErrorAsync(
                     $"Payments.UniFi: Failure to retrieve transaction token. " +
                     $"Endpoint: {transactionTokenEndpoint}. " +
                     $"StatusCode: {(int)response.StatusCode} ({response.StatusCode}). " +
                     $"Reason: {response.ReasonPhrase}. " +
-                    $"Response: {responseContent}");
+                    $"Response: {errorResponseContent}");
                 throw new NopException("Payments.UniFi: Failure to retrieve transaction token.");
             }
 
@@ -156,13 +156,13 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var errorResponseContent = await response.Content.ReadAsStringAsync();
                 await _logger.ErrorAsync(
                     $"Payments.UniFi: Failure to retrieve bearer token. " +
                     $"Endpoint: {oauth2Endpoint}. " +
                     $"StatusCode: {(int)response.StatusCode} ({response.StatusCode}). " +
                     $"Reason: {response.ReasonPhrase}. " +
-                    $"Response: {responseContent}");
+                    $"Response: {errorResponseContent}");
                 throw new NopException("Payments.UniFi: Failure to retrieve bearer token.");
             }
 
