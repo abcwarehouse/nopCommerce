@@ -51,7 +51,12 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Services
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                await _logger.ErrorAsync($"Payments.UniFi: Failure to perform transaction lookup. {responseContent}");
+                await _logger.ErrorAsync(
+                    $"Payments.UniFi: Failure to perform transaction lookup. " +
+                    $"Endpoint: {transactionLookupEndpoint}. " +
+                    $"StatusCode: {(int)response.StatusCode} ({response.StatusCode}). " +
+                    $"Reason: {response.ReasonPhrase}. " +
+                    $"Response: {responseContent}");
                 throw new NopException("Payments.UniFi: Failure to perform transaction lookup.");
             }
 

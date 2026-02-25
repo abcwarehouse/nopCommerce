@@ -119,7 +119,12 @@ namespace AbcWarehouse.Plugin.Payments.UniFi
             var responseContent = await response.Content.ReadAsStringAsync();
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                await _logger.ErrorAsync($"Payments.UniFi: Failure to process payment. {responseContent}");
+                await _logger.ErrorAsync(
+                    $"Payments.UniFi: Failure to process payment. " +
+                    $"Endpoint: {transactEndpoint}. " +
+                    $"StatusCode: {(int)response.StatusCode} ({response.StatusCode}). " +
+                    $"Reason: {response.ReasonPhrase}. " +
+                    $"Response: {responseContent}");
                 result.AddError("Failure to process payment.");
                 return result;
             }
