@@ -17,6 +17,8 @@ using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using System.Text;
+using Nop.Services.Catalog;
+using Nop.Services.Seo;
 
 namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 {
@@ -29,6 +31,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly SearchSpringSettings _settings;
+        private readonly IProductService _productService;
+        private readonly IUrlRecordService _urlRecordService;
 
         public SearchSpringController(ISearchSpringService searchSpringService,
                                         IHttpClientFactory httpClientFactory,
@@ -36,7 +40,9 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
                                         ISettingService settingService,
                                         ILocalizationService localizationService,
                                         INotificationService notificationService,
-                                        SearchSpringSettings settings)
+                                        SearchSpringSettings settings,
+                                        IProductService productService,
+                                        IUrlRecordService urlRecordService)
         {
             _searchSpringService = searchSpringService;
             _httpClientFactory = httpClientFactory;
@@ -45,6 +51,8 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             _localizationService = localizationService;
             _notificationService = notificationService;
             _settings = settings;
+            _productService = productService;
+            _urlRecordService = urlRecordService;
         }
 
         [HttpGet]
@@ -107,6 +115,19 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             {
                 var productUrl = results.Results.First().ProductUrl;
                 return Redirect(productUrl);
+            }
+
+            // If SearchSpring returned no results for an all-digit item number query,
+            // fall back to native nopCommerce SKU lookup and redirect if found
+            if (results.Results.Count() == 0 && q.All(char.IsDigit))
+            {
+                var product = await _productService.GetProductBySkuAsync(q);
+                if (product != null && product.Published)
+                {
+                    var slug = await _urlRecordService.GetActiveSlugAsync(product.Id, "Product", 0);
+                    if (!string.IsNullOrEmpty(slug))
+                        return Redirect("/" + slug);
+                }
             }
 
             results.PageNumber = page;
