@@ -180,6 +180,14 @@ i.warranty-info {
     font-size: 1rem;
     padding-left: 0.15rem;
     margin-left: 0.5rem;
+
+
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .cart-slideout__delivery-zip-code input {
+    box-shadow: 0.01px 0.01px 0px 0px;
+  }
 }
 
 .cart-slideout__subtotal {
