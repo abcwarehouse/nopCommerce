@@ -5,7 +5,7 @@
     var defaultGridPageSize = adminAreaSettings.DefaultGridPageSize;
     var gridPageSizes = adminAreaSettings.GridPageSizes;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.JCarousel.Admin.Submenus.ManageSettings");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.JCarousel.Admin.Submenus.ManageSettings");
 }
 
 <nop-antiforgery-token />
@@ -26,39 +26,41 @@
         <div class="cards-group">
             <div class="card card-default">
                 <div class="card-body">
-                    @await Html.PartialAsync("Table", new DataTablesModel
-                    {
-                        Name = "jcarousel-grid",
-                        UrlRead = new DataUrl("List", "JCarouselAdmin", null),
-                        UrlDelete = new DataUrl("DeleteCarousel", "JCarouselAdmin", null),
-                        Length = defaultGridPageSize,
-                        LengthMenu = gridPageSizes,
-                        ColumnCollection = new List<ColumnProperty>
+                    @{ 
+                        await Html.RenderPartialAsync("Table", new DataTablesModel
                         {
-                            new ColumnProperty(nameof(JCarouselSettingsModel.Name))
+                            Name = "jcarousel-grid",
+                            UrlRead = new DataUrl("List", "JCarouselAdmin", null),
+                            UrlDelete = new DataUrl("DeleteCarousel", "JCarouselAdmin", null),
+                            Length = defaultGridPageSize,
+                            LengthMenu = gridPageSizes,
+                            ColumnCollection = new List<ColumnProperty>
                             {
-                                Title = T("SevenSpikes.JCarousel.Admin.Settings.Name").Text
-                            },
-                            new ColumnProperty(nameof(JCarouselSettingsModel.DataSourceType))
-                            {
-                                Title = T("SevenSpikes.JCarousel.Admin.Settings.DataSourceType").Text
-                            },
-                            new ColumnProperty(nameof(JCarouselSettingsModel.JCarouselEntitySettings.Skin))
-                            {
-                                Title = T("SevenSpikes.JCarousel.Admin.Settings.Skin").Text
-                            },
-                            new ColumnProperty(nameof(JCarouselSettingsModel.Id))
-                            {
-                                Render = new RenderCustom("renderEditButton"),
-                                Width = "100"
-                            },
-                            new ColumnProperty(nameof(JCarouselSettingsModel.Id))
-                            {
-                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
-                                Width = "100"
+                                new ColumnProperty(nameof(JCarouselSettingsModel.Name))
+                                {
+                                    Title = T("SevenSpikes.JCarousel.Admin.Settings.Name").Text
+                                },
+                                new ColumnProperty(nameof(JCarouselSettingsModel.DataSourceType))
+                                {
+                                    Title = T("SevenSpikes.JCarousel.Admin.Settings.DataSourceType").Text
+                                },
+                                new ColumnProperty(nameof(JCarouselSettingsModel.JCarouselEntitySettings.Skin))
+                                {
+                                    Title = T("SevenSpikes.JCarousel.Admin.Settings.Skin").Text
+                                },
+                                new ColumnProperty(nameof(JCarouselSettingsModel.Id))
+                                {
+                                    Render = new RenderCustom("renderEditButton"),
+                                    Width = "100"
+                                },
+                                new ColumnProperty(nameof(JCarouselSettingsModel.Id))
+                                {
+                                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                    Width = "100"
+                                }
                             }
-                        }
-                    })
+                        });
+                    }
                 </div>
             </div>
         </div>

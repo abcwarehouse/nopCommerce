@@ -15,7 +15,6 @@ namespace Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Infrastructure
         }
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
-
             endpointRouteBuilder.MapControllerRoute("HomeDeliveryStatus",
                             "HomeDeliveryStatus/DisplayHomeDeliveryStatus",
                             new

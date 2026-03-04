@@ -9,9 +9,8 @@ using Nop.Plugin.Widgets.AbcPromos.Tasks.LegacyTasks;
 using Nop.Services.Catalog;
 using Nop.Services.Logging;
 using Nop.Services.Seo;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Task = System.Threading.Tasks.Task;
-using Nop.Plugin.Misc.AbcCore.Data;
 using Nop.Services.Stores;
 
 namespace Nop.Plugin.Widgets.AbcPromos.Tasks
@@ -22,7 +21,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
 
         private readonly ILogger _logger;
 
-        private readonly ICustomNopDataProvider _nopDataProvider;
+        private readonly INopDataProvider _nopDataProvider;
 
         private readonly IAbcPromoService _abcPromoService;
         private readonly IManufacturerService _manufacturerService;
@@ -35,7 +34,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             CoreSettings coreSettings,
             AbcPromosSettings settings,
             ILogger logger,
-            ICustomNopDataProvider nopDataProvider,
+            INopDataProvider nopDataProvider,
             IAbcPromoService abcPromoService,
             IManufacturerService manufacturerService,
             IStoreMappingService storeMappingService,
@@ -61,7 +60,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Tasks
             }
             else
             {
-                await _nopDataProvider.ExecuteNonQueryAsync("EXEC UpdateAbcPromos", 1200);
+                await _nopDataProvider.ExecuteNonQueryAsync("EXEC UpdateAbcPromos");
             }
 
             var promos = await _abcPromoService.GetAllPromosAsync();

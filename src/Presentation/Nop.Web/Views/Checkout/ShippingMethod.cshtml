@@ -3,40 +3,29 @@
     Layout = "_ColumnsOne";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Checkout").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Checkout").Text);
     //page class
-    Html.AppendPageCssClassParts("html-checkout-page");
-    Html.AppendPageCssClassParts("html-shipping-method-page");
+    NopHtml.AppendPageCssClassParts("html-checkout-page");
+    NopHtml.AppendPageCssClassParts("html-shipping-method-page");
 }
-@await Component.InvokeAsync("Widget", new { widgetZone = "cart_popup" })
 <div class="page checkout-page shipping-method-page">
-    @await Component.InvokeAsync("CheckoutProgress", new { step = CheckoutProgressStep.Shipping })
+    @await Component.InvokeAsync(typeof(CheckoutProgressViewComponent), new { step = CheckoutProgressStep.Shipping })
     <div class="page-title">
         <h1>@T("Checkout.SelectShippingMethod")</h1>
     </div>
     <div class="page-body checkout-data">
         <div class="section shipping-method">
             <form asp-route="CheckoutShippingMethod" method="post">
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutShippingMethodTop })
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutShippingMethodTop, additionalData = Model })
 
                 @if (Model.DisplayPickupInStore && Model.PickupPointsModel.AllowPickupInStore)
                 {
                     @await Html.PartialAsync("_PickupPoints", Model.PickupPointsModel)
-                    <script asp-location="Footer">
-                        $(document).ready(function () {
-                            $(document).on('checkout_toggle_pickup_in_store', function (e) {
-                                if (e.checked)
-                                    $('.method-list').hide();
-                                else
-                                    $('.method-list').show();
-                            });
-                        });
-                    </script>
                 }
 
                 @if (Model.PickupPointsModel == null || !Model.PickupPointsModel.PickupInStoreOnly)
                 {
-                    @if (Model.Warnings.Count == 0)
+                    @if (!Model.Warnings.Any())
                     {
                         <ul class="method-list">
                             @for (var i = 0; i < Model.ShippingMethods.Count; i++)
@@ -79,14 +68,14 @@
                     }
                 }
 
-                @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CheckoutShippingMethodBottom })
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutShippingMethodBottom, additionalData = Model })
             </form>
         </div>
         <div class="section order-summary">
             <div class="title">
                 <strong>@T("Checkout.OrderSummary")</strong>
             </div>
-            @await Component.InvokeAsync("OrderSummary")
+            @await Component.InvokeAsync(typeof(OrderSummaryViewComponent))
         </div>
     </div>
 </div>

@@ -28,7 +28,6 @@ using Nop.Services.Media.RoxyFileman;
 using Nop.Services.Plugins;
 using Nop.Web.Framework.Globalization;
 using Nop.Web.Framework.Mvc.Routing;
-using WebMarkupMin.AspNetCore5;
 using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Plugin.Misc.AbcCore.Domain;
 

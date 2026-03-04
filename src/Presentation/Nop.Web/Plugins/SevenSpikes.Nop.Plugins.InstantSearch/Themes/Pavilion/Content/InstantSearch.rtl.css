@@ -12,6 +12,14 @@
 .store-search-box select {
 	margin: 0 1px 0 5px;
 }
+.search-box-text .k-clear-value {
+	right: unset;
+	left: 13px;
+}
+.search-box-text.narrow .k-clear-value {
+	right: unset;
+	left: 8px;
+}
 .instantSearch {
 	right: 0 !important;
 	left: auto !important;

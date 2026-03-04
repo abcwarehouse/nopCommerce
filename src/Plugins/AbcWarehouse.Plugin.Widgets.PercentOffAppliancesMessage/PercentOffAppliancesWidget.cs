@@ -5,15 +5,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore.Infrastructure;
 
+
 namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessage
 {
     public class PercentOffAppliancesMessageWidget : BasePlugin, IWidgetPlugin
     {
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
+        public Type GetWidgetViewComponent(string widgetZone)
         {
-            return "PercentOffAppliancesMessage";
+            return typeof(AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.Components.PercentOffAppliancesMessageViewComponent);
         }
 
         public Task<IList<string>> GetWidgetZonesAsync()

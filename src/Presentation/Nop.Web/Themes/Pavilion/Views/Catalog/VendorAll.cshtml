@@ -1,14 +1,16 @@
 ﻿@model IList<VendorModel>
 
+@using Nop.Core.Domain.Vendors
+
 @inject IViewComponentSelector viewComponentSelector
 
 @{
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Vendors").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Vendors").Text);
     //page class
-    Html.AppendPageCssClassParts("html-vendor-list-page");
+    NopHtml.AppendPageCssClassParts("html-vendor-list-page");
 }
 
 <div class="page vendor-list-page">
@@ -23,12 +25,12 @@
                 {
                     <li class="item-box vendor-item">
                         <h2 class="title">
-                            <a href="@Url.RouteUrl("Vendor", new { SeName = item.SeName })" class="vendor">
+                            <a href="@(Url.RouteUrl<Vendor>(new { SeName = item.SeName }))" title="@item.PictureModel.Title" class="vendor">
                                 @item.Name
                             </a>
                         </h2>
                         <div class="picture">
-                            <a href="@Url.RouteUrl("Vendor", new { SeName = item.SeName })" title="@item.PictureModel.Title">
+                            <a href="@(Url.RouteUrl<Vendor>(new { SeName = item.SeName }))" title="@item.PictureModel.Title">
                                 @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                                 {
                                     @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 

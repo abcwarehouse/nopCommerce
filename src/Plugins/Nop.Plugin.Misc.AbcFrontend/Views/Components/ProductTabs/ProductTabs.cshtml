@@ -1,34 +1,53 @@
-﻿@* Modified to use our _ProductTabsWithoutAjax partial view *@
+﻿@* ABC: Modified to use our _ProductTabsWithoutAjax partial view *@
 
 @using Nop.Core;
-@using SevenSpikes.Nop.Plugins.NopQuickTabs.Models;
-@using SevenSpikes.Nop.Plugins.NopQuickTabs.Domain;
-@using SevenSpikes.Nop.Framework.Theme;
-@using SevenSpikes.Nop.Plugins.Core.Infrastructure.Constants;
+@using Nop.Services.Configuration;
+@* ABC: custom *@
+@using SevenSpikes.Nop.Plugins.NopQuickTabs.Models;                    @* TabUIModel *@
+@using SevenSpikes.Nop.Plugins.NopQuickTabs.Domain;                    @* TabSettings *@
+@using SevenSpikes.Nop.Framework.Theme;                                @* ThemeHelper *@
+@using SevenSpikes.Nop.Plugins.NopQuickTabs.Infrastructure.Constants;  @* Plugin *@
 
 @model TabUIModel
     
-@inject TabSettings settings;
-@inject IWorkContext workContext;
+@inject TabSettings settings
+@inject IWorkContext workContext
+@inject ISettingService settingService
+@inject IStoreContext storeContext
 
 @{
     var themeFolder = await ThemeHelper.GetPluginThemeAsync(Plugin.FolderName);
+    var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    var attachmentPluginEnabled = await settingService.GetSettingByKeyAsync("AttachmentsSettings.Enable", false, storeId, true);
+
+    if (attachmentPluginEnabled != false && settings.EnableProductAttachmentsTab && settings.EnableAjax)
+    {
+        var attachmentsThemeFolder = await ThemeHelper.GetPluginThemeAsync("SevenSpikes.Nop.Plugins.Attachments");
+        var attachmentsCssFilePath = "~/Plugins/SevenSpikes.Nop.Plugins.Attachments/Themes/" + attachmentsThemeFolder + "/Content/Attachments.css";
+
+        <link rel="stylesheet" href="~/Plugins/SevenSpikes.Nop.Plugins.Attachments/Styles/common.css" />
+        <link rel="stylesheet" href="@attachmentsCssFilePath" />
+    }
 
     if (Model.Tabs.Count == 0)
     {
         return;
     }
 
-    Html.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
+    //TODO 4.5: jquery-ui.min.js was AppendScriptParts. See if this is OK!
+    <script src="~/lib_npm/jquery-ui-dist/jquery-ui.min.js" asp-location="Footer"></script>
+    <script src="~/Plugins/SevenSpikes.Nop.Plugins.NopQuickTabs/Scripts/ProductTabs.min.js" asp-location="Footer"></script>
 
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.NopQuickTabs/Scripts/ProductTabs.min.js");
+    var quickTabsCssFilePath = $"~/Plugins/{Plugin.FolderName}/Themes/{themeFolder}/Content/QuickTabs.css";
 
-    Html.AddCssFileParts($"~/Plugins/{Plugin.FolderName}/Themes/{themeFolder}/Content/QuickTabs.css");
+    <link rel="stylesheet" href="@quickTabsCssFilePath" />
 
     var supportRtl = (await workContext.GetWorkingLanguageAsync()).Rtl;
     if (supportRtl)
     {
-        Html.AddCssFileParts($"~/Plugins/{Plugin.FolderName}/Themes/{themeFolder}/Content/QuickTabs.rtl.css");
+        var quickTabsRtlCssFilePath = $"~/Plugins/{Plugin.FolderName}/Themes/{themeFolder}/Content/QuickTabs.rtl.css";
+
+        <link rel="stylesheet" href="@quickTabsRtlCssFilePath" />
     }
 
     var additionalClass = "";
@@ -38,6 +57,8 @@
     }
 
     @* ABC: using custom *@
+    @* var productTabsPartialViewName = settings.EnableAjax ? Views.WithAjaxPartial : Views.WithoutAjaxPartial;
+    string productTabsPartialView = $"~/Plugins/{Plugin.FolderName}/Views/Components/ProductTabs/{productTabsPartialViewName}.cshtml"; *@
     string productTabsPartialView = $"~/Plugins/Misc.AbcFrontend/Views/Components/ProductTabs/_ProductTabsWithoutAjax.cshtml";
 
     <div id="quickTabs" class="productTabs @additionalClass"

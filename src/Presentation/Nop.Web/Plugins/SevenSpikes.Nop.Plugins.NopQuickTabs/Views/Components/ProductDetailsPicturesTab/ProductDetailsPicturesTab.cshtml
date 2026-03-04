@@ -9,6 +9,6 @@
     }
     else
     {        
-        @await Html.PartialAsync("_ProductDetailsPictures", Model)
+        await Html.RenderPartialAsync("_ProductDetailsPictures", Model);
     }
 }

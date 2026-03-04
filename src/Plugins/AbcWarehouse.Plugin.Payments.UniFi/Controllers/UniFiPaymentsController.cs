@@ -51,7 +51,7 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         public ActionResult Configure()
         {
@@ -61,7 +61,7 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Controllers
         }
 
         [AuthorizeAdmin]
-        [Area(AreaNames.Admin)]
+        [Area(AreaNames.ADMIN)]
         [AutoValidateAntiforgeryToken]
         [HttpPost]
         public async Task<ActionResult> Configure(ConfigModel model)

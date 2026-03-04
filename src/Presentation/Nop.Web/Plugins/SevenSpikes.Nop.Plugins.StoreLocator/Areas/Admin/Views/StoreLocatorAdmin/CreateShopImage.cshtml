@@ -5,7 +5,7 @@
 
     if (ViewBag.RefreshPage == true || ViewBag.isTrialVersion == true)
     {
-        <script type="text/javascript">
+        <script asp-location="Footer" type="text/javascript">
             try {
                 var gridElement = window.opener.document.getElementById("@ViewBag.btnId");
                 $(gridElement).click();
@@ -32,5 +32,5 @@
     </div>
     <input type="hidden" name="refreshButtonId" value="btnRefreshImgs" />
 
-    @await Html.PartialAsync(AdminViews.ShopImageCreateOrUpdate, Model)
+    @{ await Html.RenderPartialAsync(AdminViews.ShopImageCreateOrUpdate, Model); } 
 </form>
