@@ -104,7 +104,9 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
         )
         {
             var model = await base.PrepareProductOverviewPriceModelAsync(product, forceRedirectionAfterAddingToCart);
-            model.Price = await AdjustMattressPriceAsync(product.Id) ?? model.Price;
+            var prices = await AdjustMattressPriceAsync(product.Id);
+            model.Price = prices.price ?? model.Price;
+            model.OldPrice = prices.oldPrice ?? model.OldPrice; 
 
             return model;
         }
@@ -113,7 +115,9 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             PrepareProductPriceModelAsync(Product product)
         {
             var model = await base.PrepareProductPriceModelAsync(product);
-            model.Price = await AdjustMattressPriceAsync(product.Id) ?? model.Price;
+            var prices = await AdjustMattressPriceAsync(product.Id);
+            model.Price = prices.price ?? model.Price;
+            model.OldPrice = prices.oldPrice ?? model.OldPrice;
 
             return model;
         }
@@ -166,17 +170,19 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
             return filteredModels;
         }
 
-        private async Task<string> AdjustMattressPriceAsync(int productId)
+        private async Task<(string price, string oldPrice)> AdjustMattressPriceAsync(int productId)
         {
             var mattressPrice = await _abcMattressListingPriceService.GetListingPriceForMattressProductAsync(
                 productId
             );
             if (mattressPrice.HasValue)
             {
-                return (await _priceFormatter.FormatPriceAsync(mattressPrice.Value.Price)).Replace(".00", "");
+                var price = (await _priceFormatter.FormatPriceAsync(mattressPrice.Value.Price)).Replace(".00", "");
+                var oldPrice = (await _priceFormatter.FormatPriceAsync(mattressPrice.Value.OldPrice)).Replace(".00", "");
+                return (price, oldPrice);
             }
 
-            return null;
+            return (null, null);
         }
     }
 }
