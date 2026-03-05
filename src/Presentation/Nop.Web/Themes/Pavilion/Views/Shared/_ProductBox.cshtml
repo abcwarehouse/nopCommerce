@@ -261,7 +261,7 @@
     }
     <div class="picture">
         <div class="image-container">
-            <a href="@Url.RouteUrl("Product", new { SeName = Model.SeName })" title="@Model.DefaultPictureModel.Title">
+            <a href="@productUrl" title="@Model.DefaultPictureModel.Title">
                 @if (disableLazyLoad)
                 {
                     <img src="@Model.DefaultPictureModel.ImageUrl" alt="@Model.DefaultPictureModel.AlternateText" title="@Model.DefaultPictureModel.Title" />
