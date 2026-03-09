@@ -29,21 +29,23 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
 
         public async Task<(decimal Price, decimal OldPrice)?> GetListingPriceForMattressProductAsync(int productId)
         {
-            // only need to do this if we're on the 'shop by size' categories
-            // but we're opening this up to be called anywhere
-            // including the JSON schema for google crawler
             var url = _webHelper.GetThisPageUrl(true);
-            if (!IsSizeCategoryPage(url)) { return null; }
+            var size = GetMattressSizeFromUrl(url);
+            var mattressBase = GetBaseFromMattressSize(size);
 
             var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
             ProductAttributeMapping mattressSizePam = null;
+            ProductAttributeMapping mattressBasePam = null;
             foreach (var pam in pams)
             {
                 var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
                 if (productAttribute?.Name == AbcMattressesConsts.MattressSizeName)
                 {
                     mattressSizePam = pam;
-                    break;
+                }
+                else if (productAttribute?.Name == mattressBase)
+                {
+                    mattressBasePam = pam;
                 }
             }
 
@@ -52,34 +54,50 @@ namespace Nop.Plugin.Misc.AbcCore.Mattresses
                 return null;
             }
 
-            var value = (await _productAttributeService.GetProductAttributeValuesAsync(
+            var mattressSizeValue = (await _productAttributeService.GetProductAttributeValuesAsync(
                 mattressSizePam.Id
-            )).Where(pav => pav.Name == GetMattressSizeFromUrl(url))
+            )).Where(pav => pav.Name == size)
              .FirstOrDefault();
-            if (value == null) // no matching sizes, check for default (queen)
+
+            if (mattressSizeValue == null) // no matching sizes, check for default (queen)
             {
-                value = (await _productAttributeService.GetProductAttributeValuesAsync(
+                mattressSizeValue = (await _productAttributeService.GetProductAttributeValuesAsync(
                     mattressSizePam.Id
                 )).Where(pav => pav.Name == AbcMattressesConsts.Queen)
                 .FirstOrDefault();
             }
 
+            var mattressBaseValue = mattressBasePam == null ? null :
+                (await _productAttributeService.GetProductAttributeValuesAsync(
+                    mattressBasePam.Id
+                )).OrderBy(pav => pav.DisplayOrder).FirstOrDefault();
+            var mattressBasePriceAdjustment = mattressBaseValue?.PriceAdjustment ?? 0;
+
             var product = await _productService.GetProductByIdAsync(productId);
 
-            return value == null ? null :
-                                    (Math.Round(product.Price + value.PriceAdjustment, 2),
-                                     value.Cost); // using ProductAttributeValue Cost for OldPrice
+            return mattressSizeValue == null ?
+                null :
+                (Math.Round(product.Price + mattressSizeValue.PriceAdjustment + mattressBasePriceAdjustment, 2),
+                mattressSizeValue.Cost + mattressBasePriceAdjustment); // using ProductAttributeValue Cost for OldPrice
         }
 
-        private bool IsSizeCategoryPage(string url)
+        private string GetBaseFromMattressSize(string size)
         {
-            return url.Contains("twin-mattress") ||
-                   url.Contains("twinxl-mattress") ||
-                   url.Contains("twin-extra-long-mattress") ||
-                   url.Contains("full-mattress") ||
-                   url.Contains("queen-mattress") ||
-                   url.Contains("king-mattress") ||
-                   url.Contains("california-king-mattress");
+            switch (size)
+            {
+                case AbcMattressesConsts.CaliforniaKing:
+                    return AbcMattressesConsts.BaseNameCaliforniaKing;
+                case AbcMattressesConsts.King:
+                    return AbcMattressesConsts.BaseNameKing;
+                case AbcMattressesConsts.Full:
+                    return AbcMattressesConsts.BaseNameFull;
+                case AbcMattressesConsts.TwinXL:
+                    return AbcMattressesConsts.BaseNameTwinXL;
+                case AbcMattressesConsts.Twin:
+                    return AbcMattressesConsts.BaseNameTwin;
+                default:
+                    return AbcMattressesConsts.BaseNameQueen;
+            }
         }
 
         // default to queen if nothing matches

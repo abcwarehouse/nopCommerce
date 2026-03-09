@@ -303,7 +303,7 @@
             @{
                 var picture = Model.PictureModels.FirstOrDefault();
                 var hoverPicture = Model.PictureModels.ElementAtOrDefault(1);
-                <a href="@(Url.RouteUrl<Product>(new { SeName = Model.SeName }))" title="@picture?.Title">
+                <a href="@productUrl" title="@picture?.Title">
                     @if (disableLazyLoad)
                     {
                         <img src="@picture.ImageUrl" alt="@picture.AlternateText" title="@picture.Title" />
