@@ -6,13 +6,14 @@
 
 @inject FrontEndService frontEndService;
 @inject IStoreContext storeContext;
+@inject INopHtmlHelper NopHtml;
 
 @{
     Layout = "";
 
-    Html.AddScriptParts("~/Plugins/Widgets.AbcPickupInStore/Scripts/jquery.unobtrusive-ajax.js");
-    Html.AddCssFileParts("~/Plugins/Widgets.AbcPickupInStore/styles/loading.css");
-    Html.AddCssFileParts("~/Plugins/Widgets.AbcPickupInStore/styles/SelectStoreForPickup.css");
+    NopHtml.AddScriptParts("~/Plugins/Widgets.AbcPickupInStore/Scripts/jquery.unobtrusive-ajax.js");
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.AbcPickupInStore/styles/loading.css");
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.AbcPickupInStore/styles/SelectStoreForPickup.css");
 
     var currentStore = await storeContext.GetCurrentStoreAsync();
     bool isHawthorne = frontEndService.StoreIsHawthorne(currentStore);

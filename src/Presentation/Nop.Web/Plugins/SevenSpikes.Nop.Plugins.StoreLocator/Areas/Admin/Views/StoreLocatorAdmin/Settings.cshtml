@@ -2,10 +2,10 @@
 @{
     Layout = AdminViewLocations.AdminLayoutViewPath;
 
-    Html.SetActiveMenuItemSystemName("SevenSpikes.StoreLocator.Admin.Submenus.Settings");
+    NopHtml.SetActiveMenuItemSystemName("SevenSpikes.StoreLocator.Admin.Submenus.Settings");
 }
 
-<script type="text/javascript">
+<script asp-location="Footer" type="text/javascript">
     $(document).ready(function () {
         var manuallySetBounds = "#@Html.IdFor(model => model.ManuallySetMapBounds)";
         var manuallySetBoundsClass = ".manually-set-bounds";
@@ -46,17 +46,17 @@
             @await Component.InvokeAsync("StoreScopeConfiguration")
             <nop-tabs id="storelocator-settings-edit">
                 <nop-tab asp-name="tab-general" asp-default="true" asp-title="@T("SevenSpikes.StoreLocator.Admin.Settings.General")">
-                    @await Html.PartialAsync("Settings.General", Model)
+                    @{ await Html.RenderPartialAsync("Settings.General", Model); }
                 </nop-tab>
                 <nop-tab asp-name="tab-seo" asp-title="@T("SevenSpikes.StoreLocator.Admin.Settings.AllShopsSEO")">
-                    @await Html.PartialAsync("Settings.Seo", Model)
+                    @{ await Html.RenderPartialAsync("Settings.Seo", Model); }
                 </nop-tab>
             </nop-tabs>
         </div>
     </section>
 </form>
 
-<script type="text/javascript">
+<script asp-location="Footer" type="text/javascript">
     function enableCustomOverlay(overrideSelector, parentOfOverlaySelector) {
         var parent = $(parentOfOverlaySelector);
 

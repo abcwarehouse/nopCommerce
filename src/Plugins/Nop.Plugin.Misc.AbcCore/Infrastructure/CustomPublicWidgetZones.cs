@@ -52,7 +52,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string CategoryDetailsBottomMin768px => CategoryDetailsBottom + Min768px;
         public static string CategoryDetailsBottomAbove1000px => CategoryDetailsBottom + Above1000px;
 
-
+        public static string CategoryBottom => "CategoryBottom";
 
         public static string Cart => "cart";
 
@@ -92,5 +92,9 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public static string ProductDetailsDescriptionTabTop => "productdetails_description_tab_top";
 
         public static string PromoProductsBelowBanner => "promo_products_below_banner";
+
+        public static string HawthorneVideo => "hawthorne_video";
+        public static string HawthorneHome => "hawthorne_home";
+        public static string HawthorneHours => "hawthorne_hours";
     }
 }

@@ -53,7 +53,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.PageNotFound
             try
             {
                 var pageNotFoundRecords = await _pageNotFoundRecordService.GetAllPageNotFoundRecordsAsync();
-                var bytes = await _exportManager.ExportPageNotFoundRecordsToXlsxAsync(pageNotFoundRecords);
+                var bytes = await _exportManager.ExportPageNotFoundRecordsToXlsxAsync(pageNotFoundRecords.ToList());
 
                 return File(bytes, MimeTypes.TextXlsx, "page-not-found-records.xlsx");
             }

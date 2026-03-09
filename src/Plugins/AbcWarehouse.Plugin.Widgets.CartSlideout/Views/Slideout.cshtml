@@ -2,12 +2,13 @@
     Starting point comes from https://www.w3schools.com/howto/howto_js_sidenav.asp
 *@
 
-@{
-    Html.AddCssFileParts("~/Plugins/Widgets.CartSlideout/styles/cart-slideout.css");
+@inject INopHtmlHelper NopHtml
 
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Widgets.CartSlideout/scripts/cart-slideout.js");
+@{
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.CartSlideout/styles/cart-slideout.css");
 }
 
+<script asp-exclude-from-bundle="true" src="~/Plugins/Widgets.CartSlideout/scripts/cart-slideout.js" asp-location="Footer"></script>
 <div class="cart-slideout-overlay"></div>
 <div class="cart-slideout">
   <div class="cart-slideout__header">

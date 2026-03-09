@@ -130,6 +130,13 @@
                             new ColumnProperty(nameof(OverridedProductModel.ProductName))
                             {
                                 Title = T("SevenSpikes.Conditions.Admin.ProductOverrides.ProductName").Text
+                            },
+                            new ColumnProperty(nameof(OverridedProductModel.Published))
+                            {
+                                Title = T("SevenSpikes.Conditions.Admin.ProductOverrides.Published").Text,
+                                Width = "100",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
                             }
                         }
                     })
@@ -150,7 +157,7 @@
 
     function renderSelectedCheckBox(data, type, row, meta) {
 
-        var checked = row.CustomProperties.Selected ? 'checked' : '';
+        var checked = row.Selected ? 'checked' : '';
 
         return '<input type="checkbox" id="SelectedProductIds" name="SelectedProductIds" value="' + row.ProductId + '" class="checkboxGroups" ' + checked + '>';
     }

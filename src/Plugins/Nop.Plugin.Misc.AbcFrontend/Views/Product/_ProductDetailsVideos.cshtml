@@ -1,0 +1,101 @@
+@using Nop.Web.Components
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Web.Models.Catalog
+
+@model ProductDetailsModel
+
+<link rel="stylesheet" href="~/lib_npm/magnific-popup/magnific-popup.css" />
+<script asp-exclude-from-bundle="true" src="~/lib_npm/magnific-popup/jquery.magnific-popup.min.js" asp-location="Footer"></script>
+
+@if (Model.VideoModels.Any())
+{
+    <div class="video-gallery">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsBeforeVideos, additionalData = Model })
+        <div class="video-thumbs">
+            @foreach (var video in Model.VideoModels)
+            {
+                <a class="thumb-item" href="#video-popup-@Model.Id" data-video-url="@video.VideoUrl" data-video-allow="@video.Allow">
+                    @if (!string.IsNullOrWhiteSpace(video.ThumbnailUrl))
+                    {
+                        <img class="thumb-image" src="@video.ThumbnailUrl" alt="@Model.Name" loading="lazy" />
+                    }
+                    <span class="thumb-icon" aria-hidden="true">▶</span>
+                </a>
+            }
+        </div>
+        <div id="video-popup-@Model.Id" class="video-popup mfp-hide">
+            <iframe id="video-popup-frame-@Model.Id" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <script asp-location="Footer">
+            $(function() {
+                $('.video-thumbs').magnificPopup({
+                    type: 'inline',
+                    delegate: 'a.thumb-item',
+                    removalDelay: 300,
+                    preloader: false,
+                    callbacks: {
+                        open: function() {
+                            var $trigger = $(this.currItem.el);
+                            var videoUrl = $trigger.data('video-url');
+                            var videoAllow = $trigger.data('video-allow') || 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                            var popupFrameSelector = '#video-popup-frame-@Model.Id';
+                            var src = videoUrl + (videoUrl.indexOf('?') >= 0 ? '&' : '?') + 'autoplay=1';
+
+                            $(popupFrameSelector).attr('src', src);
+                            $(popupFrameSelector).attr('allow', videoAllow);
+                        },
+                        close: function() {
+                            $('#video-popup-frame-@Model.Id').attr('src', '');
+                        }
+                    },
+                    tClose: '@T("Media.MagnificPopup.Close")',
+                    tLoading: '@T("Media.MagnificPopup.Loading")'
+                });
+            });
+        </script>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAfterVideos, additionalData = Model })
+    </div>
+}
+
+<style>
+    .video-thumbs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .video-thumbs .thumb-item {
+        position: relative;
+        width: 56px;
+        height: 56px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 1px solid;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .video-thumbs .thumb-item .thumb-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .video-thumbs .thumb-item .thumb-icon {
+        position: absolute;
+        font-size: 24px;
+        line-height: 1;
+    }
+
+    .video-popup {
+        max-width: 960px;
+        margin: 0 auto;
+    }
+
+    .video-popup iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+    }
+</style>

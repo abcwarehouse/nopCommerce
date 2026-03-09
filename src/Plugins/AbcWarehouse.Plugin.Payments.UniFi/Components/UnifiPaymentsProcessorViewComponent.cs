@@ -38,6 +38,7 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
         private readonly IStoreContext _storeContext;
         private readonly ITermLookupService _termLookupService;
         private readonly IWorkContext _workContext;
+        private readonly ILogger _logger;
         private readonly UniFiPaymentsSettings _uniFiPaymentsSettings;
         private readonly UniFiSettings _uniFiSettings;
 
@@ -50,6 +51,7 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
             IStoreContext storeContext,
             ITermLookupService termLookupService,
             IWorkContext workContext,
+            ILogger logger,
             UniFiPaymentsSettings uniFiPaymentsSettings,
             UniFiSettings uniFiSettings)
         {
@@ -61,6 +63,7 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
             _storeContext = storeContext;
             _termLookupService = termLookupService;
             _workContext = workContext;
+            _logger = logger;
             _uniFiPaymentsSettings = uniFiPaymentsSettings;
             _uniFiSettings = uniFiSettings;
         }
@@ -119,6 +122,13 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
+                var errorResponseContent = await response.Content.ReadAsStringAsync();
+                await _logger.ErrorAsync(
+                    $"Payments.UniFi: Failure to retrieve transaction token. " +
+                    $"Endpoint: {transactionTokenEndpoint}. " +
+                    $"StatusCode: {(int)response.StatusCode} ({response.StatusCode}). " +
+                    $"Reason: {response.ReasonPhrase}. " +
+                    $"Response: {errorResponseContent}");
                 throw new NopException("Payments.UniFi: Failure to retrieve transaction token.");
             }
 
@@ -146,6 +156,13 @@ namespace AbcWarehouse.Plugin.Payments.UniFi.Components
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
+                var errorResponseContent = await response.Content.ReadAsStringAsync();
+                await _logger.ErrorAsync(
+                    $"Payments.UniFi: Failure to retrieve bearer token. " +
+                    $"Endpoint: {oauth2Endpoint}. " +
+                    $"StatusCode: {(int)response.StatusCode} ({response.StatusCode}). " +
+                    $"Reason: {response.ReasonPhrase}. " +
+                    $"Response: {errorResponseContent}");
                 throw new NopException("Payments.UniFi: Failure to retrieve bearer token.");
             }
 

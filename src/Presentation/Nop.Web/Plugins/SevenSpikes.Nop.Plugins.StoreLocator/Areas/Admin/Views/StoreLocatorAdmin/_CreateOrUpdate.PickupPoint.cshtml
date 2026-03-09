@@ -2,7 +2,7 @@
 
 <input type="hidden" asp-for="@Model.ShopPickupPoint.AddressId" />
 
-<script type="text/javascript">
+<script asp-location="Footer" type="text/javascript">
     $(document).ready(function() {
         $("#@Html.IdFor(model => model.ShopPickupPoint.Address.CountryId)").change(function(){
             var selectedItem = $(this).val();

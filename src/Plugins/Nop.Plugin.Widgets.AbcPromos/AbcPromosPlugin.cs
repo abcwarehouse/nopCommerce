@@ -1,3 +1,4 @@
+using System;
 using Nop.Services.Cms;
 using Nop.Services.Plugins;
 using System.Collections.Generic;
@@ -5,8 +6,8 @@ using Nop.Web.Framework.Infrastructure;
 using Nop.Core;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
-using Nop.Core.Domain.Tasks;
-using Nop.Services.Tasks;
+using Nop.Core.Domain.ScheduleTasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Plugin.Widgets.AbcPromos.Tasks;
 using Nop.Plugin.Misc.AbcCore.Infrastructure;
 using Task = System.Threading.Tasks.Task;
@@ -39,10 +40,7 @@ namespace Nop.Plugin.Widgets.AbcPromos
 
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "WidgetsAbcPromos";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Components.WidgetsAbcPromosViewComponent);
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
         {
@@ -62,7 +60,7 @@ namespace Nop.Plugin.Widgets.AbcPromos
         public override async Task UpdateAsync(string currentVersion, string targetVersion)
         {
             await AddTaskAsync();
-            AddLocales();
+            await AddLocalesAsync();
 
             await base.UpdateAsync(currentVersion, targetVersion);
         }
@@ -71,7 +69,7 @@ namespace Nop.Plugin.Widgets.AbcPromos
         {
             await RemoveTaskAsync();
             await AddTaskAsync();
-            AddLocales();
+            await AddLocalesAsync();
 
             await base.InstallAsync();
         }
@@ -85,9 +83,9 @@ namespace Nop.Plugin.Widgets.AbcPromos
             await base.UninstallAsync();
         }
 
-        private void AddLocales()
+        private async Task AddLocalesAsync()
         {
-            _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 [AbcPromosLocales.IncludeExpiredPromosOnRebatesPromosPage]
                     = "Include Expired Promos on Rebates/Promos Page",

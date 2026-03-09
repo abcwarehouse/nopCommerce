@@ -45,6 +45,7 @@ namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Controllers
         }
 
         //available even when a store is closed
+        // reference NewsletterController.cs
         [CheckAccessClosedStore(true)]
         [HttpPost]
         [IgnoreAntiforgeryToken]
@@ -60,18 +61,16 @@ namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Controllers
             else
             {
                 email = email.Trim();
-
-                var subscription = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(email, (await _storeContext.GetCurrentStoreAsync()).Id);
+                var store = await _storeContext.GetCurrentStoreAsync();
+                var subscription = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(email, store.Id);
+                var currentLanguage = await _workContext.GetWorkingLanguageAsync();
                 if (subscription != null)
                 {
                     if (subscribe)
                     {
                         if (!subscription.Active)
                         {
-                            await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(
-                                subscription,
-                                (await _workContext.GetWorkingLanguageAsync()).Id
-                            );
+                            await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(subscription);
                         }
                         result = await _localizationService.GetResourceAsync("Newsletter.SubscribeEmailSent");
                     }
@@ -79,10 +78,7 @@ namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Controllers
                     {
                         if (subscription.Active)
                         {
-                            await _workflowMessageService.SendNewsLetterSubscriptionDeactivationMessageAsync(
-                                subscription,
-                                (await _workContext.GetWorkingLanguageAsync()).Id
-                            );
+                            await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(subscription);
                         }
                         result = await _localizationService.GetResourceAsync("Newsletter.UnsubscribeEmailSent");
                     }
@@ -115,7 +111,7 @@ namespace Nop.Plugin.Misc.FreshAddressNewsletterIntegration.Controllers
                         CreatedOnUtc = DateTime.UtcNow
                     };
                     await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(subscription);
-                    await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(subscription, (_workContext.GetWorkingLanguageAsync()).Id);
+                    await _workflowMessageService.SendNewsLetterSubscriptionActivationMessageAsync(subscription);
 
                     result = await _localizationService.GetResourceAsync("Newsletter.SubscribeEmailSent");
                 }

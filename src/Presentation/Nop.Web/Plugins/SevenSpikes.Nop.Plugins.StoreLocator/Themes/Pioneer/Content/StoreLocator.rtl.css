@@ -1,0 +1,45 @@
+﻿
+.radiusFilterWrapper .units {
+	margin-right: -30px;
+	margin-left: unset;
+	right: -10px;
+	left: unset;
+}
+.shops-item .distance-line {
+	margin: 0 0 15px 10px;
+}
+.shops-item .read-more:after {
+    content: "\e90b";
+    font-size: 12px;
+}
+.shop-full-description ul,
+.shop-full-description ol {
+	padding: 0 36px 0 0;
+}
+
+@media all and (min-width: 768px) {
+
+	.directions-wrapper {
+		float: right;
+	}
+	.directions-panel {
+		padding: 0 0 0 10px;
+	}
+	.map-wrapper.directions-shown {
+		float: left;
+	}
+	.current-location-wrap {
+		text-align: left;
+	}
+	.shop-page .map-controls {
+		text-align: left;
+	}
+}
+
+@media all and (min-width: 1025px) {
+
+	.radiusFilterWrapper {
+		margin-right: auto;
+		margin-left: unset
+	}
+}

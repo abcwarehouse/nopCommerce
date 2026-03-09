@@ -221,7 +221,7 @@
 	clear: none; /*revert the second item*/
 	margin-left: 2%; /*revert the second item*/
 }
-.item-box:nth-child(4n+1) {
+.item-box:nth-child(3n+1) {
 	clear: both;
 	margin-left: 0;
 }
@@ -330,7 +330,7 @@
 }
 .gallery .thumb-item {
 	width: 18%;
-	margin: 0 1% 10px;
+	margin: 5px 1%;
 }
 .overview {
 	float: right;
@@ -343,6 +343,9 @@
 }
 .product-review-box {
 	margin: 3px 12px 0 0;
+}
+.product-review-links {
+	margin-top: 0;
 }
 
 .overview .prices > div,
@@ -510,9 +513,6 @@ div.rental-price {
 
 /* REVIEW PAGE */
 
-.product-reviews-page .page-body {
-	text-align: left;
-}
 .ui-tabs .product-review-item {
 	padding: 30px;
 }
@@ -545,11 +545,6 @@ div.rental-price {
 }
 
 /* WISHLIST & COMPARE LIST */
-
-.compare-products-table-mobile img {
-    max-width: 150px;
-}
-
 /* TOPICS */
 
 .topic-password {
@@ -612,6 +607,10 @@ div.rental-price {
 }
 .account-page .add-button {
 	clear: both;
+}
+.account-page .instruction:not(ul),
+.configure-provider .inputs {
+	padding: 30px 60px;
 }
 
 /* SHOPPING CART & CHECKOUT */
@@ -896,107 +895,4 @@ div.rental-price {
 	padding: 0 30px;
 }
 
-}
-
-.hover-image img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	opacity: 0 !important;
-	transition: opacity 1s ease;
-  }
-
-.image-container:hover .hover-image img {
-opacity: 1 !important;
-}
-
-.image-container:hover a > img {
-	visibility: hidden;
-	opacity: 0 !important;
-	transition: opacity 1s ease;
-}
-
-.hover-image img {
-	opacity: 0 !important;
-}
-.header-links {
-	left: -20px !important;
-  }
-
-  .storeId3 .header-links {
-	left: -10px !important;
-  }
-
-  .storeId8 .header-links {
-    margin-left: -6px;
-	top: 22px;
-}
-
-
-  body .header-menu .first li>a {
-	padding: 5px 5px;
-	padding-bottom: 10px;
-}
-
-input.button-1.search-box-button {
-    z-index: 1;
-}
-.elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
-    margin-left: 20px;
-	margin-top: 8px;
-}
-
-body .header-menu>ul>li>a>span {
-	font-size: 13px;
-}
-body .header-menu .mobile-sidebar-category.first li>a>span {
-    line-height: 100px;
-}
-body .header-menu .mobile-sidebar-category.second {
-    margin-top: 55px !important;
-}
-.header-menu-parent ul.mega-menu {
-    text-align: right;
-}
-.listbox a.product-name {
-    word-break: break-word;
-}
-.water-heater-link {
-	display: none;
-}
-.appliances-list .water-heater-link {
-	display: block !important;
-}
-body a {
-	text-decoration: none;
-	color: initial;
-}
-body ul {
-	padding-left: 0px;
-}
-
-@media screen and (max-width: 1024px) {
-	div#mobile-header-logo {
-		position: absolute;
-		top: 10px;
-		left: 0;
-	}
-	.header {
-		margin-bottom: 0px;
-	}
-	.header-middle {
-		background: #fff;
-		width: 100%;
-		text-align: center;
-	}
-	.elfsight-app-0939552e-738a-40b7-99ae-c6b3a185dada {
-		margin-left: auto;
-		margin-right: auto;
-		padding-bottom: 15px;
-	}
-}
-@media screen and (max-width: 1024px) {
-	.storeId8 .hours-desktop {
-		padding-top: 3px;
-	}
 }

@@ -6,7 +6,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Catalog.Products").Text;
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("Products");
+    NopHtml.SetActiveMenuItemSystemName("Products");
 }
 
 @{
@@ -14,6 +14,8 @@
     var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
 }
 
+@if (Model.LicenseCheckModel.BlockPages != true)
+{
     <form asp-controller="Product" asp-action="List" method="post">
         <div class="content-header clearfix">
             <h1 class="float-left">
@@ -21,8 +23,12 @@
             </h1>
             <div class="float-right">
                 <a asp-action="Create" class="btn btn-primary">
-                    <i class="fas fa-plus-square"></i>
+                    <i class="fas fa-square-plus"></i>
                     @T("Admin.Common.AddNew")
+                </a>
+                <a asp-action="BulkEdit" class="btn btn-info">
+                    <i class="fas fa-pen"></i>
+                    @T("Admin.Catalog.Products.BulkEdit")
                 </a>
                 <button asp-action="DownloadCatalogPDF" type="submit" name="download-catalog-pdf" class="btn bg-purple">
                     <i class="far fa-file-pdf"></i>
@@ -76,11 +82,11 @@
                     </button>
                 }
                 <button type="button" id="delete-selected" class="btn btn-danger">
-                    <i class="far fa-trash-alt"></i>
+                    <i class="far fa-trash-can"></i>
                     @T("Admin.Common.Delete.Selected")
                 </button>
                 <nop-action-confirmation asp-button-id="delete-selected" />
-                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.ProductListButtons })
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.ProductListButtons, additionalData = Model })
             </div>
         </div>
 
@@ -92,7 +98,7 @@
                         <div class="card-body">
                             <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
                                 <div class="search-text">@T("Admin.Common.Search")</div>
-                                <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                                <div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
                                 <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
                             </div>
 
@@ -193,7 +199,7 @@
                                 <div class="row">
                                     <div class="text-center col-12">
                                         <button type="button" id="search-products" class="btn btn-primary btn-search">
-                                            <i class="fas fa-search"></i>
+                                            <i class="fas fa-magnifying-glass"></i>
                                             @T("Admin.Common.Search")
                                         </button>
                                     </div>
@@ -238,7 +244,7 @@
                                       {
                                           Title = T("Admin.Catalog.Products.Fields.PictureThumbnailUrl").Text,
                                           Width = "100",
-                                          Render = new RenderPicture()
+                                          Render = new RenderPicture(width: 100)
                                       },
                                       new ColumnProperty(nameof(ProductModel.Name))
                                       {
@@ -249,10 +255,9 @@
                                           Title = T("Admin.Catalog.Products.Fields.Sku").Text,
                                           Width = "100"
                                       },
-                                      new ColumnProperty(nameof(ProductModel.Price))
+                                      new ColumnProperty(nameof(ProductModel.FormattedPrice))
                                       {
-                                          Title = T("Admin.Catalog.Products.Fields.Price").Text,
-                                          Render = new RenderCustom("renderColumnPrice")
+                                          Title = T("Admin.Catalog.Products.Fields.Price").Text
                                       },
                                       new ColumnProperty(nameof(ProductModel.StockQuantityStr))
                                       {
@@ -270,17 +275,14 @@
                                           Title = T("Admin.Common.Edit").Text,
                                           Width = "80",
                                           ClassName =  NopColumnClassDefaults.Button,
-                                          Render = new RenderButtonEdit(new DataUrl("Edit"))
+                                          Render = new RenderButtonEdit(new DataUrl("~/Admin/Product/Edit"))
                                       }
                                   }
                          })
 
-                              <script>
-                            function renderColumnPrice(data, type, row, meta) {
-                                return (row.ProductTypeId != @((int)ProductType.GroupedProduct) ) ? data : null;
-                            }
+                              <script>                           
 
-                            $(document).ready(function () {
+                            $(function() {
                                 $('#delete-selected-action-confirmation-submit-button').bind('click', function () {
                                     var postData = {
                                         selectedIds: selectedIds
@@ -292,10 +294,14 @@
                                         url: "@(Url.Action("DeleteSelected", "Product"))",
                                         data: postData,
                                         error: function (jqXHR, textStatus, errorThrown) {
-                                            $('#deleteSelectedFailed-info').text(errorThrown);
-                                            $('#deleteSelectedFailed').click();
+                                            showAlert('deleteSelectedFailed', errorThrown);
                                         },
                                         complete: function (jqXHR, textStatus) {
+                                            if (jqXHR.status === 204)
+                                            {
+                                                showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                                return;
+                                            }
                                             updateTable('#products-grid');
                                         }
                                     });
@@ -306,6 +312,7 @@
 
                               </script>
                               <nop-alert asp-alert-id="deleteSelectedFailed" />
+                              <nop-alert asp-alert-id="nothingSelectedAlert" />
                           </div>
                       </div>
                 </div>
@@ -313,16 +320,57 @@
         </div>
       </section>
     <script>
-        $(document).ready(function () {
+        $(function() {
             $("#@Html.IdFor(model => model.GoDirectlyToSku)").keydown(function (event) {
                 if (event.keyCode === 13) {
-                    $("#go-to-product-by-sku").click();
+                    $("#go-to-product-by-sku").trigger("click");
                     return false;
                 }
             });
         });
     </script>
 </form>
+}
+
+<script>
+    $(function() {
+        var displayModal = @((Model.LicenseCheckModel?.DisplayWarning == true || Model.LicenseCheckModel?.BlockPages == true).ToString().ToLower());
+        if (displayModal) {
+            $('#license-window').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $('#license-window').on('shown.bs.modal', function (event) {
+                var modalCloseEl = $(this).find('button.close');
+                var closeTextEl = $('span', modalCloseEl);
+
+                var startFrom = 5;
+                closeTextEl.text(startFrom);
+
+                const timer = setInterval(function() {
+                    if (startFrom-- > 0)
+                        closeTextEl.text(startFrom);
+                }, 1000);
+
+                setTimeout(function() {
+                    closeTextEl.html('&times;');
+                    modalCloseEl.on('click', function() {
+                        $('#license-window').modal('hide')
+                    });
+                    clearInterval(timer);
+                }, startFrom*1000);
+            });
+        }
+    });
+</script>
+<div id="license-window" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @Html.Raw(Model.LicenseCheckModel?.WarningText)
+        </div>
+    </div>
+</div>
 
     @*import products form*@
     <div id="importexcel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
@@ -373,13 +421,13 @@
     </form>
 
 <script>
-    $(document).ready(function () {
+    $(function() {
         $('#exportxml-selected').click(function (e) {
             e.preventDefault();
             var ids = selectedIds.join(",");
             if (!ids) {
                 $('#exportXmlSelected-info').text("@T("Admin.Products.NoProducts")");
-                $("#exportXmlSelected").click();
+                $("#exportXmlSelected").trigger("click");
             }
             else {
                 $('#export-xml-selected-form #selectedIds').val(ids);
@@ -398,13 +446,13 @@
     </form>
 
     <script>
-        $(document).ready(function () {
+        $(function() {
             $('#exportexcel-selected').click(function (e) {
                 e.preventDefault();
                 var ids = selectedIds.join(",");
-                 if (!ids) {
+                if (!ids) {
                     $('#exportExcelSelected-info').text("@T("Admin.Products.NoProducts")");
-                    $("#exportExcelSelected").click();
+                    $("#exportExcelSelected").trigger("click");
                 }
                 else {
                     $('#export-excel-selected-form #selectedIds').val(ids);
@@ -415,4 +463,4 @@
             });
         });
     </script>
-	<nop-alert asp-alert-id="exportExcelSelected" />
+<nop-alert asp-alert-id="exportExcelSelected" />
