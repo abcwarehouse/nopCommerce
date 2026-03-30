@@ -109,7 +109,7 @@ namespace Nop.Plugin.Widgets.AbcPromos.Components
                     {
                         AltText = promo.Name,
                         BannerImageUrl = bannerImage,
-                        PromoFormPopup = promo.GetPopupCommand()
+                        PromoFormPopup = promo.GetPdfPath()
                     };
                     banners.Add(bannerModel);
                 }

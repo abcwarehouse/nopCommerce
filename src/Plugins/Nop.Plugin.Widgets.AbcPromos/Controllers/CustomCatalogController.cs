@@ -154,7 +154,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
                             promo.Description,
                 Products = (await _productModelFactory.PrepareProductOverviewModelsAsync(filteredPromoProducts)).ToList(),
                 BannerImageUrl = await promo.GetPromoBannerUrlAsync(),
-                PromoFormPopup = promo.GetPopupCommand()
+                PromoFormPopup = promo.GetPdfPath()
             };
 
             var pagedList = new PagedList<Product>(
