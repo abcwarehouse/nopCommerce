@@ -16,6 +16,30 @@
         _ltk.SCA.CaptureEmail('BillingNewAddress_Email');
         _ltk.SCA.CaptureEmail('ShippingNewAddress_Email');
 
+        // On checkout pages, ensure cart is submitted to Listrak before CaptureEmail fires.
+        // This handles cases where the cart page or slideout submission didn't complete
+        // (e.g. Listrak SDK still loading when item was added). Runs once on first focus
+        // of the email field, well before the blur that triggers CaptureEmail.
+        (function() {
+            var fields = ['BillingNewAddress_Email', 'ShippingNewAddress_Email'];
+            fields.forEach(function(fieldId) {
+                var field = document.getElementById(fieldId);
+                if (!field) { return; }
+                field.addEventListener('focus', function handler() {
+                    field.removeEventListener('focus', handler);
+                    fetch('/api/cart')
+                        .then(function(r) { return r.json(); })
+                        .then(function(cart) {
+                            if (!cart.items || cart.items.length === 0) { return; }
+                            cart.items.forEach(function(item) {
+                                _ltk.SCA.AddItemWithLinks(item.sku, item.quantity, item.price, item.name, item.imageUrl, item.productUrl);
+                            });
+                            _ltk.SCA.Submit();
+                        });
+                }, { once: true });
+            });
+        })();
+
         @if (Model.IsRegisterPage) {
             <text>_ltk.Signup.New('account-registration-abc', 'Email', _ltk.Signup.TYPE.DEFAULT, 'register-button');</text>
         }
