@@ -1108,9 +1108,15 @@ namespace Nop.Web.Areas.Admin.Controllers
 
                 order.CardType = _encryptionService.EncryptText(cardType);
                 order.CardName = _encryptionService.EncryptText(cardName);
-                order.CardNumber = _encryptionService.EncryptText(cardNumber);
-                order.MaskedCreditCardNumber = _encryptionService.EncryptText(_paymentService.GetMaskedCreditCardNumber(cardNumber));
-                order.CardCvv2 = _encryptionService.EncryptText(cardCvv2);
+                // Only update the stored card number if a new unmasked number was submitted
+                if (!string.IsNullOrEmpty(cardNumber) && !cardNumber.Contains('*'))
+                {
+                    order.CardNumber = _encryptionService.EncryptText(cardNumber);
+                    order.MaskedCreditCardNumber = _encryptionService.EncryptText(_paymentService.GetMaskedCreditCardNumber(cardNumber));
+                }
+                // Only update CVV if a new value was provided
+                if (!string.IsNullOrEmpty(cardCvv2))
+                    order.CardCvv2 = _encryptionService.EncryptText(cardCvv2);
                 order.CardExpirationMonth = _encryptionService.EncryptText(cardExpirationMonth);
                 order.CardExpirationYear = _encryptionService.EncryptText(cardExpirationYear);
                 await _orderService.UpdateOrderAsync(order);
