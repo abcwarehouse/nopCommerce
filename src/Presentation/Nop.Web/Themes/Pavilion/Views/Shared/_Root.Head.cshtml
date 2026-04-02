@@ -110,6 +110,10 @@
     </script>
     <!-- END CHEQ INVOCATION TAG -->
 
+    <!-- Noibu -->
+    <script src="https://cdn.noibu.com/collect-core.js"></script>
+    <!-- End Noibu -->
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -223,7 +227,7 @@
         var routeData = ViewContext.RouteData;
         var controller = routeData.Values["controller"]?.ToString() ?? "home";
         var action = routeData.Values["action"]?.ToString() ?? "index";
-        
+
         return $"{controller.ToLowerInvariant()}-{action.ToLowerInvariant()}";
     }
 }
