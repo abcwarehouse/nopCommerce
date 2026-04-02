@@ -30,7 +30,8 @@
                     <text>_ltk.SCA.AddItemWithLinks('@item.Sku', @item.Quantity, @item.Price, '@item.Title', '@item.ImageUrl', '@item.ProductUrl');</text>
                 }
 
-                <text>_ltk.SCA.Submit();</text>
+                <text>_ltk.SCA.Total = @(Model.CartUpdateOrderItems.Sum(i => i.Price * i.Quantity).ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
+                _ltk.SCA.Submit();</text>
             }
         }
 
