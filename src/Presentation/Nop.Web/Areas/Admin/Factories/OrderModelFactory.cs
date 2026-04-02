@@ -531,10 +531,10 @@ namespace Nop.Web.Areas.Admin.Factories
                 model.CardType = _encryptionService.DecryptText(order.CardType);
                 //cardholder name
                 model.CardName = _encryptionService.DecryptText(order.CardName);
-                //card number
-                model.CardNumber = _encryptionService.DecryptText(order.CardNumber);
-                //cvv
-                model.CardCvv2 = _encryptionService.DecryptText(order.CardCvv2);
+                //card number - display masked (last 4 digits only)
+                model.CardNumber = _paymentService.GetMaskedCreditCardNumber(_encryptionService.DecryptText(order.CardNumber));
+                //cvv - never expose in the UI
+                model.CardCvv2 = string.Empty;
                 //expiry date
                 var cardExpirationMonthDecrypted = _encryptionService.DecryptText(order.CardExpirationMonth);
                 if (!string.IsNullOrEmpty(cardExpirationMonthDecrypted) && cardExpirationMonthDecrypted != "0")
