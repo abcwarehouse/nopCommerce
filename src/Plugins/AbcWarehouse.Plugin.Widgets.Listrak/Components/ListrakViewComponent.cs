@@ -73,10 +73,8 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Components
             var controller = routeData.Values["controller"];
             var action = routeData.Values["action"];
 
-            // on cart page or checkout page (both need cart data so SCA has a cart total when email is captured)
-            var isCartPage = controller.ToString() == "ShoppingCart" && action.ToString() == "Cart";
-            var isCheckoutPage = controller.ToString() == "Checkout" && action.ToString() != "Completed";
-            if (isCartPage || isCheckoutPage)
+            // on cart page
+            if (controller.ToString() == "ShoppingCart" && action.ToString() == "Cart")
             {
                 var customer = await _workContext.GetCurrentCustomerAsync();
                 var cart = await _shoppingCartService.GetShoppingCartAsync(customer);
