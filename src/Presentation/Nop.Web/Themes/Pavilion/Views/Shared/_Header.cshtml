@@ -263,7 +263,41 @@
                     }
                 }
                 <div class="search-spring-container">
-                    @await Component.InvokeAsync("SearchSpring")
+                    @if (storeId != 3)
+                    {
+                        Html.AddCssFileParts("~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Themes/Pavilion/Content/InstantSearch.css");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.core.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.data.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.popup.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.list.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/lib/kendo/2020.1.406/js/kendo.autocomplete.min.js");
+                        Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/SevenSpikes.Nop.Plugins.InstantSearch/Scripts/InstantSearch.min.js");
+                        <div class="search-box store-search-box">
+                            <form asp-route="ProductSearch" method="get" id="small-search-box-form">
+                                <input type="text" class="search-box-text" id="small-searchterms"
+                                       autocomplete="off" name="q" placeholder="What can we help you find?" />
+                                <button type="submit" class="button-1 search-box-button">Search</button>
+                            </form>
+                        </div>
+                        @await Component.InvokeAsync("InstantSearch")
+                        <script id="instantSearchItemTemplate" type="text/x-kendo-template">
+                            <div class="instant-search-item" data-url="${ data.CustomProperties.Url }">
+                                <a class="iOS-temp" href="${ data.CustomProperties.Url }">
+                                    <div class="img-block">
+                                        <img src="${ data.DefaultPictureModel.ImageUrl }" alt="${ data.Name }" title="${ data.Name }" style="border: none">
+                                    </div>
+                                    <div class="detail">
+                                        <div class="title">${ data.Name }</div>
+                                        <div class="price"># var price = ""; if (data.ProductPrice.Price) { price = data.ProductPrice.Price } # #= price #</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </script>
+                    }
+                    else
+                    {
+                        @await Component.InvokeAsync("SearchSpring")
+                    }
                 </div>
                 @await Component.InvokeAsync("FlyoutShoppingCart")
                 <div class="header-links-wrapper">
