@@ -134,21 +134,10 @@ namespace Nop.Plugin.Misc.AbcCore.Factories
         protected override async Task<ProductPriceModel>
             PrepareProductPriceModelAsync(Product product, bool addPriceRangeFrom = false, bool forceRedirectionAfterAddingToCart = false)
         {
-            var model = await base.PrepareProductOverviewPriceModelAsync(product, addPriceRangeFrom, forceRedirectionAfterAddingToCart);
+            var model = await base.PrepareProductPriceModelAsync(product, addPriceRangeFrom, forceRedirectionAfterAddingToCart);
             var prices = await AdjustMattressPriceAsync(product.Id);
             model.Price = prices.price ?? model.Price;
             model.OldPrice = prices.oldPrice ?? model.OldPrice; 
-            return model;
-        }
-
-        protected override async Task<ProductDetailsModel.ProductPriceModel>
-            PrepareProductPriceModelAsync(Product product)
-        {
-            var model = await base.PrepareProductPriceModelAsync(product);
-            var prices = await AdjustMattressPriceAsync(product.Id);
-            model.Price = prices.price ?? model.Price;
-            model.OldPrice = prices.oldPrice ?? model.OldPrice;
-
             return model;
         }
 
