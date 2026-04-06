@@ -21,6 +21,7 @@
 @inject IAbcMattressListingPriceService abcMattressListingPriceService
 @inject IWebHelper webHelper
 @inject IAbcCategoryService abcCategoryService
+@inject IManufacturerService manufacturerService
 
 @{
     var itemNumber = "";
@@ -87,6 +88,18 @@
 	var price = mattressListingPrice != null ?
 		mattressListingPrice.ToString() :
 		Model.Price;
+
+    var isTempurpedic = false;
+    var productManufacturers = await manufacturerService.GetProductManufacturersByProductIdAsync(Model.ProductId);
+    foreach (var pm in productManufacturers)
+    {
+        var mfr = await manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
+        if (mfr != null && mfr.Name.IndexOf("tempur", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            isTempurpedic = true;
+            break;
+        }
+    }
 }
 
 @if (!Model.CustomerEntersPrice)
@@ -107,7 +120,7 @@
             }
             else
             {
-                if (!String.IsNullOrWhiteSpace(Model.OldPrice))
+                if (!isTempurpedic && !String.IsNullOrWhiteSpace(Model.OldPrice))
                 {
                     @*old price*@
                     <div class="old-product-price">
@@ -116,7 +129,7 @@
                     </div>
                 }
                 // Should always exist for mattress manipulation
-                if (!String.IsNullOrWhiteSpace(savedStr))
+                if (!isTempurpedic && !String.IsNullOrWhiteSpace(savedStr))
                 {
                     <div class="you-save-amt">@savedStr.Replace(".00", "")</div>
                 }

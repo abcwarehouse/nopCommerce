@@ -32,6 +32,7 @@
 @inject IProductService productService
 @inject IStoreContext storeContext
 @inject IAbcCategoryService abcCategoryService
+@inject IManufacturerService manufacturerService
 @inject INopHtmlHelper NopHtml
 
 @{
@@ -191,6 +192,18 @@
     }
 
     var isGiftCard = Model.Sku == "GIFT CARDS - ADD VAL";
+
+    var isTempurpedic = false;
+    var productManufacturers = await manufacturerService.GetProductManufacturersByProductIdAsync(Model.Id);
+    foreach (var pm in productManufacturers)
+    {
+        var mfr = await manufacturerService.GetManufacturerByIdAsync(pm.ManufacturerId);
+        if (mfr != null && mfr.Name.IndexOf("tempur", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            isTempurpedic = true;
+            break;
+        }
+    }
 }
 
 @* ABC: both style and script should be moved *@
@@ -398,7 +411,7 @@
             {
                 <div class="prices">
                     @{decimal? savedPrice = null; }
-                    @if (!String.IsNullOrEmpty(Model.ProductPrice.OldPrice))
+                    @if (!isTempurpedic && !String.IsNullOrEmpty(Model.ProductPrice.OldPrice))
                     {
                         string oldPriceStr = "Compare at " + Model.ProductPrice.OldPrice.Replace(".00", "");
                         <span class="price old-price">@oldPriceStr</span>
@@ -408,7 +421,7 @@
                     {
                         <span class="price old-price">&nbsp</span>
                     }
-                    @if (savedPrice.HasValue && savedPrice.Value > 30)
+                    @if (!isTempurpedic && savedPrice.HasValue && savedPrice.Value > 30)
                     {
                         var saveStr = "$" + savedPrice.Value.ToString().Replace(".00", "") + " Off";
                         <span class="price you-save">@saveStr</span>
