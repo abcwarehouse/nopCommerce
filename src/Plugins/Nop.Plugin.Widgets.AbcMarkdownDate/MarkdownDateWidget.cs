@@ -10,10 +10,7 @@ namespace Nop.Plugin.Widgets.AbcMarkdownDate
     {
         public bool HideInWidgetList => false;
 
-        public string GetWidgetViewComponentName(string widgetZone)
-        {
-            return "AbcMarkdownDate";
-        }
+        public Type GetWidgetViewComponent(string widgetZone) => typeof(Nop.Plugin.Widgets.AbcHomeDeliveryStatus.Components.AbcMarkdownDateViewComponent);
 
         public Task<IList<string>> GetWidgetZonesAsync()
         {

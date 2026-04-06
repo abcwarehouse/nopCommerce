@@ -1,18 +1,17 @@
+@using Nop.Web.Components
 @using Nop.Web.Framework.Infrastructure
 @using Nop.Web.Models.Catalog
 
 @model ProductDetailsModel
-@{
-    Html.AddScriptParts(ResourceLocation.Footer, "~/lib_npm/magnific-popup/jquery.magnific-popup.min.js");
-    Html.AddCssFileParts("~/lib_npm/magnific-popup/magnific-popup.css");
 
-    // custom
-    Html.AddScriptParts(ResourceLocation.Footer, "~/Plugins/Misc.AbcFrontend/scripts/jquery.jcarousel.min.js");
-}
+<link rel="stylesheet" href="~/lib_npm/magnific-popup/magnific-popup.css" />
+<script asp-exclude-from-bundle="true" src="~/lib_npm/magnific-popup/jquery.magnific-popup.min.js" asp-location="Footer"></script>
+@* ABC: custom to allow PDP jcarousel *@
+<script asp-exclude-from-bundle="true" src="~/Plugins/Misc.AbcFrontend/Content/scripts/jquery.jcarousel.min.js" asp-location="Footer"></script>
 
-<div class="gallery">
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
 
+<div class="picture-gallery">
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsBeforePictures, additionalData = Model })
     <div class="picture">
         <!-- Always wrap the main image in an anchor so it's clickable for fullscreen -->
         <a href="@Model.DefaultPictureModel.FullSizeImageUrl"
@@ -25,12 +24,12 @@
                  id="main-product-img-@Model.Id" />
         </a>
     </div>
-
-    @if (Model.PictureModels.Count > 1)
+    @if (Model.PictureModels.Count > 1 && Model.DefaultPictureZoomEnabled)
     {
         <div class="jcarousel-wrapper">
-            <a class="jcarousel-prev" aria-label="Previous image"><i class="fas fa-arrow-left" aria-hidden="true"></i></a>
-
+            <a class="jcarousel-prev" aria-label="Previous image">
+                <img src="~/Plugins/Misc.AbcFrontend/Content/img/arrow-left-solid.png" alt="Previous" aria-hidden="true" />
+            </a>
             <div class="jcarousel">
                 <ul>
                     @{
@@ -38,14 +37,12 @@
                     }
                     @foreach (var picture in Model.PictureModels)
                     {
-                        var isVideo = picture.Title?.Contains("video", System.StringComparison.OrdinalIgnoreCase) ?? false;
-                        var typeClass = isVideo ? "mfp-iframe" : "mfp-image";
                         <li>
-                            <a class="jcarousel-item @typeClass"
+                            <a class="jcarousel-item mfp-image"
                                href="@picture.FullSizeImageUrl"
                                data-index="@idx"
                                title="@picture.Title">
-                                <img class="@typeClass"
+                                <img class="mfp-image"
                                      src="@picture.ThumbImageUrl"
                                      alt="@picture.AlternateText"
                                      title="@picture.Title"
@@ -58,7 +55,9 @@
                 </ul>
             </div>
 
-            <a class="jcarousel-next" aria-label="Next image"><i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <a class="jcarousel-next" aria-label="Next image">
+                <img src="~/Plugins/Misc.AbcFrontend/Content/img/arrow-right-solid.png" alt="Next" aria-hidden="true" />
+            </a>
         </div>
 
         <!-- Thumbnails lightbox (gallery) -->
@@ -153,8 +152,7 @@
             });
         </script>
     }
-
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAfterPictures, additionalData = Model })
 </div>
 
 <!-- carousel init -->
@@ -196,8 +194,8 @@
     }
 
     /* Responsive widths */
-    @@media screen and (min-width: 475px) { .jcarousel { width: 300px; } }
-    @@media screen and (min-width: 595px) { .jcarousel { width: 400px; } }
-    @@media screen and (min-width: 769px) { .jcarousel { width: 200px; } }
+    @@media screen and (min-width: 475px) and (max-width: 594px) { .jcarousel { width: 300px; } }
+    @@media screen and (min-width: 595px) and (max-width: 768px) { .jcarousel { width: 400px; } }
+    @@media screen and (min-width: 769px) and (max-width: 1000px) { .jcarousel { width: 200px; } }
     @@media screen and (min-width: 1001px) { .jcarousel { width: 300px; } }
 </style>

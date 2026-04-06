@@ -7,6 +7,7 @@
     foreach (MenuItemModel subItem in Model.SubItems)
     {
         subItem.DepthLevel = Model.DepthLevel + 1;
-        @await Html.PartialAsync(AdminViews.MenuItem, subItem)
+
+        await Html.RenderPartialAsync(AdminViews.MenuItem, subItem);
     }
 }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Nop.Plugin.Widgets.AbcPromos.Controllers
 {
     [AuthorizeAdmin]
-    [Area(AreaNames.Admin)]
+    [Area(AreaNames.ADMIN)]
     [AutoValidateAntiforgeryToken]
     public class AbcPromosController : BasePluginController
     {

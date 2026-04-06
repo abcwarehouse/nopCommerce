@@ -15,6 +15,15 @@
 <div class="card-body">
     <div class="form-group row">
         <div class="col-md-3">
+            <nop-override-store-checkbox asp-for="DisableLuceneSearch_OverrideForStore" asp-input="DisableLuceneSearch" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <nop-label asp-for="DisableLuceneSearch" />
+        </div>
+        <div class="col-md-9">
+            <nop-editor asp-for="DisableLuceneSearch" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
             <nop-override-store-checkbox asp-for="BlogSearchWidgetZone_OverrideForStore" asp-input="BlogSearchWidgetZone" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <nop-label asp-for="BlogSearchWidgetZone"/>
         </div>

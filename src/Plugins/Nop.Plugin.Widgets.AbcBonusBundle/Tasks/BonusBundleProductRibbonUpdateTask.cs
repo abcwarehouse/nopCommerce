@@ -1,6 +1,6 @@
 ﻿using Nop.Data;
 using Nop.Services.Logging;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using System.Linq;
 using Task = System.Threading.Tasks.Task;
 

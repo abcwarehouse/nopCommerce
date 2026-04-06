@@ -3,7 +3,7 @@
 @model TrialData
 
 @{
-    var supportRtl = await this.ShouldUseRtlThemeAsync();
+    var supportRtl = await Html.ShouldUseRtlThemeAsync();
 }
 
 @if (supportRtl)

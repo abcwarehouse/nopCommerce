@@ -43,7 +43,6 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
 {
     public class AbcCategoryController : CategoryController
     {
-        private readonly ICategoryService _categoryService;
         private readonly IGenericAttributeService _genericAttributeService;
 
         public AbcCategoryController(
@@ -90,7 +89,6 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             workContext
         )
         {
-            _categoryService = categoryService;
             _genericAttributeService = genericAttributeService;
         }
 

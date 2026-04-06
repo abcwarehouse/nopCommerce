@@ -53,3 +53,8 @@ WHERE Name = 'captchasettings.recaptchapublickey'
 UPDATE Setting
 SET Value = 'RECAPTCHA_SECRET_KEY'
 WHERE Name = 'captchasettings.recaptchaprivatekey'
+
+-- check home delivery status
+UPDATE Setting
+SET Value = 'True'
+WHERE Name = 'abchomedeliverystatussettings.usemockresponses'

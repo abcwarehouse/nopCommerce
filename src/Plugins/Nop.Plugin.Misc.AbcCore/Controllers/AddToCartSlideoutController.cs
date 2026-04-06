@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Nop.Plugin.Misc.AbcCore.Components;
 
 namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
@@ -99,7 +100,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             var shoppingCartItem = shoppingCart.FirstOrDefault(sci => sci.Id == shoppingCartItemId);
             var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
-            var slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M);
+            CartSlideoutInfo slideoutInfo = await GetSlideoutInfoAsync(product, shoppingCartItem, 0.0M);
 
             // Get pickup in store HTML if zip code is available
             if (Request.Cookies.TryGetValue("customerZipCode", out var zip) && !string.IsNullOrEmpty(zip) && zip.Length == 5)
@@ -142,7 +143,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                 }
             }
 
-            var slideoutInfo = await GetSlideoutInfoAsync(product, sci, customerEnteredPrice);
+            CartSlideoutInfo slideoutInfo = await GetSlideoutInfoAsync(product, sci, customerEnteredPrice);
 
             return Json(new
             {
@@ -166,9 +167,9 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             var productId = product.Id;
 
             return new CartSlideoutInfo() {
-                ProductInfoHtml = await RenderViewComponentToStringAsync("CartSlideoutProductInfo", new { productId = productId, customerEnteredPrice = customerEnteredPrice } ),
+                ProductInfoHtml = await RenderViewComponentToStringAsync(typeof(CartSlideoutProductInfoViewComponent), new { productId = productId, customerEnteredPrice = customerEnteredPrice } ),
                 DeliveryOptionsHtml = await RenderViewComponentToStringAsync(
-                    "CartSlideoutProductAttributes",
+                    typeof(CartSlideoutProductAttributesViewComponent),
                     new {
                         product = product,
                         includedAttributeNames = new string[]
@@ -200,7 +201,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId);
 
             // get 5 closest based on zip code
-            var coords = _geocodeService.GeocodeZip(zip);
+            var coords = await _geocodeService.GeocodeZipAsync(zip);
             if (stockResponse == null)
             {
                 stockResponse = new StockResponse();
@@ -217,7 +218,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             var availableCount = stockResponse.ProductStocks.Count(s => s.Available);
 
             var html = await RenderViewComponentToStringAsync(
-                "CartSlideoutPickupInStore",
+                typeof(CartSlideoutPickupInStoreViewComponent),
                 new {
                     productStock = stockResponse.ProductStocks
                 });

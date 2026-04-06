@@ -1,5 +1,7 @@
+@inject INopHtmlHelper NopHtml
+
 @{
-    Html.AddCssFileParts("~/Plugins/Widgets.UniFi/styles/styles.css");
+    NopHtml.AddCssFileParts("~/Plugins/Widgets.UniFi/styles/styles.css");
 }
 
 <div class="sync-price"></div>

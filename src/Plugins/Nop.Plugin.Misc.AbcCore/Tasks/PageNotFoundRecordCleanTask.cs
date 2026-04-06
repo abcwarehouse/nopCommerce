@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Nop.Core.Domain.Common;
 using Nop.Data;
-using Nop.Services.Tasks;
+using Nop.Services.ScheduleTasks;
 using Nop.Services.Logging;
 
 namespace Nop.Plugin.Misc.AbcCore.Tasks
