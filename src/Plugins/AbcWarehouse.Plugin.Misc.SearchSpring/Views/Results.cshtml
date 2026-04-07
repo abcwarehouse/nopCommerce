@@ -225,17 +225,6 @@ else
                         }
                     }
 
-                    // Log diagnostic info if there are failed SKUs
-                    if (failedSkus.Any())
-                    {
-                        logger.WarningAsync($"[SearchSpring Results] SKU lookup failures - Query: '{Model.Query}' | " +
-                            $"SearchSpring returned {Model.Results.Count()} results | " +
-                            $"Found in DB: {foundSkus.Count} | " +
-                            $"NOT found in DB: {failedSkus.Count} | " +
-                            $"Failed SKUs: {string.Join(", ", failedSkus.Take(20))}" +
-                            (failedSkus.Count > 20 ? $"... and {failedSkus.Count - 20} more" : "")).GetAwaiter().GetResult();
-                    }
-
                     foreach (var model in productModels)
                     {
                         <div class="item-box">
