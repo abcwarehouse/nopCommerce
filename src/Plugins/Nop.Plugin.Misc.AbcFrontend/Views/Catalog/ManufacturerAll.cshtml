@@ -6,14 +6,15 @@
 @using Microsoft.AspNetCore.Mvc.ViewComponents
 
 @inject IViewComponentSelector viewComponentSelector
+@inject INopHtmlHelper NopHtml
 
 @{
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(T("PageTitle.Manufacturers").Text);
+    NopHtml.AddTitleParts(T("PageTitle.Manufacturers").Text);
     //page class
-    Html.AppendPageCssClassParts("html-manufacturer-list-page");
+    NopHtml.AppendPageCssClassParts("html-manufacturer-list-page");
 
      // Featured filter list
     var allowedManufacturers = new HashSet<string>
