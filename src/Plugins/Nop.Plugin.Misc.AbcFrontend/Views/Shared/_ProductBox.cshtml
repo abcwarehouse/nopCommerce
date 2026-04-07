@@ -92,7 +92,7 @@
     }
 
     var mattressSize = "";
-    var productUrl = @Url.RouteUrl("Product", new { SeName = Model.SeName });
+    var productUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName });
     if (isMattress)
     {
         // custom: add URL query params for mattress if applicable:
