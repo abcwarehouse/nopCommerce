@@ -17,7 +17,7 @@
     NopHtml.AddTitleParts("Rebates/Promos");
 
     //page class
-    Html.AppendPageCssClassParts("html-promo-listing-page");
+    NopHtml.AppendPageCssClassParts("html-promo-listing-page");
     var currentStore = await storeContext.GetCurrentStoreAsync();
     int storeId = currentStore.Id;
 }
