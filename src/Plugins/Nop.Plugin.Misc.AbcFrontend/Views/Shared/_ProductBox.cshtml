@@ -334,25 +334,28 @@
                     {
                         <img class="picture-img" alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" />
                     }
-                    <div class="hover-image">
-                        @if (disableLazyLoad)
-                        {
-                            <img src="@hoverPicture.ImageUrl" alt="@(hoverPicture.AlternateText + " Hover")" title="@hoverPicture.Title" />
-                        }
-                        else if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
-                        {
-                            @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                    @if (hoverPicture != null)
+                    {
+                        <div class="hover-image">
+                            @if (disableLazyLoad)
                             {
-                                ("src", hoverPicture.ImageUrl),
-                                ("alt", hoverPicture.AlternateText),
-                                ("title", hoverPicture.Title)
-                            })
-                        }
-                        else
-                        {
-                            <img class="picture-img-hover" alt="@hoverPicture?.AlternateText" src="@hoverPicture?.ImageUrl" title="@hoverPicture?.Title" />
-                        }
-                    </div>
+                                <img src="@hoverPicture.ImageUrl" alt="@(hoverPicture.AlternateText + " Hover")" title="@hoverPicture.Title" />
+                            }
+                            else if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
+                            {
+                                @await Component.InvokeAsync("LazyLoadImage", new (string Key, string Value)[]
+                                {
+                                    ("src", hoverPicture.ImageUrl),
+                                    ("alt", hoverPicture.AlternateText),
+                                    ("title", hoverPicture.Title)
+                                })
+                            }
+                            else
+                            {
+                                <img class="picture-img-hover" alt="@hoverPicture?.AlternateText" src="@hoverPicture?.ImageUrl" title="@hoverPicture?.Title" />
+                            }
+                        </div>
+                    }
                 </a>
             }
             </div>

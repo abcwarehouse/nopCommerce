@@ -3,11 +3,13 @@
 @using EllaSoftware.Plugin.Misc.CronTasks.Models;
 @using EllaSoftware.Plugin.Misc.CronTasks.Domain;
 
+@inject INopHtmlHelper NopHtml
+
 @{
     Layout = "_AdminLayout";
     ViewBag.Title = T("EllaSoftware.Plugin.Misc.CronTasks.Settings.Title").Text;
 
-    Html.SetActiveMenuItemSystemName("CRONTasks");
+    NopHtml.SetActiveMenuItemSystemName("CRONTasks");
 }
 
     <div class="content-header clearfix">
