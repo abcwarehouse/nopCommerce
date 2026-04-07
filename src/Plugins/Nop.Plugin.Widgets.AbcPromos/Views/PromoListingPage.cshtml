@@ -7,13 +7,14 @@
 @inject IManufacturerService manufacturerService
 @inject IUrlRecordService urlRecordService
 @inject IStoreContext storeContext
+@inject INopHtmlHelper NopHtml
 
 
 @{
     Layout = "_ColumnsOne";
 
     //title
-    Html.AddTitleParts("Rebates/Promos");
+    NopHtml.AddTitleParts("Rebates/Promos");
 
     //page class
     Html.AppendPageCssClassParts("html-promo-listing-page");
