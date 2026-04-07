@@ -6,6 +6,7 @@
 
 @inject IGenericAttributeService genericAttributeService
 @inject IWorkContext workContext
+@inject INopHtmlHelper NopHtml
 
 <!-- imports T -->
 @inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>
@@ -14,7 +15,7 @@
     //page title
     ViewBag.PageTitle = "Missing Image Products";
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("ABCWarehouse.MissingImageProduct");
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.MissingImageProduct");
 
     Layout = "_AdminLayout";
 }

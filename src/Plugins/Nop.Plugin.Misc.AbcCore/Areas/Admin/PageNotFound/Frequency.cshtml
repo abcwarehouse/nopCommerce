@@ -8,6 +8,8 @@
 @using Nop.Services.Common
 @using Nop.Core
 
+@inject INopHtmlHelper NopHtml
+
 @inherits Nop.Web.Framework.Mvc.Razor.NopRazorPage<TModel>
 @addTagHelper *, Nop.Web.Framework
 
@@ -15,7 +17,7 @@
     //page title
     ViewBag.PageTitle = "Page Not Found Frequency";
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("AbcWarehouse.PageNotFoundFreq");
+    NopHtml.SetActiveMenuItemSystemName("AbcWarehouse.PageNotFoundFreq");
 
     Layout = "_AdminLayout";
 }

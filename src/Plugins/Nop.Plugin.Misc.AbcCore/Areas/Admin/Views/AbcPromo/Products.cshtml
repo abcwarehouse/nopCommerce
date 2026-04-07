@@ -2,11 +2,13 @@
 
 @using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
 
+@inject INopHtmlHelper NopHtml
+
 @{
     //page title
     ViewBag.PageTitle = "Promo Products";
     //active menu item (system name)
-    Html.SetActiveMenuItemSystemName("ABCWarehouse.Promos");
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.Promos");
 
     Layout = "_AdminLayout";
 }
