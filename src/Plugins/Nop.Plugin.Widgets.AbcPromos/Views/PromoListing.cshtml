@@ -11,20 +11,22 @@
 @using Nop.Core.Infrastructure;
 @using Nop.Web.Models.Catalog;
 @using Nop.Services.Catalog;
+@using Nop.Web.Framework.UI;
 
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
 @inject CommonSettings commonSettings
 @inject IViewComponentSelector viewComponentSelector
+@inject INopHtmlHelper NopHtml
 
 @{
     Layout = "_ColumnsTwo";
 
     //title
-    Html.AddTitleParts(Model.Name);
+    NopHtml.AddTitleParts(Model.Name);
 
     //page class
-    Html.AppendPageCssClassParts("html-promo-page");
+    NopHtml.AppendPageCssClassParts("html-promo-page");
 
 	// ABC: get the URL for widget
 	var path = @Context.Request.Path.Value;
