@@ -458,11 +458,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error("✗ Geolocation failed in search");
                     console.error("Error code:", error.code);
                     console.error("Error message:", error.message);
-                    
+
+                    sessionStorage.setItem('geoDeclined', 'true');
+
                     let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}`;
                     if (sort) url += `&sort=${encodeURIComponent(sort)}`;
                     if (additionalFilters) url += `&${additionalFilters}`;
-                    
+
                     console.log("Fallback redirect to:", url);
                     window.location.href = url;
                 },
@@ -555,11 +557,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
     
-    if (!hasGeoParams) {
+    if (!hasGeoParams && sessionStorage.getItem('geoDeclined') !== 'true') {
         console.log("No geo params in URL, triggering initial geolocation...");
         const currentPage = parseInt(urlParams.get('page')) || 1;
         const filters = getCurrentFilters();
-        
+
         // Give the page a moment to fully load
         setTimeout(function() {
             runGeoSearchWithFilters(currentQuery, currentPage, currentSort, filters);
