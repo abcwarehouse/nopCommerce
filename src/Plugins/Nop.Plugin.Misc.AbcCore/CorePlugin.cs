@@ -31,7 +31,9 @@ namespace Nop.Plugin.Misc.AbcCore
 {
     public class CorePlugin : BasePlugin, IMiscPlugin, IWidgetPlugin,
         IConsumer<EntityDeletedEvent<ProductPicture>>,
+        IConsumer<EntityInsertedEvent<HtmlWidget>>,
         IConsumer<EntityUpdatedEvent<HtmlWidget>>,
+        IConsumer<EntityDeletedEvent<HtmlWidget>>,
         IConsumer<AdminMenuCreatedEvent>
     {
         private readonly IWebHelper _webHelper;
@@ -90,10 +92,20 @@ namespace Nop.Plugin.Misc.AbcCore
             }
         }
 
-        // Cleans additional cache for HTML Widgets after changing content to reflect changes immediately
+        // Clears the full cache when HTML Widgets change so updates reflect immediately without a manual cache clear
+        public async System.Threading.Tasks.Task HandleEventAsync(EntityInsertedEvent<HtmlWidget> eventMessage)
+        {
+            await _cacheManager.ClearAsync();
+        }
+
         public async System.Threading.Tasks.Task HandleEventAsync(EntityUpdatedEvent<HtmlWidget> eventMessage)
         {
-            await _cacheManager.RemoveByPrefixAsync("Nop.conditionstatement.all.");
+            await _cacheManager.ClearAsync();
+        }
+
+        public async System.Threading.Tasks.Task HandleEventAsync(EntityDeletedEvent<HtmlWidget> eventMessage)
+        {
+            await _cacheManager.ClearAsync();
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
