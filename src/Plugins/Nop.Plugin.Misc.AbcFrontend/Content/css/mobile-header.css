@@ -1,8 +1,10 @@
-﻿/* adjust admin header */
-.admin-header-links {
-    position: relative;
+﻿
+/* adjust admin header - mobile only */
+@media (max-width: 1024px) {
+    .admin-header-links {
+        position: relative;
+    }
 }
-
 
 /* sets up flex for centering */
 .responsive-nav-wrapper {
