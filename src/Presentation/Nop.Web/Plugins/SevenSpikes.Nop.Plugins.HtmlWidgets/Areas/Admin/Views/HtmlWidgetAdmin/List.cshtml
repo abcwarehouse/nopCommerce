@@ -127,28 +127,6 @@
 
 <script type="text/javascript">
 
-    // Normalize search inputs to lowercase so the search is case-insensitive
-    $(function () {
-        var $name = $('#SearchWidgetName');
-        var $content = $('#SearchWidgetContent');
-
-        function lowercaseInput($el) {
-            $el.on('input', function () {
-                var pos = this.selectionStart;
-                this.value = this.value.toLowerCase();
-                this.setSelectionRange(pos, pos);
-            });
-        }
-
-        lowercaseInput($name);
-        lowercaseInput($content);
-
-        $('#search-html-widgets').on('click', function () {
-            $name.val($name.val().toLowerCase());
-            $content.val($content.val().toLowerCase());
-        });
-    });
-
     function renderVisible(data, type, row, meta) {
 
         if (row.Visible) {
