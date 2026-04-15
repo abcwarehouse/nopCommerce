@@ -32,18 +32,20 @@ namespace AbcWarehouse.Plugin.Widgets.Flixmedia.Components
         {
             if (!_settings.IsValid())
             {
-                await _logger.ErrorAsync("Widgets.Flixmedia: Flix ID is required to be " +
+                await _logger.WarningAsync("Widgets.Flixmedia: Flix ID is required to be " +
                               "set to enable product syndication.");
                 return Content("");
             }
 
-            if (widgetZone == _settings.WidgetZone)
-            {
-                return View("~/Plugins/Widgets.Flixmedia/Views/ContentDisplay.cshtml");
-            }
             if (widgetZone == PublicWidgetZones.ProductDetailsBottom)
             {
                 var productDetailsModel = additionalData as ProductDetailsModel;
+                if (productDetailsModel == null)
+                {
+                    await _logger.WarningAsync($"Widgets.Flixmedia: Expected ProductDetailsModel for widget zone {widgetZone} but received {additionalData?.GetType().Name ?? "null"}");
+                    return Content("");
+                }
+
                 var model = new ScriptModel()
                 {
                     Id = _settings.FlixID,
@@ -52,8 +54,12 @@ namespace AbcWarehouse.Plugin.Widgets.Flixmedia.Components
                 };
                 return View("~/Plugins/Widgets.Flixmedia/Views/Script.cshtml", model);
             }
+            if (widgetZone == _settings.WidgetZone)
+            {
+                return View("~/Plugins/Widgets.Flixmedia/Views/ContentDisplay.cshtml");
+            }
 
-            await _logger.ErrorAsync($"Widgets.Flixmedia: No view provided for widget zone {widgetZone}");
+            await _logger.WarningAsync($"Widgets.Flixmedia: No view provided for widget zone {widgetZone}");
             return Content("");
         }
     }

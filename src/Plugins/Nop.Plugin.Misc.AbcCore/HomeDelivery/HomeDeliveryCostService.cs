@@ -136,8 +136,10 @@ namespace Nop.Plugin.Misc.AbcCore.HomeDelivery
                 pams
                 .Where(pam => mattressProductAttributeIds.Contains(pam.ProductAttributeId))
                 .Select(pam => _productAttributeParser.ParseValues(attributesXml, pam.Id).FirstOrDefault())
+                .Where(idasstring => idasstring != null)
                 .Select(async idasstring => await _productAttributeService.GetProductAttributeValueByIdAsync(int.Parse(idasstring)))
                 .Select(t => t.Result)
+                .Where(pav => pav != null)
                 .Sum(pav => pav.PriceAdjustment);
         }
     }
