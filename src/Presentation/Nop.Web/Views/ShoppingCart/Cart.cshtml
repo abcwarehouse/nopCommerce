@@ -17,5 +17,6 @@
     </div>
     <div class="page-body">
         @await Component.InvokeAsync(typeof(OrderSummaryViewComponent), new { overriddenModel = Model})
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CartPopup, additionalData = Model })
     </div>
 </div>
