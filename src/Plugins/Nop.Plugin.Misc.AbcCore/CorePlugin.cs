@@ -92,20 +92,30 @@ namespace Nop.Plugin.Misc.AbcCore
             }
         }
 
-        // Clears the full cache when HTML Widgets change so updates reflect immediately without a manual cache clear
+        // Clears only HTML widget-related cache entries when a widget changes so updates reflect immediately
         public async System.Threading.Tasks.Task HandleEventAsync(EntityInsertedEvent<HtmlWidget> eventMessage)
         {
-            await _cacheManager.ClearAsync();
+            await ClearHtmlWidgetCacheAsync();
         }
 
         public async System.Threading.Tasks.Task HandleEventAsync(EntityUpdatedEvent<HtmlWidget> eventMessage)
         {
-            await _cacheManager.ClearAsync();
+            await ClearHtmlWidgetCacheAsync();
         }
 
         public async System.Threading.Tasks.Task HandleEventAsync(EntityDeletedEvent<HtmlWidget> eventMessage)
         {
-            await _cacheManager.ClearAsync();
+            await ClearHtmlWidgetCacheAsync();
+        }
+
+        private async System.Threading.Tasks.Task ClearHtmlWidgetCacheAsync()
+        {
+            // SevenSpikes widget rendered-output cache (key format: SevenSpikes.Nop.Plugins.HtmlWidgets.{0}-{1}-...-{8})
+            await _cacheManager.RemoveByPrefixAsync("SevenSpikes.Nop.Plugins.HtmlWidgets.");
+            // Standard nopCommerce entity cache for HtmlWidget
+            await _cacheManager.RemoveByPrefixAsync(NopEntityCacheDefaults<HtmlWidget>.Prefix);
+            // Conditions cache (widget display conditions)
+            await _cacheManager.RemoveByPrefixAsync("SevenSpikes.Nop.Conditions.Entity.Type.Conditions.");
         }
 
         public System.Threading.Tasks.Task<IList<string>> GetWidgetZonesAsync()
