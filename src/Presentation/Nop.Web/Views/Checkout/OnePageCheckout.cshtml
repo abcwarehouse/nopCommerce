@@ -214,6 +214,7 @@
             </li>
         </ol>
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OpcContentAfter, additionalData = Model })
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CartPopup, additionalData = Model })
     </div>
     <script asp-location="Footer">
         Accordion.init('checkout-steps', '.step-title', true);

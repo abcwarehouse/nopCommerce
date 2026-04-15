@@ -48,6 +48,7 @@ public static partial class PublicWidgetZones
     public static string BoardsTopicTop => "boards_topic_top";
     public static string BodyEndHtmlTagBefore => "body_end_html_tag_before";
     public static string BodyStartHtmlTagAfter => "body_start_html_tag_after";
+    public static string CartPopup => "cart_popup";
     public static string CategoryDetailsAfterBreadcrumb => "categorydetails_after_breadcrumb";
     public static string CategoryDetailsAfterFeaturedProducts => "categorydetails_after_featured_products";
     public static string CategoryDetailsBeforeFeaturedProducts => "categorydetails_before_featured_products";
