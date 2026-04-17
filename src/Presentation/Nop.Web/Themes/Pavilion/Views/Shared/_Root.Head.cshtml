@@ -67,14 +67,6 @@
     <!link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css' />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-    <div name="termly-embed" data-id="201f1512-62c5-4a84-a3b4-a71cbd4fbef7"></div>
-    <script type="text/javascript">(function(d, s, id) {
-    var js, tjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "https://app.termly.io/embed-policy.min.js";
-    tjs.parentNode.insertBefore(js, tjs);
-    }(document, 'script', 'termly-jssdk'));</script>
     @NopHtml.GenerateHeadCustom()
     @*This is used so that themes can inject content into the header*@
     @await Html.PartialAsync("Head")
