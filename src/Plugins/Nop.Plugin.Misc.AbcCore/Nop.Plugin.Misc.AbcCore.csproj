@@ -140,6 +140,7 @@
   <ItemGroup>
     <!-- ABC: Added to resolve "System.Data.Odbc.dll not found" runtime error. -->
     <!-- This ensures the ODBC assembly is included in the build output. -->
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="System.Data.Odbc" Version="8.0.1" />
   </ItemGroup>
 
@@ -150,7 +151,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="git rev-parse --abbrev-ref HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)branch.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
-    <Exec Command="git rev-parse --short HEAD > &quot;$(MSBuildProjectDirectory)\$(OutDir)sha.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
+    <Exec Command="git rev-parse --abbrev-ref HEAD &gt; &quot;$(MSBuildProjectDirectory)\$(OutDir)branch.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
+    <Exec Command="git rev-parse --short HEAD &gt; &quot;$(MSBuildProjectDirectory)\$(OutDir)sha.txt&quot;" ContinueOnError="true" IgnoreExitCode="true" />
   </Target>
 </Project>
