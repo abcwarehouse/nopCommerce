@@ -120,11 +120,11 @@ function createEstimateShippingPopUp(settings) {
 
     successHandler: function (address, response) {
       // ABC: reset fields until option count determined
-      const shippingOptions = 
+      const shippingOptions =
         document.getElementsByClassName('shipping-options')[0];
       const zipWarning = document.getElementById('zip-warning');
-      shippingOptions.style.display = "block";
-      zipWarning.style.display = "none";
+      if (shippingOptions) shippingOptions.style.display = "block";
+      if (zipWarning) zipWarning.style.display = "none";
 
       $('.shipping-options-body', $(this.settings.contentEl)).empty();
 
@@ -135,8 +135,8 @@ function createEstimateShippingPopUp(settings) {
 
         // ABC: no options? show warning and stop
         if (!options || options.length <= 0) {
-          shippingOptions.style.display = "none";
-          zipWarning.style.display = "block";
+          if (shippingOptions) shippingOptions.style.display = "none";
+          if (zipWarning) zipWarning.style.display = "block";
           return;
         }
 
