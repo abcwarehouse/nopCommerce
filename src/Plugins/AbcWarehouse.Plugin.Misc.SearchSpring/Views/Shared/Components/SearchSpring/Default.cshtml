@@ -37,7 +37,8 @@
     updateZeroPrices();
 
     const observer = new MutationObserver(updateZeroPrices);
-    observer.observe(document.body, { childList: true, subtree: true });
+    const observeTarget = document.body || document.documentElement;
+    if (observeTarget) observer.observe(observeTarget, { childList: true, subtree: true });
 </script>
 
 <style>
