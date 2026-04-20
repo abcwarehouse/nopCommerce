@@ -1,0 +1,206 @@
+@model Nop.Plugin.Misc.AbcCore.Areas.Admin.Models.MickeyLandingPageModel
+
+@using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
+
+@inject INopHtmlHelper NopHtml
+
+@{
+    var isNew = Model.Id == 0;
+    ViewBag.PageTitle = isNew ? "Add Landing Page" : $"Edit: {Model.Name}";
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.MickeyLandingPages");
+    Layout = "_AdminLayout";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        @ViewBag.PageTitle
+        <small>
+            <i class="fa fa-arrow-circle-left"></i>
+            <a href="@Url.Action("List", "MickeyLandingPage")">Back to list</a>
+        </small>
+    </h1>
+</div>
+
+<div class="content">
+    <form asp-controller="MickeyLandingPage" asp-action="@(isNew ? "Create" : "Edit")" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Landing Page Details</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Name" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="Name" />
+                            <span asp-validation-for="Name"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="StartDate" />
+                            <p class="text-muted" style="font-size:12px;">Leave blank for no start restriction</p>
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="StartDate" />
+                            <span asp-validation-for="StartDate"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="EndDate" />
+                            <p class="text-muted" style="font-size:12px;">Leave blank for no end restriction</p>
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="EndDate" />
+                            <span asp-validation-for="EndDate"></span>
+                        </div>
+                    </div>
+                    @if (!isNew)
+                    {
+                        <div class="form-group row">
+                            <div class="col-md-3"><label>Status</label></div>
+                            <div class="col-md-9">
+                                @if (Model.IsActive)
+                                {
+                                    <span class="label label-success" style="font-size:14px;">Active</span>
+                                }
+                                else if (Model.StartDate.HasValue && Model.StartDate > DateTime.Now)
+                                {
+                                    <span class="label label-warning" style="font-size:14px;">Upcoming</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-default" style="font-size:14px;">Expired</span>
+                                }
+                                <span style="margin-left:10px;">@Model.DateRange</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="content-footer clearfix">
+            <div class="pull-right">
+                <button type="submit" class="btn bg-blue">
+                    <i class="fa fa-floppy-o"></i> Save
+                </button>
+            </div>
+        </div>
+    </form>
+
+    @if (!isNew)
+    {
+        <!-- Product management section -->
+        <div class="panel-group" style="margin-top:20px;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Products on this Landing Page (@Model.ProductCount)</h3>
+                </div>
+                <div class="panel-body">
+
+                    <!-- Add product by ID -->
+                    <div class="form-inline" style="margin-bottom:15px;">
+                        <label>Add Product by ID:</label>
+                        <input type="number" id="add-product-id" class="form-control" placeholder="Product ID" style="width:150px; margin:0 8px;" />
+                        <button type="button" id="add-product-btn" class="btn bg-green">
+                            <i class="fa fa-plus"></i> Add
+                        </button>
+                        <span id="add-product-message" style="margin-left:10px;"></span>
+                    </div>
+
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "mickey-lp-products-grid",
+                        UrlRead = new DataUrl("ProductList", "MickeyLandingPage", null),
+                        SearchButtonId = "search-products",
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        Filters = new List<FilterParameter>
+                        {
+                            new FilterParameter(nameof(MickeyLandingPageProductSearchModel.LandingPageId), Model.Id, typeof(int)),
+                            new FilterParameter(nameof(MickeyLandingPageProductSearchModel.LandingPageName), Model.Name)
+                        },
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(MickeyLandingPageProductModel.ProductId))
+                            {
+                                Title = "ID",
+                                Width = "60"
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageProductModel.Name))
+                            {
+                                Title = "Product Name",
+                                Width = "300"
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageProductModel.Sku))
+                            {
+                                Title = "SKU",
+                                Width = "120"
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageProductModel.Published))
+                            {
+                                Title = "Published",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageProductModel.MappingId))
+                            {
+                                Title = "Remove",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonRemove("Remove")
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!isNew)
+{
+    <script>
+        var landingPageId = @Model.Id;
+
+        $('#add-product-btn').click(function () {
+            var productId = parseInt($('#add-product-id').val());
+            if (!productId || productId <= 0) {
+                $('#add-product-message').html('<span class="text-danger">Enter a valid Product ID.</span>');
+                return;
+            }
+            $.post('@Url.Action("AddProduct", "MickeyLandingPage")',
+                { landingPageId: landingPageId, productId: productId },
+                function (data) {
+                    if (data.success) {
+                        $('#add-product-id').val('');
+                        $('#add-product-message').html('<span class="text-success">Added.</span>');
+                        $('#mickey-lp-products-grid').DataTable().ajax.reload();
+                        setTimeout(function () { $('#add-product-message').html(''); }, 3000);
+                    } else {
+                        $('#add-product-message').html('<span class="text-danger">' + data.message + '</span>');
+                    }
+                }
+            );
+        });
+
+        $(document).on('click', '.button-column-delete', function () {
+            var mappingId = $(this).data('id');
+            if (!confirm('Remove this product from the landing page?')) return;
+            $.post('@Url.Action("RemoveProduct", "MickeyLandingPage")',
+                { mappingId: mappingId },
+                function (data) {
+                    if (data.success) {
+                        $('#mickey-lp-products-grid').DataTable().ajax.reload();
+                    }
+                }
+            );
+        });
+    </script>
+}

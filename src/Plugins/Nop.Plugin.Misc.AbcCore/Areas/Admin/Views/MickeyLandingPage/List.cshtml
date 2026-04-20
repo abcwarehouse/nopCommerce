@@ -1,0 +1,90 @@
+@model Nop.Plugin.Misc.AbcCore.Areas.Admin.Models.MickeyLandingPageSearchModel
+
+@using Nop.Plugin.Misc.AbcCore.Areas.Admin.Models
+
+@inject INopHtmlHelper NopHtml
+
+@{
+    ViewBag.PageTitle = "Mickey Shorr Landing Pages";
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.MickeyLandingPages");
+    Layout = "_AdminLayout";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Mickey Shorr Landing Pages
+    </h1>
+    <div class="pull-right">
+        <a href="@Url.Action("Create", "MickeyLandingPage")" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i> Add New
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "mickey-landing-pages-grid",
+                        UrlRead = new DataUrl("List", "MickeyLandingPage", null),
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(MickeyLandingPageModel.Name))
+                            {
+                                Title = "Name",
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageModel.DateRange))
+                            {
+                                Title = "Date Range",
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageModel.IsActive))
+                            {
+                                Title = "Active",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageModel.ProductCount))
+                            {
+                                Title = "Products",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageModel.Id))
+                            {
+                                Title = "Edit",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonEdit(new DataUrl("~/Admin/MickeyLandingPage/Edit/"))
+                            },
+                            new ColumnProperty(nameof(MickeyLandingPageModel.Id))
+                            {
+                                Title = "Delete",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonRemove("Delete")
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '.button-column-delete', function () {
+        if (!confirm('Delete this landing page and all its product assignments?')) return;
+        var id = $(this).data('id');
+        $.post('@Url.Action("Delete", "MickeyLandingPage")', { id: id }, function () {
+            $('#mickey-landing-pages-grid').DataTable().ajax.reload();
+        });
+    });
+</script>

@@ -5,6 +5,7 @@ using Nop.Services.Messages;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Data;
 using Nop.Web.Framework.Components;
 using Nop.Plugin.Misc.AbcCore.Domain;
@@ -19,6 +20,7 @@ using Nop.Services.Common;
 using Nop.Core.Domain.Catalog;
 using Nop.Web.Areas.Admin.Models.Catalog;
 using Nop.Plugin.Misc.AbcCore.Models;
+using Nop.Plugin.Misc.AbcCore.Services;
 using Nop.Web.Framework.Infrastructure;
 using nopWebAdminCatalog = Nop.Web.Areas.Admin.Models.Catalog;
 
@@ -30,15 +32,18 @@ namespace Nop.Plugin.Misc.AbcCore.Components
         private readonly CoreSettings _coreSettings;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly INotificationService _notificationService;
+        private readonly IMickeyLandingPageService _mickeyLandingPageService;
 
         public AbcCoreViewComponent(
             CoreSettings coreSettings,
             IGenericAttributeService genericAttributeService,
-            INotificationService notificationService
+            INotificationService notificationService,
+            IMickeyLandingPageService mickeyLandingPageService
         ) {
             _coreSettings = coreSettings;
             _genericAttributeService = genericAttributeService;
             _notificationService = notificationService;
+            _mickeyLandingPageService = mickeyLandingPageService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData = null)
@@ -46,14 +51,49 @@ namespace Nop.Plugin.Misc.AbcCore.Components
             if (widgetZone == AdminWidgetZones.ProductDetailsBlock)
             {
                 var productId = (additionalData as ProductModel).Id;
+
                 var plpDescription = await _genericAttributeService.GetAttributeAsync<Product, string>(
                     productId, "PLPDescription"
                 );
 
+                // Current landing page assignments for this product
+                var currentAssignments = new List<MickeyLandingPageAssignment>();
+                var availableLandingPages = new List<SelectListItem>();
+
+                if (productId > 0)
+                {
+                    var allLandingPages = await _mickeyLandingPageService.GetAllLandingPagesAsync();
+                    var mappings = await _mickeyLandingPageService.GetMappingsByProductIdAsync(productId);
+                    var assignedIds = mappings.Select(m => m.MickeyLandingPageId).ToHashSet();
+
+                    currentAssignments = mappings.Select(m =>
+                    {
+                        var lp = allLandingPages.FirstOrDefault(p => p.Id == m.MickeyLandingPageId);
+                        return new MickeyLandingPageAssignment
+                        {
+                            MappingId = m.Id,
+                            LandingPageId = m.MickeyLandingPageId,
+                            Name = lp?.Name ?? "Unknown",
+                            DateRange = lp?.GetDateRangeDisplay() ?? "",
+                            IsActive = lp?.IsActive() ?? false
+                        };
+                    }).ToList();
+
+                    availableLandingPages = allLandingPages
+                        .Where(lp => !assignedIds.Contains(lp.Id))
+                        .Select(lp => new SelectListItem
+                        {
+                            Value = lp.Id.ToString(),
+                            Text = $"{lp.Name} ({lp.GetDateRangeDisplay()})"
+                        }).ToList();
+                }
+
                 var model = new ABCProductDetailsModel
                 {
                     ProductId = productId,
-                    PLPDescription = plpDescription
+                    PLPDescription = plpDescription,
+                    CurrentLandingPages = currentAssignments,
+                    AvailableLandingPages = availableLandingPages
                 };
 
                 return View("~/Plugins/Misc.AbcCore/Views/ProductDetails.cshtml", model);
@@ -98,6 +138,5 @@ namespace Nop.Plugin.Misc.AbcCore.Components
 
             return Content("");
         }
-
     }
 }

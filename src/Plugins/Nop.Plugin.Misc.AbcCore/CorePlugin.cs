@@ -181,6 +181,14 @@ namespace Nop.Plugin.Misc.AbcCore
                         },
                         new()
                         {
+                            SystemName = "ABCWarehouse.MickeyLandingPages",
+                            Title = "Mickey Landing Pages",
+                            Url = eventMessage.GetMenuItemUrl("MickeyLandingPage", "List"),
+                            IconClass = "far fa-dot-circle",
+                            Visible = true
+                        },
+                        new()
+                        {
                             SystemName = "ABCWarehouse.MissingImageProducts",
                             Title = "Missing Image Products",
                             Url = eventMessage.GetMenuItemUrl("MissingImageProducts", "List"),

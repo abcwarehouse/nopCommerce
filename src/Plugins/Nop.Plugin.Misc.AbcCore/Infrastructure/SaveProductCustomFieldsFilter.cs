@@ -31,31 +31,23 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                 context.RouteData.Values["action"]?.ToString() == "Edit" &&
                 context.RouteData.Values["area"]?.ToString() == "Admin")
             {
-                // Get PLPDescription from form
-                if (context.HttpContext.Request.Form.TryGetValue("PLPDescription", out var plpDescriptionValues))
+                // Resolve product ID from route or form
+                int productId = 0;
+                if (context.RouteData.Values.TryGetValue("id", out var idValue))
+                    int.TryParse(idValue?.ToString(), out productId);
+                if (productId == 0 && context.HttpContext.Request.Form.TryGetValue("Id", out var formIdValue))
+                    int.TryParse(formIdValue.ToString(), out productId);
+
+                if (productId > 0)
                 {
-                    var plpDescription = plpDescriptionValues.ToString();
-
-                    // Get product ID from route or form
-                    int productId = 0;
-                    if (context.RouteData.Values.TryGetValue("id", out var idValue))
+                    var product = await _productService.GetProductByIdAsync(productId);
+                    if (product != null)
                     {
-                        int.TryParse(idValue?.ToString(), out productId);
-                    }
-
-                    // Fallback: try to get from form if model binding puts it there
-                    if (productId == 0 && context.HttpContext.Request.Form.TryGetValue("Id", out var formIdValue))
-                    {
-                        int.TryParse(formIdValue.ToString(), out productId);
-                    }
-
-                    if (productId > 0)
-                    {
-                        var product = await _productService.GetProductByIdAsync(productId);
-                        if (product != null)
+                        // Save PLPDescription
+                        if (context.HttpContext.Request.Form.TryGetValue("PLPDescription", out var plpDescriptionValues))
                         {
                             await _genericAttributeService.SaveAttributeAsync(
-                                product, "PLPDescription", plpDescription
+                                product, "PLPDescription", plpDescriptionValues.ToString()
                             );
                         }
                     }

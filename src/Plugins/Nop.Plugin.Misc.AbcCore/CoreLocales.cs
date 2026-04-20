@@ -19,6 +19,11 @@ namespace Nop.Plugin.Misc.AbcCore
         public const string PLPDescriptionHint =
             PLPDescription + ".Hint";
 
+        public const string ShowOnMickeyLandingPage =
+            Base + "ShowOnMickeyLandingPage";
+        public const string ShowOnMickeyLandingPageHint =
+            ShowOnMickeyLandingPage + ".Hint";
+
         public const string MobilePhoneNumber =
             Base + "MobilePhoneNumber";
         public const string MobilePhoneNumberHint =

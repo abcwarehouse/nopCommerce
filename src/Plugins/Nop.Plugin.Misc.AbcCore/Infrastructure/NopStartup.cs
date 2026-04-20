@@ -3,7 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
+using Nop.Data;
 using Nop.Plugin.Misc.AbcCore.Delivery;
+using Nop.Plugin.Misc.AbcCore.Domain;
 using Nop.Plugin.Misc.AbcCore.Factories;
 using Nop.Plugin.Misc.AbcCore.HomeDelivery;
 using Nop.Plugin.Misc.AbcCore.Mattresses;
@@ -30,6 +32,12 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
         public void Configure(IApplicationBuilder application)
         {
             application.UseMiddleware<PermissionsPolicyMiddleware>();
+
+            // Create Mickey Landing Page tables on startup if they don't exist yet
+            using var scope = application.ApplicationServices.CreateScope();
+            var dataProvider = scope.ServiceProvider.GetRequiredService<INopDataProvider>();
+            dataProvider.CreateTableIfNotExistsAsync<MickeyLandingPage>().GetAwaiter().GetResult();
+            dataProvider.CreateTableIfNotExistsAsync<MickeyLandingPageProductMapping>().GetAwaiter().GetResult();
         }
         
 
@@ -81,6 +89,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             // Overrides AJAX filter functionality
             services.AddScoped<IManufacturerService7Spikes, AbcManufacturerService7Spikes>();
             services.AddScoped<IAbcOrderService, AbcOrderService>();
+            services.AddScoped<IMickeyLandingPageService, MickeyLandingPageService>();
             // Filter for saving custom product fields (PLPDescription)
             services.AddScoped<SaveProductCustomFieldsFilter>();
         }

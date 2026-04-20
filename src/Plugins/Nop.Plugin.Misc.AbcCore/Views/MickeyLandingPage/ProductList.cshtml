@@ -1,0 +1,56 @@
+@using Nop.Web.Models.Catalog
+@model IList<ProductOverviewModel>
+
+@*
+    Mickey Shorr Landing Page — product grid.
+    Rendered by MickeyLandingPageViewComponent when a landing page is active.
+    The MickeySalePromo plugin's existing CSS/layout applies to the surrounding page;
+    this partial renders only the product grid rows so it can be embedded anywhere.
+*@
+
+<div class="product-grid mickey-landing-page-grid">
+    @foreach (var product in Model)
+    {
+        <div class="item-box">
+            <div class="content-box">
+                <h2 class="product-title">
+                    <a href="@Url.RouteUrl("Product", new { SeName = product.SeName })">
+                        @product.Name
+                    </a>
+                </h2>
+
+                @if (product.DefaultPictureModel != null)
+                {
+                    <div class="picture">
+                        <a href="@Url.RouteUrl("Product", new { SeName = product.SeName })">
+                            <img src="@product.DefaultPictureModel.ImageUrl"
+                                 alt="@product.DefaultPictureModel.AlternateText"
+                                 title="@product.DefaultPictureModel.Title" />
+                        </a>
+                    </div>
+                }
+
+                <div class="add-info">
+                    @if (product.ProductPrice != null)
+                    {
+                        <div class="prices">
+                            @if (!string.IsNullOrEmpty(product.ProductPrice.OldPrice))
+                            {
+                                <span class="price old-price">@product.ProductPrice.OldPrice</span>
+                            }
+                            <span class="price actual-price">@product.ProductPrice.Price</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="sale-ad-button">
+                <input type="button"
+                       class="button-1 add-to-cart-button"
+                       value="Add to cart"
+                       data-productid="@product.Id"
+                       onclick="return AjaxCart.addproducttocart_details('/addproducttocart/details/@product.Id/1','#product-details-form'),!1" />
+            </div>
+        </div>
+    }
+</div>
