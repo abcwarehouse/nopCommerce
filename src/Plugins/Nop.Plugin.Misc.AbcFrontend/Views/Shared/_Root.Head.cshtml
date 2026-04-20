@@ -468,13 +468,15 @@
         });
     </script>
 
-    <script type="text/javascript">(function(d, s, id) {
+    <script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+    (function(d, s, id) {
     var js, tjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
     js = d.createElement(s); js.id = id;
     js.src = "https://app.termly.io/embed-policy.min.js";
     tjs.parentNode.insertBefore(js, tjs);
-    }(document, 'script', 'termly-jssdk'));</script>
+    }(document, 'script', 'termly-jssdk'));
+    });</script>
 
     <!-- Microsoft Clarity (Analytics) -->
     <script type="text/javascript">
