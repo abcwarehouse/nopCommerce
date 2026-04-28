@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -I {} sh -c 'echo \"=== {} ===\" && head -20 {}')",
+      "Bash(gh release:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(dotnet build:*)",
+      "Bash(grep -h \"<TargetFramework>\" src/Plugins/**/*.csproj src/Presentation/Nop.Web/Nop.Web.csproj src/Libraries/**/*.csproj)",
+      "Bash(xargs grep *)",
+      "Bash(grep -v \"^$\\(ls src/Presentation/Nop.Web/Plugins/)",
+      "Bash(xargs ls *)",
+      "Bash(xargs cat *)"
+    ]
+  }
+}
