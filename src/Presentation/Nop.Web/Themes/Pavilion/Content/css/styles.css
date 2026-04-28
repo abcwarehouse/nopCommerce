@@ -9168,3 +9168,10 @@ padding-top: 70px;
 .storeId3 .header-links-wrapper label {
 color: #fff !important;
 }
+.affirm img {
+    max-width: 60px;
+    margin-right: 3px;
+}
+.affirm {
+    margin-bottom: 15px;
+}
