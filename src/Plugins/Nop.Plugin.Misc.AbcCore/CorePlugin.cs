@@ -162,7 +162,7 @@ namespace Nop.Plugin.Misc.AbcCore
         // https://docs.nopcommerce.com/en/developer/plugins/menu-item.html
         public Task HandleEventAsync(AdminMenuCreatedEvent eventMessage)
         {
-            eventMessage.RootMenuItem.InsertBefore("All plugins and themes",
+            eventMessage.RootMenuItem.InsertAfter("Help",
                 new AdminMenuItem
                 {
                     SystemName = "ABCWarehouse",
@@ -183,7 +183,7 @@ namespace Nop.Plugin.Misc.AbcCore
                         {
                             SystemName = "ABCWarehouse.MissingImageProducts",
                             Title = "Missing Image Products",
-                            Url = eventMessage.GetMenuItemUrl("MissingImageProducts", "List"),
+                            Url = eventMessage.GetMenuItemUrl("MissingImageProduct", "List"),
                             IconClass = "far fa-dot-circle",
                             Visible = true
                         },
