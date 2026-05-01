@@ -93,15 +93,21 @@
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
-    <!-- CHEQ INVOCATION TAG -->
-    <script async src="https://euob.seseasky.com/sxp/i/9d624d5b2ef513c6dd666d2144dec734.js"
-    data-ch="cheq4ppc" class="ct_clicktrue_96385" data-jsonp="onCheqResponse">
+    <!-- Bazaarvoice Reviews -->
+    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+    <script>
+        // Global BV config - disable SEO on listing pages to prevent incomplete Review schema
+        // Product detail pages set window.bvSeoEnabled = true before this runs
+        window.addEventListener('load', function() {
+            if (typeof BV !== 'undefined' && typeof BV.configure === 'function' && !window.bvSeoEnabled) {
+                BV.configure('global', {
+                    seo: {
+                        enabled: false
+                    }
+                });
+            }
+        });
     </script>
-    <!-- END CHEQ INVOCATION TAG -->
-
-    <!-- Noibu -->
-    <script src="https://cdn.noibu.com/collect-core.js"></script>
-    <!-- End Noibu -->
 
     <!-- ABC: Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -341,22 +347,6 @@
     @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)   
     @Html.Raw(commonSettings.FooterCustomHtml)
     @* ===== DEFERRED SCRIPTS (moved from head for performance) ===== *@
-
-    <!-- Bazaarvoice Reviews -->
-    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
-    <script>
-        // Global BV config - disable SEO on listing pages to prevent incomplete Review schema
-        // Product detail pages set window.bvSeoEnabled = true before this runs
-        window.addEventListener('load', function() {
-            if (typeof BV !== 'undefined' && typeof BV.configure === 'function' && !window.bvSeoEnabled) {
-                BV.configure('global', {
-                    seo: {
-                        enabled: false
-                    }
-                });
-            }
-        });
-    </script>
 
     <!-- SearchSpring Scripts -->
     <script defer src="https://cdn.searchspring.io/script.js"></script>
