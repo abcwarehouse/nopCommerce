@@ -14,7 +14,6 @@
                     </div>
                 }
                 <div class="payment-details">
-                    4 <img src="https://www.abcwarehouse.com/images/uploaded/creditcards.jpg" alt="Credit Cards" />
                     <input id="provider_@(provider.SystemName)" type="radio" name="provider_@(provider.SystemName)" value="@(provider.SystemName)" checked="@provider.Selected" />
                     <label for="provider_@(provider.SystemName)">@provider.Name</label>
                     @if (!string.IsNullOrEmpty(provider.Description))
