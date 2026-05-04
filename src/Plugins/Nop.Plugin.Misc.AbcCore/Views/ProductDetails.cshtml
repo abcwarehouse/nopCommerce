@@ -18,6 +18,15 @@
                                 <span asp-validation-for="@Model.PLPDescription"></span>
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <nop-label asp-for="@Model.AbcShortDescription" />
+                            </div>
+                            <div class="col-md-9">
+                                <nop-textarea asp-for="@Model.AbcShortDescription"></nop-textarea>
+                                <span asp-validation-for="@Model.AbcShortDescription"></span>
+                            </div>
+                        </div>
                     </section>
                 }
                 else
