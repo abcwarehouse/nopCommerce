@@ -1,5 +1,5 @@
 ﻿{
-  "Group": "Widgets",
+  "Group": "Payment methods",
   "FriendlyName": "ABC Warehouse Card",
   "SystemName": "Payments.UniFi",
   "Version": "4.40.0",
