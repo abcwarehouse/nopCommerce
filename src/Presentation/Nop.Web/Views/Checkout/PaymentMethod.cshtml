@@ -42,9 +42,6 @@
                         }
                     </div>
                 }
-                <div class="credit-con">
-                    <img src="https://www.abcwarehouse.com/images/uploaded/creditcards.jpg" alt="Credit Cards" />
-                </div>
                 @if (Model.PaymentMethods.Count > 0)
                 {
                     <ul class="method-list" id="payment-method-block">
@@ -77,6 +74,9 @@
                                 </div>
                             </li>
                         }
+                        <div class="credit-con">
+                            <img src="https://www.abcwarehouse.com/images/uploaded/creditcards.jpg" alt="Credit Cards" />
+                        </div>
                     </ul>
                     <div class="buttons">
                         <button type="submit" name="nextstep" class="button-1 payment-method-next-step-button">@T("Checkout.NextButton")</button>
