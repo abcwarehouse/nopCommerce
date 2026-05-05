@@ -631,6 +631,30 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //product and gift card attributes
             var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
 
+            // ABC: for wishlist, auto-select the first Delivery/Pickup option if none was selected
+            if ((ShoppingCartType)shoppingCartTypeId == ShoppingCartType.Wishlist)
+            {
+                var deliveryPickupPa = await _abcProductAttributeService.GetProductAttributeByNameAsync(
+                    AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
+                if (deliveryPickupPa != null)
+                {
+                    var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
+                    var deliveryPickupPam = pams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
+                    if (deliveryPickupPam != null)
+                    {
+                        var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(attributes);
+                        var alreadySelected = parsedPams.Any(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
+                        if (!alreadySelected)
+                        {
+                            var pavs = await _productAttributeService.GetProductAttributeValuesAsync(deliveryPickupPam.Id);
+                            var firstPav = pavs.FirstOrDefault();
+                            if (firstPav != null)
+                                attributes = _productAttributeParser.AddProductAttribute(attributes, deliveryPickupPam, firstPav.Id.ToString());
+                        }
+                    }
+                }
+            }
+
             // ABC: need to add the pick up in store option if it was provided
             foreach (var element in form)
             {
