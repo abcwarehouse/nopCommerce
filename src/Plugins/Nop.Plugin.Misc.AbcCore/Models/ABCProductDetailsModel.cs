@@ -8,5 +8,8 @@ namespace Nop.Plugin.Misc.AbcCore.Models
 
         [NopResourceDisplayName(CoreLocales.PLPDescription)]
         public string PLPDescription { get; set; }
+
+        [NopResourceDisplayName(CoreLocales.AbcShortDescription)]
+        public string AbcShortDescription { get; set; }
     }
 }

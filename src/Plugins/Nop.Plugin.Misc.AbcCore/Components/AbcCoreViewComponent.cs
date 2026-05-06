@@ -49,11 +49,15 @@ namespace Nop.Plugin.Misc.AbcCore.Components
                 var plpDescription = await _genericAttributeService.GetAttributeAsync<Product, string>(
                     productId, "PLPDescription"
                 );
+                var abcShortDescription = await _genericAttributeService.GetAttributeAsync<Product, string>(
+                    productId, "AbcShortDescription"
+                );
 
                 var model = new ABCProductDetailsModel
                 {
                     ProductId = productId,
-                    PLPDescription = plpDescription
+                    PLPDescription = plpDescription,
+                    AbcShortDescription = abcShortDescription
                 };
 
                 return View("~/Plugins/Misc.AbcCore/Views/ProductDetails.cshtml", model);
