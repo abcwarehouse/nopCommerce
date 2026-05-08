@@ -445,10 +445,8 @@
         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
     var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
+    NopHtml.AddHeadCustomParts($"<script type=\"application/ld+json\">{jsonLd}</script>");
 }
-    <script type="application/ld+json">
-        @Html.Raw(jsonLd)
-    </script>
     <!--BV injected code-->
     <script>
         // Flag to prevent the global head listener from disabling BV SEO on product pages
