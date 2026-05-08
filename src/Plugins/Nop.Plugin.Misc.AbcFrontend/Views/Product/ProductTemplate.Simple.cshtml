@@ -21,6 +21,7 @@
 @using Microsoft.AspNetCore.Http;               @* IHttpContextAccessor *@
 @using System.Text.RegularExpressions;          @* Regex *@
 @using Newtonsoft.Json;                         @* JsonConvert *@
+@using Nop.Services.Common;                     @* IGenericAttributeService *@ 
 
 @inject CatalogSettings catalogSettings
 @inject IHtmlFormatter htmlFormatter
@@ -33,6 +34,7 @@
 @inject ISettingService settingService
 @inject IProductAttributeService productAttributeService
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IGenericAttributeService genericAttributeService
 
 @{
     Layout = "_ColumnsOne";
@@ -125,6 +127,9 @@
             break;
         }
     }
+
+    // ABC Short Description
+    var abcShortDescription = await genericAttributeService.GetAttributeAsync<string>(currentProduct, "AbcShortDescription");
 }
 
 @if (isClearance)
@@ -275,6 +280,12 @@
                             var dataDictRental = new ViewDataDictionary(ViewData);
                             dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
                             @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
+                        }
+                        @if (!string.IsNullOrEmpty(abcShortDescription))
+                        {
+                            <div class="abc-short-description">
+                                @Html.Raw(abcShortDescription)
+                            </div>
                         }
                         @if (!string.IsNullOrEmpty(Model.ShortDescription))
                         {

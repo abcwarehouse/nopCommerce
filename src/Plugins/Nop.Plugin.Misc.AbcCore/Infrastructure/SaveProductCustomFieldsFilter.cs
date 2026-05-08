@@ -31,35 +31,18 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                 context.RouteData.Values["action"]?.ToString() == "Edit" &&
                 context.RouteData.Values["area"]?.ToString() == "Admin")
             {
-                // Get PLPDescription from form
-                if (context.HttpContext.Request.Form.TryGetValue("PLPDescription", out var plpDescriptionValues))
-                {
-                    var plpDescription = plpDescriptionValues.ToString();
+                var plpDescription = context.HttpContext.Request.Form["PLPDescription"].ToString();
+                var abcShortDescription = context.HttpContext.Request.Form["AbcShortDescription"].ToString();
+                var productId = Convert.ToInt32(context.RouteData.Values["id"].ToString());
 
-                    // Get product ID from route or form
-                    int productId = 0;
-                    if (context.RouteData.Values.TryGetValue("id", out var idValue))
-                    {
-                        int.TryParse(idValue?.ToString(), out productId);
-                    }
+                var product = await _productService.GetProductByIdAsync(productId);
 
-                    // Fallback: try to get from form if model binding puts it there
-                    if (productId == 0 && context.HttpContext.Request.Form.TryGetValue("Id", out var formIdValue))
-                    {
-                        int.TryParse(formIdValue.ToString(), out productId);
-                    }
-
-                    if (productId > 0)
-                    {
-                        var product = await _productService.GetProductByIdAsync(productId);
-                        if (product != null)
-                        {
-                            await _genericAttributeService.SaveAttributeAsync(
-                                product, "PLPDescription", plpDescription
-                            );
-                        }
-                    }
-                }
+                await _genericAttributeService.SaveAttributeAsync(
+                    product, "PLPDescription", plpDescription
+                );
+                await _genericAttributeService.SaveAttributeAsync(
+                    product, "AbcShortDescription", abcShortDescription
+                );
             }
 
             await next();
