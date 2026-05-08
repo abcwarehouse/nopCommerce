@@ -400,7 +400,7 @@
 
 <!-- ABC: JSON-LD markup for BazaarVoice? -->
 @{
-    var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+    var bvProductUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol());
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 }
 @{
