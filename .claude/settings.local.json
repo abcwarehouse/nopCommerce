@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.nopcommerce.com)",
+      "WebFetch(domain:store.nopadvance.com)"
+    ]
+  }
+}
