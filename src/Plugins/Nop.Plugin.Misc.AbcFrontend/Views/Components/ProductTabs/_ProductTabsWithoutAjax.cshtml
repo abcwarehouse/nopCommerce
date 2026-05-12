@@ -14,8 +14,13 @@
 @using Nop.Plugin.Misc.AbcCore.Infrastructure
 @using Nop.Plugin.Misc.AbcCore
 
-@inject INopHtmlHelper NopHtml
+@* ABC: custom *@
+@using Nop.Services.Catalog
+@using Nop.Services.Common
 
+@inject INopHtmlHelper NopHtml
+@inject IProductService productService
+@inject IGenericAttributeService genericAttributeService
 @inject FrontEndService frontEndService
 @inject CoreSettings coreSettings
 
@@ -94,6 +99,17 @@
                             additionalData = Model
                         }
                     )
+
+                    // ABC Full Description
+                    var abcFullDescription = await genericAttributeService.GetAttributeAsync<string>(
+                        await productService.GetProductByIdAsync(productId), "AbcFullDescription");
+
+                    if (!string.IsNullOrEmpty(abcFullDescription))
+                    {
+                        <div class="abc-full-description">
+                            @Html.Raw(abcFullDescription)
+                        </div>
+                    }
                 }
                 @Html.Raw(tabInfo.Content)
             </div>
