@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -151,13 +152,15 @@ public partial class NopHtmlHelper : INopHtmlHelper
                 {
                     case PageTitleSeoAdjustment.PagenameAfterStorename:
                     {
-                        result = string.Join(_seoSettings.PageTitleSeparator, defaultTitle, specificTitle);
+                        result = string.Join(_seoSettings.PageTitleSeparator,
+                            new[] { defaultTitle, specificTitle }.Where(s => !string.IsNullOrEmpty(s)));
                     }
                         break;
                     case PageTitleSeoAdjustment.StorenameAfterPagename:
                     default:
                     {
-                        result = string.Join(_seoSettings.PageTitleSeparator, specificTitle, defaultTitle);
+                        result = string.Join(_seoSettings.PageTitleSeparator,
+                            new[] { specificTitle, defaultTitle }.Where(s => !string.IsNullOrEmpty(s)));
                     }
                         break;
                 }

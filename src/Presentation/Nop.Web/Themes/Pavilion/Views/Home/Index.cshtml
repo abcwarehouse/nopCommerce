@@ -32,7 +32,7 @@
     bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
 }
 
-<div class="page home-page">
+<div class="page home-page paviliion-file">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageTop })
         @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })

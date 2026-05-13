@@ -69,7 +69,8 @@
     else
     {
         <!-- ABC Homepage  -->
-        <div class="page home-page">
+        <div class="page home-page frontend-file">
+            <h1 class="sr-only">ABC Warehouse &ndash; Appliances, TVs, Mattresses &amp; Furniture</h1>
             <div class="page-body">
                 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HomepageTop })
                 @await Component.InvokeAsync("TopicBlock", new { systemName = "HomepageText" })
