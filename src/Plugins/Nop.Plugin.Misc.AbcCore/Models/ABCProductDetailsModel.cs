@@ -11,5 +11,8 @@ namespace Nop.Plugin.Misc.AbcCore.Models
 
         [NopResourceDisplayName(CoreLocales.AbcShortDescription)]
         public string AbcShortDescription { get; set; }
+
+        [NopResourceDisplayName(CoreLocales.AbcFullDescription)]
+        public string AbcFullDescription { get; set; }
     }
 }

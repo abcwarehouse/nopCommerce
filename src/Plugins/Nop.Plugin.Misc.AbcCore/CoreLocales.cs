@@ -43,5 +43,10 @@ namespace Nop.Plugin.Misc.AbcCore
             Base + "AbcShortDescription";
         public const string AbcShortDescriptionHint =
             AbcShortDescription + ".Hint";
+
+        public const string AbcFullDescription =
+            Base + "AbcFullDescription";
+        public const string AbcFullDescriptionHint =
+            AbcFullDescription + ".Hint";
     }
 }

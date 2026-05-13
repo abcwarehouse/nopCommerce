@@ -33,6 +33,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
             {
                 var plpDescription = context.HttpContext.Request.Form["PLPDescription"].ToString();
                 var abcShortDescription = context.HttpContext.Request.Form["AbcShortDescription"].ToString();
+                var abcFullDescription = context.HttpContext.Request.Form["AbcFullDescription"].ToString();
                 var productId = Convert.ToInt32(context.RouteData.Values["id"].ToString());
 
                 var product = await _productService.GetProductByIdAsync(productId);
@@ -42,6 +43,9 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
                 );
                 await _genericAttributeService.SaveAttributeAsync(
                     product, "AbcShortDescription", abcShortDescription
+                );
+                await _genericAttributeService.SaveAttributeAsync(
+                    product, "AbcFullDescription", abcFullDescription
                 );
             }
 
