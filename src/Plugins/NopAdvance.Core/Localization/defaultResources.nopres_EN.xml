@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Language Name="English">
+	<LocaleResource Name="NopAdvance.Core.Plugins">
+		<Value>Plugins</Value>
+	</LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.Themes">
+        <Value>Themes</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.MorePlugins">
+        <Value>More Plugins</Value>
+    </LocaleResource>
+	<LocaleResource Name="NopAdvance.Core.Help">
+		<Value>Help</Value>
+	</LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.Configure">
+        <Value>Configure</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.Settings">
+        <Value>Settings</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.ContactSupport">
+        <Value>Contact Support</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.ContactSales">
+        <Value>Contact Sales</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.WidgetZones">
+        <Value>Widget zones</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.WidgetZones.Title">
+        <Value>Custom widget zones</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.WidgetZones.Fields.WidgetZones">
+        <Value>Widget zones</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.WidgetZones.Fields.WidgetZones.Hint">
+        <Value>Mention the custom/additional widget zones.</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.WidgetZones.Fields.WidgetZones.Text">
+        <Value>Enter widget zones ...</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.WidgetZones.Updated">
+        <Value>Widget zones updated successfully.</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License">
+        <Value>Licensing</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License.Title">
+        <Value>NopAdvance licensing</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License.Fields.LicenseKey">
+        <Value>License key</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License.Register">
+        <Value>Register</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License.DeRegister">
+        <Value>Deregister</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License.DeRegister.AdditionalConfirm">
+        <Value><![CDATA[<p>This will de register the plugin. </p>]]></Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.License.DeRegister.Error">
+        <Value>Failed to deregister license.</Value>
+    </LocaleResource>
+	<LocaleResource Name="NopAdvance.Core.Plugin.Configure">
+		<Value>Configure</Value>
+	</LocaleResource>
+	<LocaleResource Name="NopAdvance.Core.Plugin.Enabled">
+		<Value>Enabled</Value>
+	</LocaleResource>
+	<LocaleResource Name="NopAdvance.Core.Plugin.Enabled.Hint">
+		<Value>Check to enable the plugin.</Value>
+	</LocaleResource>
+    <LocaleResource Name="NopAdvance.Core.DiscountRules">
+        <Value>Discount rules</Value>
+    </LocaleResource>
+</Language>
