@@ -1,0 +1,91 @@
+@*
+    // ***   ** ****** ****** ****** ******* **     ** ****** ***   ** **** ****
+    // ****  ** **  ** **  ** **  **  **  **  **   **  **  ** ****  ** *    *
+    // ** ** ** **  ** ****** ******  **  **   ** **   ****** ** ** ** *    ***
+    // **  **** **  ** **     **  **  **  **    ***    **  ** **  **** *    *
+    // **   *** ****** **     **  ** *******     *     **  ** **   *** **** ****
+    // **************************************************************************
+    // *                                                                         *
+    // *    NopAdvance Core Plugin by NopAdvance team                            *
+    // *    Copyright (c) NopAdvance LLP. All Rights Reserved.                   *
+    // *                                                                         *
+    // **************************************************************************
+    // *                                                                         *
+    // *    This software is licensed for use under the terms accepted during    *
+    // *    the purchase of this product. A non-exclusive, non-transferable      *
+    // *    right is granted to use this product on the website for which it was *
+    // *    licensed.                                                            *
+    // *                                                                         *
+    // *    Companies purchasing this product for their customers are permitted, *
+    // *    provided the use complies with the terms outlined in the EULA:       *
+    // *    https://store.nopadvance.com/eula.                                   *
+    // *                                                                         *
+    // *    You may not reverse engineer, decompile, modify, or distribute this  *
+    // *    software without explicit permission from NopAdvance LLP. Any        *
+    // *    violation will result in the termination of your license and may     *
+    // *    lead to legal action.                                                *
+    // *                                                                         *
+    // **************************************************************************
+    // *    Contact: contact@nopadvance.com                                      *
+    // *    Website: https://nopadvance.com                                      *
+    // **************************************************************************
+*@
+@model CustomWidgetZoneModel
+
+@{
+    Layout = "_AdminLayout";
+
+    //page title
+    ViewBag.PageTitle = T(CoreLocaleResourceDefaults.WIDGET_ZONES_TITILE).Text;
+    //active menu item (system name)
+    NopHtml.SetActiveMenuItemSystemName(Model.SystemName);
+}
+
+<script src="~/lib_npm/jquery-tageditor/jquery.caret.min.js"></script>
+<script src="~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js"></script>
+<link rel="stylesheet" href="~/lib_npm/jquery-tageditor/jquery.tag-editor.css">
+
+<script asp-location="Footer">
+    $(document).ready(function () {
+        $("#@Html.IdFor(model => model.CustomWidgetZones)").tagEditor({
+            autocomplete: {
+                delay: 0,
+                position: { collision: 'flip' }
+            },
+            delimiter: ',',
+            placeholder: '@T(CoreLocaleResourceDefaults.WIDGET_ZONES_FIELD_NAMES_TEXT)'
+        });
+    });
+</script>
+
+<form asp-controller="@Model.ControllerName" asp-action="@Model.ActionName" method="post">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T(CoreLocaleResourceDefaults.WIDGET_ZONES_TITILE)
+        </h1>
+    </div>
+	<section class="content">
+		<div class="container-fluid">
+            <div class="form-horizontal">
+			    <div class="card card-default">
+				    <div class="card-body">
+					    <div class="form-group row">
+						    <div class="col-md-3">
+                                <nop-label asp-for="CustomWidgetZones" />
+						    </div>
+						    <div class="col-md-9">
+                                <nop-editor asp-for="CustomWidgetZones" />
+                                <span asp-validation-for="CustomWidgetZones"></span>
+						    </div>
+					    </div>
+					    <div class="form-group row">
+                            <div class="col-md-9 offset-md-3">
+                                <button type="submit" name="save" class="btn btn-primary">@T("Admin.Common.Save")</button>
+                            </div>
+					    </div>
+				    </div>
+			    </div>
+		    </div>
+        </div>
+	</section>
+</form>
