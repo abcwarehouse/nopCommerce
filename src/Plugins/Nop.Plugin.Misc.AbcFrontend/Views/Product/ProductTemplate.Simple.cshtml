@@ -411,7 +411,7 @@
 
 <!-- ABC: JSON-LD markup for BazaarVoice? -->
 @{
-    var bvProductUrl = $"{HttpContextAccessor.HttpContext.Request.Scheme}://{HttpContextAccessor.HttpContext.Request.Host}{Url.RouteUrl("Product", new { SeName = Model.SeName })}";
+    var bvProductUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol());
     var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
 }
 @{
@@ -431,13 +431,21 @@
         ["image"] = productImageUrl,
         ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
-        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)),
+        ["brand"] = Model.ProductManufacturers.Any()
+            ? (object)new Dictionary<string, object>
+                {
+                    ["@type"] = "Brand",
+                    ["name"] = Model.ProductManufacturers.First().Name
+                }
+            : null,
         ["offers"] = offerPrice != null
             ? new Dictionary<string, object>
                 {
                     ["@type"] = "Offer",
+                    ["url"] = bvProductUrl,
                     ["priceCurrency"] = "USD",
-                    ["price"] = offerPrice
+                    ["price"] = offerPrice,
+                    ["availability"] = "https://schema.org/InStock"
                 }
             : null
     };
@@ -448,25 +456,12 @@
         .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
     var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
+    NopHtml.AddHeadCustomParts($"<script type=\"application/ld+json\">{jsonLd}</script>");
 }
-    <script type="application/ld+json">
-        @Html.Raw(jsonLd)
-    </script>
     <!--BV injected code-->
     <script>
-        // Flag to prevent global config from disabling BV SEO on product pages
+        // Flag to prevent the global head listener from disabling BV SEO on product pages
         window.bvSeoEnabled = true;
-        // Make sure that BV.configure is defined before running this script
-        BV.configure('global', {
-            events : {
-                bvRender : function (data) {
-                // JavaScript code that executes when the Bazaarvoice application renders.
-                },
-            seo : {
-                enabled: true // Enable BV's structured data on product detail pages
-                }
-            }
-        });
     </script>
     <script>
         (function(){
