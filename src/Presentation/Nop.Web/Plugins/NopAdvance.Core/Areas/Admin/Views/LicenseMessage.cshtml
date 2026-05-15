@@ -1,0 +1,99 @@
+@*
+    // ***   ** ****** ****** ****** ******* **     ** ****** ***   ** **** ****
+    // ****  ** **  ** **  ** **  **  **  **  **   **  **  ** ****  ** *    *
+    // ** ** ** **  ** ****** ******  **  **   ** **   ****** ** ** ** *    ***
+    // **  **** **  ** **     **  **  **  **    ***    **  ** **  **** *    *
+    // **   *** ****** **     **  ** *******     *     **  ** **   *** **** ****
+    // **************************************************************************
+    // *                                                                         *
+    // *    NopAdvance Core Plugin by NopAdvance team                            *
+    // *    Copyright (c) NopAdvance LLP. All Rights Reserved.                   *
+    // *                                                                         *
+    // **************************************************************************
+    // *                                                                         *
+    // *    This software is licensed for use under the terms accepted during    *
+    // *    the purchase of this product. A non-exclusive, non-transferable      *
+    // *    right is granted to use this product on the website for which it was *
+    // *    licensed.                                                            *
+    // *                                                                         *
+    // *    Companies purchasing this product for their customers are permitted, *
+    // *    provided the use complies with the terms outlined in the EULA:       *
+    // *    https://store.nopadvance.com/eula.                                   *
+    // *                                                                         *
+    // *    You may not reverse engineer, decompile, modify, or distribute this  *
+    // *    software without explicit permission from NopAdvance LLP. Any        *
+    // *    violation will result in the termination of your license and may     *
+    // *    lead to legal action.                                                *
+    // *                                                                         *
+    // **************************************************************************
+    // *    Contact: contact@nopadvance.com                                      *
+    // *    Website: https://nopadvance.com                                      *
+    // **************************************************************************
+*@
+@model LicenseMessageModel
+@using NopAdvance.Plugin.Core.Domain
+
+@{
+    Layout = "_AdminLayout";
+
+    //page title
+    ViewBag.PageTitle = "NopAdvance license info";
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        NopAdvance license info
+    </h1>
+    <div class="float-right">
+        &nbsp;
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        @switch (Model.LicenseStatus)
+                        {
+                            case LicenseStatusType.Expired:
+                                {
+                                    <div style="margin: 1.5em; padding: 1em; border: 1px solid #ff8000; background-color: #ffedcc; color: #994d00; font-size: 1.25em; text-align: center;">
+                                        <h2>Trial Period Expired</h2>
+                                        <p>The trial period for <strong>@Model.SystemName</strong> has expired. To continue using the plugin/theme, you need to register your license.</p>
+                                        <p>To register your license, click <a href="@(Model.StoreUrl)/Admin/NopAdvanceLicense/List">here</a> to visit the license registration page.</p>
+                                        <p>Contact our customer support team at <a href="mailto:support@nopadvance.com">support@nopadvance.com</a> if you need any assistance.</p>
+                                        <p>Trial versions have limited durations. Please register your license to maintain full access to all features.</p>
+                                    </div>
+
+                                }
+                                break;
+                            case LicenseStatusType.NotFound:
+                                {
+                                    <div style="margin: 1.5em; padding: 1em; border: 1px solid #666666; background-color: #f0f0f0; color: #333333; font-size: 1.25em; text-align: center;">
+                                        <h2>License Not Found</h2>
+                                        <p>We couldn't find a valid license for <strong>@Model.SystemName</strong>. Please ensure you have registered your license correctly.</p>
+                                        <p>To register your license, click <a href="@(Model.StoreUrl)/Admin/NopAdvanceLicense/List">here</a> to visit the license registration page.</p>
+                                        <p>Contact our customer support team at <a href="mailto:support@nopadvance.com">support@nopadvance.com</a> if you need any assistance.</p>
+                                        <p>Remember, using valid licenses is essential for uninterrupted access to our software. Please register your license to continue.</p>
+                                    </div>
+                                }
+                                break;
+                            case LicenseStatusType.Error:
+                                {
+                                    <div style="margin: 1.5em; padding: 1em; border: 1px solid red; background-color: #ffe6e6; color: #990000; font-size: 1.25em; text-align: center;">
+                                        <h2>License Validation Error</h2>
+                                        <p>It appears there's an issue with the license validation for <strong>@Model.SystemName</strong>. Your license may be invalid or has been used in an unauthorized manner. As a result, the plugin/theme has been deactivated.</p>
+                                        <p>Please contact our customer support team at <a href="mailto:support@nopadvance.com">support@nopadvance.com</a> to rectify this issue and regain access.</p>
+                                        <p>Remember, infringement of license agreements is a serious offense and can result in legal consequences. Always ensure to use valid licenses for all software and respect the terms of use.</p>
+                                    </div>
+                                }
+                                break;
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

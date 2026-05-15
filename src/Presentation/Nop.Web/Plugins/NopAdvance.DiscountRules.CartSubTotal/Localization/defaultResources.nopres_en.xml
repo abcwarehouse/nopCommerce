@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Language Name="English">
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal">
+        <Value>Minimum cart subtotal should be x.xx amount</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.Admin.Fields.CartSubTotal">
+        <Value>Required cart sub-total</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.Admin.Fields.CartSubTotal.Hint">
+        <Value>Discount will be applied if customer's cart sub-total is equal or greater than the specified amount.</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.Admin.Fields.CartSubTotal.Positive">
+        <Value>Sub-total amount must be greater than zero(0).</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.Admin.ErrorMessage">
+        <Value>This plugin only works with those discounts where "Discount type" is set to "Assigned to order sub-total".</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.NotEnough">
+        <Value>Cart sub-total should be minimum {0}</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.License.InValid">
+        <Value>License is invalid</Value>
+    </LocaleResource>
+    <LocaleResource Name="NopAdvance.DiscountRules.CartSubTotal.Admin.Fields.CartSubTotal.DiscountId.Required">
+        <Value>Discount is required.</Value>
+    </LocaleResource>
+</Language>
