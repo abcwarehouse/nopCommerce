@@ -123,6 +123,7 @@ AppPackages/
 # ABC: we use this for useful scripts
 #sql/
 *.Cache
+*.lscache
 ClientBin/
 [Ss]tyle[Cc]op.*
 ~$*
