@@ -67,24 +67,15 @@
 
     //variables
 
-    var title = await NopHtml.GenerateTitleAsync();
+    // ABC: changed to false to prevent duplicate title tags being generated (we generate it manually in the layout for better control)
+    var title = await NopHtml.GenerateTitleAsync(false);
     var description = await @NopHtml.GenerateMetaDescriptionAsync();
-    var keywords = await NopHtml.GenerateMetaKeywordsAsync();
+    // ABC: Meta keywords are not used by search engines and often contain duplicates, so we'll leave this blank to avoid potential SEO issues with duplicate content.
+    //      If needed in the future, we can implement a more robust solution for generating unique keywords.
+    //var keywords = await NopHtml.GenerateMetaKeywordsAsync();
 
     var currentPageClass = (await (await Html.PartialAsync("_CurrentPageClass")).RenderHtmlContentAsync()).Trim();
     var supportRtl = await Html.ShouldUseRtlThemeAsync();
-
-    // ABC: shorten title to 60 chars
-    string fullTitle = title.ToString();
-    string shortTitle = string.Empty;
-    if (fullTitle.Length >= 60) 
-    {
-        shortTitle = fullTitle.Substring(0, 60);
-    }
-    else
-    {
-        shortTitle = fullTitle;
-    }
 
     var currentStore = await storeContext.GetCurrentStoreAsync();
     string storeId = "storeId" + currentStore.Id.ToString();
@@ -117,10 +108,10 @@
     })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
     <!-- End Google Tag Manager -->
 
-    <title>@shortTitle</title>
+    <title>@title</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <meta name="description" content="@description" />
-    <meta name="keywords" content="@keywords" />
+    @*<meta name="keywords" content="@keywords" />*@
     <meta name="generator" content="nopCommerce" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0" />
     <!link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css' />
