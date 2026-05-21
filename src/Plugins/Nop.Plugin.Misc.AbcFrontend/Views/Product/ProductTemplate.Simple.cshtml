@@ -431,7 +431,9 @@
         ["image"] = productImageUrl,
         ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
-        ["brand"] = string.Join(" ", Model.ProductManufacturers.Select(m => m.Name)),
+        ["brand"] = Model.ProductManufacturers.Count == 1
+            ? (object)new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = Model.ProductManufacturers[0].Name }
+            : Model.ProductManufacturers.Select(m => new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = m.Name }).ToList<object>(),
         ["offers"] = offerPrice != null
             ? new Dictionary<string, object>
                 {
