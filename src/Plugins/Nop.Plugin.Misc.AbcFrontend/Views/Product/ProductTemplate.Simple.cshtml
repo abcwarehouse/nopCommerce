@@ -18,10 +18,7 @@
 @using Nop.Plugin.Misc.AbcCore.Nop;             @* IAbcCategoryService *@
 @using Nop.Plugin.Misc.AbcCore.Domain;          @* ProductAbcDescription *@
 @using Nop.Plugin.Misc.AbcCore.Infrastructure;  @* CustomPublicWidgetZones *@
-@using Microsoft.AspNetCore.Http;               @* IHttpContextAccessor *@
-@using System.Text.RegularExpressions;          @* Regex *@
-@using Newtonsoft.Json;                         @* JsonConvert *@
-@using Nop.Services.Common;                     @* IGenericAttributeService *@ 
+@using Nop.Services.Common;                     @* IGenericAttributeService *@
 
 @inject CatalogSettings catalogSettings
 @inject IHtmlFormatter htmlFormatter
@@ -33,7 +30,6 @@
 @inject FrontEndService frontEndService
 @inject ISettingService settingService
 @inject IProductAttributeService productAttributeService
-@inject IHttpContextAccessor HttpContextAccessor
 @inject IGenericAttributeService genericAttributeService
 
 @{
@@ -409,51 +405,6 @@
     </div>
 </div>
 
-<!-- ABC: JSON-LD markup for BazaarVoice? -->
-@{
-    var bvProductUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol());
-    var productImageUrl = Model.DefaultPictureModel?.ImageUrl;
-}
-@{
-    string offerPrice = null;
-
-    if (Model?.ProductPrice != null)
-    {
-        offerPrice = Model.ProductPrice.PriceValue.ToString();
-    }
-
-    var schema = new Dictionary<string, object>
-    {
-        ["@context"] = "https://schema.org",
-        ["@type"] = "Product",
-        ["@id"] = bvProductUrl,
-        ["name"] = Model.Name,
-        ["image"] = productImageUrl,
-        ["description"] = Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
-        ["sku"] = Model.Sku,
-        ["brand"] = Model.ProductManufacturers.Count == 1
-            ? (object)new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = Model.ProductManufacturers[0].Name }
-            : Model.ProductManufacturers.Select(m => new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = m.Name }).ToList<object>(),
-        ["offers"] = offerPrice != null
-            ? new Dictionary<string, object>
-                {
-                    ["@type"] = "Offer",
-                    ["priceCurrency"] = "USD",
-                    ["price"] = offerPrice
-                }
-            : null
-    };
-
-    // Remove null-valued keys (like "offers" if offerPrice is null)
-    var schemaFiltered = schema
-        .Where(kvp => kvp.Value != null)
-        .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-    var jsonLd = JsonConvert.SerializeObject(schemaFiltered, Formatting.Indented);
-}
-    <script type="application/ld+json">
-        @Html.Raw(jsonLd)
-    </script>
     <!--BV injected code-->
     <script>
         // Flag to prevent global config from disabling BV SEO on product pages

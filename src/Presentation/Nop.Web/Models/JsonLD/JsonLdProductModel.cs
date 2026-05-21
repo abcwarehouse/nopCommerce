@@ -23,6 +23,9 @@ public record JsonLdProductModel : JsonLdModel
     [JsonProperty("@type")]
     public static string Type => "Product";
 
+    [JsonProperty("@id")]
+    public string Id { get; set; }
+
     [JsonProperty("name")]
     public string Name { get; set; }
 
