@@ -254,20 +254,15 @@
                         </div>
 
                         <script>
-                            // bvCallback must be used when interacting with BV via JavaScript and using the `async` attribute.
-                            window.bvCallback = function (BV) {
-                                // Register a function to be called when a BV feature needs to display the R&R element
+                            // Extend the global bvCallback (which disables SEO injection) with product-page tab behavior.
+                            var _prevBvCallback = window.bvCallback || function(BV) {};
+                            window.bvCallback = function(BV) {
+                                _prevBvCallback(BV);
                                 if (BV.reviews && BV.reviews.on) {
-                                    BV.reviews.on('show', function () {
-                                        $('#review_tab').show();
-                                    });
+                                    BV.reviews.on('show', function () { $('#review_tab').show(); });
                                 }
-
-                                // Register a function to be called when a BV feature needs to display the Q&A element
                                 if (BV.questions && BV.questions.on) {
-                                    BV.questions.on('show', function () {
-                                        $('#questions_tab').show();
-                                    });
+                                    BV.questions.on('show', function () { $('#questions_tab').show(); });
                                 }
                             };
                         </script>
@@ -447,19 +442,6 @@
 @Html.Raw(bvJsonLd)
 </script>
     <!--BV injected code-->
-    <script>
-        // Disable BV's own SEO schema injection — we output our own Product JSON-LD above.
-        // BV's injected schema omits the type field which causes Google "Invalid object type" errors.
-        window.bvSeoEnabled = true;
-        BV.configure('global', {
-            events: {
-                bvRender: function (data) {}
-            },
-            seo: {
-                enabled: false
-            }
-        });
-    </script>
     <script>
         (function(){
             document.addEventListener("DOMContentLoaded", punt);

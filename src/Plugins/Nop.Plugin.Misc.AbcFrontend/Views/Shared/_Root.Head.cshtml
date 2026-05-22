@@ -85,20 +85,15 @@
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
     <!-- Bazaarvoice Reviews -->
-    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
     <script>
-        // Global BV config - disable SEO on listing pages to prevent incomplete Review schema
-        // Product detail pages set window.bvSeoEnabled = true before this runs
-        window.addEventListener('load', function() {
-            if (typeof BV !== 'undefined' && typeof BV.configure === 'function' && !window.bvSeoEnabled) {
-                BV.configure('global', {
-                    seo: {
-                        enabled: false
-                    }
-                });
-            }
-        });
+        // Disable BV SEO schema injection before bv.js loads.
+        // We provide our own Product JSON-LD on product pages — BV's injected schema is typeless and causes Google errors.
+        // bvCallback is BV's guaranteed init hook; setting it here ensures it runs before any schema injection.
+        window.bvCallback = function(BV) {
+            BV.configure('global', { seo: { enabled: false } });
+        };
     </script>
+    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
     <!-- ABC: Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
