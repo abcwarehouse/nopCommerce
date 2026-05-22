@@ -1,0 +1,88 @@
+@*
+    // ***   ** ****** ****** ****** ******* **     ** ****** ***   ** **** ****
+    // ****  ** **  ** **  ** **  **  **  **  **   **  **  ** ****  ** *    *
+    // ** ** ** **  ** ****** ******  **  **   ** **   ****** ** ** ** *    ***
+    // **  **** **  ** **     **  **  **  **    ***    **  ** **  **** *    *
+    // **   *** ****** **     **  ** *******     *     **  ** **   *** **** ****
+    // **************************************************************************
+    // *                                                                         *
+    // *    NopAdvance Core Plugin by NopAdvance team                            *
+    // *    Copyright (c) NopAdvance LLP. All Rights Reserved.                   *
+    // *                                                                         *
+    // **************************************************************************
+    // *                                                                         *
+    // *    This software is licensed for use under the terms accepted during    *
+    // *    the purchase of this product. A non-exclusive, non-transferable      *
+    // *    right is granted to use this product on the website for which it was *
+    // *    licensed.                                                            *
+    // *                                                                         *
+    // *    Companies purchasing this product for their customers are permitted, *
+    // *    provided the use complies with the terms outlined in the EULA:       *
+    // *    https://store.nopadvance.com/eula.                                   *
+    // *                                                                         *
+    // *    You may not reverse engineer, decompile, modify, or distribute this  *
+    // *    software without explicit permission from NopAdvance LLP. Any        *
+    // *    violation will result in the termination of your license and may     *
+    // *    lead to legal action.                                                *
+    // *                                                                         *
+    // **************************************************************************
+    // *    Contact: contact@nopadvance.com                                      *
+    // *    Website: https://nopadvance.com                                      *
+    // **************************************************************************
+*@
+@using NopAdvance.Plugin.Core.Helpers
+@using NopAdvance.Plugin.Core.Domain
+@using Nop.Core
+
+@inject IStoreContext storeContext
+@inject IGenericHelper genericHelper
+@{
+    var pluginDescriptor = genericHelper.GetPluginDescriptor(ViewBag.SystemName);
+
+    //friendly name
+    var friendlyName = pluginDescriptor?.FriendlyName;
+
+    Layout = "_AdminLayout";
+    //page title
+    ViewBag.PageTitle = T(CoreLocaleResourceDefaults.CONFIGURE_PAGE_TITLE).Text + " - " + friendlyName;
+
+    LicenseStatusType licenseStatus = LicenseStatusType.NotFound;
+    if (ViewBag.LicenseStatus != null)
+    {
+        licenseStatus = (LicenseStatusType)ViewBag.LicenseStatus;
+    }
+
+    var supportLink = await genericHelper.GetContactSupportLinkAsync(friendlyName);
+    var salesLink = await genericHelper.GetContactSalesLinkAsync();
+    var registerLink = "<a href=\"" + (await storeContext.GetCurrentStoreAsync()).Url.TrimEnd('/') + "/Admin/NopAdvanceLicensing/List\" style=\"text-decoration: underline; font-size: 14px; margin-left: 10px;\">Register license</a>";
+}
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @switch (licenseStatus)
+        {
+            case LicenseStatusType.Paid:
+            case LicenseStatusType.Free:
+                <i title="Valid License – Product registered and active." data-toggle="tooltip" class="fas fa-check-circle text-green"></i>
+                break;
+            case LicenseStatusType.Trial:
+                <i title="Trial License (10 days from installation)." data-toggle="tooltip" class="fas fa-exclamation-triangle text-yellow"></i>
+                break;
+            case LicenseStatusType.Expired:
+                <i title="Trial Expired: Plugin is non-functional." data-toggle="tooltip" class="fas fa-times-circle text-red"></i>
+                break;
+        }
+        
+        @T(CoreLocaleResourceDefaults.CONFIGURE_PAGE_TITLE) - @friendlyName @Html.Raw(licenseStatus == LicenseStatusType.Trial ? registerLink : "")
+    </h1>
+    <div class="float-right">
+        <a class="btn btn-primary" href="@supportLink">@T(CoreLocaleResourceDefaults.CONTACT_SUPPORT)</a>
+        <a class="btn bg-olive" href="@salesLink">@T(CoreLocaleResourceDefaults.CONTACT_SALES)</a>
+    </div>
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @RenderBody()
+        </div>
+    </div>
+</section>

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -r src/Plugins/NopAdvance.Core src/Presentation/Nop.Web/Plugins/NopAdvance.Core)",
+      "Bash(cp -r src/Plugins/NopAdvance.DiscountRules.CartSubTotal src/Presentation/Nop.Web/Plugins/NopAdvance.DiscountRules.CartSubTotal)",
+      "Bash(git status *)"
+    ]
+  }
+}
