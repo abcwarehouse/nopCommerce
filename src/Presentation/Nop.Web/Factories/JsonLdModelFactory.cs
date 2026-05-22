@@ -131,6 +131,7 @@ public partial class JsonLdModelFactory : IJsonLdModelFactory
 
         var product = new JsonLdProductModel
         {
+            Id = productUrl.ToLowerInvariant(),
             Name = model.Name,
             Sku = model.Sku,
             Gtin = model.Gtin,

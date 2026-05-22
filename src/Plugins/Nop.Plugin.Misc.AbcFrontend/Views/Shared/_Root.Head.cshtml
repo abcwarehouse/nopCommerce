@@ -84,21 +84,9 @@
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
+    @NopHtml.GenerateHeadCustom()
     <!-- Bazaarvoice Reviews -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
-    <script>
-        // Global BV config - disable SEO on listing pages to prevent incomplete Review schema
-        // Product detail pages set window.bvSeoEnabled = true before this runs
-        window.addEventListener('load', function() {
-            if (typeof BV !== 'undefined' && typeof BV.configure === 'function' && !window.bvSeoEnabled) {
-                BV.configure('global', {
-                    seo: {
-                        enabled: false
-                    }
-                });
-            }
-        });
-    </script>
 
     <!-- ABC: Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -119,7 +107,6 @@
     <meta name="generator" content="nopCommerce" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0" />
     <!link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700&display=swap' rel='stylesheet' type='text/css' />
-    @NopHtml.GenerateHeadCustom()
     @*This is used so that themes can inject content into the header*@
     @await Html.PartialAsync("Head")
     @await Component.InvokeAsync("Widget", new { widgetZone = "head_html_tag_after_css_files_pavilion" })
