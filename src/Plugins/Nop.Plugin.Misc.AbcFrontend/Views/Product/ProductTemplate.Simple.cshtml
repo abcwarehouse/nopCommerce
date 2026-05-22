@@ -449,7 +449,7 @@
     <!--BV injected code-->
     <script>
         // Disable BV's own SEO schema injection — we output our own Product JSON-LD above.
-        // BV's injected schema omits @type which causes Google "Invalid object type" errors.
+        // BV's injected schema omits the type field which causes Google "Invalid object type" errors.
         window.bvSeoEnabled = true;
         BV.configure('global', {
             events: {
