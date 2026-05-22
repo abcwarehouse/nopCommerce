@@ -448,17 +448,15 @@
 </script>
     <!--BV injected code-->
     <script>
-        // Flag to prevent global config from disabling BV SEO on product pages
+        // Disable BV's own SEO schema injection — we output our own Product JSON-LD above.
+        // BV's injected schema omits @type which causes Google "Invalid object type" errors.
         window.bvSeoEnabled = true;
-        // Make sure that BV.configure is defined before running this script
         BV.configure('global', {
-            events : {
-                bvRender : function (data) {
-                // JavaScript code that executes when the Bazaarvoice application renders.
-                },
-            seo : {
-                enabled: true // Enable BV's structured data on product detail pages
-                }
+            events: {
+                bvRender: function (data) {}
+            },
+            seo: {
+                enabled: false
             }
         });
     </script>
