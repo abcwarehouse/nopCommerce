@@ -75,6 +75,48 @@
         NopHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
     NopHtml.AddJsonLdParts(Model.JsonLd);
+
+    // Build Product JSON-LD here so it lands in <head> before bv.js loads.
+    // BV reads the existing Product schema to build its own augmented schema (with aggregateRating).
+    // In nopCommerce 4.4 this worked via HTML microdata; 4.8 removed microdata, so we inject JSON-LD instead.
+    {
+        var bvProductUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol());
+        string bvOfferPrice = null;
+        if (Model?.ProductPrice != null && !Model.ProductPrice.CallForPrice)
+            bvOfferPrice = Model.ProductPrice.PriceValue?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+
+        object bvBrand = null;
+        if (Model.ProductManufacturers.Count == 1)
+            bvBrand = new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = Model.ProductManufacturers[0].Name };
+        else if (Model.ProductManufacturers.Count > 1)
+            bvBrand = Model.ProductManufacturers.Select(m => new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = m.Name }).Cast<object>().ToList();
+
+        var bvSchema = new Dictionary<string, object>
+        {
+            ["@context"] = "https://schema.org",
+            ["@type"] = "Product",
+            ["@id"] = bvProductUrl,
+            ["name"] = Model.Name,
+            ["image"] = Model.DefaultPictureModel?.ImageUrl,
+            ["description"] = System.Text.RegularExpressions.Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
+            ["sku"] = Model.Sku,
+            ["brand"] = bvBrand,
+            ["offers"] = bvOfferPrice != null
+                ? (object)new Dictionary<string, object>
+                    {
+                        ["@type"] = "Offer",
+                        ["url"] = bvProductUrl,
+                        ["priceCurrency"] = "USD",
+                        ["price"] = bvOfferPrice,
+                        ["availability"] = "https://schema.org/" + (Model.InStock ? "InStock" : "OutOfStock")
+                    }
+                : null
+        };
+
+        var bvSchemaFiltered = bvSchema.Where(kvp => kvp.Value != null).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        var bvJsonLd = Newtonsoft.Json.JsonConvert.SerializeObject(bvSchemaFiltered, Newtonsoft.Json.Formatting.Indented);
+        NopHtml.AddHeadCustomParts("<script type=\"application/ld+json\">" + bvJsonLd + "</script>");
+    }
 }
 <!--product breadcrumb-->
 @section Breadcrumb
@@ -400,47 +442,6 @@
     </div>
 </div>
 
-@{
-    var bvProductUrl = Url.RouteUrl<Product>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol());
-
-    string offerPrice = null;
-    if (Model?.ProductPrice != null && !Model.ProductPrice.CallForPrice)
-    {
-        offerPrice = Model.ProductPrice.PriceValue?.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
-    }
-
-    var bvSchema = new Dictionary<string, object>
-    {
-        ["@context"] = "https://schema.org",
-        ["@type"] = "Product",
-        ["@id"] = bvProductUrl,
-        ["name"] = Model.Name,
-        ["image"] = Model.DefaultPictureModel?.ImageUrl,
-        ["description"] = System.Text.RegularExpressions.Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
-        ["sku"] = Model.Sku,
-        ["brand"] = Model.ProductManufacturers.Count == 0
-            ? null
-            : Model.ProductManufacturers.Count == 1
-                ? (object)new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = Model.ProductManufacturers[0].Name }
-                : Model.ProductManufacturers.Select(m => new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = m.Name }).ToList<object>(),
-        ["offers"] = offerPrice != null
-            ? (object)new Dictionary<string, object>
-                {
-                    ["@type"] = "Offer",
-                    ["url"] = bvProductUrl,
-                    ["priceCurrency"] = "USD",
-                    ["price"] = offerPrice,
-                    ["availability"] = "https://schema.org/" + (Model.InStock ? "InStock" : "OutOfStock")
-                }
-            : null
-    };
-
-    var bvSchemaFiltered = bvSchema.Where(kvp => kvp.Value != null).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-    var bvJsonLd = Newtonsoft.Json.JsonConvert.SerializeObject(bvSchemaFiltered, Newtonsoft.Json.Formatting.Indented);
-}
-<script type="application/ld+json">
-@Html.Raw(bvJsonLd)
-</script>
     <!--BV injected code-->
     <script>
         (function(){
