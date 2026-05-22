@@ -423,9 +423,11 @@
         ["image"] = Model.DefaultPictureModel?.ImageUrl,
         ["description"] = System.Text.RegularExpressions.Regex.Replace(Model.ShortDescription ?? "", "<.*?>", string.Empty),
         ["sku"] = Model.Sku,
-        ["brand"] = Model.ProductManufacturers.Count == 1
-            ? (object)new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = Model.ProductManufacturers[0].Name }
-            : Model.ProductManufacturers.Select(m => new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = m.Name }).ToList<object>(),
+        ["brand"] = Model.ProductManufacturers.Count == 0
+            ? null
+            : Model.ProductManufacturers.Count == 1
+                ? (object)new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = Model.ProductManufacturers[0].Name }
+                : Model.ProductManufacturers.Select(m => new Dictionary<string, object> { ["@type"] = "Brand", ["name"] = m.Name }).ToList<object>(),
         ["offers"] = offerPrice != null
             ? (object)new Dictionary<string, object>
                 {
