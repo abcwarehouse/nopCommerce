@@ -100,14 +100,16 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
         public override async Task<IActionResult> Edit(CategoryModel model, bool continueEditing)
         {
-            await SaveHawthorneIntDataAsync(model.Id, "HawthornePictureId");
-            await SaveHawthorneStringDataAsync(model.Id, "HawthorneMetaTitle");
-            await SaveHawthorneStringDataAsync(model.Id, "HawthorneMetaDescription");
+            await SaveStringDataAsync(model.Id, "SeoTitle");
+            await SaveStringDataAsync(model.Id, "SeoDescription");
+            await SaveIntDataAsync(model.Id, "HawthornePictureId");
+            await SaveStringDataAsync(model.Id, "HawthorneMetaTitle");
+            await SaveStringDataAsync(model.Id, "HawthorneMetaDescription");
 
             return await base.Edit(model, continueEditing);
         }
 
-        private async Task SaveHawthorneIntDataAsync(int categoryId, string key)
+        private async Task SaveIntDataAsync(int categoryId, string key)
         {
             var value = Convert.ToInt32(Request.Form[key].ToString());
             if (value != 0)
@@ -119,7 +121,7 @@ namespace Nop.Plugin.Misc.AbcCore.Areas.Admin.Controllers
             }
         }
         
-        private async Task SaveHawthorneStringDataAsync(int categoryId, string key)
+        private async Task SaveStringDataAsync(int categoryId, string key)
         {
             var value = Request.Form[key].ToString();
             if (!string.IsNullOrWhiteSpace(value))

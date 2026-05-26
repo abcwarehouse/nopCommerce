@@ -1,29 +1,20 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": ".NET Core Launch (web)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/Presentation/Nop.Web/bin/Debug/net9.0/Nop.Web.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Presentation/Nop.Web",
-            "stopAtEntry": false,
-            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+https?://\\S+",
-                // Modified to a custom URL: https://code.visualstudio.com/docs/csharp/debugger-settings#_specifying-the-browsers-url
-                "uriFormat": "http://localhost:8080"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            },
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Nop.Web (Clean + Build Solution)",
+      "type": "node-terminal",
+      "request": "launch",
+      "preLaunchTask": "Clean and Build nopCommerce Solution",
+      "command": "dotnet run --project ${workspaceFolder}/src/Presentation/Nop.Web/Nop.Web.csproj",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+https?://\\S+:([0-9]+)",
+        "uriFormat": "http://localhost:%s"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  ]
 }
