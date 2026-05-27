@@ -8,6 +8,10 @@ namespace Nop.Plugin.Misc.AbcCore.Models
 {
     public class AbcCategoryDetailsModel
     {
+        public string SeoTitle { get; set; }
+
+        public string SeoDescription { get; set; }
+
         public int CategoryId { get; set; }
 
         [UIHint("Picture")]

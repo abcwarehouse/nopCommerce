@@ -262,6 +262,14 @@
       {
         "SystemName": "AbcWarehouse.Plugin.Misc.SearchSpring",
         "Version": "1.0.0"
+      },
+      {
+        "SystemName": "NopAdvance.Core",
+        "Version": "1.18"
+      },
+      {
+        "SystemName": "NopAdvance.DiscountRules.CartSubTotal",
+        "Version": "1.05"
       }
     ],
     "PluginNamesToUninstall": [],

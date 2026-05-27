@@ -83,6 +83,14 @@ namespace Nop.Plugin.Misc.AbcCore.Components
             else if (widgetZone == AdminWidgetZones.CategoryDetailsBlock)
             {
                 var categoryId = (additionalData as nopWebAdminCatalog.CategoryModel).Id;
+
+                var seoTitle = await _genericAttributeService.GetAttributeAsync<Category, string>(
+                    categoryId, "SeoTitle"
+                );
+                var seoDescription = await _genericAttributeService.GetAttributeAsync<Category, string>(
+                    categoryId, "SeoDescription"
+                );
+
                 var hawthornePictureId = await _genericAttributeService.GetAttributeAsync<Category, int>(
                     categoryId, "HawthornePictureId"
                 );
@@ -95,6 +103,8 @@ namespace Nop.Plugin.Misc.AbcCore.Components
 
                 var model = new AbcCategoryDetailsModel
                 {
+                    SeoTitle = seoTitle,
+                    SeoDescription = seoDescription,
                     CategoryId = categoryId,
                     HawthornePictureId = hawthornePictureId,
                     HawthorneMetaTitle = hawthorneMetaTitle,
