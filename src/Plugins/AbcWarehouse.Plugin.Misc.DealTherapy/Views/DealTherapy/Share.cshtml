@@ -1,0 +1,87 @@
+@model AbcWarehouse.Plugin.Misc.DealTherapy.Models.DealTherapyResultModel
+@inject Nop.Web.Framework.UI.INopHtmlHelper NopHtml
+@{
+    Layout = "_ColumnsOne";
+    var product = Model.Product;
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var shareUrl = $"{baseUrl}/deal-therapy/share/{product.Key}";
+    var imageUrl = $"{baseUrl}/deal-therapy/share-image/{product.Key}";
+    var ogTitle = $"My Deal Therapy Diagnosis: {product.Diagnosis}";
+    var ogDesc = $"Rx: {product.Name}. Take your own Deal Therapy session at ABC Warehouse.";
+
+    NopHtml.AddTitleParts($"Deal Therapy — {product.Diagnosis}");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:type\" content=\"website\" />");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:url\" content=\"{shareUrl}\" />");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:title\" content=\"{System.Net.WebUtility.HtmlEncode(ogTitle)}\" />");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:description\" content=\"{System.Net.WebUtility.HtmlEncode(ogDesc)}\" />");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:image\" content=\"{imageUrl}\" />");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:image:width\" content=\"1200\" />");
+    NopHtml.AddHeadCustomParts($"<meta property=\"og:image:height\" content=\"630\" />");
+    NopHtml.AddHeadCustomParts($"<meta name=\"twitter:card\" content=\"summary_large_image\" />");
+    NopHtml.AddHeadCustomParts($"<meta name=\"twitter:title\" content=\"{System.Net.WebUtility.HtmlEncode(ogTitle)}\" />");
+    NopHtml.AddHeadCustomParts($"<meta name=\"twitter:description\" content=\"{System.Net.WebUtility.HtmlEncode(ogDesc)}\" />");
+    NopHtml.AddHeadCustomParts($"<meta name=\"twitter:image\" content=\"{imageUrl}\" />");
+}
+
+<div class="page deal-therapy-result-page">
+    <div class="page-title">
+        <h1>A Deal Therapy Diagnosis</h1>
+    </div>
+    <div class="page-body">
+
+        <div class="dt-rx-pad">
+            <div class="dt-rx-header">
+                <div class="dt-rx-logo">ABC Warehouse</div>
+                <div class="dt-rx-therapist">Chad — Deal Therapist, Unlicensed</div>
+            </div>
+            <div class="dt-rx-body">
+                <div class="dt-diagnosis-label">Diagnosis</div>
+                <div class="dt-diagnosis-name">@product.Diagnosis</div>
+                <div class="dt-verdict">
+                    @foreach (var para in product.Verdict.Split('\n', System.StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <p>@para</p>
+                    }
+                </div>
+                <div class="dt-rx-symbol">℞</div>
+                <div class="dt-rx-product-name">@product.Name</div>
+                <div class="dt-side-effects">
+                    <strong>Side effects may include:</strong> @product.SideEffects
+                </div>
+            </div>
+            <div class="dt-rx-footer">
+                <div class="dt-rx-sig">— Chad, D.T.</div>
+                <div class="dt-rx-disclaimer">*Not a real therapist. Deals are very real.</div>
+            </div>
+        </div>
+
+        <div class="dt-shared-cta">
+            <p>Think this might be your diagnosis too? Take your own session.</p>
+            <a href="/deal-therapy" class="button-1">Start Deal Therapy →</a>
+            <a href="/search/results?q=@Uri.EscapeDataString(product.Name)" class="button-2">Shop @product.Name</a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+.deal-therapy-result-page .page-title h1 { margin-bottom: 24px; }
+.dt-rx-pad { max-width: 560px; background: #fffef5; border: 1px solid #d4c88a; border-top: 6px solid #e63328; border-radius: 4px; padding: 28px 32px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 24px; font-family: 'Georgia', serif; }
+.dt-rx-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d4c88a; padding-bottom: 12px; margin-bottom: 20px; }
+.dt-rx-logo { font-weight: bold; font-size: 1.1em; letter-spacing: 0.04em; color: #e63328; }
+.dt-rx-therapist { font-size: 0.8em; color: #888; font-style: italic; }
+.dt-diagnosis-label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
+.dt-diagnosis-name { font-size: 1.5em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+.dt-verdict { font-size: 0.95em; line-height: 1.7; color: #333; margin-bottom: 20px; }
+.dt-verdict p { margin-bottom: 12px; }
+.dt-rx-symbol { font-size: 2.4em; color: #e63328; line-height: 1; margin-bottom: 2px; }
+.dt-rx-product-name { font-size: 1.25em; font-weight: bold; color: #1a1a1a; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px dashed #ccc; }
+.dt-side-effects { font-size: 0.88em; color: #555; font-style: italic; background: #f5f0d8; border-radius: 3px; padding: 10px 14px; }
+.dt-rx-footer { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; }
+.dt-rx-sig { font-style: italic; font-size: 1.1em; color: #333; }
+.dt-rx-disclaimer { font-size: 0.75em; color: #aaa; }
+.dt-shared-cta p { color: #555; margin-bottom: 12px; }
+.dt-shared-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.dt-shared-cta a { margin: 0; }
+@@media (min-width: 500px) { .dt-shared-cta { flex-direction: row; align-items: center; flex-wrap: wrap; } .dt-shared-cta p { width: 100%; } }
+</style>

@@ -4,6 +4,11 @@
     Layout = "_ColumnsOne";
     NopHtml.AddTitleParts("Your Deal Therapy Prescription");
     var product = Model.Product;
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var shareUrl = product != null ? $"{baseUrl}/deal-therapy/share/{product.Key}" : "";
+    var twitterText = product != null
+        ? $"My Deal Therapy diagnosis: {product.Diagnosis}. Rx: {product.Name} — take yours:"
+        : "";
 }
 
 <div class="page deal-therapy-result-page">
@@ -49,6 +54,25 @@
                 </div>
             </div>
 
+            <div class="dt-share-section">
+                <div class="dt-share-label">Share your diagnosis</div>
+                <div class="dt-share-buttons">
+                    <button class="dt-share-btn dt-copy-btn" data-url="@shareUrl" onclick="dtCopyLink(this)">
+                        Copy Link
+                    </button>
+                    <a class="dt-share-btn dt-twitter-btn"
+                       href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(twitterText)&url=@Uri.EscapeDataString(shareUrl)"
+                       target="_blank" rel="noopener">
+                        Share on X
+                    </a>
+                    <a class="dt-share-btn dt-facebook-btn"
+                       href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(shareUrl)"
+                       target="_blank" rel="noopener">
+                        Share on Facebook
+                    </a>
+                </div>
+            </div>
+
             <div class="dt-cta-row">
                 <a href="/search/results?q=@Uri.EscapeDataString(product.Name)" class="button-1">Shop @product.Name →</a>
                 <a href="/deal-therapy" class="button-2">Retake Quiz</a>
@@ -73,14 +97,7 @@
     font-family: 'Georgia', serif;
 }
 
-.dt-rx-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    border-bottom: 1px solid #d4c88a;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-}
+.dt-rx-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d4c88a; padding-bottom: 12px; margin-bottom: 20px; }
 .dt-rx-logo { font-weight: bold; font-size: 1.1em; letter-spacing: 0.04em; color: #e63328; }
 .dt-rx-therapist { font-size: 0.8em; color: #888; font-style: italic; }
 
@@ -99,5 +116,51 @@
 .dt-rx-sig { font-style: italic; font-size: 1.1em; color: #333; }
 .dt-rx-disclaimer { font-size: 0.75em; color: #aaa; }
 
+.dt-share-section { margin-bottom: 24px; }
+.dt-share-label { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 10px; }
+.dt-share-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.dt-share-btn {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+.dt-share-btn:hover { opacity: 0.85; text-decoration: none; }
+.dt-copy-btn    { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+.dt-copy-btn.copied { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.dt-twitter-btn  { background: #000; color: #fff; }
+.dt-facebook-btn { background: #1877f2; color: #fff; }
+
 .dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 </style>
+
+<script>
+function dtCopyLink(btn) {
+    var url = btn.dataset.url;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function () {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(function () { btn.textContent = 'Copy Link'; btn.classList.remove('copied'); }, 2500);
+        });
+    } else {
+        // Fallback for older browsers
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Copy Link'; btn.classList.remove('copied'); }, 2500);
+    }
+}
+</script>

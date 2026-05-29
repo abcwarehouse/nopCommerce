@@ -25,6 +25,18 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Infrastructure
                 pattern: "deal-therapy/result",
                 defaults: new { controller = "DealTherapy", action = "Result" }
             );
+
+            endpointRouteBuilder.MapControllerRoute(
+                name: "DealTherapyShare",
+                pattern: "deal-therapy/share/{productKey}",
+                defaults: new { controller = "DealTherapy", action = "Share" }
+            );
+
+            endpointRouteBuilder.MapControllerRoute(
+                name: "DealTherapyShareImage",
+                pattern: "deal-therapy/share-image/{productKey}",
+                defaults: new { controller = "DealTherapy", action = "ShareImage" }
+            );
         }
 
         public int Priority => 0;
