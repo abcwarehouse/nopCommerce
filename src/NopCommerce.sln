@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nop.Plugin.Misc.AbcFrontend
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Misc.SearchSpring", "Plugins\AbcWarehouse.Plugin.Misc.SearchSpring\AbcWarehouse.Plugin.Misc.SearchSpring.csproj", "{2196E5AF-7BFF-45B0-A376-D91A2C82DC71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Misc.DealTherapy", "Plugins\AbcWarehouse.Plugin.Misc.DealTherapy\AbcWarehouse.Plugin.Misc.DealTherapy.csproj", "{61E3D981-08F2-4992-A246-8D561AB6268A}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Payments.UniFi", "Plugins\AbcWarehouse.Plugin.Payments.UniFi\AbcWarehouse.Plugin.Payments.UniFi.csproj", "{3E1116F2-81AF-4B38-948D-CDCFBBFDD254}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbcWarehouse.Plugin.Widgets.UniFi", "Plugins\AbcWarehouse.Plugin.Widgets.UniFi\AbcWarehouse.Plugin.Widgets.UniFi.csproj", "{75A95C16-9710-4421-8C0F-6876FA87BE9C}"
@@ -223,6 +225,10 @@ Global
 		{6D172051-A383-4BA6-A263-CEA19E7A6D2E}.Release|x86.Build.0 = Release|Any CPU
 		{6D172051-A383-4BA6-A263-CEA19E7A6D2E}.Release|x64.ActiveCfg = Release|Any CPU
 		{6D172051-A383-4BA6-A263-CEA19E7A6D2E}.Release|x64.Build.0 = Release|Any CPU
+		{61E3D981-08F2-4992-A246-8D561AB6268A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61E3D981-08F2-4992-A246-8D561AB6268A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61E3D981-08F2-4992-A246-8D561AB6268A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61E3D981-08F2-4992-A246-8D561AB6268A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2196E5AF-7BFF-45B0-A376-D91A2C82DC71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2196E5AF-7BFF-45B0-A376-D91A2C82DC71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2196E5AF-7BFF-45B0-A376-D91A2C82DC71}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

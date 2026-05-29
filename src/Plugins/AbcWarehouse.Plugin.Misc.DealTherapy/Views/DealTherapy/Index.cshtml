@@ -1,0 +1,65 @@
+@model AbcWarehouse.Plugin.Misc.DealTherapy.Models.DealTherapyModel
+@{
+    Layout = "_ColumnsOne";
+    NopHtml.AddTitleParts("Deal Therapy");
+}
+
+<div class="page deal-therapy-page">
+    <div class="page-title">
+        <h1>Deal Therapy</h1>
+    </div>
+    <div class="page-body">
+        <p class="deal-therapy-intro">Answer a few quick questions and we'll help you find your perfect deal.</p>
+
+        <form asp-action="Submit" asp-controller="DealTherapy" method="post" id="deal-therapy-form">
+            @Html.AntiForgeryToken()
+
+            @for (var i = 0; i < Model.Questions.Count; i++)
+            {
+                var question = Model.Questions[i];
+                <div class="deal-therapy-question" data-question="@question.Key">
+                    <h3>@(i + 1). @question.Text</h3>
+                    <ul class="deal-therapy-options">
+                        @foreach (var option in question.Options)
+                        {
+                            <li>
+                                <label>
+                                    <input type="radio"
+                                           name="Answers[@question.Key]"
+                                           value="@option"
+                                           required />
+                                    @option
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="deal-therapy-email">
+                <label for="Email">Email address <span class="optional">(optional — we'll send you personalized deals)</span></label>
+                <input type="email" id="Email" name="Email" placeholder="you@example.com" />
+            </div>
+
+            <div class="deal-therapy-submit">
+                <button type="submit" class="button-1">Get My Results</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .deal-therapy-page .page-title h1 { margin-bottom: 10px; }
+    .deal-therapy-intro { font-size: 1.1em; margin-bottom: 24px; }
+    .deal-therapy-question { margin-bottom: 28px; }
+    .deal-therapy-question h3 { margin-bottom: 10px; font-size: 1.05em; }
+    .deal-therapy-options { list-style: none; padding: 0; }
+    .deal-therapy-options li { margin-bottom: 8px; }
+    .deal-therapy-options label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1em; }
+    .deal-therapy-options input[type="radio"] { width: 16px; height: 16px; }
+    .deal-therapy-email { margin-bottom: 24px; }
+    .deal-therapy-email label { display: block; margin-bottom: 6px; font-weight: bold; }
+    .deal-therapy-email .optional { font-weight: normal; font-size: 0.9em; color: #666; }
+    .deal-therapy-email input[type="email"] { width: 100%; max-width: 400px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+    .deal-therapy-submit { margin-top: 8px; }
+</style>

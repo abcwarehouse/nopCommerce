@@ -1,0 +1,11 @@
+{
+  "Group": "Misc",
+  "FriendlyName": "Deal Therapy",
+  "SystemName": "AbcWarehouse.Plugin.Misc.DealTherapy",
+  "Version": "1.0.0",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "Mike Schwartz",
+  "DisplayOrder": 1,
+  "FileName": "AbcWarehouse.Plugin.Misc.DealTherapy.dll",
+  "Description": "Deal Therapy quiz page - helps customers find the right deal."
+}
