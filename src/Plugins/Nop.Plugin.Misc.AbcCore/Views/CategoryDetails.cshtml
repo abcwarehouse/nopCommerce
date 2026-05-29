@@ -6,6 +6,24 @@
     <div class="card-body">
         <div class="card card-default">
             <div class="card-body">
+                <div class="form-group advanced-setting row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.SeoTitle" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-editor asp-for="@Model.SeoTitle" />
+                        <span asp-validation-for="@Model.SeoTitle"></span>
+                    </div>
+                </div>
+                <div class="form-group advanced-setting row">
+                    <div class="col-md-3">
+                        <nop-label asp-for="@Model.SeoDescription" />
+                    </div>
+                    <div class="col-md-9">
+                        <nop-textarea asp-for="@Model.SeoDescription"></nop-textarea>
+                        <span asp-validation-for="@Model.SeoDescription"></span>
+                    </div>
+                </div>
                 <section class="content">
                     Optional image to be displayed on Hawthorne. If this is not provided, default picture will be used.
                 </section>

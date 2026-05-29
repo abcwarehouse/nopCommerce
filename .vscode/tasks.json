@@ -1,53 +1,34 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "clean",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "clean",
-                "${workspaceFolder}/src/NopCommerce.sln",
-            ],
-            "problemMatcher": "$msCompile",
-        },
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/src/NopCommerce.sln",
-            ],
-            "problemMatcher": "$msCompile",
-            "dependsOn": [
-                "clean"
-            ]
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/Presentation/Nop.Web/Nop.Web.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/Presentation/Nop.Web/Nop.Web.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Clean nopCommerce Solution",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "clean",
+        "src/NopCommerce.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build nopCommerce Solution",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "src/NopCommerce.sln"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "Clean and Build nopCommerce Solution",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Clean nopCommerce Solution",
+        "Build nopCommerce Solution"
+      ]
+    }
+  ]
 }

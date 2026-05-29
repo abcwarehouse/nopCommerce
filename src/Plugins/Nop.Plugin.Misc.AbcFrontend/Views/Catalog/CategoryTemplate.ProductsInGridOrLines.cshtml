@@ -4,6 +4,7 @@
 @inject INopHtmlHelper NopHtml
 
 @using Nop.Core.Domain.Common
+@using Nop.Core.Domain.Catalog
 @using Nop.Core.Domain.Seo
 @* custom *@
 @using Nop.Plugin.Misc.AbcCore.Services
@@ -11,6 +12,7 @@
 @using Nop.Web.Framework.Infrastructure
 @using Nop.Plugin.Misc.AbcCore.Infrastructure
 @using Nop.Web.Extensions
+@using Nop.Services.Common
 
 @inject Nop.Core.IWebHelper webHelper
 @inject SeoSettings seoSettings
@@ -18,6 +20,7 @@
 @inject IViewComponentSelector viewComponentSelector
 @* custom *@
 @inject FrontEndService frontEndService
+@inject IGenericAttributeService genericAttributeService
 
 @{
     Layout = "_ColumnsTwo";
@@ -50,6 +53,9 @@
     }
 
 	var isClearance = Model.Name == "Clearance";
+
+	var seoTitle = await genericAttributeService.GetAttributeAsync<Category, string>(Model.Id, "SeoTitle");
+	var seoDescription = await genericAttributeService.GetAttributeAsync<Category, string>(Model.Id, "SeoDescription");
 }
 
 @using Nop.Core.Domain.Common;
@@ -103,6 +109,18 @@
 		}
 	</style>
 }
+<style>
+	h1 {
+		margin: 0 0 20px;
+		border-bottom: 1px solid red;
+		padding: 0 0px 5px;
+		padding-top: 15px;
+		font-size: 22px;
+		line-height: 30px;
+		color: #333;
+		text-transform: uppercase;
+	}
+</style>
 <script>
     // check if it's a leaf category
     $(function () {
@@ -361,6 +379,16 @@
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBeforeSubcategoriesMin480px, additionalData = Model.Id })
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBeforeSubcategoriesMin768px, additionalData = Model.Id })
 		@await Component.InvokeAsync("Widget", new { widgetZone = CustomPublicWidgetZones.CategoryDetailsBeforeSubcategoriesAbove1000px, additionalData = Model.Id })
+
+		@if (!string.IsNullOrEmpty(seoTitle))
+		{
+			<h1>@seoTitle</h1>
+		}
+		@if (!string.IsNullOrEmpty(seoDescription))
+		{
+			<p class="abc-appliance-backround">@seoDescription</p>
+		}
+
 		@*subcategories*@
 		@if (Model.SubCategories.Count > 0)
 		{
