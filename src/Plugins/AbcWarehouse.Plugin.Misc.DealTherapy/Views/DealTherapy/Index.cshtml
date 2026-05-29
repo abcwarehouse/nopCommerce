@@ -8,59 +8,186 @@
 <div class="page deal-therapy-page">
     <div class="page-title">
         <h1>Deal Therapy</h1>
+        <p class="dt-subtitle">A one-on-one session with Chad, your deadpan Deal Therapist. Four questions. One prescription.</p>
     </div>
     <div class="page-body">
-        <p class="deal-therapy-intro">Answer a few quick questions and we'll help you find your perfect deal.</p>
 
-        <form asp-action="Submit" asp-controller="DealTherapy" method="post" id="deal-therapy-form">
+        <div class="dt-progress-bar" id="dt-progress-bar">
+            <div class="dt-progress-fill" id="dt-progress-fill"></div>
+        </div>
+        <div class="dt-step-label" id="dt-step-label">Question 1 of 4</div>
+
+        <form method="post" action="/deal-therapy/submit" id="dt-form">
             @Html.AntiForgeryToken()
 
-            @for (var i = 0; i < Model.Questions.Count; i++)
+            @foreach (var question in Model.Questions)
             {
-                var question = Model.Questions[i];
-                <div class="deal-therapy-question" data-question="@question.Key">
-                    <h3>@(i + 1). @question.Text</h3>
-                    <ul class="deal-therapy-options">
-                        @foreach (var option in question.Options)
+                var attrs = $"data-key=\"{question.Key}\"";
+                if (!string.IsNullOrEmpty(question.Branch))    attrs += $" data-branch=\"{question.Branch}\"";
+                if (!string.IsNullOrEmpty(question.SubBranch)) attrs += $" data-subbranch=\"{question.SubBranch}\"";
+
+                <div class="dt-question" id="q-@question.Key" @Html.Raw(attrs) style="display:none">
+                    @if (!string.IsNullOrEmpty(question.IntroText))
+                    {
+                        <div class="dt-intro">@question.IntroText</div>
+                    }
+                    <h2 class="dt-question-text">@question.Text</h2>
+                    <div class="dt-options">
+                        @foreach (var opt in question.Options)
                         {
-                            <li>
-                                <label>
-                                    <input type="radio"
-                                           name="Answers[@question.Key]"
-                                           value="@option"
-                                           required />
-                                    @option
-                                </label>
-                            </li>
+                            var optAttrs = $"data-value=\"{opt.Value}\" data-qkey=\"{question.Key}\"";
+                            if (!string.IsNullOrEmpty(opt.RevealBranch))    optAttrs += $" data-reveal-branch=\"{opt.RevealBranch}\"";
+                            if (!string.IsNullOrEmpty(opt.RevealSubBranch)) optAttrs += $" data-reveal-subbranch=\"{opt.RevealSubBranch}\"";
+
+                            <div class="dt-option" @Html.Raw(optAttrs)>
+                                @opt.Text
+                            </div>
                         }
-                    </ul>
+                    </div>
                 </div>
             }
 
-            <div class="deal-therapy-email">
-                <label for="Email">Email address <span class="optional">(optional — we'll send you personalized deals)</span></label>
-                <input type="email" id="Email" name="Email" placeholder="you@example.com" />
+            <div class="dt-email-section" id="dt-email-section" style="display:none">
+                <div class="dt-chad-note">
+                    <em>Chad uncaps a pen and slides a notepad across the desk:</em>
+                    <br />"One last thing — leave your email if you'd like your prescription sent to you. Entirely optional. No judgment either way."
+                </div>
+                <div class="dt-email-field">
+                    <label for="Email">Email <span class="dt-optional">(optional)</span></label>
+                    <input type="email" id="Email" name="Email" placeholder="you@example.com" autocomplete="email" />
+                </div>
+                <button type="submit" class="button-1 dt-submit-btn">Get My Prescription →</button>
             </div>
 
-            <div class="deal-therapy-submit">
-                <button type="submit" class="button-1">Get My Results</button>
-            </div>
         </form>
+
     </div>
 </div>
 
 <style>
-    .deal-therapy-page .page-title h1 { margin-bottom: 10px; }
-    .deal-therapy-intro { font-size: 1.1em; margin-bottom: 24px; }
-    .deal-therapy-question { margin-bottom: 28px; }
-    .deal-therapy-question h3 { margin-bottom: 10px; font-size: 1.05em; }
-    .deal-therapy-options { list-style: none; padding: 0; }
-    .deal-therapy-options li { margin-bottom: 8px; }
-    .deal-therapy-options label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1em; }
-    .deal-therapy-options input[type="radio"] { width: 16px; height: 16px; }
-    .deal-therapy-email { margin-bottom: 24px; }
-    .deal-therapy-email label { display: block; margin-bottom: 6px; font-weight: bold; }
-    .deal-therapy-email .optional { font-weight: normal; font-size: 0.9em; color: #666; }
-    .deal-therapy-email input[type="email"] { width: 100%; max-width: 400px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
-    .deal-therapy-submit { margin-top: 8px; }
+.deal-therapy-page .page-title h1 { margin-bottom: 6px; }
+.dt-subtitle { color: #555; font-size: 1em; margin-bottom: 24px; }
+
+.dt-progress-bar { height: 4px; background: #e0e0e0; border-radius: 2px; margin-bottom: 6px; }
+.dt-progress-fill { height: 4px; background: #e63328; border-radius: 2px; width: 25%; transition: width 0.4s ease; }
+.dt-step-label { font-size: 0.85em; color: #888; margin-bottom: 28px; }
+
+.dt-question { animation: dtFadeIn 0.35s ease; }
+@@keyframes dtFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.dt-intro { font-style: italic; color: #666; font-size: 0.9em; margin-bottom: 8px; }
+.dt-question-text { font-size: 1.3em; margin-bottom: 20px; line-height: 1.4; }
+
+.dt-options { display: flex; flex-direction: column; gap: 10px; max-width: 680px; }
+.dt-option {
+    padding: 14px 18px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #fff;
+    font-size: 0.97em;
+    line-height: 1.45;
+    transition: border-color 0.15s, background 0.15s;
+}
+.dt-option:hover { border-color: #e63328; background: #fff8f8; }
+.dt-option.selected { border-color: #e63328; background: #fff0f0; font-weight: 600; pointer-events: none; }
+.dt-option.dimmed { opacity: 0.4; pointer-events: none; }
+
+.dt-email-section { margin-top: 10px; max-width: 480px; animation: dtFadeIn 0.35s ease; }
+.dt-chad-note { font-size: 0.95em; color: #555; border-left: 3px solid #e63328; padding-left: 14px; margin-bottom: 20px; line-height: 1.6; }
+.dt-email-field label { display: block; font-weight: bold; margin-bottom: 6px; }
+.dt-optional { font-weight: normal; font-size: 0.85em; color: #888; }
+.dt-email-field input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; margin-bottom: 18px; }
+.dt-submit-btn { font-size: 1.05em; padding: 12px 28px; }
 </style>
+
+<script>
+(function () {
+    var currentBranch = null;
+    var currentSubBranch = null;
+    var totalSteps = 4;
+    var currentStep = 1;
+
+    // Next-question map: given current question key + selected value → next key
+    function getNextKey(qKey, val) {
+        if (qKey === 'q1')           return 'q2_' + val;
+        if (qKey === 'q2_appliance') return 'q3_' + val;
+        var map = {
+            'q2_dish': 'q3_dish', 'q3_dish': 'q4_dish', 'q4_dish': '__email',
+            'q2_laundry': 'q3_laundry', 'q3_laundry': 'q4_laundry', 'q4_laundry': '__email',
+            'q3_cook': 'q4_cook', 'q4_cook': '__email',
+            'q3_fridge': 'q4_fridge', 'q4_fridge': '__email',
+            'q2_furniture': 'q3_furniture', 'q3_furniture': 'q4_furniture', 'q4_furniture': '__email'
+        };
+        return map[qKey] || null;
+    }
+
+    function setAnswer(qKey, val) {
+        var existing = document.querySelector('input[name="Answers[' + qKey + ']"]');
+        if (existing) existing.remove();
+        var inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = 'Answers[' + qKey + ']';
+        inp.value = val;
+        document.getElementById('dt-form').appendChild(inp);
+    }
+
+    function updateProgress(step) {
+        currentStep = step;
+        var pct = Math.round((step / totalSteps) * 100);
+        document.getElementById('dt-progress-fill').style.width = pct + '%';
+        document.getElementById('dt-step-label').textContent = 'Question ' + step + ' of ' + totalSteps;
+    }
+
+    function showQuestion(key) {
+        var el = document.getElementById('q-' + key);
+        if (!el) return;
+        el.style.display = 'block';
+        setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+    }
+
+    function onOptionClick(e) {
+        var opt = e.currentTarget;
+        var qKey = opt.dataset.qkey;
+        var val = opt.dataset.value;
+        var revealBranch = opt.dataset.revealBranch;
+        var revealSubBranch = opt.dataset.revealSubBranch;
+
+        // Lock options for this question
+        var siblings = opt.parentElement.querySelectorAll('.dt-option');
+        siblings.forEach(function (s) {
+            s.classList.add(s === opt ? 'selected' : 'dimmed');
+        });
+
+        setAnswer(qKey, val);
+
+        if (revealBranch)    currentBranch = revealBranch;
+        if (revealSubBranch) currentSubBranch = revealSubBranch;
+
+        var nextKey = getNextKey(qKey, val);
+
+        if (nextKey === '__email') {
+            updateProgress(totalSteps);
+            setTimeout(function () {
+                var emailSection = document.getElementById('dt-email-section');
+                emailSection.style.display = 'block';
+                emailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        } else if (nextKey) {
+            updateProgress(currentStep + 1);
+            setTimeout(function () { showQuestion(nextKey); }, 300);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Wire up all option clicks
+        document.querySelectorAll('.dt-option').forEach(function (opt) {
+            opt.addEventListener('click', onOptionClick);
+        });
+
+        // Show Q1 to start
+        showQuestion('q1');
+        updateProgress(1);
+    });
+})();
+</script>

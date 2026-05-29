@@ -2,39 +2,102 @@
 @inject Nop.Web.Framework.UI.INopHtmlHelper NopHtml
 @{
     Layout = "_ColumnsOne";
-    NopHtml.AddTitleParts("Your Deal Therapy Results");
+    NopHtml.AddTitleParts("Your Deal Therapy Prescription");
+    var product = Model.Product;
 }
 
 <div class="page deal-therapy-result-page">
     <div class="page-title">
-        <h1>Your Deal Therapy Results</h1>
+        <h1>Your Prescription Is Ready</h1>
     </div>
     <div class="page-body">
-        <div class="deal-therapy-recommendation">
-            <p>@Model.Recommendation</p>
-        </div>
 
-        <div class="deal-therapy-answer-summary">
-            <h3>Your answers</h3>
-            <ul>
-                @foreach (var answer in Model.Answers)
-                {
-                    <li><strong>@answer.Key:</strong> @answer.Value</li>
-                }
-            </ul>
-        </div>
+        @if (product == null)
+        {
+            <p>Something went wrong retrieving your results. <a href="/deal-therapy">Retake the quiz</a>.</p>
+        }
+        else
+        {
+            <div class="dt-rx-pad">
+                <div class="dt-rx-header">
+                    <div class="dt-rx-logo">ABC Warehouse</div>
+                    <div class="dt-rx-therapist">Chad — Deal Therapist, Unlicensed</div>
+                </div>
 
-        <div class="deal-therapy-cta">
-            <a href="/" class="button-1">Shop Now</a>
-            <a href="/deal-therapy" class="button-2">Retake Quiz</a>
-        </div>
+                <div class="dt-rx-body">
+                    <div class="dt-diagnosis-label">Diagnosis</div>
+                    <div class="dt-diagnosis-name">@product.Diagnosis</div>
+
+                    <div class="dt-verdict">
+                        @foreach (var para in product.Verdict.Split('\n', System.StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <p>@para</p>
+                        }
+                    </div>
+
+                    <div class="dt-rx-symbol">℞</div>
+                    <div class="dt-rx-product-name">@product.Name</div>
+
+                    <div class="dt-side-effects">
+                        <strong>Side effects may include:</strong> @product.SideEffects
+                    </div>
+                </div>
+
+                <div class="dt-rx-footer">
+                    <div class="dt-rx-sig">— Chad, D.T.</div>
+                    <div class="dt-rx-disclaimer">*Not a real therapist. Deals are very real.</div>
+                </div>
+            </div>
+
+            <div class="dt-cta-row">
+                <a href="/search/results?q=@Uri.EscapeDataString(product.Name)" class="button-1">Shop @product.Name →</a>
+                <a href="/deal-therapy" class="button-2">Retake Quiz</a>
+            </div>
+        }
+
     </div>
 </div>
 
 <style>
-    .deal-therapy-recommendation { background: #f5f5f5; border-left: 4px solid #e63328; padding: 16px 20px; margin-bottom: 28px; font-size: 1.1em; }
-    .deal-therapy-answer-summary h3 { margin-bottom: 10px; }
-    .deal-therapy-answer-summary ul { list-style: none; padding: 0; margin-bottom: 28px; }
-    .deal-therapy-answer-summary li { padding: 4px 0; }
-    .deal-therapy-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.deal-therapy-result-page .page-title h1 { margin-bottom: 24px; }
+
+.dt-rx-pad {
+    max-width: 560px;
+    background: #fffef5;
+    border: 1px solid #d4c88a;
+    border-top: 6px solid #e63328;
+    border-radius: 4px;
+    padding: 28px 32px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 28px;
+    font-family: 'Georgia', serif;
+}
+
+.dt-rx-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #d4c88a;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+.dt-rx-logo { font-weight: bold; font-size: 1.1em; letter-spacing: 0.04em; color: #e63328; }
+.dt-rx-therapist { font-size: 0.8em; color: #888; font-style: italic; }
+
+.dt-diagnosis-label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
+.dt-diagnosis-name { font-size: 1.5em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+
+.dt-verdict { font-size: 0.95em; line-height: 1.7; color: #333; margin-bottom: 20px; }
+.dt-verdict p { margin-bottom: 12px; }
+
+.dt-rx-symbol { font-size: 2.4em; color: #e63328; line-height: 1; margin-bottom: 2px; }
+.dt-rx-product-name { font-size: 1.25em; font-weight: bold; color: #1a1a1a; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px dashed #ccc; }
+
+.dt-side-effects { font-size: 0.88em; color: #555; font-style: italic; background: #f5f0d8; border-radius: 3px; padding: 10px 14px; }
+
+.dt-rx-footer { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; }
+.dt-rx-sig { font-style: italic; font-size: 1.1em; color: #333; }
+.dt-rx-disclaimer { font-size: 0.75em; color: #aaa; }
+
+.dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 </style>
