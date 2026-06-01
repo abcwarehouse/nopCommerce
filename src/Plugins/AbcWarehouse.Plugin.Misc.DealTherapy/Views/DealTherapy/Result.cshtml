@@ -70,7 +70,7 @@
                         <div class="dt-product-card-price">@preview.Price</div>
                         <div class="dt-product-card-actions">
                             <button type="button" class="button-1"
-                                    onclick="AjaxCart.addproducttocart_catalog('/addproducttocart/catalog/@preview.ProductId/1/1', this)">
+                                    onclick="addCartItemAsync(@preview.ProductId)">
                                 Add to Cart
                             </button>
                             <a href="@preview.ProductUrl" class="button-2">View Product</a>
