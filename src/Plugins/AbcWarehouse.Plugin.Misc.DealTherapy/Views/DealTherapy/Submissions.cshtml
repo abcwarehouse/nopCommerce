@@ -1,0 +1,91 @@
+@model List<AbcWarehouse.Plugin.Misc.DealTherapy.Models.DealTherapySubmissionRowModel>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewBag.Title = "Deal Therapy — Submissions";
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        Deal Therapy — Submissions
+        <small>@Model.Count total</small>
+    </h1>
+</div>
+
+<div class="content">
+    <div class="container-fluid">
+        <div class="card card-default">
+            <div class="card-body">
+
+                @if (!Model.Any())
+                {
+                    <p class="text-muted">No submissions yet.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover dataTable" id="dt-submissions-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date (UTC)</th>
+                                    <th>Branch</th>
+                                    <th>Diagnosis</th>
+                                    <th>Product Prescribed</th>
+                                    <th>Email</th>
+                                    <th>Customer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model)
+                                {
+                                    <tr>
+                                        <td>@row.Id</td>
+                                        <td style="white-space:nowrap">@row.CreatedOn</td>
+                                        <td>@row.Branch</td>
+                                        <td>@row.Diagnosis</td>
+                                        <td>@row.ProductName</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(row.Email))
+                                            {
+                                                <a href="mailto:@row.Email">@row.Email</a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (row.CustomerId.HasValue)
+                                            {
+                                                <a href="@Url.Action("Edit", "Customer", new { id = row.CustomerId.Value, area = "Admin" })" target="_blank">
+                                                    #@row.CustomerId
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Guest</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <script>
+                    $(document).ready(function () {
+                        if ($.fn.dataTable) {
+                            $('#dt-submissions-table').DataTable({
+                                order: [[0, 'desc']],
+                                pageLength: 25,
+                                columnDefs: [{ targets: 0, type: 'num' }]
+                            });
+                        }
+                    });
+                    </script>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

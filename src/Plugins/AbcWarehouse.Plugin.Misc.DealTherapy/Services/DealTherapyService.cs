@@ -53,5 +53,10 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Services
         {
             return await _answerRepository.GetAllAsync(q => q.Where(a => a.SubmissionId == submissionId));
         }
+
+        public async Task<IList<DealTherapySubmission>> GetAllSubmissionsAsync()
+        {
+            return await _submissionRepository.GetAllAsync(q => q.OrderByDescending(s => s.CreatedOnUtc));
+        }
     }
 }

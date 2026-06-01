@@ -46,4 +46,15 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Models
         public string Email { get; set; }
         public ProductResult Product { get; set; }
     }
+
+    public class DealTherapySubmissionRowModel
+    {
+        public int Id { get; set; }
+        public int? CustomerId { get; set; }
+        public string Email { get; set; }
+        public string CreatedOn { get; set; }
+        public string ProductName { get; set; }
+        public string Diagnosis { get; set; }
+        public string Branch { get; set; }
+    }
 }

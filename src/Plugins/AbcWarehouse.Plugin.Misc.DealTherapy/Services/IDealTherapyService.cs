@@ -9,5 +9,6 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Services
         Task<int> SaveSubmissionAsync(int? customerId, string email, IList<(string questionKey, string answerValue)> answers);
         Task<DealTherapySubmission> GetSubmissionAsync(int id);
         Task<IList<DealTherapyAnswer>> GetAnswersForSubmissionAsync(int submissionId);
+        Task<IList<DealTherapySubmission>> GetAllSubmissionsAsync();
     }
 }

@@ -70,6 +70,9 @@
                        target="_blank" rel="noopener">
                         Share on Facebook
                     </a>
+                    <button class="dt-share-btn dt-instagram-btn" data-url="@shareUrl" onclick="dtCopyForInstagram(this)">
+                        Share on Instagram
+                    </button>
                 </div>
             </div>
 
@@ -133,13 +136,32 @@
 .dt-share-btn:hover { opacity: 0.85; text-decoration: none; }
 .dt-copy-btn    { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
 .dt-copy-btn.copied { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
-.dt-twitter-btn  { background: #000; color: #fff; }
-.dt-facebook-btn { background: #1877f2; color: #fff; }
+.dt-twitter-btn   { background: #000; color: #fff; }
+.dt-facebook-btn  { background: #1877f2; color: #fff; }
+.dt-instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; border: none; }
+.dt-instagram-btn.copied { background: #d1fae5; color: #065f46; }
 
 .dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 </style>
 
 <script>
+function dtCopyForInstagram(btn) {
+    var url = btn.dataset.url;
+    var doCopy = function () {
+        btn.textContent = 'Copied! Paste into your Instagram post.';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Share on Instagram'; btn.classList.remove('copied'); }, 3000);
+    };
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(doCopy);
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); doCopy();
+    }
+}
+
 function dtCopyLink(btn) {
     var url = btn.dataset.url;
     if (navigator.clipboard) {

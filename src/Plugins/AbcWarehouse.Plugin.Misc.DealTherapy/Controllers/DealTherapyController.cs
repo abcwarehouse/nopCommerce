@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -7,7 +8,9 @@ using AbcWarehouse.Plugin.Misc.DealTherapy.Services;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Services.Customers;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Mvc.Filters;
 using SkiaSharp;
 
 namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
@@ -72,6 +75,39 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             };
 
             return View("~/Plugins/AbcWarehouse.Plugin.Misc.DealTherapy/Views/DealTherapy/Result.cshtml", resultModel);
+        }
+
+        [HttpGet]
+        [AuthorizeAdmin]
+        [Area(AreaNames.ADMIN)]
+        public async Task<IActionResult> Submissions()
+        {
+            var submissions = await _dealTherapyService.GetAllSubmissionsAsync();
+            var products = GetProductResults();
+            var rows = new List<DealTherapySubmissionRowModel>();
+
+            foreach (var submission in submissions)
+            {
+                var answers = await _dealTherapyService.GetAnswersForSubmissionAsync(submission.Id);
+                var answerDict = answers.ToDictionary(a => a.QuestionKey, a => a.AnswerValue);
+                var productKey = DetermineProduct(answerDict);
+                products.TryGetValue(productKey ?? string.Empty, out var product);
+                var branch = answerDict.GetValueOrDefault("q1", "");
+
+                rows.Add(new DealTherapySubmissionRowModel
+                {
+                    Id = submission.Id,
+                    CustomerId = submission.CustomerId,
+                    Email = submission.Email,
+                    CreatedOn = submission.CreatedOnUtc.ToString("MM/dd/yyyy h:mm tt") + " UTC",
+                    ProductName = product?.Name ?? "—",
+                    Diagnosis = product?.Diagnosis ?? "—",
+                    Branch = string.IsNullOrEmpty(branch) ? "—"
+                           : char.ToUpper(branch[0]) + branch.Substring(1)
+                });
+            }
+
+            return View("~/Plugins/AbcWarehouse.Plugin.Misc.DealTherapy/Views/DealTherapy/Submissions.cshtml", rows);
         }
 
         [HttpGet]
