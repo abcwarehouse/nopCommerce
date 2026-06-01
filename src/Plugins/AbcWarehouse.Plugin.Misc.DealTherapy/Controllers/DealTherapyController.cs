@@ -520,7 +520,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Capacity Crisis",
                 Verdict = "You don't have a dish problem. You have a volume problem, and frankly, a control problem about germs. That's okay. We work with what we've got.\n\nThe GE keeps up with the load you swore you'd never let pile that high. Big capacity, sanitizing power strong enough to make a germaphobe weep with relief, and the quiet confidence of a machine that has seen things.",
                 SideEffects = "telling guests your forks are technically cleaner than the surgical kind.",
-                Sku = ""
+                Sku = "PFQ97HSPVDS"
             },
             ["bosch_dishwasher"] = new ProductResult
             {
@@ -529,7 +529,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Chronic Noise Sensitivity",
                 Verdict = "You flinch at sound. You crave order. You once shushed a refrigerator. I understand you completely.\n\nThe Bosch is ultra-quiet, minimalist, and built to last longer than most of your relationships. It cleans in total silence and asks for nothing. Nap-compatible. Your secret is safe â€” no one will ever hear it working.",
                 SideEffects = "people assuming you do dishes by hand because they never hear the machine.",
-                Sku = ""
+                Sku = "SHP65DM5N"
             },
             ["ge_allinone"] = new ProductResult
             {
@@ -556,7 +556,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Compulsive Host Syndrome",
                 Verdict = "You don't cook for yourself. You cook for an audience. Hosting is your love language and, let's be honest, your cardio.\n\nThe Stone-Bake range turns your kitchen into the place everyone wants to be â€” including a true stone-bake pizza setting so you never order out again. Family-friendly, host-ready, faintly smug. Perfect.",
                 SideEffects = "judging anyone who suggests delivery.",
-                Sku = ""
+                Sku = "GCFE3070BF"
             },
             ["ge_range"] = new ProductResult
             {
@@ -565,7 +565,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Multitasking Burnout",
                 Verdict = "You are stirring one pot, texting your sister, and refereeing a custody dispute over the remote. You don't need more hands. You need a smarter oven.\n\nThe GE smart range brings WiFi, no-preheat, and a built-in camera so you can watch dinner without opening the door. Tech-forward cooking for the family chef who is doing six things and finishing none of them.",
                 SideEffects = "preheating the oven from your phone purely because you can.",
-                Sku = ""
+                Sku = "GGF600AVSS"
             },
             ["madia_fridge"] = new ProductResult
             {
@@ -574,7 +574,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Small-Space Survivalist",
                 Verdict = "You have an apartment, a garage corner, or a personality that simply does not require a six-foot fridge. Self-aware. Respectable.\n\nThe Madia is apartment-sized, Energy-Star efficient, smudge-resistant, and built around one beautiful word: value. Perfect first fridge, perfect garage backup, zero tricks.",
                 SideEffects = "bragging about your energy bill to people who didn't ask.",
-                Sku = ""
+                Sku = "MRT18D3BW"
             },
             ["ge_fridge"] = new ProductResult
             {
@@ -583,7 +583,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Classic Overflow",
                 Verdict = "You are a standard family going through milk like it's a competitive sport. You don't need spectacle. You need space that looks good doing it.\n\nThe GE side-by-side is sleek, sturdy, family-sized, and elegant enough to make the kitchen look intentional. The dependable workhorse that quietly carries your whole household.",
                 SideEffects = "an unreasonable sense of pride every time it's fully stocked.",
-                Sku = ""
+                Sku = "GZS24PYYFS"
             },
             ["lg_fridge"] = new ProductResult
             {
@@ -592,7 +592,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Gadget-Forward Big Family",
                 Verdict = "Big family, big hauls, big ice expectations. You want the fridge to do tricks, and honestly? You've earned the tricks.\n\nThe LG brings four styles of ice, knock-to-see-inside glass, counter-depth styling, and maximum storage. Built for the household that runs on bulk groceries and showing off a little.",
                 SideEffects = "knocking on the fridge in front of guests for no functional reason.",
-                Sku = ""
+                Sku = "LRYKC2606S"
             },
             ["sofa_sleeper"] = new ProductResult
             {
@@ -637,7 +637,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Cinematic Standards Disorder",
                 Verdict = "You don't watch television. You attend screenings. A washed-out picture physically pains you, and frankly, you've earned the right to be this particular.\n\nThe 77-inch LG OLED evo C5 delivers over 8.3 million self-lit pixels for perfect black, perfect color, Dolby Vision and Dolby Atmos, plus FILMMAKER MODE so you see films exactly as the director intended. It's the home theater you keep telling people you're going to build â€” except it already exists, and it's enormous.",
                 SideEffects = "pausing movies to make guests appreciate the shadow detail.",
-                Sku = ""
+                Sku = "OLED77C5PUA"
             },
             ["tcl_gaming"] = new ProductResult
             {
@@ -646,7 +646,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Competitive Reflex Syndrome",
                 Verdict = "You lost a match once because of input lag and you have never fully recovered. We're not going to fix that trauma today. We're going to fix the TV.\n\nThe 65-inch TCL QM7L runs a 144Hz refresh rate with Game Accelerator 288 VRR and FreeSync for tear-free, near-zero-lag play, backed by Mini LED brightness up to 3,000 nits and 2,100+ local dimming zones. Fast, bright, and built to win â€” so the only thing left to blame is your aim.",
                 SideEffects = "blaming the TV significantly less, which may be its own emotional adjustment.",
-                Sku = ""
+                Sku = "65QM7L"
             },
             ["samsung_outdoor"] = new ProductResult
             {
@@ -655,7 +655,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Indoor Confinement Issues",
                 Verdict = "The party is outside. You are inside, squinting at a glare-blasted screen through a window. This is no way to live, and we both know it.\n\nThe 55-inch Samsung Terrace is a 4K partial-sun outdoor TV built to handle the elements â€” weather-resistant, anti-glare, and bright enough to beat daylight. The game, the cookout, and the crowd, all in one place: the backyard, where you clearly belong.",
                 SideEffects = "becoming the house everyone shows up to on game day, uninvited but welcome.",
-                Sku = ""
+                Sku = "QN55LST7DAFXZA"
             },
             ["sharp_value"] = new ProductResult
             {
@@ -664,7 +664,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Overthinking-the-Purchase Paralysis",
                 Verdict = "You've read 40 reviews, opened 12 tabs, and asked three coworkers. You don't need the most expensive TV. You need permission to stop researching. Granted.\n\nThe 55-inch Sharp AQUOS is 4K QLED with Xumo streaming built right in â€” a genuinely great picture and all your apps, at a price that doesn't sting. The smart, no-drama choice for someone who just wants to watch their show tonight, not write a dissertation about it.",
                 SideEffects = "an overwhelming sense of relief, and roughly 40 reclaimed browser tabs.",
-                Sku = ""
+                Sku = "4TC55HP7050U"
             }
         };
     }
