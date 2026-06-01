@@ -27,6 +27,12 @@
                 if (!string.IsNullOrEmpty(question.SubBranch)) attrs += $" data-subbranch=\"{question.SubBranch}\"";
 
                 <div class="dt-question" id="q-@question.Key" @Html.Raw(attrs) style="display:none">
+                    @if (!string.IsNullOrEmpty(question.ImageUrl))
+                    {
+                        <div class="dt-question-img">
+                            <img src="@question.ImageUrl" alt="" />
+                        </div>
+                    }
                     @if (!string.IsNullOrEmpty(question.IntroText))
                     {
                         <div class="dt-intro">@question.IntroText</div>
@@ -74,6 +80,9 @@
 
 .dt-question { animation: dtFadeIn 0.35s ease; }
 @@keyframes dtFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.dt-question-img { max-width: 680px; margin-bottom: 18px; }
+.dt-question-img img { width: 100%; height: auto; display: block; border-radius: 6px; object-fit: cover; }
 
 .dt-intro { font-style: italic; color: #666; font-size: 0.9em; margin-bottom: 8px; }
 .dt-question-text { font-size: 1.3em; margin-bottom: 20px; line-height: 1.4; }

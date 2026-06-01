@@ -300,6 +300,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q1",
+                ImageUrl = "/images/deal-therapy/q1.jpg",
                 IntroText = "Chad, steepling his fingers:",
                 Text = "\"So. What brings you to Deal Therapy today?\"",
                 Options = new()
@@ -316,6 +317,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_dish", Branch = "dish",
+                ImageUrl = "/images/deal-therapy/q2_dish.jpg",
                 Text = "\"When your dishwasher runs, what do you need from it?\"",
                 Options = new()
                 {
@@ -326,6 +328,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_dish", Branch = "dish",
+                ImageUrl = "/images/deal-therapy/q3_dish.jpg",
                 Text = "\"Let's talk about your relationship with germs.\"",
                 Options = new()
                 {
@@ -336,6 +339,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_dish", Branch = "dish",
+                ImageUrl = "/images/deal-therapy/q4_dish.jpg",
                 Text = "\"Pick the compliment that would make you blush:\"",
                 Options = new()
                 {
@@ -348,6 +352,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_laundry", Branch = "laundry",
+                ImageUrl = "/images/deal-therapy/q2_laundry.jpg",
                 Text = "\"Describe your laundry square footage.\"",
                 Options = new()
                 {
@@ -358,6 +363,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_laundry", Branch = "laundry",
+                ImageUrl = "/images/deal-therapy/q3_laundry.jpg",
                 Text = "\"Your honest feelings about doing laundry?\"",
                 Options = new()
                 {
@@ -368,6 +374,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_laundry", Branch = "laundry",
+                ImageUrl = "/images/deal-therapy/q4_laundry.jpg",
                 Text = "\"Choose your laundry personality:\"",
                 Options = new()
                 {
@@ -380,6 +387,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_appliance", Branch = "appliance",
+                ImageUrl = "/images/deal-therapy/q2_appliance.jpg",
                 Text = "\"Is your conflict with making the food, or keeping it?\"",
                 Options = new()
                 {
@@ -392,6 +400,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_cook", Branch = "appliance", SubBranch = "cook",
+                ImageUrl = "/images/deal-therapy/q3_cook.jpg",
                 Text = "\"When people come over, you're the one whoâ€¦\"",
                 Options = new()
                 {
@@ -402,6 +411,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_cook", Branch = "appliance", SubBranch = "cook",
+                ImageUrl = "/images/deal-therapy/q4_cook.jpg",
                 Text = "\"Pick your dream feature:\"",
                 Options = new()
                 {
@@ -414,6 +424,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_fridge", Branch = "appliance", SubBranch = "fridge",
+                ImageUrl = "/images/deal-therapy/q3_fridge.jpg",
                 Text = "\"How big is your operation?\"",
                 Options = new()
                 {
@@ -425,6 +436,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_fridge", Branch = "appliance", SubBranch = "fridge",
+                ImageUrl = "/images/deal-therapy/q4_fridge.jpg",
                 Text = "\"What actually sells you?\"",
                 Options = new()
                 {
@@ -438,6 +450,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_furniture", Branch = "furniture",
+                ImageUrl = "/images/deal-therapy/q2_furniture.jpg",
                 Text = "\"What's the #1 job of this furniture?\"",
                 Options = new()
                 {
@@ -450,6 +463,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_furniture", Branch = "furniture",
+                ImageUrl = "/images/deal-therapy/q3_furniture.jpg",
                 Text = "\"Your ideal Friday night on it:\"",
                 Options = new()
                 {
@@ -462,6 +476,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_furniture", Branch = "furniture",
+                ImageUrl = "/images/deal-therapy/q4_furniture.jpg",
                 Text = "\"Pick the review you'd leave:\"",
                 Options = new()
                 {
@@ -476,6 +491,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_tv", Branch = "tv",
+                ImageUrl = "/images/deal-therapy/q2_tv.jpg",
                 Text = "\"Where does this TV live, and what's it for?\"",
                 Options = new()
                 {
@@ -488,6 +504,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_tv", Branch = "tv",
+                ImageUrl = "/images/deal-therapy/q3_tv.jpg",
                 Text = "\"What do you actually watch?\"",
                 Options = new()
                 {
@@ -500,6 +517,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_tv", Branch = "tv",
+                ImageUrl = "/images/deal-therapy/q4_tv.jpg",
                 Text = "\"Pick the spec that makes your heart race:\"",
                 Options = new()
                 {

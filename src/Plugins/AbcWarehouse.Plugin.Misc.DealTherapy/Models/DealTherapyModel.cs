@@ -17,6 +17,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Models
         public string Text { get; set; }
         public string Branch { get; set; }
         public string SubBranch { get; set; }
+        public string ImageUrl { get; set; }
         public List<QuizOption> Options { get; set; }
     }
 
