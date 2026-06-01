@@ -296,11 +296,11 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
 
         private static List<DealTherapyQuestion> GetQuestions() => new()
         {
-            // â”€â”€ Q1: Intake (everyone) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ----- Q1: Intake (everyone) ------------------------
             new DealTherapyQuestion
             {
                 Key = "q1",
-                ImageUrl = "/images/deal-therapy/q1.jpg",
+                ImageUrl = "/images/uploaded/therapy/q1.jpg",
                 IntroText = "Chad, steepling his fingers:",
                 Text = "\"So. What brings you to Deal Therapy today?\"",
                 Options = new()
@@ -313,22 +313,22 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // â”€â”€ DISH branch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ----- DISH branch -------------------------------------------------
             new DealTherapyQuestion
             {
                 Key = "q2_dish", Branch = "dish",
-                ImageUrl = "/images/deal-therapy/q2_dish.jpg",
+                ImageUrl = "/images/uploaded/therapy/Q2_dish.jpg",
                 Text = "\"When your dishwasher runs, what do you need from it?\"",
                 Options = new()
                 {
-                    new QuizOption { Value = "ge_dishwasher",    Text = "\"To keep up â€” there's always another load, another sticky toddler cup.\"" },
-                    new QuizOption { Value = "bosch_dishwasher", Text = "\"To shut up â€” if I can hear it, it's already failed me.\"" }
+                    new QuizOption { Value = "ge_dishwasher",    Text = "\"To keep up- there's always another load, another sticky toddler cup.\"" },
+                    new QuizOption { Value = "bosch_dishwasher", Text = "\"To shut up- if I can hear it, it's already failed me.\"" }
                 }
             },
             new DealTherapyQuestion
             {
                 Key = "q3_dish", Branch = "dish",
-                ImageUrl = "/images/deal-therapy/q3_dish.jpg",
+                ImageUrl = "/images/uploaded/therapy/q3_dish.jpg",
                 Text = "\"Let's talk about your relationship with germs.\"",
                 Options = new()
                 {
@@ -339,7 +339,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_dish", Branch = "dish",
-                ImageUrl = "/images/deal-therapy/q4_dish.jpg",
+                ImageUrl = "/images/uploaded/therapy/q4_dish.jpg",
                 Text = "\"Pick the compliment that would make you blush:\"",
                 Options = new()
                 {
@@ -348,11 +348,11 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // â”€â”€ LAUNDRY branch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ----- LAUNDRY branch ---------------------------------------â”€
             new DealTherapyQuestion
             {
                 Key = "q2_laundry", Branch = "laundry",
-                ImageUrl = "/images/deal-therapy/q2_laundry.jpg",
+                ImageUrl = "/images/uploaded/therapy/Laundry_Q2.jpg",
                 Text = "\"Describe your laundry square footage.\"",
                 Options = new()
                 {
@@ -363,7 +363,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_laundry", Branch = "laundry",
-                ImageUrl = "/images/deal-therapy/q3_laundry.jpg",
+                ImageUrl = "/images/uploaded/therapy/Laundry_Q3.jpg",
                 Text = "\"Your honest feelings about doing laundry?\"",
                 Options = new()
                 {
@@ -374,7 +374,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_laundry", Branch = "laundry",
-                ImageUrl = "/images/deal-therapy/q4_laundry.jpg",
+                ImageUrl = "/images/uploaded/therapy/Laundry_Q4.jpg",
                 Text = "\"Choose your laundry personality:\"",
                 Options = new()
                 {
@@ -383,11 +383,11 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // â”€â”€ APPLIANCE branch: Cook vs. Keep fork (Q2) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ----- APPLIANCE branch: Cook vs. Keep fork (Q2) -------------------------------------------------------â”€
             new DealTherapyQuestion
             {
                 Key = "q2_appliance", Branch = "appliance",
-                ImageUrl = "/images/deal-therapy/q2_appliance.jpg",
+                ImageUrl = "/images/uploaded/therapy/Appliance_Q2.jpg",
                 Text = "\"Is your conflict with making the food, or keeping it?\"",
                 Options = new()
                 {
@@ -400,7 +400,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_cook", Branch = "appliance", SubBranch = "cook",
-                ImageUrl = "/images/deal-therapy/q3_cook.jpg",
+                ImageUrl = "/images/uploaded/therapy/Cook_Q3.jpg",
                 Text = "\"When people come over, you're the one whoâ€¦\"",
                 Options = new()
                 {
@@ -411,7 +411,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_cook", Branch = "appliance", SubBranch = "cook",
-                ImageUrl = "/images/deal-therapy/q4_cook.jpg",
+                ImageUrl = "/images/uploaded/therapy/Cook_Q4.jpg",
                 Text = "\"Pick your dream feature:\"",
                 Options = new()
                 {
@@ -424,7 +424,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_fridge", Branch = "appliance", SubBranch = "fridge",
-                ImageUrl = "/images/deal-therapy/q3_fridge.jpg",
+                ImageUrl = "/images/uploaded/therapy/q3_fridge.jpg",
                 Text = "\"How big is your operation?\"",
                 Options = new()
                 {
@@ -436,7 +436,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_fridge", Branch = "appliance", SubBranch = "fridge",
-                ImageUrl = "/images/deal-therapy/q4_fridge.jpg",
+                ImageUrl = "/images/uploaded/therapy/q4_fridge.jpg",
                 Text = "\"What actually sells you?\"",
                 Options = new()
                 {
@@ -446,15 +446,15 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // â”€â”€ FURNITURE branch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ----- FURNITURE branch ----------------------------------â”€
             new DealTherapyQuestion
             {
                 Key = "q2_furniture", Branch = "furniture",
-                ImageUrl = "/images/deal-therapy/q2_furniture.jpg",
+                ImageUrl = "/images/uploaded/therapy/q2_furniture.jpg",
                 Text = "\"What's the #1 job of this furniture?\"",
                 Options = new()
                 {
-                    new QuizOption { Value = "sofa_sleeper",  Text = "\"Save space and pull double duty â€” sleep a guest, hide my clutter.\"" },
+                    new QuizOption { Value = "sofa_sleeper",  Text = "\"Save space and pull double duty- sleep a guest, hide my clutter.\"" },
                     new QuizOption { Value = "tvx_sectional", Text = "\"Seat the whole family without anyone fighting for a cushion.\"" },
                     new QuizOption { Value = "nat_loveseat",  Text = "\"Look expensive and pulled-together. Vibes over volume.\"" },
                     new QuizOption { Value = "loveseat",      Text = "\"Swallow me whole in comfort. I recline and I do not return.\"" }
@@ -463,12 +463,12 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_furniture", Branch = "furniture",
-                ImageUrl = "/images/deal-therapy/q3_furniture.jpg",
+                ImageUrl = "/images/uploaded/therapy/q3_furniture.jpg",
                 Text = "\"Your ideal Friday night on it:\"",
                 Options = new()
                 {
                     new QuizOption { Value = "sofa_sleeper",  Text = "\"Friend crashing over, or my gaming setup dialed in.\"" },
-                    new QuizOption { Value = "tvx_sectional", Text = "\"Movie-night dogpile â€” kids, snacks, chaos, room for all.\"" },
+                    new QuizOption { Value = "tvx_sectional", Text = "\"Movie-night dogpile- kids, snacks, chaos, room for all.\"" },
                     new QuizOption { Value = "nat_loveseat",  Text = "\"A glass of wine, looking effortlessly chic, zero clutter.\"" },
                     new QuizOption { Value = "loveseat",      Text = "\"Recliner fully back, blanket, not moving for three hours.\"" }
                 }
@@ -476,22 +476,22 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_furniture", Branch = "furniture",
-                ImageUrl = "/images/deal-therapy/q4_furniture.jpg",
+                ImageUrl = "/images/uploaded/therapy/q4_furniture.jpg",
                 Text = "\"Pick the review you'd leave:\"",
                 Options = new()
                 {
-                    new QuizOption { Value = "sofa_sleeper",  Text = "\"'Genius for small spaces â€” guests have a bed AND I got storage.'\"" },
+                    new QuizOption { Value = "sofa_sleeper",  Text = "\"'Genius for small spaces- guests have a bed AND I got storage.'\"" },
                     new QuizOption { Value = "tvx_sectional", Text = "\"'Stylish, durable, survived three kids and a dog. Worth it.'\"" },
                     new QuizOption { Value = "nat_loveseat",  Text = "\"'Gorgeous leather, looks upscale, exactly the elegant piece I wanted.'\"" },
                     new QuizOption { Value = "loveseat",      Text = "\"'Overstuffed, reclines, best decision ever. Best. Day.'\"" }
                 }
             },
 
-            // â”€â”€ TV branch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // ----- TV branch ------------------------------------------------------
             new DealTherapyQuestion
             {
                 Key = "q2_tv", Branch = "tv",
-                ImageUrl = "/images/deal-therapy/q2_tv.jpg",
+                ImageUrl = "/images/uploaded/therapy/q2_tv.jpg",
                 Text = "\"Where does this TV live, and what's it for?\"",
                 Options = new()
                 {
@@ -504,27 +504,27 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_tv", Branch = "tv",
-                ImageUrl = "/images/deal-therapy/q3_tv.jpg",
+                ImageUrl = "/images/uploaded/therapy/q3_tv.jpg",
                 Text = "\"What do you actually watch?\"",
                 Options = new()
                 {
-                    new QuizOption { Value = "lg_oled",           Text = "\"Films, the way the director intended â€” deep blacks, every shadow.\"" },
+                    new QuizOption { Value = "lg_oled",           Text = "\"Films, the way the director intended- deep blacks, every shadow.\"" },
                     new QuizOption { Value = "tcl_gaming",        Text = "\"Fast, competitive, twitchy stuff where every millisecond counts.\"" },
                     new QuizOption { Value = "samsung_outdoor",   Text = "\"The game and the cookout, in full sun, without squinting.\"" },
-                    new QuizOption { Value = "sharp_value",       Text = "\"A bit of everything â€” streaming, news, the usual. Just make it look good.\"" }
+                    new QuizOption { Value = "sharp_value",       Text = "\"A bit of everything- streaming, news, the usual. Just make it look good.\"" }
                 }
             },
             new DealTherapyQuestion
             {
                 Key = "q4_tv", Branch = "tv",
-                ImageUrl = "/images/deal-therapy/q4_tv.jpg",
+                ImageUrl = "/images/uploaded/therapy/q4_tv.jpg",
                 Text = "\"Pick the spec that makes your heart race:\"",
                 Options = new()
                 {
                     new QuizOption { Value = "lg_oled",           Text = "\"8.3 million self-lit pixels, perfect black, Dolby Vision &amp; Atmos.\"" },
                     new QuizOption { Value = "tcl_gaming",        Text = "\"144Hz, VRR, FreeSync, near-zero lag. Built to win.\"" },
                     new QuizOption { Value = "samsung_outdoor",   Text = "\"Weatherproof, anti-glare, bright enough to beat the sun.\"" },
-                    new QuizOption { Value = "sharp_value",       Text = "\"4K QLED with streaming built in â€” and a price that doesn't sting.\"" }
+                    new QuizOption { Value = "sharp_value",       Text = "\"4K QLED with streaming built in- and a price that doesn't sting.\"" }
                 }
             }
         };
@@ -545,7 +545,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "bosch_dishwasher",
                 Name = "Bosch Dishwasher",
                 Diagnosis = "Chronic Noise Sensitivity",
-                Verdict = "You flinch at sound. You crave order. You once shushed a refrigerator. I understand you completely.\n\nThe Bosch is ultra-quiet, minimalist, and built to last longer than most of your relationships. It cleans in total silence and asks for nothing. Nap-compatible. Your secret is safe â€” no one will ever hear it working.",
+                Verdict = "You flinch at sound. You crave order. You once shushed a refrigerator. I understand you completely.\n\nThe Bosch is ultra-quiet, minimalist, and built to last longer than most of your relationships. It cleans in total silence and asks for nothing. Nap-compatible. Your secret is safe- no one will ever hear it working.",
                 SideEffects = "people assuming you do dishes by hand because they never hear the machine.",
                 Sku = "SHP65DM5N"
             },
@@ -554,7 +554,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "ge_allinone",
                 Name = "GE All-in-One Washer/Dryer",
                 Diagnosis = "Spatial-Capacity Crisis",
-                Verdict = "You've been asked to fit two appliances into the space of roughly one shoebox. You are not the problem. Your floor plan is the problem.\n\nThe GE washes AND dries in a single machine â€” no transfers, no wet pile, no second unit you don't have room for. Built for growing families, small spaces, pet owners, and the gloriously, unapologetically lazy.",
+                Verdict = "You've been asked to fit two appliances into the space of roughly one shoebox. You are not the problem. Your floor plan is the problem.\n\nThe GE washes AND dries in a single machine- no transfers, no wet pile, no second unit you don't have room for. Built for growing families, small spaces, pet owners, and the gloriously, unapologetically lazy.",
                 SideEffects = "weeping with joy the first time you never have to move a wet load again.",
                 Sku = ""
             },
@@ -572,7 +572,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "stonebake_range",
                 Name = "Stone-Bake Range",
                 Diagnosis = "Compulsive Host Syndrome",
-                Verdict = "You don't cook for yourself. You cook for an audience. Hosting is your love language and, let's be honest, your cardio.\n\nThe Stone-Bake range turns your kitchen into the place everyone wants to be â€” including a true stone-bake pizza setting so you never order out again. Family-friendly, host-ready, faintly smug. Perfect.",
+                Verdict = "You don't cook for yourself. You cook for an audience. Hosting is your love language and, let's be honest, your cardio.\n\nThe Stone-Bake range turns your kitchen into the place everyone wants to be- including a true stone-bake pizza setting so you never order out again. Family-friendly, host-ready, faintly smug. Perfect.",
                 SideEffects = "judging anyone who suggests delivery.",
                 Sku = "GCFE3070BF"
             },
@@ -617,7 +617,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "sofa_sleeper",
                 Name = "Sofa Sleeper",
                 Diagnosis = "The Space-Saving Host",
-                Verdict = "You have guests but not guest rooms, clutter but not closets, and a square footage that demands every object earn its keep.\n\nThe Sofa Sleeper pulls double duty: sleeps a guest, hides your storage, anchors a small space, and doubles as gaming HQ. Minimalist on the outside, secretly a problem-solver on the inside â€” a lot like you.",
+                Verdict = "You have guests but not guest rooms, clutter but not closets, and a square footage that demands every object earn its keep.\n\nThe Sofa Sleeper pulls double duty: sleeps a guest, hides your storage, anchors a small space, and doubles as gaming HQ. Minimalist on the outside, secretly a problem-solver on the inside- a lot like you.",
                 SideEffects = "smug satisfaction when a guest says \"wait, this is a bed?\"",
                 Sku = ""
             },
@@ -626,7 +626,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "tvx_sectional",
                 Name = "TVX Sectional",
                 Diagnosis = "Family Sprawl",
-                Verdict = "You need to seat the entire household without a cushion-based turf war. This is a logistics problem, and we solve it with square footage.\n\nThe TVX sectional is stylish, durable, and built to survive kids, dogs, and movie-night dogpiles. More room for the whole family â€” finally, enough seats that nobody has to sit on the floor pretending it's fine.",
+                Verdict = "You need to seat the entire household without a cushion-based turf war. This is a logistics problem, and we solve it with square footage.\n\nThe TVX sectional is stylish, durable, and built to survive kids, dogs, and movie-night dogpiles. More room for the whole family- finally, enough seats that nobody has to sit on the floor pretending it's fine.",
                 SideEffects = "a sudden surge in friends who want to come over for movie night.",
                 Sku = ""
             },
@@ -635,7 +635,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "nat_loveseat",
                 Name = "Nat Love Seat",
                 Diagnosis = "The Refined Minimalist",
-                Verdict = "You don't want more furniture. You want better furniture. Vibes over volume. Elegance over excess. I see your aesthetic and I approve.\n\nThe Nat love seat is premium leather, upscale, and effortlessly chic â€” the elegant, stylish piece that makes the whole room look like you have your life together. (You may not. The love seat won't tell.)",
+                Verdict = "You don't want more furniture. You want better furniture. Vibes over volume. Elegance over excess. I see your aesthetic and I approve.\n\nThe Nat love seat is premium leather, upscale, and effortlessly chic- the elegant, stylish piece that makes the whole room look like you have your life together. (You may not. The love seat won't tell.)",
                 SideEffects = "rearranging the entire room so the love seat gets the best light.",
                 Sku = ""
             },
@@ -644,7 +644,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "loveseat",
                 Name = "Love Seat (Reclining)",
                 Diagnosis = "The Comfort Devotee",
-                Verdict = "You recline, and you do not return. Comfort isn't a feature to you â€” it's the entire philosophy. There's no shame here. Only cushions.\n\nThis overstuffed reclining love seat is loaded with features and built for the long sit. Blanket, snack, full recline, three undisturbed hours. As one reviewer put it: best decision ever. Best. Day.",
+                Verdict = "You recline, and you do not return. Comfort isn't a feature to you- it's the entire philosophy. There's no shame here. Only cushions.\n\nThis overstuffed reclining love seat is loaded with features and built for the long sit. Blanket, snack, full recline, three undisturbed hours. As one reviewer put it: best decision ever. Best. Day.",
                 SideEffects = "missing the first 40 minutes of every movie because you got too comfortable.",
                 Sku = ""
             },
@@ -653,7 +653,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "lg_oled",
                 Name = "LG OLED 77\" C5 (OLED77C5PUA)",
                 Diagnosis = "Cinematic Standards Disorder",
-                Verdict = "You don't watch television. You attend screenings. A washed-out picture physically pains you, and frankly, you've earned the right to be this particular.\n\nThe 77-inch LG OLED evo C5 delivers over 8.3 million self-lit pixels for perfect black, perfect color, Dolby Vision and Dolby Atmos, plus FILMMAKER MODE so you see films exactly as the director intended. It's the home theater you keep telling people you're going to build â€” except it already exists, and it's enormous.",
+                Verdict = "You don't watch television. You attend screenings. A washed-out picture physically pains you, and frankly, you've earned the right to be this particular.\n\nThe 77-inch LG OLED evo C5 delivers over 8.3 million self-lit pixels for perfect black, perfect color, Dolby Vision and Dolby Atmos, plus FILMMAKER MODE so you see films exactly as the director intended. It's the home theater you keep telling people you're going to build- except it already exists, and it's enormous.",
                 SideEffects = "pausing movies to make guests appreciate the shadow detail.",
                 Sku = "OLED77C5PUA"
             },
@@ -662,7 +662,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "tcl_gaming",
                 Name = "TCL 65\" QM7L Mini LED (65QM7L)",
                 Diagnosis = "Competitive Reflex Syndrome",
-                Verdict = "You lost a match once because of input lag and you have never fully recovered. We're not going to fix that trauma today. We're going to fix the TV.\n\nThe 65-inch TCL QM7L runs a 144Hz refresh rate with Game Accelerator 288 VRR and FreeSync for tear-free, near-zero-lag play, backed by Mini LED brightness up to 3,000 nits and 2,100+ local dimming zones. Fast, bright, and built to win â€” so the only thing left to blame is your aim.",
+                Verdict = "You lost a match once because of input lag and you have never fully recovered. We're not going to fix that trauma today. We're going to fix the TV.\n\nThe 65-inch TCL QM7L runs a 144Hz refresh rate with Game Accelerator 288 VRR and FreeSync for tear-free, near-zero-lag play, backed by Mini LED brightness up to 3,000 nits and 2,100+ local dimming zones. Fast, bright, and built to win- so the only thing left to blame is your aim.",
                 SideEffects = "blaming the TV significantly less, which may be its own emotional adjustment.",
                 Sku = "65QM7L"
             },
@@ -671,7 +671,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "samsung_outdoor",
                 Name = "Samsung 55\" The Terrace (QN55LST7D)",
                 Diagnosis = "Indoor Confinement Issues",
-                Verdict = "The party is outside. You are inside, squinting at a glare-blasted screen through a window. This is no way to live, and we both know it.\n\nThe 55-inch Samsung Terrace is a 4K partial-sun outdoor TV built to handle the elements â€” weather-resistant, anti-glare, and bright enough to beat daylight. The game, the cookout, and the crowd, all in one place: the backyard, where you clearly belong.",
+                Verdict = "The party is outside. You are inside, squinting at a glare-blasted screen through a window. This is no way to live, and we both know it.\n\nThe 55-inch Samsung Terrace is a 4K partial-sun outdoor TV built to handle the elements- weather-resistant, anti-glare, and bright enough to beat daylight. The game, the cookout, and the crowd, all in one place: the backyard, where you clearly belong.",
                 SideEffects = "becoming the house everyone shows up to on game day, uninvited but welcome.",
                 Sku = "QN55LST7DAFXZA"
             },
@@ -680,7 +680,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Key = "sharp_value",
                 Name = "Sharp AQUOS 55\" 4K QLED (4TC55HP7050U)",
                 Diagnosis = "Overthinking-the-Purchase Paralysis",
-                Verdict = "You've read 40 reviews, opened 12 tabs, and asked three coworkers. You don't need the most expensive TV. You need permission to stop researching. Granted.\n\nThe 55-inch Sharp AQUOS is 4K QLED with Xumo streaming built right in â€” a genuinely great picture and all your apps, at a price that doesn't sting. The smart, no-drama choice for someone who just wants to watch their show tonight, not write a dissertation about it.",
+                Verdict = "You've read 40 reviews, opened 12 tabs, and asked three coworkers. You don't need the most expensive TV. You need permission to stop researching. Granted.\n\nThe 55-inch Sharp AQUOS is 4K QLED with Xumo streaming built right in- a genuinely great picture and all your apps, at a price that doesn't sting. The smart, no-drama choice for someone who just wants to watch their show tonight, not write a dissertation about it.",
                 SideEffects = "an overwhelming sense of relief, and roughly 40 reclaimed browser tabs.",
                 Sku = "4TC55HP7050U"
             }
