@@ -54,6 +54,31 @@
                 </div>
             </div>
 
+            @if (Model.ProductPreview != null)
+            {
+                var preview = Model.ProductPreview;
+                <div class="dt-product-card">
+                    <div class="dt-product-card-img">
+                        <a href="@preview.ProductUrl">
+                            <img src="@preview.ImageUrl" alt="@preview.Name" />
+                        </a>
+                    </div>
+                    <div class="dt-product-card-info">
+                        <div class="dt-product-card-name">
+                            <a href="@preview.ProductUrl">@preview.Name</a>
+                        </div>
+                        <div class="dt-product-card-price">@preview.Price</div>
+                        <div class="dt-product-card-actions">
+                            <button type="button" class="button-1"
+                                    onclick="AjaxCart.addproducttocart_catalog('/addproducttocart/catalog/@preview.ProductId/1/1', this)">
+                                Add to Cart
+                            </button>
+                            <a href="@preview.ProductUrl" class="button-2">View Product</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
             <div class="dt-share-section">
                 <div class="dt-share-label">Share your diagnosis</div>
                 <div class="dt-share-buttons">
@@ -141,7 +166,29 @@
 .dt-instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; border: none; }
 .dt-instagram-btn.copied { background: #d1fae5; color: #065f46; }
 
+.dt-product-card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    max-width: 560px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.dt-product-card-img { flex: 0 0 130px; }
+.dt-product-card-img img { width: 130px; height: 130px; object-fit: contain; border-radius: 4px; display: block; }
+.dt-product-card-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.dt-product-card-name a { font-weight: bold; font-size: 1em; color: #1a1a1a; text-decoration: none; line-height: 1.4; }
+.dt-product-card-name a:hover { color: #e63328; }
+.dt-product-card-price { font-size: 1.2em; font-weight: bold; color: #e63328; }
+.dt-product-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
 .dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.dt-question { padding-top: 20px; }
 </style>
 
 <script>
