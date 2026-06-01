@@ -1,12 +1,61 @@
 @{
     Layout = "_ColumnsOne";
+    var storepointScript = ViewData["StorepointScript"] as string;
+    var storepointScriptUrl = ViewData["StorepointScriptUrl"] as string;
+    var storepointLocations = ViewData["StorepointLocations"] as IEnumerable<AbcWarehouse.Plugin.Misc.StorepointStoreLocator.Controllers.StoreLocatorController.StorepointLocation>;
 }
 
+<style>
+    .storepoint-locations-ssr {
+        margin-top: 2rem;
+    }
+
+    .storepoint-location-ssr-item {
+        padding: 1rem;
+        border-bottom: 1px solid #ccc;
+    }
+</style>    
 <div class="page store-locator-page">
     <div class="page-title">
         <h1>Store Locator</h1>
     </div>
     <div class="page-body">
-        <p>Storepoint Store Locator plugin is active.</p>
+        <div id="storepoint-container" data-map-id="15faae969dbf06"></div>
+
+        <script>(function(){var a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src="https://cdn.storepoint.co/api/v1/js/15faae969dbf06.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);}());</script>
+
+        @if (storepointLocations != null && storepointLocations.Any())
+        {
+            <section class="storepoint-locations-ssr" aria-label="Store locations">
+                <h2>Store Locations</h2>
+                <ul class="storepoint-locations-ssr-list">
+                    @foreach (var location in storepointLocations)
+                    {
+                        <li class="storepoint-location-ssr-item">
+                            @if (!string.IsNullOrWhiteSpace(location.Name))
+                            {
+                                <strong>@location.Name</strong>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(location.StreetAddress))
+                            {
+                                <div>@location.StreetAddress</div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(location.City) || !string.IsNullOrWhiteSpace(location.State) || !string.IsNullOrWhiteSpace(location.PostalCode))
+                            {
+                                <div>@string.Join(", ", new[] { location.City, location.State }.Where(s => !string.IsNullOrWhiteSpace(s))) @location.PostalCode</div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(location.Phone))
+                            {
+                                <div><a href="tel:@location.Phone">@location.Phone</a></div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(location.Website))
+                            {
+                                <div><a href="@location.Website" rel="nofollow noopener" target="_blank">Visit Website</a></div>
+                            }
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
     </div>
 </div>

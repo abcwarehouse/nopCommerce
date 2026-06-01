@@ -7,5 +7,5 @@
   "Author": "ABC Warehouse",
   "DisplayOrder": 1,
   "FileName": "AbcWarehouse.Plugin.Misc.StorepointStoreLocator.dll",
-  "Description": "Minimal Storepoint Store Locator misc plugin scaffold."
+  "Description": "Sets up /store-locator with SSR for Storepoint Store Locator."
 }
