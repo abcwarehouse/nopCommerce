@@ -184,7 +184,46 @@
 .dt-product-card-name a { font-weight: bold; font-size: 1em; color: #1a1a1a; text-decoration: none; line-height: 1.4; }
 .dt-product-card-name a:hover { color: #e63328; }
 .dt-product-card-price { font-size: 1.2em; font-weight: bold; color: #e63328; }
-.dt-product-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.dt-product-card-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+
+.dt-product-card-actions .button-1,
+.dt-product-card-actions .button-2 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.dt-product-card-actions .button-1 {
+    background: #e63328;
+    color: #fff;
+    border: 2px solid #e63328;
+}
+.dt-product-card-actions .button-1:hover {
+    background: #c8281e;
+    border-color: #c8281e;
+    color: #fff;
+    text-decoration: none;
+}
+
+.dt-product-card-actions .button-2 {
+    background: transparent;
+    color: #374151;
+    border: 2px solid #d1d5db;
+}
+.dt-product-card-actions .button-2:hover {
+    border-color: #374151;
+    color: #111;
+    text-decoration: none;
+}
 
 .dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 

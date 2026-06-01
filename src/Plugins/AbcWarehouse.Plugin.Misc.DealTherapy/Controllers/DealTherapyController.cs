@@ -481,7 +481,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 {
                     new QuizOption { Value = "lg_oled",           Text = "\"My living room is a movie theater and I will accept nothing less.\"" },
                     new QuizOption { Value = "tcl_gaming",        Text = "\"It's command central. Console, PC, controller permanently in hand.\"" },
-                    new QuizOption { Value = "samsung_outdoor",   Text = "\"Outside â€” patio, deck, by the grill. The party's out there.\"" },
+                    new QuizOption { Value = "samsung_outdoor",   Text = "\"Outside patio, deck, by the grill. The party's out there.\"" },
                     new QuizOption { Value = "sharp_value",       Text = "\"Honestly? I just need a great TV that doesn't cost a fortune.\"" }
                 }
             },
