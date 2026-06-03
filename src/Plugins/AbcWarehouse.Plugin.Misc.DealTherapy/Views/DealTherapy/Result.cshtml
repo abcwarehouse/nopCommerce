@@ -9,6 +9,22 @@
     var twitterText = product != null
         ? $"My Deal Therapy diagnosis: {product.Diagnosis}. Rx: {product.Name} — take yours:"
         : "";
+
+    var caseStudyVideos = product == null
+        ? new System.Collections.Generic.List<string>()
+        : new[] { product.CaseStudyVideo1Url, product.CaseStudyVideo2Url, product.CaseStudyVideo3Url }
+            .Where(v => !string.IsNullOrEmpty(v)).ToList();
+
+    string ToYouTubeEmbedUrl(string url)
+    {
+        if (url.Contains("/embed/"))
+            return url.Split('?')[0] + "?rel=0";
+        if (url.Contains("youtu.be/"))
+            return "https://www.youtube.com/embed/" + url.Split('/').Last().Split('?')[0] + "?rel=0";
+        if (url.Contains("youtube.com/watch"))
+            return "https://www.youtube.com/embed/" + System.Web.HttpUtility.ParseQueryString(new Uri(url).Query)["v"] + "?rel=0";
+        return "https://www.youtube.com/embed/" + url.Trim() + "?rel=0";
+    }
 }
 
 <div class="page deal-therapy-result-page">
@@ -99,26 +115,6 @@
                 </div>
             </div>
 
-            @{
-                var caseStudyVideos = new[]
-                {
-                    product.CaseStudyVideo1Url,
-                    product.CaseStudyVideo2Url,
-                    product.CaseStudyVideo3Url
-                }.Where(v => !string.IsNullOrEmpty(v)).ToList();
-
-                // Accepts any YouTube format: watch URL, short URL, embed URL, or bare video ID
-                string ToYouTubeEmbedUrl(string url)
-                {
-                    if (url.Contains("/embed/"))
-                        return url.Split('?')[0] + "?rel=0";
-                    if (url.Contains("youtu.be/"))
-                        return "https://www.youtube.com/embed/" + url.Split('/').Last().Split('?')[0] + "?rel=0";
-                    if (url.Contains("youtube.com/watch"))
-                        return "https://www.youtube.com/embed/" + System.Web.HttpUtility.ParseQueryString(new Uri(url).Query)["v"] + "?rel=0";
-                    return "https://www.youtube.com/embed/" + url.Trim() + "?rel=0";
-                }
-            }
             @if (caseStudyVideos.Any())
             {
                 <div class="dt-case-studies">
