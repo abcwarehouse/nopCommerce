@@ -1,0 +1,289 @@
+@model AbcWarehouse.Plugin.Misc.DealTherapy.Models.DealTherapyResultModel
+@inject Nop.Web.Framework.UI.INopHtmlHelper NopHtml
+@{
+    Layout = "_ColumnsOne";
+    NopHtml.AddTitleParts("Your Deal Therapy Prescription");
+    var product = Model.Product;
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var shareUrl = product != null ? $"{baseUrl}/deal-therapy/share/{product.Key}" : "";
+    var twitterText = product != null
+        ? $"My Deal Therapy diagnosis: {product.Diagnosis}. Rx: {product.Name} — take yours:"
+        : "";
+
+}
+
+<div class="page deal-therapy-result-page">
+        <div class="dt-quiz-banner">
+            <img src="/images/uploaded/therapy/DealTherapyHeader.jpg" alt="Deal Therapy" />
+        </div>
+
+    <div class="page-title">
+        <h1>Your Prescription Is Ready</h1>
+    </div>
+    <div class="page-body">
+
+        @if (product == null)
+        {
+            <p>Something went wrong retrieving your results. <a href="/deal-therapy">Retake the quiz</a>.</p>
+        }
+        else
+        {
+            <div class="dt-rx-pad">
+                <div class="dt-rx-header">
+                    <div class="dt-rx-logo">ABC Warehouse</div>
+                    <div class="dt-rx-therapist">Chad — Deal Therapist, Unlicensed</div>
+                </div>
+
+                <div class="dt-rx-body">
+                    <div class="dt-diagnosis-label">Diagnosis</div>
+                    <div class="dt-diagnosis-name">@product.Diagnosis</div>
+
+                    <div class="dt-verdict">
+                        @foreach (var para in product.Verdict.Split('\n', System.StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <p>@para</p>
+                        }
+                    </div>
+
+                    <div class="dt-rx-symbol">℞</div>
+                    <div class="dt-rx-product-name">@product.Name</div>
+                    @if (Model.ProductPreview != null)
+                    {
+                        var preview = Model.ProductPreview;
+                        <div class="dt-product-card">
+                            <div class="dt-product-card-img">
+                                <a href="@preview.ProductUrl">
+                                    <img src="@preview.ImageUrl" alt="" />
+                                </a>
+                            </div>
+                            <div class="dt-product-card-info">
+                                @if (!string.IsNullOrEmpty(preview.ShortDescription))
+                                {
+                                    <div class="dt-product-card-desc">@Html.Raw(preview.ShortDescription)</div>
+                                }
+                                <div class="dt-product-card-actions">
+                                    <button type="button" class="button-1"
+                                            onclick="addCartItemAsync(@preview.ProductId)">
+                                        Add to Cart
+                                    </button>
+                                    <a href="@preview.ProductUrl" class="button-2">View Product</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="dt-side-effects">
+                        <strong>Side effects may include:</strong> @product.SideEffects
+                    </div>
+                </div>
+
+                <div class="dt-rx-footer">
+                    <div class="dt-rx-sig">— Chad, D.T.</div>
+                    <div class="dt-rx-disclaimer">*Not a real therapist. Deals are very real.</div>
+                </div>
+            </div>
+
+            <div class="dt-share-section">
+                <div class="dt-share-label">Share your diagnosis</div>
+                <div class="dt-share-buttons">
+                    <button class="dt-share-btn dt-copy-btn" data-url="@shareUrl" onclick="dtCopyLink(this)">
+                        Copy Link
+                    </button>
+                    <a class="dt-share-btn dt-facebook-btn"
+                       href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(shareUrl)"
+                       target="_blank" rel="noopener">
+                        Share on Facebook
+                    </a>
+                    <button class="dt-share-btn dt-instagram-btn" data-url="@shareUrl" onclick="dtCopyForInstagram(this)">
+                        Share on Instagram
+                    </button>
+                </div>
+            </div>
+
+            <div class="dt-cta-row">
+                <a href="/search/results?q=@Uri.EscapeDataString(product.Name)" class="button-1">Shop @product.Name →</a>
+                <a href="/deal-therapy" class="button-2">Retake Quiz</a>
+            </div>
+        }
+
+    </div>
+</div>
+
+<style>
+.dt-quiz-banner { width: 100%; margin-bottom: 0; line-height: 0; }
+.dt-quiz-banner img { width: 100%; height: auto; display: block; object-fit: cover; }
+.dt-quiz-banner--placeholder {
+    height: 220px;
+    background: #f3f4f6;
+    border: 2px dashed #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 0.95em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: normal;
+}
+
+.deal-therapy-result-page .page-title h1 { margin-bottom: 24px; }
+
+.dt-rx-pad {
+    max-width: 640px;
+    background: #fffef5;
+    border: 1px solid #d4c88a;
+    border-top: 6px solid #e63328;
+    border-radius: 4px;
+    padding: 28px 32px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 28px;
+    font-family: 'Georgia', serif;
+}
+
+body .dt-product-card-desc { font-weight: bold; font-size: 17px; line-height: 1.25; }
+
+.dt-rx-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d4c88a; padding-bottom: 12px; margin-bottom: 20px; }
+.dt-rx-logo { font-weight: bold; font-size: 1.1em; letter-spacing: 0.04em; color: #e63328; }
+.dt-rx-therapist { font-size: 0.8em; color: #888; font-style: italic; }
+
+.dt-diagnosis-label { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 4px; }
+.dt-diagnosis-name { font-size: 1.5em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+
+.dt-verdict { font-size: 0.95em; line-height: 1.7; color: #333; margin-bottom: 20px; }
+.dt-verdict p { margin-bottom: 12px; }
+
+.dt-rx-symbol { font-size: 2.4em; color: #e63328; line-height: 1; margin-bottom: 2px; }
+.dt-rx-product-name { font-size: 1.25em; font-weight: bold; color: #1a1a1a; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px dashed #ccc; }
+
+.dt-side-effects { font-size: 0.88em; color: #555; font-style: italic; background: #f5f0d8; border-radius: 3px; padding: 10px 14px; }
+
+.dt-rx-footer { display: flex; justify-content: space-between; align-items: baseline; margin-top: 18px; }
+.dt-rx-sig { font-style: italic; font-size: 1.1em; color: #333; }
+.dt-rx-disclaimer { font-size: 0.75em; color: #aaa; }
+
+.page-title { padding-top: 30px; }
+
+.dt-share-section { margin-bottom: 24px; }
+.dt-share-label { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 10px; }
+.dt-share-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.dt-share-btn {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+.dt-share-btn:hover { opacity: 0.85; text-decoration: none; }
+.dt-copy-btn    { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+.dt-copy-btn.copied { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.dt-twitter-btn   { background: #000; color: #fff; }
+.dt-facebook-btn  { background: #1877f2; color: #fff; }
+.dt-instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; border: none; }
+.dt-instagram-btn.copied { background: #d1fae5; color: #065f46; }
+
+.dt-product-card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    max-width: 560px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.dt-product-card-img { flex: 0 0 130px; }
+.dt-product-card-img img { width: 130px; height: 130px; object-fit: contain; border-radius: 4px; display: block; }
+.dt-product-card-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.dt-product-card-desc { font-size: 0.9em; line-height: 1.55; color: #444; }
+.dt-product-card-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
+
+.dt-product-card-actions .button-1,
+.dt-product-card-actions .button-2 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.dt-product-card-actions .button-1 {
+    background: #e63328;
+    color: #fff;
+    border: 2px solid #e63328;
+}
+.dt-product-card-actions .button-1:hover {
+    background: #c8281e;
+    border-color: #c8281e;
+    color: #fff;
+    text-decoration: none;
+}
+
+.dt-product-card-actions .button-2 {
+    background: transparent;
+    color: #374151;
+    border: 2px solid #d1d5db;
+}
+.dt-product-card-actions .button-2:hover {
+    border-color: #374151;
+    color: #111;
+    text-decoration: none;
+}
+
+.dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+</style>
+
+<script>
+function dtCopyForInstagram(btn) {
+    var url = btn.dataset.url;
+    var doCopy = function () {
+        btn.textContent = 'Copied! Paste into your Instagram post.';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Share on Instagram'; btn.classList.remove('copied'); }, 3000);
+    };
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(doCopy);
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+        document.body.removeChild(ta); doCopy();
+    }
+}
+
+function dtCopyLink(btn) {
+    var url = btn.dataset.url;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function () {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(function () { btn.textContent = 'Copy Link'; btn.classList.remove('copied'); }, 2500);
+        });
+    } else {
+        // Fallback for older browsers
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Copy Link'; btn.classList.remove('copied'); }, 2500);
+    }
+}
+</script>
