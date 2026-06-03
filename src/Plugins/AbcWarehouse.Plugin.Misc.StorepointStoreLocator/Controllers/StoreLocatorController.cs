@@ -23,27 +23,10 @@ namespace AbcWarehouse.Plugin.Misc.StorepointStoreLocator.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewData["StorepointScript"] = await LoadStorepointScriptAsync();
             ViewData["StorepointScriptUrl"] = STOREPOINT_SCRIPT_URL;
             ViewData["StorepointLocations"] = await LoadStorepointLocationsAsync();
 
             return View("~/Plugins/Misc.StorepointStoreLocator/Views/Index.cshtml");
-        }
-
-        private async Task<string> LoadStorepointScriptAsync()
-        {
-            if (!Uri.TryCreate(STOREPOINT_SCRIPT_URL, UriKind.Absolute, out var scriptUri))
-                return string.Empty;
-
-            try
-            {
-                var client = _httpClientFactory.CreateClient();
-                return await client.GetStringAsync(scriptUri);
-            }
-            catch
-            {
-                return string.Empty;
-            }
         }
 
         private async Task<IList<StorepointLocation>> LoadStorepointLocationsAsync()
