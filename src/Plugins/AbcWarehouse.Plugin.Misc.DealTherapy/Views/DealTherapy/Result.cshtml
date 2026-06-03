@@ -31,27 +31,6 @@
     <div class="page-title">
         <h1>Your Prescription Is Ready</h1>
     </div>
-    @if (product != null && !string.IsNullOrEmpty(product.BannerImageUrl))
-    {
-        <div class="dt-result-banner">
-            <img src="@product.BannerImageUrl" alt="" />
-        </div>
-    }
-    else if (product != null)
-    {
-        <div class="dt-result-banner dt-result-banner--placeholder">
-            <span>Banner Image</span>
-        </div>
-    }
-
-    <div class="dt-chad-intro">
-        <div class="dt-chad-intro-text">
-            <p>Sometimes, people come to ABC Warehouse when they have a problem. And that's where I come in. I don't just listen to your problems. I help you find deals that actually solve them.</p>
-            <p>At ABC Warehouse, we have appliances, TVs, mattresses, and furniture. All at prices that help you find relief.</p>
-        </div>
-        <div class="dt-chad-intro-sig">— Chad, Deal Therapist</div>
-    </div>
-
     <div class="page-body">
 
         @if (product == null)
@@ -160,44 +139,6 @@
 </div>
 
 <style>
-.dt-result-banner { width: 100%; margin-bottom: 28px; line-height: 0; }
-.dt-result-banner img { width: 100%; height: auto; display: block; border-radius: 6px; object-fit: cover; }
-.dt-result-banner--placeholder {
-    height: 220px;
-    background: #f3f4f6;
-    border: 2px dashed #d1d5db;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #9ca3af;
-    font-size: 0.95em;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    line-height: normal;
-}
-
-.dt-chad-intro {
-    background: #fffef5;
-    border-left: 4px solid #e63328;
-    border-radius: 4px;
-    padding: 20px 24px;
-    margin-bottom: 28px;
-    font-family: 'Georgia', serif;
-}
-.dt-chad-intro-text p {
-    font-size: 1.05em;
-    line-height: 1.75;
-    color: #333;
-    margin-bottom: 12px;
-}
-.dt-chad-intro-text p:last-child { margin-bottom: 14px; }
-.dt-chad-intro-sig {
-    font-style: italic;
-    font-size: 0.95em;
-    color: #888;
-}
-
 .deal-therapy-result-page .page-title h1 { margin-bottom: 24px; }
 
 .dt-rx-pad {
