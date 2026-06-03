@@ -3,6 +3,11 @@
     var storepointScript = ViewData["StorepointScript"] as string;
     var storepointScriptUrl = ViewData["StorepointScriptUrl"] as string;
     var storepointLocations = ViewData["StorepointLocations"] as IEnumerable<AbcWarehouse.Plugin.Misc.StorepointStoreLocator.Controllers.StoreLocatorController.StorepointLocation>;
+
+    //title
+    NopHtml.AddTitleParts("ABC Warehouse Locations - Stores in Michigan, Ohio & Indiana");
+    //meta
+    NopHtml.AddMetaDescriptionParts("Find your nearest ABC Warehouse store. 40+ locations across Michigan, Ohio & Indiana with appliances, TVs, mattresses, furniture & electronics in stock.");
 }
 
 <style>
