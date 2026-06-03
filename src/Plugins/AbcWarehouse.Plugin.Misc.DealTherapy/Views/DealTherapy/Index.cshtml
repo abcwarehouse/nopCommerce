@@ -1,0 +1,315 @@
+@model AbcWarehouse.Plugin.Misc.DealTherapy.Models.DealTherapyModel
+@inject Nop.Web.Framework.UI.INopHtmlHelper NopHtml
+@{
+    Layout = "_ColumnsOne";
+    NopHtml.AddTitleParts("Deal Therapy");
+    var quizBannerImageUrl = "/images/uploaded/therapy/DealTherapyHeader.jpg";
+
+    var quizCaseStudyVideos = new[]
+    {
+        "https://www.youtube.com/watch?v=jESijeX0hs8",
+        "https://www.youtube.com/watch?v=rzyJkVR0fkc",
+        "https://www.youtube.com/watch?v=qIsL27jgue4"
+    };
+
+    string ToYouTubeEmbedUrl(string url)
+    {
+        if (url.Contains("/embed/"))
+            return url.Split('?')[0] + "?rel=0";
+        if (url.Contains("youtu.be/"))
+            return "https://www.youtube.com/embed/" + url.Split('/').Last().Split('?')[0] + "?rel=0";
+        if (url.Contains("youtube.com/watch"))
+            return "https://www.youtube.com/embed/" + System.Web.HttpUtility.ParseQueryString(new Uri(url).Query)["v"] + "?rel=0";
+        return "https://www.youtube.com/embed/" + url.Trim() + "?rel=0";
+    }
+
+    var filledVideos = quizCaseStudyVideos.Where(v => !string.IsNullOrEmpty(v)).ToList();
+}
+
+<div class="page deal-therapy-page">
+    @if (!string.IsNullOrEmpty(quizBannerImageUrl))
+    {
+        <div class="dt-quiz-banner">
+            <img src="@quizBannerImageUrl" alt="" />
+        </div>
+    }
+    else
+    {
+        <div class="dt-quiz-banner dt-quiz-banner--placeholder">
+            <span>Banner Image</span>
+        </div>
+    }
+    <div class="deal-therapy-container">
+
+    <div class="page-title">
+        <h1>Deal Therapy</h1>
+        <p class="dt-subtitle">A one-on-one session with Chad, your deadpan Deal Therapist. Four questions. One prescription.</p>
+    </div>
+    <div class="page-body">
+
+        <div class="dt-chad-intro">
+            <div class="dt-chad-intro-text">
+                <p>Sometimes, people come to ABC Warehouse when they have a problem. And that's where I come in. I don't just listen to your problems. I help you find deals that actually solve them.</p>
+                <p>At ABC Warehouse, we have appliances, TVs, mattresses, and furniture. All at prices that help you find relief.</p>
+            </div>
+            <div class="dt-chad-intro-sig">— Chad, Deal Therapist</div>
+        </div>
+
+        <div class="dt-progress-bar" id="dt-progress-bar">
+            <div class="dt-progress-fill" id="dt-progress-fill"></div>
+        </div>
+        <div class="dt-step-label" id="dt-step-label">Question 1 of 4</div>
+
+        <form method="post" action="/deal-therapy/submit" id="dt-form">
+            @Html.AntiForgeryToken()
+
+            @foreach (var question in Model.Questions)
+            {
+                var attrs = $"data-key=\"{question.Key}\"";
+                if (!string.IsNullOrEmpty(question.Branch))    attrs += $" data-branch=\"{question.Branch}\"";
+                if (!string.IsNullOrEmpty(question.SubBranch)) attrs += $" data-subbranch=\"{question.SubBranch}\"";
+
+                <div class="dt-question" id="q-@question.Key" @Html.Raw(attrs) style="display:none">
+                    @if (!string.IsNullOrEmpty(question.ImageUrl))
+                    {
+                        <div class="dt-question-img">
+                            <img src="@question.ImageUrl" alt="" />
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(question.IntroText))
+                    {
+                        <div class="dt-intro">@question.IntroText</div>
+                    }
+                    <h2 class="dt-question-text">@question.Text</h2>
+                    <div class="dt-options">
+                        @foreach (var opt in question.Options)
+                        {
+                            var optAttrs = $"data-value=\"{opt.Value}\" data-qkey=\"{question.Key}\"";
+                            if (!string.IsNullOrEmpty(opt.RevealBranch))    optAttrs += $" data-reveal-branch=\"{opt.RevealBranch}\"";
+                            if (!string.IsNullOrEmpty(opt.RevealSubBranch)) optAttrs += $" data-reveal-subbranch=\"{opt.RevealSubBranch}\"";
+
+                            <div class="dt-option" @Html.Raw(optAttrs)>
+                                @opt.Text
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="dt-email-section" id="dt-email-section" style="display:none">
+                <div class="dt-chad-note">
+                    <em>Chad uncaps a pen and slides a notepad across the desk:</em>
+                    <br />"One last thing — leave your email if you'd like your prescription sent to you. Entirely optional. No judgment either way."
+                </div>
+                <div class="dt-email-field">
+                    <label for="Email">Email <span class="dt-optional">(optional)</span></label>
+                    <input type="email" id="Email" name="Email" placeholder="you@example.com" autocomplete="email" />
+                </div>
+                <button type="submit" class="button-1 dt-submit-btn">Get My Prescription →</button>
+            </div>
+
+        </form>
+
+        @if (filledVideos.Any())
+        {
+            <div class="dt-case-studies">
+                <h2 class="dt-case-studies-title">Case Studies</h2>
+                <div class="dt-video-row">
+                    @foreach (var videoUrl in filledVideos)
+                    {
+                        <div class="dt-video-item">
+                            <iframe src="@ToYouTubeEmbedUrl(videoUrl)"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+    </div>
+    </div>
+</div>
+
+<style>
+.dt-quiz-banner { width: 100%; margin-bottom: 0; line-height: 0; }
+.dt-quiz-banner img { width: 100%; height: auto; display: block; object-fit: cover; }
+.dt-quiz-banner--placeholder {
+    height: 220px;
+    background: #f3f4f6;
+    border: 2px dashed #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 0.95em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: normal;
+    margin-bottom: 0;
+}
+.page.deal-therapy-page .deal-therapy-container {
+    padding: 20px 35px;
+    background: #fff;
+}
+
+.dt-chad-intro {
+    background: #fffef5;
+    border-left: 4px solid #e63328;
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    font-family: 'Georgia', serif;
+}
+.dt-chad-intro-text p { font-size: 1.05em; line-height: 1.75; color: #333; margin-bottom: 12px; }
+.dt-chad-intro-text p:last-child { margin-bottom: 14px; }
+.dt-chad-intro-sig { font-style: italic; font-size: 0.95em; color: #888; }
+
+.deal-therapy-page .page-title h1 { margin-bottom: 6px; }
+.dt-subtitle { color: #555; font-size: 1em; margin-bottom: 24px; }
+
+.dt-progress-bar { height: 4px; background: #e0e0e0; border-radius: 2px; margin-bottom: 6px; }
+.dt-progress-fill { height: 4px; background: #e63328; border-radius: 2px; width: 25%; transition: width 0.4s ease; }
+.dt-step-label { font-size: 0.85em; color: #888; margin-bottom: 28px; }
+
+.dt-question { animation: dtFadeIn 0.35s ease; }
+@@keyframes dtFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.dt-question-img { max-width: 680px; margin-bottom: 18px; }
+.dt-question-img img { width: 100%; height: auto; display: block; border-radius: 6px; object-fit: cover; }
+
+.dt-intro { font-style: italic; color: #666; font-size: 0.9em; margin-bottom: 8px; }
+.dt-question-text { font-size: 1.3em; margin-bottom: 20px; line-height: 1.4; }
+
+.dt-options { display: flex; flex-direction: column; gap: 10px; max-width: 680px; }
+.dt-option {
+    padding: 14px 18px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #fff;
+    font-size: 0.97em;
+    line-height: 1.45;
+    transition: border-color 0.15s, background 0.15s;
+}
+.dt-option:hover { border-color: #e63328; background: #fff8f8; }
+.dt-option.selected { border-color: #e63328; background: #fff0f0; font-weight: 600; pointer-events: none; }
+.dt-option.dimmed { opacity: 0.4; pointer-events: none; }
+
+.dt-email-section { margin-top: 10px; max-width: 480px; animation: dtFadeIn 0.35s ease; }
+.dt-chad-note { font-size: 0.95em; color: #555; border-left: 3px solid #e63328; padding-left: 14px; margin-bottom: 20px; line-height: 1.6; }
+.dt-email-field label { display: block; font-weight: bold; margin-bottom: 6px; }
+.dt-optional { font-weight: normal; font-size: 0.85em; color: #888; }
+.dt-email-field input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; margin-bottom: 18px; }
+.dt-submit-btn { font-size: 1.05em; padding: 12px 28px; }
+.dt-question { padding-top: 20px; }
+
+.dt-case-studies { margin-top: 40px; margin-bottom: 32px; }
+.dt-case-studies-title { font-size: 30px; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+.dt-video-row { display: flex; gap: 16px; }
+.dt-video-item { flex: 1; min-width: 0; }
+.dt-video-item iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    border: none;
+    display: block;
+    background: #000;
+}
+@@media (max-width: 640px) {
+    .dt-video-row { flex-direction: column; }
+}
+</style>
+
+<script>
+(function () {
+    var currentBranch = null;
+    var currentSubBranch = null;
+    var totalSteps = 4;
+    var currentStep = 1;
+
+    // Next-question map: given current question key + selected value → next key
+    function getNextKey(qKey, val) {
+        if (qKey === 'q1')           return 'q2_' + val;
+        if (qKey === 'q2_appliance') return 'q3_' + val;
+        var map = {
+            'q2_dish': 'q3_dish', 'q3_dish': 'q4_dish', 'q4_dish': '__email',
+            'q2_laundry': 'q3_laundry', 'q3_laundry': 'q4_laundry', 'q4_laundry': '__email',
+            'q3_cook': 'q4_cook', 'q4_cook': '__email',
+            'q3_fridge': 'q4_fridge', 'q4_fridge': '__email',
+            'q2_furniture': 'q3_furniture', 'q3_furniture': 'q4_furniture', 'q4_furniture': '__email',
+            'q2_tv': 'q3_tv', 'q3_tv': 'q4_tv', 'q4_tv': '__email'
+        };
+        return map[qKey] || null;
+    }
+
+    function setAnswer(qKey, val) {
+        var existing = document.querySelector('input[name="Answers[' + qKey + ']"]');
+        if (existing) existing.remove();
+        var inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = 'Answers[' + qKey + ']';
+        inp.value = val;
+        document.getElementById('dt-form').appendChild(inp);
+    }
+
+    function updateProgress(step) {
+        currentStep = step;
+        var pct = Math.round((step / totalSteps) * 100);
+        document.getElementById('dt-progress-fill').style.width = pct + '%';
+        document.getElementById('dt-step-label').textContent = 'Question ' + step + ' of ' + totalSteps;
+    }
+
+    function showQuestion(key) {
+        var el = document.getElementById('q-' + key);
+        if (!el) return;
+        el.style.display = 'block';
+        setTimeout(function () { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+    }
+
+    function onOptionClick(e) {
+        var opt = e.currentTarget;
+        var qKey = opt.dataset.qkey;
+        var val = opt.dataset.value;
+        var revealBranch = opt.dataset.revealBranch;
+        var revealSubBranch = opt.dataset.revealSubBranch;
+
+        // Lock options for this question
+        var siblings = opt.parentElement.querySelectorAll('.dt-option');
+        siblings.forEach(function (s) {
+            s.classList.add(s === opt ? 'selected' : 'dimmed');
+        });
+
+        setAnswer(qKey, val);
+
+        if (revealBranch)    currentBranch = revealBranch;
+        if (revealSubBranch) currentSubBranch = revealSubBranch;
+
+        var nextKey = getNextKey(qKey, val);
+
+        if (nextKey === '__email') {
+            updateProgress(totalSteps);
+            setTimeout(function () {
+                var emailSection = document.getElementById('dt-email-section');
+                emailSection.style.display = 'block';
+                emailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        } else if (nextKey) {
+            updateProgress(currentStep + 1);
+            setTimeout(function () { showQuestion(nextKey); }, 300);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Wire up all option clicks
+        document.querySelectorAll('.dt-option').forEach(function (opt) {
+            opt.addEventListener('click', onOptionClick);
+        });
+
+        // Show Q1 to start
+        showQuestion('q1');
+        updateProgress(1);
+    });
+})();
+</script>

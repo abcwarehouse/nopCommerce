@@ -12,6 +12,8 @@
   <Target Name="NopTarget" AfterTargets="Build">
     <!-- Delete unnecessary libraries from plugins path -->
     <MSBuild Projects="@(ClearPluginAssemblies)" Properties="PluginPath=$(MSBuildProjectDirectory)\$(OutDir)" Targets="NopClear" />
+    <!-- Remove refs\ subfolder — its reference assemblies are not needed at runtime and break Nop.Web publish -->
+    <RemoveDir Directories="$(MSBuildProjectDirectory)\$(OutDir)\refs" />
   </Target>
   <ItemGroup>
     <None Remove="logo.jpg" />
