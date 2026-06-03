@@ -1,3 +1,4 @@
+@using System.Linq
 @{
     Layout = "_ColumnsOne";
     var storepointScript = ViewData["StorepointScript"] as string;
@@ -53,10 +54,12 @@
                             {
                                 <div><a href="tel:@location.Phone">@location.Phone</a></div>
                             }
-                            @if (!string.IsNullOrWhiteSpace(location.Website))
-                            {
-                                <div><a href="@location.Website" rel="nofollow noopener" target="_blank">Visit Website</a></div>
-                            }
+@if (!string.IsNullOrWhiteSpace(location.Website)
+    && Uri.TryCreate(location.Website, UriKind.Absolute, out var websiteUri)
+    && (websiteUri.Scheme == Uri.UriSchemeHttp || websiteUri.Scheme == Uri.UriSchemeHttps))
+{
+    <div><a href="@websiteUri.AbsoluteUri" rel="nofollow noopener" target="_blank">Visit Website</a></div>
+}
                         </li>
                     }
                 </ul>
