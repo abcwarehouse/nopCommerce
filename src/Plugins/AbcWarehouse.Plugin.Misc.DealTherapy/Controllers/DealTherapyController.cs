@@ -107,7 +107,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                     {
                         ProductId = nopProduct.Id,
                         ImageUrl = imageUrl,
-                        ShortDescription = nopProduct.ShortDescription,
+                        ShortDescription = StripFeaturesSection(nopProduct.ShortDescription),
                         ProductUrl = $"/{seName}"
                     };
                 }
@@ -272,6 +272,15 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             using var snapshot = surface.Snapshot();
             using var data = snapshot.Encode(SKEncodedImageFormat.Png, 95);
             return data.ToArray();
+        }
+
+        private static string StripFeaturesSection(string shortDescription)
+        {
+            if (string.IsNullOrEmpty(shortDescription))
+                return shortDescription;
+
+            var cutIdx = shortDescription.IndexOf("<div class=\"rws-features-wapper\">");
+            return cutIdx > 0 ? shortDescription.Substring(0, cutIdx).Trim() : shortDescription;
         }
 
         private static string DetermineProduct(Dictionary<string, string> answers)
