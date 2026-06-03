@@ -13,18 +13,9 @@
 }
 
 <div class="page deal-therapy-result-page">
-    @if (product != null && !string.IsNullOrEmpty(product.BannerImageUrl))
-    {
         <div class="dt-quiz-banner">
             <img src="/images/uploaded/therapy/DealTherapyHeader.jpg" alt="Deal Therapy" />
         </div>
-    }
-    else if (product != null)
-    {
-        <div class="dt-quiz-banner dt-quiz-banner--placeholder">
-            <span>Banner Image</span>
-        </div>
-    }
 
     <div class="page-title">
         <h1>Your Prescription Is Ready</h1>

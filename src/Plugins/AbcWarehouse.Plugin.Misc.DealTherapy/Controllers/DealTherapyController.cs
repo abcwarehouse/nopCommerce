@@ -316,7 +316,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q1",
-                ImageUrl = "/images/uploaded/therapy/q1.jpg",
+                ImageUrl = "/images/uploaded/therapy/Intake_Q1.jpg",
                 IntroText = "Chad, steepling his fingers:",
                 Text = "\"So. What brings you to Deal Therapy today?\"",
                 Options = new()
