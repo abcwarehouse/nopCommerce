@@ -90,8 +90,17 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 var nopProduct = await _productService.GetProductBySkuAsync(product.Sku);
                 if (nopProduct != null && !nopProduct.Deleted && nopProduct.Published)
                 {
-                    var pictures = await _pictureService.GetPicturesByProductIdAsync(nopProduct.Id, 1);
-                    var (imageUrl, _) = await _pictureService.GetPictureUrlAsync(pictures.FirstOrDefault(), 370);
+                    string imageUrl;
+                    if (!string.IsNullOrEmpty(product.CustomImageUrl))
+                    {
+                        imageUrl = product.CustomImageUrl;
+                    }
+                    else
+                    {
+                        var pictures = await _pictureService.GetPicturesByProductIdAsync(nopProduct.Id, 1);
+                        (imageUrl, _) = await _pictureService.GetPictureUrlAsync(pictures.FirstOrDefault(), 370);
+                    }
+
                     var seName = await _urlRecordService.GetSeNameAsync(nopProduct);
                     var formattedPrice = await _priceFormatter.FormatPriceAsync(nopProduct.Price);
 
@@ -317,7 +326,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_dish", Branch = "dish",
-                ImageUrl = "/images/uploaded/therapy/Q2_dish.jpg",
+                ImageUrl = "/images/uploaded/therapy/Dishwasher_Q2.jpg",
                 Text = "\"When your dishwasher runs, what do you need from it?\"",
                 Options = new()
                 {
@@ -328,7 +337,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_dish", Branch = "dish",
-                ImageUrl = "/images/uploaded/therapy/q3_dish.jpg",
+                ImageUrl = "/images/uploaded/therapy/Dishwasher_Q3.jpg",
                 Text = "\"Let's talk about your relationship with germs.\"",
                 Options = new()
                 {
@@ -339,7 +348,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_dish", Branch = "dish",
-                ImageUrl = "/images/uploaded/therapy/q4_dish.jpg",
+                ImageUrl = "/images/uploaded/therapy/Dishwasher_Q4.jpg",
                 Text = "\"Pick the compliment that would make you blush:\"",
                 Options = new()
                 {
@@ -424,7 +433,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_fridge", Branch = "appliance", SubBranch = "fridge",
-                ImageUrl = "/images/uploaded/therapy/q3_fridge.jpg",
+                ImageUrl = "/images/uploaded/therapy/Fridge_Q3.jpg",
                 Text = "\"How big is your operation?\"",
                 Options = new()
                 {
@@ -436,7 +445,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_fridge", Branch = "appliance", SubBranch = "fridge",
-                ImageUrl = "/images/uploaded/therapy/q4_fridge.jpg",
+                ImageUrl = "/images/uploaded/therapy/Fridge_Q4.jpg",
                 Text = "\"What actually sells you?\"",
                 Options = new()
                 {
@@ -450,7 +459,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_furniture", Branch = "furniture",
-                ImageUrl = "/images/uploaded/therapy/q2_furniture.jpg",
+                ImageUrl = "/images/uploaded/therapy/Furniture_Q2.jpg",
                 Text = "\"What's the #1 job of this furniture?\"",
                 Options = new()
                 {
@@ -463,7 +472,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_furniture", Branch = "furniture",
-                ImageUrl = "/images/uploaded/therapy/q3_furniture.jpg",
+                ImageUrl = "/images/uploaded/therapy/Furniture_Q3.jpg",
                 Text = "\"Your ideal Friday night on it:\"",
                 Options = new()
                 {
@@ -476,7 +485,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_furniture", Branch = "furniture",
-                ImageUrl = "/images/uploaded/therapy/q4_furniture.jpg",
+                ImageUrl = "/images/uploaded/therapy/Furniture_Q4.jpg",
                 Text = "\"Pick the review you'd leave:\"",
                 Options = new()
                 {
@@ -491,7 +500,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q2_tv", Branch = "tv",
-                ImageUrl = "/images/uploaded/therapy/q2_tv.jpg",
+                ImageUrl = "/images/uploaded/therapy/TV_Q2.jpg",
                 Text = "\"Where does this TV live, and what's it for?\"",
                 Options = new()
                 {
@@ -504,7 +513,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q3_tv", Branch = "tv",
-                ImageUrl = "/images/uploaded/therapy/q3_tv.jpg",
+                ImageUrl = "/images/uploaded/therapy/TV_Q3.jpg",
                 Text = "\"What do you actually watch?\"",
                 Options = new()
                 {
@@ -517,7 +526,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             new DealTherapyQuestion
             {
                 Key = "q4_tv", Branch = "tv",
-                ImageUrl = "/images/uploaded/therapy/q4_tv.jpg",
+                ImageUrl = "/images/uploaded/therapy/TV_Q4.jpg",
                 Text = "\"Pick the spec that makes your heart race:\"",
                 Options = new()
                 {
@@ -538,7 +547,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Capacity Crisis",
                 Verdict = "You don't have a dish problem. You have a volume problem, and frankly, a control problem about germs. That's okay. We work with what we've got.\n\nThe GE keeps up with the load you swore you'd never let pile that high. Big capacity, sanitizing power strong enough to make a germaphobe weep with relief, and the quiet confidence of a machine that has seen things.",
                 SideEffects = "telling guests your forks are technically cleaner than the surgical kind.",
-                Sku = "PFQ97HSPVDS"
+                Sku = "PFQ97HSPVDS",
+                CustomImageUrl = "/images/uploaded/therapy/12150.png"
             },
             ["bosch_dishwasher"] = new ProductResult
             {
@@ -547,7 +557,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Chronic Noise Sensitivity",
                 Verdict = "You flinch at sound. You crave order. You once shushed a refrigerator. I understand you completely.\n\nThe Bosch is ultra-quiet, minimalist, and built to last longer than most of your relationships. It cleans in total silence and asks for nothing. Nap-compatible. Your secret is safe- no one will ever hear it working.",
                 SideEffects = "people assuming you do dishes by hand because they never hear the machine.",
-                Sku = "SHP65DM5N"
+                Sku = "SHP65DM5N",
+                CustomImageUrl = "/images/uploaded/therapy/23790.png"
             },
             ["ge_allinone"] = new ProductResult
             {
@@ -556,7 +567,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Spatial-Capacity Crisis",
                 Verdict = "You've been asked to fit two appliances into the space of roughly one shoebox. You are not the problem. Your floor plan is the problem.\n\nThe GE washes AND dries in a single machine- no transfers, no wet pile, no second unit you don't have room for. Built for growing families, small spaces, pet owners, and the gloriously, unapologetically lazy.",
                 SideEffects = "weeping with joy the first time you never have to move a wet load again.",
-                Sku = ""
+                Sku = "GDT595HYYFS",
+                CustomImageUrl = "/images/uploaded/therapy/14060.png"
             },
             ["whirlpool"] = new ProductResult
             {
@@ -565,7 +577,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The No-Nonsense Traditionalist",
                 Verdict = "You don't want your laundry to be 'smart.' You want it to work, the way your grandmother's did, until roughly the heat death of the universe.\n\nWhirlpool: trusted, American-made, budget-friendly, and refreshingly free of features you'd never use. It washes. It dries. That is the entire pitch, and you respect that deeply.",
                 SideEffects = "becoming emotionally attached to a brand your family has trusted for three generations.",
-                Sku = ""
+                Sku = "WTW6157PB",
+                CustomImageUrl = "/images/uploaded/therapy/21849.png"
             },
             ["stonebake_range"] = new ProductResult
             {
@@ -574,7 +587,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Compulsive Host Syndrome",
                 Verdict = "You don't cook for yourself. You cook for an audience. Hosting is your love language and, let's be honest, your cardio.\n\nThe Stone-Bake range turns your kitchen into the place everyone wants to be- including a true stone-bake pizza setting so you never order out again. Family-friendly, host-ready, faintly smug. Perfect.",
                 SideEffects = "judging anyone who suggests delivery.",
-                Sku = "GCFE3070BF"
+                Sku = "GCFE3070BF",
+                CustomImageUrl = "/images/uploaded/therapy/18560.png"
             },
             ["ge_range"] = new ProductResult
             {
@@ -583,7 +597,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Multitasking Burnout",
                 Verdict = "You are stirring one pot, texting your sister, and refereeing a custody dispute over the remote. You don't need more hands. You need a smarter oven.\n\nThe GE smart range brings WiFi, no-preheat, and a built-in camera so you can watch dinner without opening the door. Tech-forward cooking for the family chef who is doing six things and finishing none of them.",
                 SideEffects = "preheating the oven from your phone purely because you can.",
-                Sku = "GGF600AVSS"
+                Sku = "GGF600AVSS",
+                CustomImageUrl = "/images/uploaded/therapy/18431.png"
             },
             ["madia_fridge"] = new ProductResult
             {
@@ -592,7 +607,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Small-Space Survivalist",
                 Verdict = "You have an apartment, a garage corner, or a personality that simply does not require a six-foot fridge. Self-aware. Respectable.\n\nThe Madia is apartment-sized, Energy-Star efficient, smudge-resistant, and built around one beautiful word: value. Perfect first fridge, perfect garage backup, zero tricks.",
                 SideEffects = "bragging about your energy bill to people who didn't ask.",
-                Sku = "MRT18D3BW"
+                Sku = "MRT18S3AST",
+                CustomImageUrl = "/images/uploaded/therapy/15111.png"
             },
             ["ge_fridge"] = new ProductResult
             {
@@ -601,7 +617,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Classic Overflow",
                 Verdict = "You are a standard family going through milk like it's a competitive sport. You don't need spectacle. You need space that looks good doing it.\n\nThe GE side-by-side is sleek, sturdy, family-sized, and elegant enough to make the kitchen look intentional. The dependable workhorse that quietly carries your whole household.",
                 SideEffects = "an unreasonable sense of pride every time it's fully stocked.",
-                Sku = "GZS24PYYFS"
+                Sku = "GZS24PYYFS",
+                CustomImageUrl = "/images/uploaded/therapy/15820.png"
             },
             ["lg_fridge"] = new ProductResult
             {
@@ -610,7 +627,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Gadget-Forward Big Family",
                 Verdict = "Big family, big hauls, big ice expectations. You want the fridge to do tricks, and honestly? You've earned the tricks.\n\nThe LG brings four styles of ice, knock-to-see-inside glass, counter-depth styling, and maximum storage. Built for the household that runs on bulk groceries and showing off a little.",
                 SideEffects = "knocking on the fridge in front of guests for no functional reason.",
-                Sku = "LRYKC2606S"
+                Sku = "LRYKC2606S",
+                CustomImageUrl = "/images/uploaded/therapy/15148.png"
             },
             ["sofa_sleeper"] = new ProductResult
             {
@@ -619,7 +637,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Space-Saving Host",
                 Verdict = "You have guests but not guest rooms, clutter but not closets, and a square footage that demands every object earn its keep.\n\nThe Sofa Sleeper pulls double duty: sleeps a guest, hides your storage, anchors a small space, and doubles as gaming HQ. Minimalist on the outside, secretly a problem-solver on the inside- a lot like you.",
                 SideEffects = "smug satisfaction when a guest says \"wait, this is a bed?\"",
-                Sku = ""
+                Sku = "+57059",
+                CustomImageUrl = "/images/uploaded/therapy/57059.png"
             },
             ["tvx_sectional"] = new ProductResult
             {
@@ -628,7 +647,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Family Sprawl",
                 Verdict = "You need to seat the entire household without a cushion-based turf war. This is a logistics problem, and we solve it with square footage.\n\nThe TVX sectional is stylish, durable, and built to survive kids, dogs, and movie-night dogpiles. More room for the whole family- finally, enough seats that nobody has to sit on the floor pretending it's fine.",
                 SideEffects = "a sudden surge in friends who want to come over for movie night.",
-                Sku = ""
+                Sku = "34134/3767-15-WESTWO",
+                CustomImageUrl = "/images/uploaded/therapy/57778.png"
             },
             ["nat_loveseat"] = new ProductResult
             {
@@ -637,7 +657,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Refined Minimalist",
                 Verdict = "You don't want more furniture. You want better furniture. Vibes over volume. Elegance over excess. I see your aesthetic and I approve.\n\nThe Nat love seat is premium leather, upscale, and effortlessly chic- the elegant, stylish piece that makes the whole room look like you have your life together. (You may not. The love seat won't tell.)",
                 SideEffects = "rearranging the entire room so the love seat gets the best light.",
-                Sku = ""
+                Sku = "C316-235(A0D5)-LOVES",
+                CustomImageUrl = "/images/uploaded/therapy/57990.png"
             },
             ["loveseat"] = new ProductResult
             {
@@ -646,7 +667,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "The Comfort Devotee",
                 Verdict = "You recline, and you do not return. Comfort isn't a feature to you- it's the entire philosophy. There's no shame here. Only cushions.\n\nThis overstuffed reclining love seat is loaded with features and built for the long sit. Blanket, snack, full recline, three undisturbed hours. As one reviewer put it: best decision ever. Best. Day.",
                 SideEffects = "missing the first 40 minutes of every movie because you got too comfortable.",
-                Sku = ""
+                Sku = "+61740",
+                CustomImageUrl = "/images/uploaded/therapy/61740.png"
             },
             ["lg_oled"] = new ProductResult
             {
@@ -655,7 +677,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Cinematic Standards Disorder",
                 Verdict = "You don't watch television. You attend screenings. A washed-out picture physically pains you, and frankly, you've earned the right to be this particular.\n\nThe 77-inch LG OLED evo C5 delivers over 8.3 million self-lit pixels for perfect black, perfect color, Dolby Vision and Dolby Atmos, plus FILMMAKER MODE so you see films exactly as the director intended. It's the home theater you keep telling people you're going to build- except it already exists, and it's enormous.",
                 SideEffects = "pausing movies to make guests appreciate the shadow detail.",
-                Sku = "OLED77C5PUA"
+                Sku = "OLED77C5PUA",
+                CustomImageUrl = "/images/uploaded/therapy/24538.png"
             },
             ["tcl_gaming"] = new ProductResult
             {
@@ -664,7 +687,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Competitive Reflex Syndrome",
                 Verdict = "You lost a match once because of input lag and you have never fully recovered. We're not going to fix that trauma today. We're going to fix the TV.\n\nThe 65-inch TCL QM7L runs a 144Hz refresh rate with Game Accelerator 288 VRR and FreeSync for tear-free, near-zero-lag play, backed by Mini LED brightness up to 3,000 nits and 2,100+ local dimming zones. Fast, bright, and built to win- so the only thing left to blame is your aim.",
                 SideEffects = "blaming the TV significantly less, which may be its own emotional adjustment.",
-                Sku = "65QM7L"
+                Sku = "65QM7L",
+                CustomImageUrl = "/images/uploaded/therapy/24502.png"
             },
             ["samsung_outdoor"] = new ProductResult
             {
@@ -673,7 +697,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Indoor Confinement Issues",
                 Verdict = "The party is outside. You are inside, squinting at a glare-blasted screen through a window. This is no way to live, and we both know it.\n\nThe 55-inch Samsung Terrace is a 4K partial-sun outdoor TV built to handle the elements- weather-resistant, anti-glare, and bright enough to beat daylight. The game, the cookout, and the crowd, all in one place: the backyard, where you clearly belong.",
                 SideEffects = "becoming the house everyone shows up to on game day, uninvited but welcome.",
-                Sku = "QN55LST7DAFXZA"
+                Sku = "QN55LST7DAFXZA",
+                CustomImageUrl = "/images/uploaded/therapy/24655.png"
             },
             ["sharp_value"] = new ProductResult
             {
@@ -682,7 +707,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Diagnosis = "Overthinking-the-Purchase Paralysis",
                 Verdict = "You've read 40 reviews, opened 12 tabs, and asked three coworkers. You don't need the most expensive TV. You need permission to stop researching. Granted.\n\nThe 55-inch Sharp AQUOS is 4K QLED with Xumo streaming built right in- a genuinely great picture and all your apps, at a price that doesn't sting. The smart, no-drama choice for someone who just wants to watch their show tonight, not write a dissertation about it.",
                 SideEffects = "an overwhelming sense of relief, and roughly 40 reclaimed browser tabs.",
-                Sku = "4TC55HP7050U"
+                Sku = "4TC55HP7050U",
+                CustomImageUrl = "/images/uploaded/therapy/24835.png"
             }
         };
     }

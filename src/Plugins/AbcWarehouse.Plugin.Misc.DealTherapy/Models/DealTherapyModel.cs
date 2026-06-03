@@ -41,6 +41,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Models
         public string Verdict { get; set; }
         public string SideEffects { get; set; }
         public string Sku { get; set; }
+        public string CustomImageUrl { get; set; }
     }
 
     public class DealTherapyProductPreviewModel

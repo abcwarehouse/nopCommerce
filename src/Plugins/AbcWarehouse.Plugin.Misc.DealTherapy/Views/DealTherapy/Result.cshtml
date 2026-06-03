@@ -42,6 +42,30 @@
 
                     <div class="dt-rx-symbol">℞</div>
                     <div class="dt-rx-product-name">@product.Name</div>
+                    @if (Model.ProductPreview != null)
+                    {
+                        var preview = Model.ProductPreview;
+                        <div class="dt-product-card">
+                            <div class="dt-product-card-img">
+                                <a href="@preview.ProductUrl">
+                                    <img src="@preview.ImageUrl" alt="@preview.Name" />
+                                </a>
+                            </div>
+                            <div class="dt-product-card-info">
+                                <div class="dt-product-card-name">
+                                    <a href="@preview.ProductUrl">@preview.Name</a>
+                                </div>
+                                <div class="dt-product-card-price">@preview.Price</div>
+                                <div class="dt-product-card-actions">
+                                    <button type="button" class="button-1"
+                                            onclick="addCartItemAsync(@preview.ProductId)">
+                                        Add to Cart
+                                    </button>
+                                    <a href="@preview.ProductUrl" class="button-2">View Product</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
 
                     <div class="dt-side-effects">
                         <strong>Side effects may include:</strong> @product.SideEffects
@@ -54,42 +78,12 @@
                 </div>
             </div>
 
-            @if (Model.ProductPreview != null)
-            {
-                var preview = Model.ProductPreview;
-                <div class="dt-product-card">
-                    <div class="dt-product-card-img">
-                        <a href="@preview.ProductUrl">
-                            <img src="@preview.ImageUrl" alt="@preview.Name" />
-                        </a>
-                    </div>
-                    <div class="dt-product-card-info">
-                        <div class="dt-product-card-name">
-                            <a href="@preview.ProductUrl">@preview.Name</a>
-                        </div>
-                        <div class="dt-product-card-price">@preview.Price</div>
-                        <div class="dt-product-card-actions">
-                            <button type="button" class="button-1"
-                                    onclick="addCartItemAsync(@preview.ProductId)">
-                                Add to Cart
-                            </button>
-                            <a href="@preview.ProductUrl" class="button-2">View Product</a>
-                        </div>
-                    </div>
-                </div>
-            }
-
             <div class="dt-share-section">
                 <div class="dt-share-label">Share your diagnosis</div>
                 <div class="dt-share-buttons">
                     <button class="dt-share-btn dt-copy-btn" data-url="@shareUrl" onclick="dtCopyLink(this)">
                         Copy Link
                     </button>
-                    <a class="dt-share-btn dt-twitter-btn"
-                       href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(twitterText)&url=@Uri.EscapeDataString(shareUrl)"
-                       target="_blank" rel="noopener">
-                        Share on X
-                    </a>
                     <a class="dt-share-btn dt-facebook-btn"
                        href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(shareUrl)"
                        target="_blank" rel="noopener">
