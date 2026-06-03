@@ -27,6 +27,7 @@
 }
 
 <div class="page deal-therapy-page">
+    <div class="deal-therapy-container">
     @if (!string.IsNullOrEmpty(quizBannerImageUrl))
     {
         <div class="dt-quiz-banner">
@@ -128,6 +129,7 @@
         }
 
     </div>
+    </div>
 </div>
 
 <style>
@@ -200,7 +202,7 @@
 .dt-question { padding-top: 20px; }
 
 .dt-case-studies { margin-top: 40px; margin-bottom: 32px; }
-.dt-case-studies-title { font-size: 1.2em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+.dt-case-studies-title { font-size: 30px; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
 .dt-video-row { display: flex; gap: 16px; }
 .dt-video-item { flex: 1; min-width: 0; }
 .dt-video-item iframe {

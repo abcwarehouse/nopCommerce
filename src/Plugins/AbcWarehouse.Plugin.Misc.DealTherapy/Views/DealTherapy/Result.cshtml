@@ -13,6 +13,19 @@
 }
 
 <div class="page deal-therapy-result-page">
+    @if (product != null && !string.IsNullOrEmpty(product.BannerImageUrl))
+    {
+        <div class="dt-quiz-banner">
+            <img src="@product.BannerImageUrl" alt="" />
+        </div>
+    }
+    else if (product != null)
+    {
+        <div class="dt-quiz-banner dt-quiz-banner--placeholder">
+            <span>Banner Image</span>
+        </div>
+    }
+
     <div class="page-title">
         <h1>Your Prescription Is Ready</h1>
     </div>
@@ -106,10 +119,31 @@
 </div>
 
 <style>
+.dt-quiz-banner { width: 100%; margin-bottom: 0; line-height: 0; }
+.dt-quiz-banner img { width: 100%; height: auto; display: block; object-fit: cover; }
+.dt-quiz-banner--placeholder {
+    height: 220px;
+    background: #f3f4f6;
+    border: 2px dashed #d1d5db;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 0.95em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: normal;
+}
+
+.page.deal-therapy-page .deal-therapy-container {
+    padding: 0px 35px;
+    background: #fff;
+}
+
 .deal-therapy-result-page .page-title h1 { margin-bottom: 24px; }
 
 .dt-rx-pad {
-    max-width: 560px;
+    max-width: 640px;
     background: #fffef5;
     border: 1px solid #d4c88a;
     border-top: 6px solid #e63328;
@@ -119,6 +153,8 @@
     margin-bottom: 28px;
     font-family: 'Georgia', serif;
 }
+
+body .dt-product-card-desc { font-weight: bold; font-size: 17px; line-height: 1.25; }
 
 .dt-rx-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid #d4c88a; padding-bottom: 12px; margin-bottom: 20px; }
 .dt-rx-logo { font-weight: bold; font-size: 1.1em; letter-spacing: 0.04em; color: #e63328; }
