@@ -140,15 +140,17 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 products.TryGetValue(productKey ?? string.Empty, out var product);
                 var branch = answerDict.GetValueOrDefault("q1", "");
 
+                var estTime = TimeZoneInfo.ConvertTimeFromUtc(submission.CreatedOnUtc, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+
                 rows.Add(new DealTherapySubmissionRowModel
                 {
                     Id = submission.Id,
                     CustomerId = submission.CustomerId,
                     Email = submission.Email,
-                    CreatedOn = submission.CreatedOnUtc.ToString("MM/dd/yyyy h:mm tt") + " UTC",
-                    ProductName = product?.Name ?? "â€”",
-                    Diagnosis = product?.Diagnosis ?? "â€”",
-                    Branch = string.IsNullOrEmpty(branch) ? "â€”"
+                    CreatedOn = estTime.ToString("MM/dd/yyyy h:mm tt") + " EST",
+                    ProductName = product?.Name ?? "Unknown",
+                    Diagnosis = product?.Diagnosis ?? "Unknown",
+                    Branch = string.IsNullOrEmpty(branch) ? "Unknown"
                            : char.ToUpper(branch[0]) + branch.Substring(1)
                 });
             }
@@ -364,7 +366,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // ----- LAUNDRY branch ---------------------------------------â”€
+            // ----- LAUNDRY branch ---------------------------------------â"€
             new DealTherapyQuestion
             {
                 Key = "q2_laundry", Branch = "laundry",
@@ -399,7 +401,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // ----- APPLIANCE branch: Cook vs. Keep fork (Q2) -------------------------------------------------------â”€
+            // ----- APPLIANCE branch: Cook vs. Keep fork (Q2) -------------------------------------------------------â"€
             new DealTherapyQuestion
             {
                 Key = "q2_appliance", Branch = "appliance",
@@ -462,7 +464,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 }
             },
 
-            // ----- FURNITURE branch ----------------------------------â”€
+            // ----- FURNITURE branch ----------------------------------â"€
             new DealTherapyQuestion
             {
                 Key = "q2_furniture", Branch = "furniture",
