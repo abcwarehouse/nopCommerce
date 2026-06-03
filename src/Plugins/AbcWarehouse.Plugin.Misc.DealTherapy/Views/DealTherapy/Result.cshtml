@@ -10,21 +10,6 @@
         ? $"My Deal Therapy diagnosis: {product.Diagnosis}. Rx: {product.Name} — take yours:"
         : "";
 
-    var caseStudyVideos = product == null
-        ? new System.Collections.Generic.List<string>()
-        : new[] { product.CaseStudyVideo1Url, product.CaseStudyVideo2Url, product.CaseStudyVideo3Url }
-            .Where(v => !string.IsNullOrEmpty(v)).ToList();
-
-    string ToYouTubeEmbedUrl(string url)
-    {
-        if (url.Contains("/embed/"))
-            return url.Split('?')[0] + "?rel=0";
-        if (url.Contains("youtu.be/"))
-            return "https://www.youtube.com/embed/" + url.Split('/').Last().Split('?')[0] + "?rel=0";
-        if (url.Contains("youtube.com/watch"))
-            return "https://www.youtube.com/embed/" + System.Web.HttpUtility.ParseQueryString(new Uri(url).Query)["v"] + "?rel=0";
-        return "https://www.youtube.com/embed/" + url.Trim() + "?rel=0";
-    }
 }
 
 <div class="page deal-therapy-result-page">
@@ -68,10 +53,10 @@
                                 </a>
                             </div>
                             <div class="dt-product-card-info">
-                                <div class="dt-product-card-name">
-                                    <a href="@preview.ProductUrl">@preview.Name</a>
-                                </div>
-                                <div class="dt-product-card-price">@preview.Price</div>
+                                @if (!string.IsNullOrEmpty(preview.ShortDescription))
+                                {
+                                    <div class="dt-product-card-desc">@Html.Raw(preview.ShortDescription)</div>
+                                }
                                 <div class="dt-product-card-actions">
                                     <button type="button" class="button-1"
                                             onclick="addCartItemAsync(@preview.ProductId)">
@@ -93,24 +78,6 @@
                     <div class="dt-rx-disclaimer">*Not a real therapist. Deals are very real.</div>
                 </div>
             </div>
-
-            @if (caseStudyVideos.Any())
-            {
-                <div class="dt-case-studies">
-                    <h2 class="dt-case-studies-title">Case Studies</h2>
-                    <div class="dt-video-row">
-                        @foreach (var videoUrl in caseStudyVideos)
-                        {
-                            <div class="dt-video-item">
-                                <iframe src="@ToYouTubeEmbedUrl(videoUrl)"
-                                        frameborder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowfullscreen></iframe>
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
 
             <div class="dt-share-section">
                 <div class="dt-share-label">Share your diagnosis</div>
@@ -172,21 +139,7 @@
 .dt-rx-sig { font-style: italic; font-size: 1.1em; color: #333; }
 .dt-rx-disclaimer { font-size: 0.75em; color: #aaa; }
 
-.dt-case-studies { margin-bottom: 32px; }
-.dt-case-studies-title { font-size: 1.2em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
-.dt-video-row { display: flex; gap: 16px; }
-.dt-video-item { flex: 1; min-width: 0; }
-.dt-video-item iframe {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 6px;
-    border: none;
-    display: block;
-    background: #000;
-}
-@@media (max-width: 640px) {
-    .dt-video-row { flex-direction: column; }
-}
+.page-title { padding-top: 30px; }
 
 .dt-share-section { margin-bottom: 24px; }
 .dt-share-label { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 10px; }
@@ -224,9 +177,7 @@
 .dt-product-card-img { flex: 0 0 130px; }
 .dt-product-card-img img { width: 130px; height: 130px; object-fit: contain; border-radius: 4px; display: block; }
 .dt-product-card-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-.dt-product-card-name a { font-weight: bold; font-size: 1em; color: #1a1a1a; text-decoration: none; line-height: 1.4; }
-.dt-product-card-name a:hover { color: #e63328; }
-.dt-product-card-price { font-size: 1.2em; font-weight: bold; color: #e63328; }
+.dt-product-card-desc { font-size: 0.9em; line-height: 1.55; color: #444; }
 .dt-product-card-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
 
 .dt-product-card-actions .button-1,

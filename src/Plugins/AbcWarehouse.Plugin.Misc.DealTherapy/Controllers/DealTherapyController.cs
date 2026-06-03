@@ -102,14 +102,12 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                     }
 
                     var seName = await _urlRecordService.GetSeNameAsync(nopProduct);
-                    var formattedPrice = await _priceFormatter.FormatPriceAsync(nopProduct.Price);
 
                     preview = new DealTherapyProductPreviewModel
                     {
                         ProductId = nopProduct.Id,
-                        Name = nopProduct.Name,
                         ImageUrl = imageUrl,
-                        Price = formattedPrice,
+                        ShortDescription = nopProduct.ShortDescription,
                         ProductUrl = $"/{seName}"
                     };
                 }

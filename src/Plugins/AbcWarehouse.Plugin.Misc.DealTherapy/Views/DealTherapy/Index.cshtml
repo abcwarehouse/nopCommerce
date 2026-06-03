@@ -3,7 +3,27 @@
 @{
     Layout = "_ColumnsOne";
     NopHtml.AddTitleParts("Deal Therapy");
-    var quizBannerImageUrl = ""; // TODO: set banner image URL
+    var quizBannerImageUrl = "/images/uploaded/therapy/DealTherapyHeader.jpg"; // TODO: set banner image URL
+
+    var quizCaseStudyVideos = new[]
+    {
+        "https://www.youtube.com/watch?v=25lVIWIfbN4",
+        "https://www.youtube.com/watch?v=25lVIWIfbN4",
+        "https://www.youtube.com/watch?v=25lVIWIfbN4"
+    };
+
+    string ToYouTubeEmbedUrl(string url)
+    {
+        if (url.Contains("/embed/"))
+            return url.Split('?')[0] + "?rel=0";
+        if (url.Contains("youtu.be/"))
+            return "https://www.youtube.com/embed/" + url.Split('/').Last().Split('?')[0] + "?rel=0";
+        if (url.Contains("youtube.com/watch"))
+            return "https://www.youtube.com/embed/" + System.Web.HttpUtility.ParseQueryString(new Uri(url).Query)["v"] + "?rel=0";
+        return "https://www.youtube.com/embed/" + url.Trim() + "?rel=0";
+    }
+
+    var filledVideos = quizCaseStudyVideos.Where(v => !string.IsNullOrEmpty(v)).ToList();
 }
 
 <div class="page deal-therapy-page">
@@ -89,6 +109,24 @@
 
         </form>
 
+        @if (filledVideos.Any())
+        {
+            <div class="dt-case-studies">
+                <h2 class="dt-case-studies-title">Case Studies</h2>
+                <div class="dt-video-row">
+                    @foreach (var videoUrl in filledVideos)
+                    {
+                        <div class="dt-video-item">
+                            <iframe src="@ToYouTubeEmbedUrl(videoUrl)"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen></iframe>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
     </div>
 </div>
 
@@ -160,6 +198,22 @@
 .dt-email-field input { width: 100%; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; margin-bottom: 18px; }
 .dt-submit-btn { font-size: 1.05em; padding: 12px 28px; }
 .dt-question { padding-top: 20px; }
+
+.dt-case-studies { margin-top: 40px; margin-bottom: 32px; }
+.dt-case-studies-title { font-size: 1.2em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+.dt-video-row { display: flex; gap: 16px; }
+.dt-video-item { flex: 1; min-width: 0; }
+.dt-video-item iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    border: none;
+    display: block;
+    background: #000;
+}
+@@media (max-width: 640px) {
+    .dt-video-row { flex-direction: column; }
+}
 </style>
 
 <script>

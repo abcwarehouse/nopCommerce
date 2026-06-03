@@ -51,9 +51,8 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Models
     public class DealTherapyProductPreviewModel
     {
         public int ProductId { get; set; }
-        public string Name { get; set; }
         public string ImageUrl { get; set; }
-        public string Price { get; set; }
+        public string ShortDescription { get; set; }
         public string ProductUrl { get; set; }
     }
 
