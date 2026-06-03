@@ -1,0 +1,11 @@
+{
+  "Group": "Misc",
+  "FriendlyName": "Storepoint Store Locator",
+  "SystemName": "Misc.StorepointStoreLocator",
+  "Version": "4.80.0",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "ABC Warehouse",
+  "DisplayOrder": 1,
+  "FileName": "AbcWarehouse.Plugin.Misc.StorepointStoreLocator.dll",
+  "Description": "Sets up /store-locator with SSR for Storepoint Store Locator."
+}

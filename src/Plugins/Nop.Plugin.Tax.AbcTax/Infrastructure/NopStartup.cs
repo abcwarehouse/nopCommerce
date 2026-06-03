@@ -16,7 +16,7 @@ namespace Nop.Plugin.Tax.AbcTax.Infrastructure
         /// <summary>
         /// Gets order of this startup configuration implementation
         /// </summary>
-        public int Order => 1;
+        public int Order => int.MaxValue - 10; // ensure this runs after the main tax services are registered in the core, but before the application starts
 
         /// <summary>
         /// Add and configure any of the middleware
