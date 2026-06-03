@@ -15,6 +15,27 @@
     <div class="page-title">
         <h1>Your Prescription Is Ready</h1>
     </div>
+    @if (product != null && !string.IsNullOrEmpty(product.BannerImageUrl))
+    {
+        <div class="dt-result-banner">
+            <img src="@product.BannerImageUrl" alt="" />
+        </div>
+    }
+    else if (product != null)
+    {
+        <div class="dt-result-banner dt-result-banner--placeholder">
+            <span>Banner Image</span>
+        </div>
+    }
+
+    <div class="dt-chad-intro">
+        <div class="dt-chad-intro-text">
+            <p>Sometimes, people come to ABC Warehouse when they have a problem. And that's where I come in. I don't just listen to your problems. I help you find deals that actually solve them.</p>
+            <p>At ABC Warehouse, we have appliances, TVs, mattresses, and furniture. All at prices that help you find relief.</p>
+        </div>
+        <div class="dt-chad-intro-sig">— Chad, Deal Therapist</div>
+    </div>
+
     <div class="page-body">
 
         @if (product == null)
@@ -78,6 +99,44 @@
                 </div>
             </div>
 
+            @{
+                var caseStudyVideos = new[]
+                {
+                    product.CaseStudyVideo1Url,
+                    product.CaseStudyVideo2Url,
+                    product.CaseStudyVideo3Url
+                }.Where(v => !string.IsNullOrEmpty(v)).ToList();
+
+                // Accepts any YouTube format: watch URL, short URL, embed URL, or bare video ID
+                string ToYouTubeEmbedUrl(string url)
+                {
+                    if (url.Contains("/embed/"))
+                        return url.Split('?')[0] + "?rel=0";
+                    if (url.Contains("youtu.be/"))
+                        return "https://www.youtube.com/embed/" + url.Split('/').Last().Split('?')[0] + "?rel=0";
+                    if (url.Contains("youtube.com/watch"))
+                        return "https://www.youtube.com/embed/" + System.Web.HttpUtility.ParseQueryString(new Uri(url).Query)["v"] + "?rel=0";
+                    return "https://www.youtube.com/embed/" + url.Trim() + "?rel=0";
+                }
+            }
+            @if (caseStudyVideos.Any())
+            {
+                <div class="dt-case-studies">
+                    <h2 class="dt-case-studies-title">Case Studies</h2>
+                    <div class="dt-video-row">
+                        @foreach (var videoUrl in caseStudyVideos)
+                        {
+                            <div class="dt-video-item">
+                                <iframe src="@ToYouTubeEmbedUrl(videoUrl)"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen></iframe>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
             <div class="dt-share-section">
                 <div class="dt-share-label">Share your diagnosis</div>
                 <div class="dt-share-buttons">
@@ -105,6 +164,44 @@
 </div>
 
 <style>
+.dt-result-banner { width: 100%; margin-bottom: 28px; line-height: 0; }
+.dt-result-banner img { width: 100%; height: auto; display: block; border-radius: 6px; object-fit: cover; }
+.dt-result-banner--placeholder {
+    height: 220px;
+    background: #f3f4f6;
+    border: 2px dashed #d1d5db;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 0.95em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: normal;
+}
+
+.dt-chad-intro {
+    background: #fffef5;
+    border-left: 4px solid #e63328;
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    font-family: 'Georgia', serif;
+}
+.dt-chad-intro-text p {
+    font-size: 1.05em;
+    line-height: 1.75;
+    color: #333;
+    margin-bottom: 12px;
+}
+.dt-chad-intro-text p:last-child { margin-bottom: 14px; }
+.dt-chad-intro-sig {
+    font-style: italic;
+    font-size: 0.95em;
+    color: #888;
+}
+
 .deal-therapy-result-page .page-title h1 { margin-bottom: 24px; }
 
 .dt-rx-pad {
@@ -138,6 +235,22 @@
 .dt-rx-sig { font-style: italic; font-size: 1.1em; color: #333; }
 .dt-rx-disclaimer { font-size: 0.75em; color: #aaa; }
 
+.dt-case-studies { margin-bottom: 32px; }
+.dt-case-studies-title { font-size: 1.2em; font-weight: bold; color: #1a1a1a; margin-bottom: 16px; }
+.dt-video-row { display: flex; gap: 16px; }
+.dt-video-item { flex: 1; min-width: 0; }
+.dt-video-item iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    border: none;
+    display: block;
+    background: #000;
+}
+@@media (max-width: 640px) {
+    .dt-video-row { flex-direction: column; }
+}
+
 .dt-share-section { margin-bottom: 24px; }
 .dt-share-label { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 10px; }
 .dt-share-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -165,7 +278,6 @@
     gap: 20px;
     align-items: flex-start;
     max-width: 560px;
-    background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     padding: 16px;
