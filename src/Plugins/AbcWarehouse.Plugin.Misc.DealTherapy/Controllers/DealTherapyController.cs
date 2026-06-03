@@ -360,7 +360,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
                 Options = new()
                 {
                     new QuizOption { Value = "ge_dishwasher",    Text = "\"'Wow, your dishwasher handles a lot.'\"" },
-                    new QuizOption { Value = "bosch_dishwasher", Text = "\"'I didn't even know you owned a dishwasher. It's soâ€¦ serene.'\"" }
+                    new QuizOption { Value = "bosch_dishwasher", Text = "\"'I didn't even know you owned a dishwasher. It's so serene.'\"" }
                 }
             },
 
@@ -417,7 +417,7 @@ namespace AbcWarehouse.Plugin.Misc.DealTherapy.Controllers
             {
                 Key = "q3_cook", Branch = "appliance", SubBranch = "cook",
                 ImageUrl = "/images/uploaded/therapy/Cook_Q3.jpg",
-                Text = "\"When people come over, you're the one whoâ€¦\"",
+                Text = "\"When people come over, you're the one who...\"",
                 Options = new()
                 {
                     new QuizOption { Value = "stonebake_range", Text = "\"Insists on cooking for everyone. Hosting is my love language (and my cardio).\"" },
