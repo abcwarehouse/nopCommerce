@@ -95,10 +95,11 @@ namespace AbcWarehouse.Plugin.Widgets.UniFi.Components
                         if (isMattress)
                         {
                             var abcMattressModel = _abcMattressModelService.GetAbcMattressModelByProductId(productId);
-                            // just to keep it simple, grab the first entry
-                            var abcMattressEntry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(abcMattressModel.Id).First();
-                            
-                            abcItemNumber = abcMattressEntry?.ItemNo;
+                            if (abcMattressModel != null)
+                            {
+                                var abcMattressEntry = _abcMattressEntryService.GetAbcMattressEntriesByModelId(abcMattressModel.Id).FirstOrDefault();
+                                abcItemNumber = abcMattressEntry?.ItemNo;
+                            }
                         }
                         else
                         {
