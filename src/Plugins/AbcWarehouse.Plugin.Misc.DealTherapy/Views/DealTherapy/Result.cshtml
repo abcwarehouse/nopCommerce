@@ -243,6 +243,37 @@ body .dt-product-card-desc { font-weight: bold; font-size: 17px; line-height: 1.
 
 .dt-cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
 
+@media screen and (max-width: 500px) {
+  body .dt-product-card {
+    display: block;
+  }
+
+  body .dt-product-card-info {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  body .dt-product-card-img img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  body .dt-product-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    align-items: center;
+  }
+}
+
 </style>
 
 <script>
