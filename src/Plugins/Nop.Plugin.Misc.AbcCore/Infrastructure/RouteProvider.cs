@@ -6,16 +6,14 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
     public class RouteProvider : IRouteProvider
     {
-        public int Priority
-        {
-            get
-            {
-                return int.MaxValue;
-            }
-        }
+        public int Priority => int.MaxValue - 10; // High priority so custom routes are registered before lower-priority providers
 
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
+            endpointRouteBuilder.MapControllerRoute("StoreListingDetails",
+                            "stores/{storeSlug}",
+                            new { controller = "StoreListing", action = "Details" });
+
             // AbcCategory - get
             endpointRouteBuilder.MapControllerRoute("AbcCategoryEditGet",
                             "Admin/Category/Edit/{id}",
