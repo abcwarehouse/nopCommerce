@@ -631,15 +631,17 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //product and gift card attributes
             var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
 
-            // ABC: for wishlist, auto-select the first Delivery/Pickup option if none was selected
+            // ABC: for wishlist, auto-select the first Delivery/Pickup option if none was selected,
+            // then auto-select the first value for any required conditional attributes that are now triggered
             if ((ShoppingCartType)shoppingCartTypeId == ShoppingCartType.Wishlist)
             {
+                var allPams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
+
                 var deliveryPickupPa = await _abcProductAttributeService.GetProductAttributeByNameAsync(
                     AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
                 if (deliveryPickupPa != null)
                 {
-                    var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
-                    var deliveryPickupPam = pams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
+                    var deliveryPickupPam = allPams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
                     if (deliveryPickupPam != null)
                     {
                         var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(attributes);
@@ -651,6 +653,23 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             if (firstPav != null)
                                 attributes = _productAttributeParser.AddProductAttribute(attributes, deliveryPickupPam, firstPav.Id.ToString());
                         }
+                    }
+                }
+
+                // auto-select the first value for required conditional attributes whose condition is now met
+                foreach (var pam in allPams.Where(p => p.IsRequired && !string.IsNullOrEmpty(p.ConditionAttributeXml)))
+                {
+                    var conditionMet = await _productAttributeParser.IsConditionMetAsync(pam, attributes);
+                    if (!conditionMet.HasValue || !conditionMet.Value)
+                        continue;
+
+                    var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(attributes);
+                    if (!parsedPams.Any(p => p.Id == pam.Id))
+                    {
+                        var pavs = await _productAttributeService.GetProductAttributeValuesAsync(pam.Id);
+                        var firstPav = pavs.FirstOrDefault();
+                        if (firstPav != null)
+                            attributes = _productAttributeParser.AddProductAttribute(attributes, pam, firstPav.Id.ToString());
                     }
                 }
             }
