@@ -907,6 +907,8 @@ label+* {
 	height: 37px;
 	margin: auto;
 	border: none;
+	background: #777 url('~/Themes/Pavilion/Content/img/account-sprite.png') center -37px no-repeat;
+	font-size: 0;
 	transition: all 0.2s ease;
 }
 

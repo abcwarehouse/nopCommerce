@@ -490,12 +490,50 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
+            // ABC: for wishlist from catalog, auto-select required attributes so validation passes
+            string wishlistAttributesXml = string.Empty;
+            if (cartType == ShoppingCartType.Wishlist)
+            {
+                var allPams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+
+                var deliveryPickupPa = await _abcProductAttributeService.GetProductAttributeByNameAsync(
+                    AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
+                if (deliveryPickupPa != null)
+                {
+                    var deliveryPickupPam = allPams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
+                    if (deliveryPickupPam != null)
+                    {
+                        var pavs = await _productAttributeService.GetProductAttributeValuesAsync(deliveryPickupPam.Id);
+                        var firstPav = pavs.FirstOrDefault();
+                        if (firstPav != null)
+                            wishlistAttributesXml = _productAttributeParser.AddProductAttribute(wishlistAttributesXml, deliveryPickupPam, firstPav.Id.ToString());
+                    }
+                }
+
+                foreach (var pam in allPams.Where(p => p.IsRequired && !string.IsNullOrEmpty(p.ConditionAttributeXml)))
+                {
+                    var conditionMet = await _productAttributeParser.IsConditionMetAsync(pam, wishlistAttributesXml);
+                    if (!conditionMet.HasValue || !conditionMet.Value)
+                        continue;
+
+                    var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(wishlistAttributesXml);
+                    if (!parsedPams.Any(p => p.Id == pam.Id))
+                    {
+                        var pavs = await _productAttributeService.GetProductAttributeValuesAsync(pam.Id);
+                        var firstPav = pavs.FirstOrDefault();
+                        if (firstPav != null)
+                            wishlistAttributesXml = _productAttributeParser.AddProductAttribute(wishlistAttributesXml, pam, firstPav.Id.ToString());
+                    }
+                }
+            }
+
             // ---------------------------------MODIFIED THIS LINE TO ADD ATTRIBUTES------------------------------
             //now let's try adding product to the cart (now including product attribute validation, etc)
             addToCartWarnings = await _shoppingCartService.AddToCartAsync(customer: await _workContext.GetCurrentCustomerAsync(),
                 product: product,
                 shoppingCartType: cartType,
                 storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
+                attributesXml: wishlistAttributesXml,
                 quantity: quantity);
             if (addToCartWarnings.Any())
             {
@@ -631,15 +669,17 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
             //product and gift card attributes
             var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
 
-            // ABC: for wishlist, auto-select the first Delivery/Pickup option if none was selected
+            // ABC: for wishlist, auto-select the first Delivery/Pickup option if none was selected,
+            // then auto-select the first value for any required conditional attributes that are now triggered
             if ((ShoppingCartType)shoppingCartTypeId == ShoppingCartType.Wishlist)
             {
+                var allPams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
+
                 var deliveryPickupPa = await _abcProductAttributeService.GetProductAttributeByNameAsync(
                     AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
                 if (deliveryPickupPa != null)
                 {
-                    var pams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(productId);
-                    var deliveryPickupPam = pams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
+                    var deliveryPickupPam = allPams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
                     if (deliveryPickupPam != null)
                     {
                         var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(attributes);
@@ -651,6 +691,23 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                             if (firstPav != null)
                                 attributes = _productAttributeParser.AddProductAttribute(attributes, deliveryPickupPam, firstPav.Id.ToString());
                         }
+                    }
+                }
+
+                // auto-select the first value for required conditional attributes whose condition is now met
+                foreach (var pam in allPams.Where(p => p.IsRequired && !string.IsNullOrEmpty(p.ConditionAttributeXml)))
+                {
+                    var conditionMet = await _productAttributeParser.IsConditionMetAsync(pam, attributes);
+                    if (!conditionMet.HasValue || !conditionMet.Value)
+                        continue;
+
+                    var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(attributes);
+                    if (!parsedPams.Any(p => p.Id == pam.Id))
+                    {
+                        var pavs = await _productAttributeService.GetProductAttributeValuesAsync(pam.Id);
+                        var firstPav = pavs.FirstOrDefault();
+                        if (firstPav != null)
+                            attributes = _productAttributeParser.AddProductAttribute(attributes, pam, firstPav.Id.ToString());
                     }
                 }
             }
