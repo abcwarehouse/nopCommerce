@@ -490,12 +490,50 @@ namespace Nop.Plugin.Misc.AbcFrontend.Controllers
                 });
             }
 
+            // ABC: for wishlist from catalog, auto-select required attributes so validation passes
+            string wishlistAttributesXml = string.Empty;
+            if (cartType == ShoppingCartType.Wishlist)
+            {
+                var allPams = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+
+                var deliveryPickupPa = await _abcProductAttributeService.GetProductAttributeByNameAsync(
+                    AbcDeliveryConsts.DeliveryPickupOptionsProductAttributeName);
+                if (deliveryPickupPa != null)
+                {
+                    var deliveryPickupPam = allPams.FirstOrDefault(pam => pam.ProductAttributeId == deliveryPickupPa.Id);
+                    if (deliveryPickupPam != null)
+                    {
+                        var pavs = await _productAttributeService.GetProductAttributeValuesAsync(deliveryPickupPam.Id);
+                        var firstPav = pavs.FirstOrDefault();
+                        if (firstPav != null)
+                            wishlistAttributesXml = _productAttributeParser.AddProductAttribute(wishlistAttributesXml, deliveryPickupPam, firstPav.Id.ToString());
+                    }
+                }
+
+                foreach (var pam in allPams.Where(p => p.IsRequired && !string.IsNullOrEmpty(p.ConditionAttributeXml)))
+                {
+                    var conditionMet = await _productAttributeParser.IsConditionMetAsync(pam, wishlistAttributesXml);
+                    if (!conditionMet.HasValue || !conditionMet.Value)
+                        continue;
+
+                    var parsedPams = await _productAttributeParser.ParseProductAttributeMappingsAsync(wishlistAttributesXml);
+                    if (!parsedPams.Any(p => p.Id == pam.Id))
+                    {
+                        var pavs = await _productAttributeService.GetProductAttributeValuesAsync(pam.Id);
+                        var firstPav = pavs.FirstOrDefault();
+                        if (firstPav != null)
+                            wishlistAttributesXml = _productAttributeParser.AddProductAttribute(wishlistAttributesXml, pam, firstPav.Id.ToString());
+                    }
+                }
+            }
+
             // ---------------------------------MODIFIED THIS LINE TO ADD ATTRIBUTES------------------------------
             //now let's try adding product to the cart (now including product attribute validation, etc)
             addToCartWarnings = await _shoppingCartService.AddToCartAsync(customer: await _workContext.GetCurrentCustomerAsync(),
                 product: product,
                 shoppingCartType: cartType,
                 storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
+                attributesXml: wishlistAttributesXml,
                 quantity: quantity);
             if (addToCartWarnings.Any())
             {
