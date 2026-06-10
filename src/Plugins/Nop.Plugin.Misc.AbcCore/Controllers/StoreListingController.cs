@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Topics;
-using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Services.Seo;
 using Nop.Services.Stores;
@@ -28,7 +26,8 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             ITopicModelFactory topicModelFactory,
             ITopicService topicService,
             IUrlRecordService urlRecordService
-        ) {
+        )
+        {
             _aclService = aclService;
             _permissionService = permissionService;
             _storeMappingService = storeMappingService;
@@ -53,6 +52,8 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                     var activeSlug = await _urlRecordService.GetActiveSlugAsync(urlRecord.EntityId, urlRecord.EntityName, urlRecord.LanguageId);
                     if (!string.IsNullOrEmpty(activeSlug))
                         return RedirectToRoutePermanent("StoreListingDetails", new { storeSlug = activeSlug });
+
+                    return InvokeHttp404();
                 }
 
                 topic = await _topicService.GetTopicByIdAsync(urlRecord.EntityId);
