@@ -4,6 +4,7 @@ using Nop.Core.Domain.Topics;
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Services.Seo;
+using Nop.Services.Stores;
 using Nop.Services.Topics;
 using Nop.Web.Controllers;
 using Nop.Web.Factories;
@@ -13,7 +14,6 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
     public class StoreListingController : BasePublicController
     {
-        private readonly ILogger _logger;
         private readonly IAclService _aclService;
         private readonly IPermissionService _permissionService;
         private readonly IStoreMappingService _storeMappingService;
@@ -22,7 +22,6 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
         private readonly IUrlRecordService _urlRecordService;
 
         public StoreListingController(
-            ILogger logger,
             IAclService aclService,
             IPermissionService permissionService,
             IStoreMappingService storeMappingService,
@@ -30,7 +29,6 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             ITopicService topicService,
             IUrlRecordService urlRecordService
         ) {
-            _logger = logger;
             _aclService = aclService;
             _permissionService = permissionService;
             _storeMappingService = storeMappingService;
@@ -41,8 +39,6 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
 
         public async Task<IActionResult> Details(string storeSlug)
         {
-            await _logger.InformationAsync($"Store details requested for slug: {storeSlug}");
-
             if (string.IsNullOrWhiteSpace(storeSlug))
                 return InvokeHttp404();
 
