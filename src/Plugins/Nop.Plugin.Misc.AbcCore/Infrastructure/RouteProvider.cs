@@ -6,7 +6,7 @@ namespace Nop.Plugin.Misc.AbcCore.Infrastructure
 {
     public class RouteProvider : IRouteProvider
     {
-        public int Priority => int.MaxValue - 10; // High priority so custom routes are registered before lower-priority providers
+        public int Priority => int.MaxValue; // High priority so custom routes are registered before lower-priority providers
 
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
