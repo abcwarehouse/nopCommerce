@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
+using Nop.Core.Domain.Logging;
 using Nop.Core.Domain.Topics;
 using Nop.Services.Logging;
 using Nop.Services.Security;
 using Nop.Services.Seo;
-using Nop.Services.Stores;
 using Nop.Services.Topics;
+using Nop.Web.Controllers;
 using Nop.Web.Factories;
 using Nop.Web.Framework;
-using Nop.Web.Framework.Controllers;
 
 namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
-    public class StoreListingController : BasePluginController
+    public class StoreListingController : BasePublicController
     {
         private readonly ILogger _logger;
         private readonly IAclService _aclService;
@@ -44,20 +44,29 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             await _logger.InformationAsync($"Store details requested for slug: {storeSlug}");
 
             if (string.IsNullOrWhiteSpace(storeSlug))
-                return NotFound();
+                return InvokeHttp404();
 
             var topic = default(Topic);
 
             // First try resolving by SEO slug if it points to a topic.
             var urlRecord = await _urlRecordService.GetBySlugAsync(storeSlug);
             if (urlRecord is not null && urlRecord.EntityName.Equals(nameof(Topic), StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (!urlRecord.IsActive)
+                {
+                    var activeSlug = await _urlRecordService.GetActiveSlugAsync(urlRecord.EntityId, urlRecord.EntityName, urlRecord.LanguageId);
+                    if (!string.IsNullOrEmpty(activeSlug))
+                        return RedirectToRoutePermanent("StoreListingDetails", new { storeSlug = activeSlug });
+                }
+
                 topic = await _topicService.GetTopicByIdAsync(urlRecord.EntityId);
+            }
 
             // Fallback: allow direct topic system name usage in storeSlug.
             topic ??= await _topicService.GetTopicBySystemNameAsync(storeSlug);
 
             if (topic is null)
-                return NotFound();
+                return InvokeHttp404();
 
             var notAvailable = !topic.Published ||
                                !await _aclService.AuthorizeAsync(topic) ||
@@ -67,7 +76,7 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
                                  && await _permissionService.AuthorizeAsync(StandardPermission.ContentManagement.TOPICS_VIEW);
 
             if (notAvailable && !hasAdminAccess)
-                return NotFound();
+                return InvokeHttp404();
 
             var model = await _topicModelFactory.PrepareTopicModelAsync(topic);
 
