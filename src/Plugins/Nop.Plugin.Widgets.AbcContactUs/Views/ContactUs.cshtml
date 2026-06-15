@@ -33,6 +33,10 @@
                 alert('Phone number is required.');
                 return;
             }
+            if (!$('#sms-consent').is(':checked')) {
+                alert('Please check the box to agree to receive text messages.');
+                return;
+            }
             var reason = $('#Reason').val();
             var selectedStore = $('#SelectedStore').val();
             if (!selectedStore.replace(/\s/g, '').length)
@@ -110,6 +114,38 @@
             color: red;
         }
 
+        .phone-sms-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .phone-input {
+            flex: 0 0 auto;
+            width: 45%;
+            min-width: 180px;
+        }
+
+        .phone-input input {
+            width: 100%;
+        }
+
+        .sms-consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            flex: 1;
+            font-size: 0.85em;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .sms-consent-label input[type="checkbox"] {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
     </style>
         <div class="panel-group">
             <div class="panel panel-default">
@@ -146,8 +182,14 @@
                                 <div class="contact-us-header">
                                     Phone<span class="required-field"></span>
                                 </div>
-                                <div class="col-md-9">
-                                    <nop-editor asp-for="PhoneNumber" />
+                                <div class="phone-sms-row">
+                                    <div class="phone-input">
+                                        <nop-editor asp-for="PhoneNumber" />
+                                    </div>
+                                    <label class="sms-consent-label">
+                                        <input type="checkbox" id="sms-consent" />
+                                        Yes, I'd like to receive text messages from ABC Warehouse. (See consent language below.)
+                                    </label>
                                 </div>
                             </div>
                             @Html.ValidationMessageFor(model => model.Email)
