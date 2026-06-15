@@ -33,6 +33,10 @@
                 alert('Phone number is required.');
                 return;
             }
+            if (!$('#sms-consent').is(':checked')) {
+                alert('Please check the box to agree to receive text messages.');
+                return;
+            }
             var reason = $('#Reason').val();
             var selectedStore = $('#SelectedStore').val();
             if (!selectedStore.replace(/\s/g, '').length)
@@ -110,6 +114,54 @@
             color: red;
         }
 
+        .phone-sms-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .phone-sms-row .phone-input {
+            flex: 0 0 auto;
+            width: 17%;
+            min-width: 180px;
+        }
+
+        .phone-sms-row .phone-input input {
+            width: 100%;
+        }
+
+        .phone-sms-row .sms-consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            flex: 1;
+            width: auto;
+            font-size: 0.85em;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .phone-sms-row .sms-consent-label input[type="checkbox"] {
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        @@media (max-width: 780px) {
+            .phone-sms-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .phone-sms-row .phone-input {
+                width: 100%;
+            }
+
+            .phone-sms-row .sms-consent-label {
+                width: 100%;
+            }
+        }
+
     </style>
         <div class="panel-group">
             <div class="panel panel-default">
@@ -124,7 +176,7 @@
                                 </div>
                             }
 
-                             <div class="NameC" @* style="display:inline-block; width:33%; min-width: 480px;"*@> 
+                             <div class="NameC" @* style="display:inline-block; width:33%; min-width: 480px;"*@>
                                 <div class="contact-us-header">
                                     Name<span class="required-field"></span>
                                 </div>
@@ -146,8 +198,14 @@
                                 <div class="contact-us-header">
                                     Phone<span class="required-field"></span>
                                 </div>
-                                <div class="col-md-9">
-                                    <nop-editor asp-for="PhoneNumber" />
+                                <div class="phone-sms-row">
+                                    <div class="phone-input">
+                                        <nop-editor asp-for="PhoneNumber" />
+                                    </div>
+                                    <label class="sms-consent-label">
+                                        <input type="checkbox" id="sms-consent" />
+                                        Yes, I'd like to receive text messages from ABC Warehouse. (See consent language below.)
+                                    </label>
                                 </div>
                             </div>
                             @Html.ValidationMessageFor(model => model.Email)
