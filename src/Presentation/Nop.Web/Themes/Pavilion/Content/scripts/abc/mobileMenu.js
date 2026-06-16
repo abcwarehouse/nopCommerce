@@ -52,14 +52,7 @@ $(document).ready(function () {
              // Special case for "shop-all-categories"
 
     if (categoryName.toLowerCase() === "shop all categories") {
-        if (isHawthorne) {
-            selectCategory.attr("href", baseURLHawthorne + "manufacturer/all");
-            console.log("HAWTHORNE");
-
-        } else {
-            selectCategory.attr("href", baseURL + "manufacturer/all");
-            console.log("ABC");
-        }
+        selectCategory.attr("href", "/manufacturer/all");
         return;
     }
 
