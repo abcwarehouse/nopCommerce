@@ -53,11 +53,11 @@ $(document).ready(function () {
 
     if (categoryName.toLowerCase() === "shop all categories") {
         if (isHawthorne) {
-            selectCategory.attr("href", baseURLHawthorne + "filterSearch");
+            selectCategory.attr("href", baseURLHawthorne + "manufacturer/all");
             console.log("HAWTHORNE");
-            
+
         } else {
-            selectCategory.attr("href", baseURL + "filterSearch");
+            selectCategory.attr("href", baseURL + "manufacturer/all");
             console.log("ABC");
         }
         return;
