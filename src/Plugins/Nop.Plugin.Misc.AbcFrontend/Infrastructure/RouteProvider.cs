@@ -18,27 +18,27 @@ namespace Nop.Plugin.Misc.AbcFrontend.Infrastructure
         {
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutShippingMethod",
                             "checkout/shippingmethod",
-                            new { controller = "CustomCheckout", action = "ShippingMethod" });
+                            new { controller = "AbcCheckout", action = "ShippingMethod" });
 
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutPaymentMethod",
                             "checkout/paymentmethod",
-                            new { controller = "CustomCheckout", action = "PaymentMethod" });
+                            new { controller = "AbcCheckout", action = "PaymentMethod" });
 
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutPaymentInfo",
                             "checkout/paymentinfo",
-                            new { controller = "CustomCheckout", action = "PaymentInfo" });
+                            new { controller = "AbcCheckout", action = "PaymentInfo" });
 
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutConfirm",
                             "checkout/confirm",
-                            new { controller = "CustomCheckout", action = "Confirm" });
+                            new { controller = "AbcCheckout", action = "Confirm" });
 
             endpointRouteBuilder.MapControllerRoute("WarrantySelection",
                             "checkout/warranty",
-                            new { controller = "CustomCheckout", action = "WarrantySelection" });
+                            new { controller = "AbcCheckout", action = "WarrantySelection" });
 
             endpointRouteBuilder.MapControllerRoute("CustomCheckoutOnePage",
                             "onepagecheckout/",
-                            new { controller = "CustomCheckout", action = "OnePageCheckout" });
+                            new { controller = "AbcCheckout", action = "OnePageCheckout" });
 
             endpointRouteBuilder.MapControllerRoute("ShoppingCartRemoveItem",
                             "ShoppingCart/RemoveItem",
