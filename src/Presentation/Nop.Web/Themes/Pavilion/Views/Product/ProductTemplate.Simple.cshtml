@@ -106,6 +106,8 @@
         displayIdStr = itemNumber + (productFlag != null && productFlag.IsSpecialOrder() ? "+" : "");
     }
 
+    var isMickey = HttpContextAccessor.HttpContext.Request.Host.ToString().Contains("mickeyshorr");
+
     // ABC: For some reason I can't get the typed version, so this is from AbcCoreSettings
     var isFedExMode = await _settingService.GetSettingByKeyAsync<bool>("coresettings.isfedexmode");
 
@@ -187,7 +189,6 @@
 
 @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
 <div class="page product-details-page">
-    <h1>Product Recommendations</h1>
     <div class="page-body">
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
@@ -380,7 +381,11 @@
                 @await Component.InvokeAsync("RelatedProducts", new { productId = Model.Id })
             </div>
         </form>
-        @await Html.PartialAsync("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/_ProductRecommendations.cshtml", Model.Sku)
+        @if (!isMickey)
+        {
+            @await Html.PartialAsync("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/Views/_ProductRecommendations.cshtml", Model.Sku)
+            <div id="product-recommendations-container"></div>
+        }
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ProductDetailsBottom, additionalData = Model })
     </div>
 </div>
@@ -412,7 +417,8 @@
                 {
                     ["@type"] = "Offer",
                     ["priceCurrency"] = "USD",
-                    ["price"] = offerPrice
+                    ["price"] = offerPrice,
+                    ["availability"] = "https://schema.org/" + (Model.InStock ? "InStock" : "OutOfStock")
                 }
             : null
     };
@@ -458,6 +464,9 @@
             }
         })();
     </script>
+@if (!isMickey)
+{
+<text>
 <script>
 (function() {
     var retryCount = 0;
@@ -552,3 +561,5 @@
     }
 })();
 </script>
+</text>
+}

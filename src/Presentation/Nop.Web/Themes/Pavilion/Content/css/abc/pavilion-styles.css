@@ -2,6 +2,13 @@
     Overwrites styles.css for the Pavilion theme.
 */
 
+/* Suppress loading spinner text in newsletter area — styles.css only hides
+   .newsletter-validation .please-wait, not .newsletter-email .please-wait */
+.newsletter-signup .please-wait,
+.newsletter-email .please-wait {
+    display: none !important;
+}
+
 /* cart attribute info */
 .abc-cart-attribute-info {
     border: 1px solid gray;
