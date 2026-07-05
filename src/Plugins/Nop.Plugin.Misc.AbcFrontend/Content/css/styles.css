@@ -1,4 +1,16 @@
-﻿/*********** CSS RESET **********/
+﻿.add-base-message {
+	color: #f74258;
+	font-size: 14px;
+	margin-top: 10px;
+	clear: both;
+}
+
+.add-to-cart-button:disabled {
+	opacity: 0.2;
+	cursor: not-allowed;
+}
+
+/*********** CSS RESET **********/
 html {
 	scroll-behavior: smooth;
 }

@@ -43,12 +43,13 @@
                         var addToCartText = "";
 
                         // Delivery options
-                        if (await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.AddToCart.ProductId))
+                        if (hasDeliveryOptions)
                         {
                             <button type="button"
                                     id="add-to-cart-button-@Model.AddToCart.ProductId"
                                     class="button-1 add-to-cart-button"
-                                    onclick="addCartItemAsync(@Model.AddToCart.ProductId)">
+                                    onclick="addCartItemAsync(@Model.AddToCart.ProductId)"
+                                    disabled="true">
                                 <span>Add To Cart</span>
                             </button>
                         }
@@ -82,6 +83,8 @@
                                 data-productid="@Model.AddToCart.ProductId" 
                                 onclick="AjaxCart.addproducttocart_details('@Url.RouteUrl("AddProductToCart-Details", new { productId = Model.AddToCart.ProductId, shoppingCartTypeId = (int)ShoppingCartType.ShoppingCart })', '#product-details-form');return false;" />
                         }
+
+                        
                     }
                 </div>
                 @if (!string.IsNullOrEmpty(Model.AddToCart.PreOrderAvailabilityStartDateTimeUserTime))
