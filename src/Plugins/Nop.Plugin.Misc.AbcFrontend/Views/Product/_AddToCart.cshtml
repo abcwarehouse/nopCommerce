@@ -41,15 +41,15 @@
                 <div class="add-to-cart-panel">
                     @{
                         var addToCartText = "";
-
+                        var hasDeliveryOptions = await abcProductAttributeService.ProductHasDeliveryOptionsAsync(Model.AddToCart.ProductId);
+                        
                         // Delivery options
                         if (hasDeliveryOptions)
                         {
                             <button type="button"
                                     id="add-to-cart-button-@Model.AddToCart.ProductId"
                                     class="button-1 add-to-cart-button"
-                                    onclick="addCartItemAsync(@Model.AddToCart.ProductId)"
-                                    disabled="true">
+                                    onclick="addCartItemAsync(@Model.AddToCart.ProductId)">
                                 <span>Add To Cart</span>
                             </button>
                         }
