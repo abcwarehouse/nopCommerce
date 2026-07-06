@@ -529,7 +529,6 @@
         //almost the same implementation is used in the \Views\Product\_RentalInfo.cshtml file
         <script asp-location="Footer">
             function updateAddToCartButtonState() {
-                debugger;
                 var addToCartButton = $('#add-to-cart-button-@productId');
                 const visibleDDs = [...document.querySelectorAll('dd')].filter(dd => !dd.style.cssText.includes('display: none'));
                 const visibleDropdowns = visibleDDs.flatMap(dd => [...dd.querySelectorAll('select')]);
