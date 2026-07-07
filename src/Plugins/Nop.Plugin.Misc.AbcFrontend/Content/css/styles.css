@@ -1,4 +1,9 @@
-﻿/*********** CSS RESET **********/
+.add-to-cart-button:disabled {
+	opacity: 0.2;
+	cursor: not-allowed;
+}
+
+/*********** CSS RESET **********/
 html {
 	scroll-behavior: smooth;
 }

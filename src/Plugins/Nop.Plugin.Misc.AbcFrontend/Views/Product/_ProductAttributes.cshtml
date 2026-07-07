@@ -87,12 +87,9 @@
                                 if (attribute.Name.Contains("Frame")) { mattressClass = "mattress-frame"; }
                                 if (attribute.Name.Contains("Protector")) { mattressClass = "mattress-protector"; }
                                 <select class="@(mattressClass)" name="@(controlId)" id="@(controlId)" @(attribute.Values.Any(value => value.CustomerEntersQty) ? Html.Raw($"onchange=\"showHideDropdownQuantity('{controlId}')\"") : null)>
-                                    @if (!attribute.IsRequired)
+                                    @if (!attribute.IsRequired || attribute.Name.Contains("Base"))
                                     {
-                                        if (!attribute.Name.Contains("Base"))
-                                        {
-                                            <option value="0">---</option>
-                                        }
+                                        <option value="0">---</option>
                                     }
                                     @foreach (var attributeValue in attribute.Values)
                                     {
@@ -531,6 +528,22 @@
         //render scripts
         //almost the same implementation is used in the \Views\Product\_RentalInfo.cshtml file
         <script asp-location="Footer">
+            function updateAddToCartButtonState() {
+                var addToCartButton = $('#add-to-cart-button-@productId');
+                const visibleDDs = [...document.querySelectorAll('dd')].filter(dd => !dd.style.cssText.includes('display: none'));
+                const visibleDropdowns = visibleDDs.flatMap(dd => [...dd.querySelectorAll('select')]);
+                const baseSelect = visibleDropdowns.find(dd => dd.className.includes('mattress-base'));
+                if (baseSelect) {
+                    if (baseSelect.value === '0') {
+                        addToCartButton.prop('disabled', true);
+                    } else {
+                        addToCartButton.prop('disabled', false);
+                    }
+                } else {
+                    addToCartButton.prop('disabled', false);
+                }
+            }
+
             function updateSavingsStory() {
                 var overallPrice = parseFloat($('[class^="price-value-"]')[0].innerText.replace('$', '').replace(',', ''));
                 var oldProductPriceElement = document.querySelector('.old-product-price');
@@ -636,6 +649,7 @@
                         }
                         $(document).trigger({ type: "product_attributes_changed", changedData: data });
 
+                        updateAddToCartButtonState();
                         updateSavingsStory();
                     }
                 });
