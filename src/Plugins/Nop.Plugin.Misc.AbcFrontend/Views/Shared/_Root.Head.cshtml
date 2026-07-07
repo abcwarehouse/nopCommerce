@@ -19,6 +19,9 @@
 @using Nop.Web.Components;                          @* WidgetViewComponent *@
 @using Nop.Services.Catalog
 @using Nop.Services.Seo
+@using Nop.Services.Catalog
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
 
 @inject CatalogSettings catalogSettings
 @inject CommonSettings commonSettings
@@ -69,7 +72,7 @@
 
     // ABC: changed to false to prevent duplicate title tags being generated (we generate it manually in the layout for better control)
     var title = await NopHtml.GenerateTitleAsync(false);
-    var description = await @NopHtml.GenerateMetaDescriptionAsync();
+    var description = await NopHtml.GenerateMetaDescriptionAsync();
     // ABC: Meta keywords are not used by search engines and often contain duplicates, so we'll leave this blank to avoid potential SEO issues with duplicate content.
     //      If needed in the future, we can implement a more robust solution for generating unique keywords.
     //var keywords = await NopHtml.GenerateMetaKeywordsAsync();
@@ -78,7 +81,8 @@
     var supportRtl = await Html.ShouldUseRtlThemeAsync();
 
     var currentStore = await storeContext.GetCurrentStoreAsync();
-    string storeId = "storeId" + currentStore.Id.ToString();
+    int storeIdInt = currentStore.Id;
+    string storeId = "storeId" + storeIdInt.ToString();
 }
 
 <!DOCTYPE html>
@@ -88,13 +92,16 @@
     <!-- Bazaarvoice Reviews -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
-    <!-- ABC: Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
-    <!-- End Google Tag Manager -->
+    @if(storeIdInt == 8)
+    {
+        <!-- Hawthorne: Google Tag Manager -->
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
+            <!-- End Google Tag Manager -->
+    }
 
     <title>@title</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
@@ -300,10 +307,7 @@
         });
     </script>
 </head>
-@using Nop.Services.Catalog
-@using Nop.Services.Seo
-@using Nop.Core
-@using Nop.Core.Domain.Catalog
+
 @inject ICategoryService categoryService
 @inject IProductService productService
 @inject IUrlRecordService urlRecordService
@@ -381,10 +385,13 @@
     </noscript>
     <!-- End CHEQ INVOCATION TAG (noscript) -->
 
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    @if(storeIdInt == 8)
+    {
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TBLL3Z89"
+        height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+    }
 
     @* ABC: A bunch of custom styles *@
     <style>
