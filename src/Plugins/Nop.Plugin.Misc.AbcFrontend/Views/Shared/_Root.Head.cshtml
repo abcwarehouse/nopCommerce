@@ -19,6 +19,9 @@
 @using Nop.Web.Components;                          @* WidgetViewComponent *@
 @using Nop.Services.Catalog
 @using Nop.Services.Seo
+@using Nop.Services.Catalog
+@using Nop.Core
+@using Nop.Core.Domain.Catalog
 
 @inject CatalogSettings catalogSettings
 @inject CommonSettings commonSettings
@@ -88,16 +91,16 @@
     <!-- Bazaarvoice Reviews -->
     <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
-    if(storeId == 8 )
-        {
-            <!-- Hawthorne: Google Tag Manager -->
+    @if(storeId == 8)
+    {
+        <!-- Hawthorne: Google Tag Manager -->
             <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
             <!-- End Google Tag Manager -->
-        }
+    }
 
     <title>@title</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
@@ -303,10 +306,7 @@
         });
     </script>
 </head>
-@using Nop.Services.Catalog
-@using Nop.Services.Seo
-@using Nop.Core
-@using Nop.Core.Domain.Catalog
+
 @inject ICategoryService categoryService
 @inject IProductService productService
 @inject IUrlRecordService urlRecordService
@@ -381,7 +381,7 @@
     <!-- CHEQ INVOCATION TAG (noscript) -->
     <noscript>
     <iframe src="https://obseu.seseasky.com/ns/9d624d5b2ef513c6dd666d2144dec734.html?ch=cheq4ppc" width="0" height="0" style="display:none"></iframe>
-    </noscript>S
+    </noscript>
     <!-- End CHEQ INVOCATION TAG (noscript) -->
 
     @if(storeId == 3 )
