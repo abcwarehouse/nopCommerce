@@ -1,4 +1,8 @@
 ﻿@model CheckoutPaymentMethodModel
+
+@* ABC: custom *@
+@inject IHttpContextAccessor httpContextAccessor
+
 @{
     Layout = "_ColumnsOne";
 
@@ -7,7 +11,26 @@
     //page class
     NopHtml.AppendPageCssClassParts("html-checkout-page");
     NopHtml.AppendPageCssClassParts("html-payment-method-page");
+
+    @* ABC: custom *@
+    string error = httpContextAccessor.HttpContext.Session.GetString(key: "PaymentMethodError");
+    httpContextAccessor.HttpContext.Session.Remove(key: "PaymentMethodError");
+    string promotionMessage = httpContextAccessor.HttpContext.Session.GetString(key: "TransDescription");
 }
+@* ABC: custom *@
+<style>
+	.promotion-message {
+		margin-bottom: 10px;
+	}
+	.promotion-message a {
+		color: #336799;
+	}
+    #error-message {
+        color: red;
+        font-weight: bold;
+        padding-bottom: 1em;
+    }
+</style>
 <div class="page checkout-page payment-method-page">
     @await Component.InvokeAsync(typeof(CheckoutProgressViewComponent), new { step = CheckoutProgressStep.Payment })
     <div class="page-title">
@@ -78,6 +101,14 @@
                             <img src="https://www.abcwarehouse.com/images/uploaded/creditcards.jpg" alt="Credit Cards" />
                         </div>
                     </ul>
+                    @* added promotion message *@
+                    @if (!string.IsNullOrWhiteSpace(promotionMessage))
+                    {
+                        <div class="promotion-message">
+                            @Html.Raw(@httpContextAccessor.HttpContext.Session.GetString("TransDescription"))
+                            <a href="https://www.abcwarehouse.com/abc-warehouse-credit-card" target="_blank">See Details</a>
+                        </div>
+                    }   
                     <div class="buttons">
                         <button type="submit" name="nextstep" class="button-1 payment-method-next-step-button">@T("Checkout.NextButton")</button>
                     </div>

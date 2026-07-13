@@ -19,6 +19,7 @@
 
     var error = httpContextAccessor.HttpContext.Session.GetString("PaymentMethodError");
     httpContextAccessor.HttpContext.Session.Remove("PaymentMethodError");
+    var promotionMessage = httpContextAccessor.HttpContext.Session.GetString("TransDescription");
 }
 <style>
 	.promotion-message {
@@ -104,10 +105,13 @@
                         }
                     </ul>
                     @* added promotion message *@
-                    <div class="promotion-message">
-                        @Html.Raw(@httpContextAccessor.HttpContext.Session.GetString("TransDescription"))
-                        <a href="https://www.abcwarehouse.com/abc-warehouse-credit-card" target="_blank">See Details</a>
-					</div>
+                    @if (!string.IsNullOrEmpty(promotionMessage))
+                    {
+                        <div class="promotion-message">
+                            @Html.Raw(promotionMessage)
+                            <a href="https://www.abcwarehouse.com/abc-warehouse-credit-card" target="_blank">See Details</a>
+                        </div>
+                    }
                     <div class="buttons">
                         <input type="submit" name="nextstep" value="@T("Checkout.NextButton")" class="button-1 payment-method-next-step-button" />
                     </div>
