@@ -22,9 +22,6 @@
     <None Remove="Views\Components\ProductTabs\_ProductTabsWithoutAjax.cshtml" />
     <None Remove="Views\Components\ProductTabs\ProductTabs.cshtml" />
     <None Remove="Views\Components\MegaMenuCategory\CategoryMenuTemplate.WithPictures.cshtml" />
-    <None Remove="Views\CustomCheckout\Warranty.cshtml" />
-    <None Remove="Views\CustomCheckout\WarrantySelection.cshtml" />
-    <None Remove="Views\CustomCheckout\PaymentMethod.cshtml" />
     <None Remove="Views\Product\_ProductDetailsPictures.cshtml" />
     <None Remove="Views\Product\_ProductDetailsVideos.cshtml" />
     <None Remove="Images\abc\BestDeal.jpg" />
@@ -137,15 +134,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Components\ProductTabs\ProductTabs.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\CustomCheckout\Warranty.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\CustomCheckout\WarrantySelection.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\CustomCheckout\PaymentMethod.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Views\Product\_ProductDetailsPictures.cshtml">

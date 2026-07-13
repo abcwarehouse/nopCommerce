@@ -40,7 +40,7 @@ namespace Nop.Plugin.Misc.AbcCore.Services
             if (_settings.AreExternalCallsSkipped)
             {
                 await _logger.WarningAsync("External calls are turned off, term lookup skipped.");
-                return (null, null, null);
+                return ("Example termNo", "Example Description", "Example Link");
             }
 
             string nl = Environment.NewLine;
