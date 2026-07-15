@@ -2,7 +2,7 @@
 
 <!-- UniFi -->
 <!-- AbcItemNumber: @Model.AbcItemNumber -->
-<script>
+<script asp-location="None">
     var syfWidgetObject={};
     syfWidgetObject.syfPartnerId = "@Model.PartnerId";
     @if (!string.IsNullOrWhiteSpace(@Model.FlowType))
@@ -14,4 +14,4 @@
         <text>syfWidgetObject.tags = "@Model.Tags";</text>
     }
 </script>
-<script id=”syfMPPScript” type="text/javascript" src="@Model.Url"></script>
+<script asp-location="None" id="syfMPPScript" type="text/javascript" src="@Model.Url"></script>
