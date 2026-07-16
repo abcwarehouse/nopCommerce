@@ -269,9 +269,10 @@
         s.parentNode.insertBefore(t,s)}(window,document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '279056429645080');
-        fbq('track', 'PageView');
 
         document.addEventListener('DOMContentLoaded', function() {
+            fbq('track', 'PageView');
+
             if (document.querySelector('.storeId8')) {
                 (function(a,b,c,d){
                     a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
