@@ -31,7 +31,7 @@
             // Prevent duplicate observer setup
             if (window.searchspringObserverSetup) {
                 console.log('[SEARCHSPRING] Observer already setup, skipping');
-                return;  // ✅ NOW LEGAL - inside a function
+                return;
             }
             window.searchspringObserverSetup = true;
 
@@ -79,7 +79,6 @@
     } catch(e) {
         console.error('[SEARCHSPRING] Zero price update error:', e.message);
     }
-    })();  // ✅ Close the IIFE
 </script>
 
 <style>
