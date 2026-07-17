@@ -222,21 +222,34 @@
                 }
 
                 // Set intellisuggest configuration (defer if not yet loaded)
-                window.intellisuggest = window.intellisuggest || [];
-                if (typeof window.intellisuggest === 'object' && Array.isArray(window.intellisuggest)) {
-                    window.intellisuggest.push(['setSiteId', '4lt84w']);
-                    window.intellisuggest.push(["setShopperId", ssShopperId]);
-                    console.log('[SEARCHSPRING] Intellisuggest configuration pushed');
+                if (typeof window.intellisuggest === 'undefined' || window.intellisuggest === null) {
+                    window.intellisuggest = [];
+                    console.log('[SEARCHSPRING] Intellisuggest initialized as array');
+                }
+
+                // Only push if it's actually an array
+                if (Array.isArray(window.intellisuggest)) {
+                    try {
+                        window.intellisuggest.push(['setSiteId', '4lt84w']);
+                        window.intellisuggest.push(["setShopperId", ssShopperId]);
+                        console.log('[SEARCHSPRING] Intellisuggest configuration pushed');
+                    } catch(e) {
+                        console.warn('[SEARCHSPRING] Error pushing to intellisuggest:', e.message);
+                    }
                 } else {
-                    console.log('[SEARCHSPRING] Intellisuggest not yet ready, deferring config');
-                    // Retry after 100ms if intellisuggest script hasn't loaded
+                    console.log('[SEARCHSPRING] Intellisuggest is not an array, deferring config');
+                    // Retry after 200ms if intellisuggest script is replacing our array
                     setTimeout(function() {
-                        if (typeof window.intellisuggest === 'object' && Array.isArray(window.intellisuggest)) {
-                            window.intellisuggest.push(['setSiteId', '4lt84w']);
-                            window.intellisuggest.push(["setShopperId", ssShopperId]);
-                            console.log('[SEARCHSPRING] Intellisuggest configuration pushed (deferred)');
+                        if (typeof window.intellisuggest !== 'undefined' && Array.isArray(window.intellisuggest)) {
+                            try {
+                                window.intellisuggest.push(['setSiteId', '4lt84w']);
+                                window.intellisuggest.push(["setShopperId", ssShopperId]);
+                                console.log('[SEARCHSPRING] Intellisuggest configuration pushed (deferred)');
+                            } catch(e) {
+                                console.warn('[SEARCHSPRING] Deferred push error:', e.message);
+                            }
                         }
-                    }, 100);
+                    }, 200);
                 }
 
                 // Make utilities globally available
