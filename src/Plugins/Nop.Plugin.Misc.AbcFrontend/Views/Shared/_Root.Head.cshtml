@@ -101,11 +101,12 @@
             function gtag(){window.dataLayer.push(arguments);}
             gtag('consent', 'default', {
                 'ad_storage': 'denied',
-                'analytics_storage': 'denied',
+                'analytics_storage': 'granted',  // ← Analytics is essential, not advertising
                 'ad_user_data': 'denied',
                 'ad_personalization': 'denied',
-                'wait_for_update': 500
+                'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
             });
+            console.log('[GTM CONSENT MODE] Default: analytics=GRANTED, ads=denied, wait=2s');
             </script>
             <script>
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -441,11 +442,12 @@
 
         gtag('consent', 'default', {
             'ad_storage': 'denied',
-            'analytics_storage': 'denied',
+            'analytics_storage': 'granted',  // ← Analytics is essential, not advertising
             'ad_user_data': 'denied',
             'ad_personalization': 'denied',
-            'wait_for_update': 500
+            'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
         });
+        console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
         console.log('[CONSENT MODE] Defaults set - waiting up to 500ms for Termly update');
 
         // Listen for Termly consent changes

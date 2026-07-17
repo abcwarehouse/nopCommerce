@@ -18,11 +18,12 @@
     console.log('[CONSENT MODE] Not yet initialized, setting defaults now');
     gtag('consent', 'default', {
       'ad_storage': 'denied',
-      'analytics_storage': 'denied',
+      'analytics_storage': 'granted',  // Analytics is essential, not advertising
       'ad_user_data': 'denied',
       'ad_personalization': 'denied',
-      'wait_for_update': 500
+      'wait_for_update': 2000  // Increased from 500ms to 2s
     });
+    console.log('[CONSENT MODE] Defaults: analytics=GRANTED, ads=denied, wait=2s');
     window.consentModeInitialized = true;
   } else {
     console.log('[CONSENT MODE] Already initialized by _Root.Head.cshtml');
