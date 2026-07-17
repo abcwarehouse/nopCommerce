@@ -266,6 +266,10 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+
+        console.log('[CONSENT MODE] Initializing Consent Mode v2 defaults (denying all)');
+        console.log('[REFERRAL] Initial referrer:', document.referrer || '(direct)');
+
         gtag('consent', 'default', {
             'ad_storage': 'denied',
             'analytics_storage': 'denied',
@@ -273,10 +277,12 @@
             'ad_personalization': 'denied',
             'wait_for_update': 500
         });
+        console.log('[CONSENT MODE] Defaults set - waiting up to 500ms for Termly update');
 
         // Listen for Termly consent changes
         window.addEventListener('consentStatusChange', function(e) {
             var consentStatus = e.detail || window.consentStatus;
+            console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
 
             var consentConfig = {
                 'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
@@ -285,7 +291,8 @@
                 'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
             };
 
-            console.log('[GA4] Consent Updated:', consentConfig);
+            console.log('[CONSENT MODE] Updating consent to:', consentConfig);
+            console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
             gtag('consent', 'update', consentConfig);
         });
     </script>

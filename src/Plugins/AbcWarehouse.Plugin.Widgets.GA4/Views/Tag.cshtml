@@ -10,8 +10,12 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
 
+  console.log('[GA4 RACE CONDITION FIX] Starting initialization sequence');
+  console.log('[GA4] Script load time:', new Date().toISOString());
+
   // Ensure consent mode defaults are set (if not already set by _Root.Head.cshtml)
   if (!window.consentModeInitialized) {
+    console.log('[CONSENT MODE] Not yet initialized, setting defaults now');
     gtag('consent', 'default', {
       'ad_storage': 'denied',
       'analytics_storage': 'denied',
@@ -20,11 +24,15 @@
       'wait_for_update': 500
     });
     window.consentModeInitialized = true;
+  } else {
+    console.log('[CONSENT MODE] Already initialized by _Root.Head.cshtml');
   }
 
   gtag('js', new Date());
 
   console.log('[GA4] Initializing with tag: @Model.GoogleTag');
+  console.log('[GA4] Referrer:', document.referrer || '(direct)');
+  console.log('[GA4] User Agent:', navigator.userAgent);
 
   // Enable event queueing to buffer events during consent race condition
   var ga4Config = {
@@ -56,16 +64,22 @@
       'perplexity.ai'
     ];
 
+    console.log('[REFERRAL CLASSIFICATION] Analyzing traffic source');
+    console.log('[REFERRAL CLASSIFICATION] Referrer:', referrer || '(direct)');
+
     for (var i = 0; i < aiAssistantSources.length; i++) {
       if (referrer.includes(aiAssistantSources[i])) {
+        console.log('[REFERRAL CLASSIFICATION] ✅ Detected AI Assistant source:', aiAssistantSources[i]);
         return 'ai_assistant';
       }
     }
 
     if (userAgent.includes('ccbot') || userAgent.includes('chatgptbot')) {
+      console.log('[REFERRAL CLASSIFICATION] ✅ Detected AI bot in user agent:', userAgent);
       return 'ai_assistant';
     }
 
+    console.log('[REFERRAL CLASSIFICATION] Standard referral (not AI assistant)');
     return null;
   }
 
