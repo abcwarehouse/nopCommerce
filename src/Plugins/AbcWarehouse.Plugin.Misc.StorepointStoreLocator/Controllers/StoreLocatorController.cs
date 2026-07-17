@@ -63,7 +63,7 @@ namespace AbcWarehouse.Plugin.Misc.StorepointStoreLocator.Controllers
                         Phone = GetString(item, "phone"),
                         Website = GetString(item, "website")
                     });
-                }l
+                }
             }
             catch
             {
