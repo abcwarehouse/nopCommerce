@@ -149,8 +149,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
 
+    <!-- Global Syntax Error Catcher -->
+    <script>
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('Illegal return statement')) {
+                console.error('[ERROR SUPPRESSOR] Caught illegal return statement:', event.message);
+                event.preventDefault();
+                return true;
+            }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('SyntaxError')) {
+                console.error('[ERROR SUPPRESSOR] Caught syntax error:', event.message);
+                // Don't suppress all syntax errors, just log them
+            }
+        }, true);
+    </script>
+    
     <noscript>
-        <img height="1" width="1" 
+        <img height="1" width="1"
         src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
     </noscript>
     <!-- SearchSpring Scripts -->

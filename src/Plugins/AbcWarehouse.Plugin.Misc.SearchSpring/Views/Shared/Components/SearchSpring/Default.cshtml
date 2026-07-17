@@ -26,13 +26,14 @@
 </div>
 
 <script>
-    try {
-        // Prevent duplicate observer setup
-        if (window.searchspringObserverSetup) {
-            console.log('[SEARCHSPRING] Observer already setup, skipping');
-            return;
-        }
-        window.searchspringObserverSetup = true;
+    (function setupPriceObserver() {
+        try {
+            // Prevent duplicate observer setup
+            if (window.searchspringObserverSetup) {
+                console.log('[SEARCHSPRING] Observer already setup, skipping');
+                return;  // ✅ NOW LEGAL - inside a function
+            }
+            window.searchspringObserverSetup = true;
 
         function updateZeroPrices() {
             try {
@@ -78,6 +79,7 @@
     } catch(e) {
         console.error('[SEARCHSPRING] Zero price update error:', e.message);
     }
+    })();  // ✅ Close the IIFE
 </script>
 
 <style>
