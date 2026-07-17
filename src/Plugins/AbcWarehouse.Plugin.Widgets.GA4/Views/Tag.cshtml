@@ -48,6 +48,46 @@
   }
   gtag('config','@Model.GoogleTag', ga4Config);
 
+  // Detect email traffic by checking user agent (most email clients send a specific UA)
+  function detectEmailTraffic() {
+    var userAgent = navigator.userAgent.toLowerCase();
+
+    var emailClientIndicators = [
+      'apple mail',
+      'outlook',
+      'thunderbird',
+      'gmail',
+      'yahoo mail',
+      'aol',
+      'mail app',
+      'ios mail',
+      'android mail',
+      'mobile safari.*mail',
+      'mailspring',
+      'the bat',
+      'evolution',
+      'mutt'
+    ];
+
+    console.log('[EMAIL DETECTION] Checking user agent for email client indicators');
+    for (var i = 0; i < emailClientIndicators.length; i++) {
+      if (userAgent.includes(emailClientIndicators[i])) {
+        console.log('[EMAIL DETECTION] ✅ Email client detected:', emailClientIndicators[i]);
+        return true;
+      }
+    }
+
+    // Check for common email app contexts
+    if (window.location.href.includes('utm_medium=email') ||
+        window.location.href.includes('utm_source=email')) {
+      console.log('[EMAIL DETECTION] ✅ Email UTM parameter detected in URL');
+      return true;
+    }
+
+    console.log('[EMAIL DETECTION] No email client detected (standard browser)');
+    return false;
+  }
+
   // Custom channel grouping for AI assistant traffic (ChatGPT, Gemini, Claude, etc.)
   function classifyTrafficSource() {
     var referrer = document.referrer.toLowerCase();
@@ -65,7 +105,13 @@
     ];
 
     console.log('[REFERRAL CLASSIFICATION] Analyzing traffic source');
-    console.log('[REFERRAL CLASSIFICATION] Referrer:', referrer || '(direct)');
+    console.log('[REFERRAL CLASSIFICATION] Referrer:', referrer || '(none)');
+
+    // Check for email traffic first (highest priority since referrer is stripped)
+    if (!referrer && detectEmailTraffic()) {
+      console.log('[REFERRAL CLASSIFICATION] ✅ Email traffic detected (referrer stripped by email client)');
+      return 'email';
+    }
 
     for (var i = 0; i < aiAssistantSources.length; i++) {
       if (referrer.includes(aiAssistantSources[i])) {
@@ -79,12 +125,14 @@
       return 'ai_assistant';
     }
 
-    console.log('[REFERRAL CLASSIFICATION] Standard referral (not AI assistant)');
+    console.log('[REFERRAL CLASSIFICATION] Standard traffic - referrer:', referrer || '(direct/organic)');
     return null;
   }
 
   // Delay page_view until Termly consent is resolved (prevents race condition)
   function firePageView() {
+    console.log('[GA4 RACE CONDITION] firePageView() called at', new Date().toISOString());
+
     var referrerData = {
       'page_path': window.location.pathname,
       'page_title': document.title,
@@ -93,56 +141,82 @@
       'userAgent': navigator.userAgent
     };
 
-    // Add AI assistant channel if detected
-    var aiChannel = classifyTrafficSource();
-    if (aiChannel) {
-      referrerData['traffic_source'] = aiChannel;
-      console.log('[GA4] AI Assistant traffic detected');
+    // Add AI assistant or email channel if detected
+    var trafficChannel = classifyTrafficSource();
+    if (trafficChannel === 'email') {
+      referrerData['traffic_source'] = 'email';
+      referrerData['traffic_medium'] = 'email';
+      console.log('[GA4 REFERRAL FIX] ✅ EMAIL traffic properly tagged (referrer stripped by email client)');
+      console.log('[GA4 EMAIL FIX] User Agent:', navigator.userAgent);
+      console.log('[GA4 EMAIL FIX] WARNING: Ensure email links include utm_source=email&utm_medium=email for better tracking');
+    } else if (trafficChannel === 'ai_assistant') {
+      referrerData['traffic_source'] = trafficChannel;
+      console.log('[GA4 REFERRAL FIX] ✅ AI Assistant traffic properly tagged:', trafficChannel);
+    } else {
+      console.log('[GA4 REFERRAL FIX] Standard traffic - referrer will be preserved:', document.referrer || '(direct)');
+      // Log raw referrer for debugging
+      if (!document.referrer) {
+        console.log('[GA4 REFERRAL FIX] ⚠️ No referrer found - could be email, direct, or https->http');
+      }
     }
 
-    console.log('[GA4] Page View Event:', referrerData);
-    console.log('[GA4] Referrer source:', document.referrer || '(direct)');
+    console.log('[GA4] Page View Event Data:', referrerData);
+    console.log('[GA4 RACE CONDITION] Sending page_view with consent state AFTER Termly resolved');
 
     gtag('event', 'page_view', referrerData);
+    console.log('[GA4 RACE CONDITION] ✅ Page view fired - referral attribution should now be correct');
   }
 
   // Wait for Termly to update consent before firing page_view
   // If Termly hasn't fired within 1.5s, fire anyway (user may have disabled cookies)
+  console.log('[GA4 RACE CONDITION] Starting 1.5s timeout for Termly consent update...');
   var pageViewTimeout = setTimeout(function() {
-    console.log('[GA4] Timeout waiting for Termly consent; firing page_view with default consent');
+    console.log('[GA4 RACE CONDITION] ⚠️ Timeout (1.5s) - Termly did not update consent in time');
+    console.log('[GA4 RACE CONDITION] Firing page_view with default/initial consent state');
     firePageView();
   }, 1500);
 
   // Listen for Termly consent resolution
   window.addEventListener('consentStatusChange', function(e) {
     clearTimeout(pageViewTimeout);
-    console.log('[GA4] Termly consent received, firing page_view');
+    console.log('[GA4 RACE CONDITION] ✅ Termly consent received before timeout');
+    console.log('[GA4 RACE CONDITION] Firing page_view with USER-ACCEPTED consent state');
     firePageView();
   });
 
   // Fallback: if Termly never fires, fire on DOMContentLoaded
   var pageViewFired = false;
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('[GA4 RACE CONDITION] DOMContentLoaded fired');
     if (pageViewTimeout) {
       // Page view not yet fired, so fire it now
       clearTimeout(pageViewTimeout);
-      console.log('[GA4] DOMContentLoaded reached; firing page_view');
+      console.log('[GA4 RACE CONDITION] ℹ️ Page view not yet sent, DOMContentLoaded fallback triggering');
       firePageView();
+      pageViewFired = true;
+    } else {
+      console.log('[GA4 RACE CONDITION] ✅ Page view already fired before DOMContentLoaded');
       pageViewFired = true;
     }
   });
 
   // Wrapper to ensure consent events are queued properly
   function fireConversionEvent(eventName, eventData) {
+    console.log('[GA4 EVENT QUEUE] Processing ' + eventName + ' event');
     // If page_view already fired, send immediately; otherwise queue it
     if (pageViewFired) {
+      console.log('[GA4 EVENT QUEUE] ✅ Page view already sent - sending ' + eventName + ' immediately');
       console.log('[GA4] ' + eventName + ' Event (after page view):', eventData);
       gtag('event', eventName, eventData);
+      console.log('[GA4 EVENT QUEUE] ✅ ' + eventName + ' event sent');
     } else {
       // Queue event to fire after page_view
+      console.log('[GA4 EVENT QUEUE] ⏳ Page view not yet sent - queueing ' + eventName + ' until consent resolved');
       window.addEventListener('consentStatusChange', function queuedEventListener() {
+        console.log('[GA4 EVENT QUEUE] ✅ Consent resolved - sending queued ' + eventName + ' event');
         console.log('[GA4] ' + eventName + ' Event (queued after consent):', eventData);
         gtag('event', eventName, eventData);
+        console.log('[GA4 EVENT QUEUE] ✅ Queued ' + eventName + ' event sent');
         window.removeEventListener('consentStatusChange', queuedEventListener);
       });
     }
