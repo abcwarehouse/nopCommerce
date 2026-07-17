@@ -221,10 +221,23 @@
                     console.log('[SEARCHSPRING] Session ID initialized');
                 }
 
-                // Set intellisuggest configuration
+                // Set intellisuggest configuration (defer if not yet loaded)
                 window.intellisuggest = window.intellisuggest || [];
-                intellisuggest.push(['setSiteId', '4lt84w']);
-                intellisuggest.push(["setShopperId", ssShopperId]);
+                if (typeof window.intellisuggest === 'object' && Array.isArray(window.intellisuggest)) {
+                    window.intellisuggest.push(['setSiteId', '4lt84w']);
+                    window.intellisuggest.push(["setShopperId", ssShopperId]);
+                    console.log('[SEARCHSPRING] Intellisuggest configuration pushed');
+                } else {
+                    console.log('[SEARCHSPRING] Intellisuggest not yet ready, deferring config');
+                    // Retry after 100ms if intellisuggest script hasn't loaded
+                    setTimeout(function() {
+                        if (typeof window.intellisuggest === 'object' && Array.isArray(window.intellisuggest)) {
+                            window.intellisuggest.push(['setSiteId', '4lt84w']);
+                            window.intellisuggest.push(["setShopperId", ssShopperId]);
+                            console.log('[SEARCHSPRING] Intellisuggest configuration pushed (deferred)');
+                        }
+                    }, 100);
+                }
 
                 // Make utilities globally available
                 window.ssUtils = {
