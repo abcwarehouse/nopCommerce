@@ -10,13 +10,22 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
+  console.log('[GA4] Initializing with tag: @Model.GoogleTag');
   gtag('config','@Model.GoogleTag'@Html.Raw(@debugModeText));
 
-  gtag('event', 'page_view', {
+  var referrerData = {
     'page_path': window.location.pathname,
     'page_title': document.title,
-    'referrer': document.referrer
-  });
+    'referrer': document.referrer,
+    'timestamp': new Date().toISOString(),
+    'userAgent': navigator.userAgent
+  };
+
+  console.log('[GA4] Page View Event:', referrerData);
+  console.log('[GA4] Referrer source:', document.referrer || '(direct)');
+
+  gtag('event', 'page_view', referrerData);
 
   @if (Model.ViewItemModel != null)
   {
@@ -41,7 +50,7 @@
   @if (Model.BeginCheckoutModel != null)
   {
     <text>
-      gtag("event", "begin_checkout", {
+      var beginCheckoutEvent = {
         currency: "USD",
         value: @Model.BeginCheckoutModel.Value,
         items: [
@@ -61,7 +70,9 @@
             </text>
           }
         ]
-      });
+      };
+      console.log('[GA4] Begin Checkout Event:', beginCheckoutEvent);
+      gtag("event", "begin_checkout", beginCheckoutEvent);
     </text>
   }
 
@@ -95,7 +106,7 @@
   @if (Model.PurchaseModel != null)
   {
     <text>
-      gtag("event", "purchase", {
+      var purchaseEvent = {
         transaction_id: @Model.PurchaseModel.OrderId,
         value: @Model.PurchaseModel.Value,
         tax: @Model.PurchaseModel.Tax,
@@ -118,7 +129,9 @@
             </text>
           }
         ]
-      });
+      };
+      console.log('[GA4] Purchase Event:', purchaseEvent);
+      gtag("event", "purchase", purchaseEvent);
     </text>
   }
 </script>
