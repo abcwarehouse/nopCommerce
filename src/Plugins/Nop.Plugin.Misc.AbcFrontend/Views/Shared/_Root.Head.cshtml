@@ -89,8 +89,8 @@
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
     @NopHtml.GenerateHeadCustom()
-    <!-- Bazaarvoice Reviews -->
-    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+    <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
+    <script defer src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
     @if(storeIdInt == 8)
     {
@@ -159,106 +159,146 @@
     <!-- UUID library + Cookie/Session Management -->
     <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
     <script>
-        (function() {
-            // Utility functions
-            function getCookie(name) {
-                var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
+        try {
+            (function() {
+                console.log('[SEARCHSPRING] Initializing cookie/session management');
 
-            function setCookie(name, value, days) {
-                var expires = "";
-                if (days) {
-                    var date = new Date();
-                    date.setTime(date.getTime() + (days*24*60*60*1000));
-                    expires = "; expires=" + date.toUTCString();
+                // Utility functions
+                function getCookie(name) {
+                    try {
+                        var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                        return match ? match[2] : null;
+                    } catch(e) {
+                        console.error('[SEARCHSPRING] getCookie error:', e);
+                        return null;
+                    }
                 }
-                document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
-            }
 
-            function generateUUID() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
-
-            function getOrCreateId(cookieName, days) {
-                let id = getCookie(cookieName);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    setCookie(cookieName, id, days || 365);
+                function setCookie(name, value, days) {
+                    try {
+                        var expires = "";
+                        if (days) {
+                            var date = new Date();
+                            date.setTime(date.getTime() + (days*24*60*60*1000));
+                            expires = "; expires=" + date.toUTCString();
+                        }
+                        document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
+                    } catch(e) {
+                        console.error('[SEARCHSPRING] setCookie error:', e);
+                    }
                 }
-                return id;
-            }
 
-            // Initialize ssShopperId
-            var ssShopperId = getCookie("ssShopperId");
-            if (!ssShopperId) {
-                ssShopperId = generateUUID();
-                setCookie("ssShopperId", ssShopperId, 365);
-            }
+                function generateUUID() {
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                }
 
-            // Initialize ssSessionIdNamespace
-            var sessionKey = "ssSessionIdNamespace";
-            if (!sessionStorage.getItem(sessionKey)) {
-                var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
-                sessionStorage.setItem(sessionKey, uuid);
-                setCookie(sessionKey, uuid, 1);
-            }
+                function getOrCreateId(cookieName, days) {
+                    let id = getCookie(cookieName);
+                    if (!id) {
+                        id = Math.random().toString(36).substring(2) + Date.now();
+                        setCookie(cookieName, id, days || 365);
+                    }
+                    return id;
+                }
 
-            // Set intellisuggest configuration
-            window.intellisuggest = window.intellisuggest || [];
-            intellisuggest.push(['setSiteId', '4lt84w']);
-            intellisuggest.push(["setShopperId", ssShopperId]);
+                // Initialize ssShopperId
+                var ssShopperId = getCookie("ssShopperId");
+                if (!ssShopperId) {
+                    ssShopperId = generateUUID();
+                    setCookie("ssShopperId", ssShopperId, 365);
+                }
+                console.log('[SEARCHSPRING] ssShopperId initialized:', ssShopperId.substring(0,8) + '...');
 
-            // Make utilities globally available
-            window.ssUtils = {
-                getCookie: getCookie,
-                setCookie: setCookie,
-                generateUUID: generateUUID,
-                getOrCreateId: getOrCreateId
-            };
-        })();
+                // Initialize ssSessionIdNamespace
+                var sessionKey = "ssSessionIdNamespace";
+                if (!sessionStorage.getItem(sessionKey)) {
+                    var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
+                    sessionStorage.setItem(sessionKey, uuid);
+                    setCookie(sessionKey, uuid, 1);
+                    console.log('[SEARCHSPRING] Session ID initialized');
+                }
+
+                // Set intellisuggest configuration
+                window.intellisuggest = window.intellisuggest || [];
+                intellisuggest.push(['setSiteId', '4lt84w']);
+                intellisuggest.push(["setShopperId", ssShopperId]);
+
+                // Make utilities globally available
+                window.ssUtils = {
+                    getCookie: getCookie,
+                    setCookie: setCookie,
+                    generateUUID: generateUUID,
+                    getOrCreateId: getOrCreateId
+                };
+
+                console.log('[SEARCHSPRING] Initialization complete');
+            })();
+        } catch(e) {
+            console.error('[SEARCHSPRING] Fatal initialization error:', e.message);
+            console.error('[SEARCHSPRING] Stack:', e.stack);
+        }
     </script>
 
-    <!-- SearchSpring Suggest Integration -->
+    <!-- SearchSpring Suggest Integration (with error handling) -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#small-searchterms')
-                || document.querySelector('input[type="search"]')
-                || document.querySelector('input[name="q"]');
+            try {
+                const searchBox = document.querySelector('#small-searchterms')
+                    || document.querySelector('input[type="search"]')
+                    || document.querySelector('input[name="q"]');
 
-            if (!searchBox) return;
-
-            function debounce(func, wait) {
-                let timeout;
-                return function (...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
-            }
-
-            searchBox.addEventListener('input', debounce(async function () {
-                const query = this.value.trim();
-                if (query.length < 2) return;
-
-                const userId = window.ssUtils.getCookie('ssShopperId');
-                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
-
-                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
-                    userId ? `&userId=${encodeURIComponent(userId)}` : ''
-                }${
-                    sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
-                }`;
-
-                try {
-                    const response = await fetch(suggestUrl);
-                    const data = await response.json();
-                } catch (e) {
-                    console.error('Suggest fetch error:', e);
+                if (!searchBox) {
+                    console.log('[SEARCHSPRING] No search input found');
+                    return;
                 }
-            }, 300));
+
+                console.log('[SEARCHSPRING] Search box found, initializing suggest');
+
+                function debounce(func, wait) {
+                    let timeout;
+                    return function (...args) {
+                        clearTimeout(timeout);
+                        timeout = setTimeout(() => func.apply(this, args), wait);
+                    };
+                }
+
+                searchBox.addEventListener('input', debounce(async function () {
+                    try {
+                        const query = this.value.trim();
+                        if (query.length < 2) return;
+
+                        // Check if ssUtils is available
+                        if (typeof window.ssUtils === 'undefined') {
+                            console.log('[SEARCHSPRING] ssUtils not yet available');
+                            return;
+                        }
+
+                        const userId = window.ssUtils.getCookie('ssShopperId');
+                        const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
+
+                        const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
+                            userId ? `&userId=${encodeURIComponent(userId)}` : ''
+                        }${
+                            sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
+                        }`;
+
+                        try {
+                            const response = await fetch(suggestUrl);
+                            const data = await response.json();
+                            console.log('[SEARCHSPRING] Suggest request successful');
+                        } catch (e) {
+                            console.error('[SEARCHSPRING] Suggest fetch error:', e);
+                        }
+                    } catch (e) {
+                        console.error('[SEARCHSPRING] Input handler error:', e);
+                    }
+                }, 300));
+            } catch (e) {
+                console.error('[SEARCHSPRING] Initialization error:', e);
+            }
         });
     </script>
 
@@ -308,32 +348,57 @@
         })(window, document, "clarity", "script", "sewgt4p9qm");
     </script>
 
-    <!-- Meta Pixel -->
+    <!-- Meta Pixel (with error handling to prevent conflicts) -->
     <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window,document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '279056429645080');
+        try {
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            if(s && s.parentNode) {
+              s.parentNode.insertBefore(t,s);
+            }
+            }(window,document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '279056429645080');
+            console.log('[META PIXEL] Initialized successfully');
+        } catch(err) {
+            console.log('[META PIXEL] Error during init:', err.message);
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
-            fbq('track', 'PageView');
+            try {
+                fbq('track', 'PageView');
+                console.log('[META PIXEL] PageView tracked');
 
-            if (document.querySelector('.storeId8')) {
-                (function(a,b,c,d){
-                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
-                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-                })();
+                if (document.querySelector('.storeId8')) {
+                    (function(a,b,c,d){
+                        try {
+                            a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+                            b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
+                            a=b.getElementsByTagName(c)[0];
+                            if(a && a.parentNode) {
+                              a.parentNode.insertBefore(d,a);
+                            }
+                        } catch(err) {
+                            console.log('[TIQCDN] Load error:', err.message);
+                        }
+                    })();
 
-                const instagramLink = document.querySelector('li.instagram a');
-                if (instagramLink) {
-                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+                    const instagramLink = document.querySelector('li.instagram a');
+                    if (instagramLink) {
+                        try {
+                            instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+                            console.log('[META PIXEL] Instagram link updated');
+                        } catch(err) {
+                            console.log('[META PIXEL] Instagram link error:', err.message);
+                        }
+                    }
                 }
+            } catch(err) {
+                console.log('[META PIXEL] DOMContentLoaded error:', err.message);
             }
         });
     </script>
