@@ -5,12 +5,18 @@
 }
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=@Model.GoogleTag"></script>
+<script src="https://www.googletagmanager.com/gtag/js?id=@Model.GoogleTag"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config','@Model.GoogleTag'@Html.Raw(@debugModeText));
+
+  gtag('event', 'page_view', {
+    'page_path': window.location.pathname,
+    'page_title': document.title,
+    'referrer': document.referrer
+  });
 
   @if (Model.ViewItemModel != null)
   {
