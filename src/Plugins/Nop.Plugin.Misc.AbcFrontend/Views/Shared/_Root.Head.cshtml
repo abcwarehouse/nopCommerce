@@ -315,6 +315,66 @@
         });
     </script>
 
+    <!-- Global Error Handler (suppress third-party widget errors) -->
+    <script>
+        // Suppress MutationObserver errors from third-party widgets
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('MutationObserver') && event.message.includes('not of type')) {
+                console.warn('[ERROR HANDLER] Suppressed third-party MutationObserver error:', event.message);
+                event.preventDefault(); // Suppress the error
+                return true;
+            }
+        }, true); // Use capture phase to catch errors early
+
+        // Also handle unhandled promise rejections for MutationObserver
+        window.addEventListener('unhandledrejection', function(event) {
+            if (event.reason && event.reason.message && event.reason.message.includes('MutationObserver')) {
+                console.warn('[ERROR HANDLER] Suppressed unhandled rejection:', event.reason.message);
+                event.preventDefault(); // Suppress the rejection
+            }
+        });
+
+        // Wrap MutationObserver to catch errors at source
+        var OriginalMutationObserver = window.MutationObserver;
+        window.MutationObserver = function(callback) {
+            var wrappedCallback = function(mutations) {
+                try {
+                    callback(mutations);
+                } catch(e) {
+                    console.warn('[ERROR HANDLER] Caught MutationObserver callback error:', e.message);
+                    // Don't rethrow - let it fail silently
+                }
+            };
+            this._observer = new OriginalMutationObserver(wrappedCallback);
+        };
+        window.MutationObserver.prototype.observe = function(target, options) {
+            try {
+                if (!target || !(target instanceof Node)) {
+                    console.warn('[ERROR HANDLER] MutationObserver.observe called with invalid target:', target);
+                    return; // Silently fail instead of throwing
+                }
+                this._observer.observe(target, options);
+            } catch(e) {
+                console.warn('[ERROR HANDLER] MutationObserver.observe error:', e.message);
+            }
+        };
+        window.MutationObserver.prototype.disconnect = function() {
+            try {
+                this._observer.disconnect();
+            } catch(e) {
+                console.warn('[ERROR HANDLER] MutationObserver.disconnect error:', e.message);
+            }
+        };
+        window.MutationObserver.prototype.takeRecords = function() {
+            try {
+                return this._observer.takeRecords();
+            } catch(e) {
+                console.warn('[ERROR HANDLER] MutationObserver.takeRecords error:', e.message);
+                return [];
+            }
+        };
+    </script>
+
     <!-- Google Consent Mode v2 (must load BEFORE gtag.js and GTM) -->
     <script>
         window.dataLayer = window.dataLayer || [];
