@@ -27,6 +27,13 @@
 
 <script>
     try {
+        // Prevent duplicate observer setup
+        if (window.searchspringObserverSetup) {
+            console.log('[SEARCHSPRING] Observer already setup, skipping');
+            return;
+        }
+        window.searchspringObserverSetup = true;
+
         function updateZeroPrices() {
             try {
                 document.querySelectorAll('.price').forEach(el => {
@@ -42,15 +49,22 @@
         function setupMutationObserver() {
             try {
                 updateZeroPrices();
-                var priceObserver = new MutationObserver(updateZeroPrices);
-                var observeTarget = document.body;
-                if (observeTarget) {
-                    priceObserver.observe(observeTarget, { childList: true, subtree: true });
+
+                // Check if already set up globally
+                if (window.searchspringPriceObserver) {
+                    console.log('[SEARCHSPRING] Observer already exists, reusing');
+                    return;
+                }
+
+                var priceObserverInstance = new MutationObserver(updateZeroPrices);
+                var bodyTarget = document.body;
+                if (bodyTarget) {
+                    priceObserverInstance.observe(bodyTarget, { childList: true, subtree: true });
                     console.log('[SEARCHSPRING] MutationObserver started on document.body');
-                    window.searchspringPriceObserver = priceObserver; // Store globally to avoid redeclare
+                    window.searchspringPriceObserver = priceObserverInstance;
                 }
             } catch(e) {
-                console.error('[SEARCHSPRING] MutationObserver setup error:', e);
+                console.error('[SEARCHSPRING] MutationObserver setup error:', e.message);
             }
         }
 
@@ -62,7 +76,7 @@
             setupMutationObserver();
         }
     } catch(e) {
-        console.error('[SEARCHSPRING] Zero price update error:', e);
+        console.error('[SEARCHSPRING] Zero price update error:', e.message);
     }
 </script>
 
