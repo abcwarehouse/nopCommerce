@@ -79,6 +79,7 @@
     } catch(e) {
         console.error('[SEARCHSPRING] Zero price update error:', e.message);
     }
+    })();
 </script>
 
 <style>
@@ -128,8 +129,9 @@
 </style>
 
 <script>
-    try {
-        const baseUrl = '@searchBaseUrl';
+    (function initSearchTracking() {
+        try {
+            const baseUrl = '@searchBaseUrl';
 
         window.searchspringTracking = {
             userId: null,
@@ -288,4 +290,5 @@
         console.error('[SEARCHSPRING] Fatal initialization error:', e.message);
         console.error('[SEARCHSPRING] Stack:', e.stack);
     }
+    })();  // ✅ Close the initSearchTracking IIFE
 </script>
