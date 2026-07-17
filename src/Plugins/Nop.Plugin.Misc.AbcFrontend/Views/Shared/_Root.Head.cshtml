@@ -94,12 +94,26 @@
 
     @if(storeIdInt == 8)
     {
-        <!-- Hawthorne: Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        <!-- Hawthorne: Google Tag Manager (with Consent Mode v2) -->
+            <script>
+            // Ensure consent mode defaults are set before GTM loads
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 500
+            });
+            </script>
+            <script>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
+            })(window,document,'script','dataLayer','GTM-TBLL3Z89');
+            </script>
             <!-- End Google Tag Manager -->
     }
 
@@ -245,6 +259,34 @@
                     console.error('Suggest fetch error:', e);
                 }
             }, 300));
+        });
+    </script>
+
+    <!-- Google Consent Mode v2 (must load BEFORE gtag.js and GTM) -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'analytics_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'wait_for_update': 500
+        });
+
+        // Listen for Termly consent changes
+        window.addEventListener('consentStatusChange', function(e) {
+            var consentStatus = e.detail || window.consentStatus;
+
+            var consentConfig = {
+                'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
+                'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
+                'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
+                'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
+            };
+
+            console.log('[GA4] Consent Updated:', consentConfig);
+            gtag('consent', 'update', consentConfig);
         });
     </script>
 

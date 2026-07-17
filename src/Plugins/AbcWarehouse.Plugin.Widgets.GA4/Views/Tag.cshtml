@@ -4,33 +4,140 @@
   var debugModeText = Model.IsDebugMode ? ", { 'debug_mode':true }" : string.Empty;
 }
 
-<!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) with Consent Mode v2 & AI Assistant Channel Grouping -->
 <script src="https://www.googletagmanager.com/gtag/js?id=@Model.GoogleTag"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+  // Ensure consent mode defaults are set (if not already set by _Root.Head.cshtml)
+  if (!window.consentModeInitialized) {
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 500
+    });
+    window.consentModeInitialized = true;
+  }
+
   gtag('js', new Date());
 
   console.log('[GA4] Initializing with tag: @Model.GoogleTag');
-  gtag('config','@Model.GoogleTag'@Html.Raw(@debugModeText));
 
-  var referrerData = {
-    'page_path': window.location.pathname,
-    'page_title': document.title,
-    'referrer': document.referrer,
-    'timestamp': new Date().toISOString(),
-    'userAgent': navigator.userAgent
+  // Enable event queueing to buffer events during consent race condition
+  var ga4Config = {
+    'allow_google_signals': false,
+    'allow_ad_personalization_signals': false,
+    'cookie_flags': 'SameSite=Lax;secure'
   };
+  @if (!string.IsNullOrEmpty(debugModeText))
+  {
+    <text>
+    ga4Config['debug_mode'] = true;
+    </text>
+  }
+  gtag('config','@Model.GoogleTag', ga4Config);
 
-  console.log('[GA4] Page View Event:', referrerData);
-  console.log('[GA4] Referrer source:', document.referrer || '(direct)');
+  // Custom channel grouping for AI assistant traffic (ChatGPT, Gemini, Claude, etc.)
+  function classifyTrafficSource() {
+    var referrer = document.referrer.toLowerCase();
+    var userAgent = navigator.userAgent.toLowerCase();
 
-  gtag('event', 'page_view', referrerData);
+    var aiAssistantSources = [
+      'openai.com',
+      'chatgpt.com',
+      'chat.openai.com',
+      'gemini.google.com',
+      'bard.google.com',
+      'claude.ai',
+      'copilot.microsoft.com',
+      'perplexity.ai'
+    ];
+
+    for (var i = 0; i < aiAssistantSources.length; i++) {
+      if (referrer.includes(aiAssistantSources[i])) {
+        return 'ai_assistant';
+      }
+    }
+
+    if (userAgent.includes('ccbot') || userAgent.includes('chatgptbot')) {
+      return 'ai_assistant';
+    }
+
+    return null;
+  }
+
+  // Delay page_view until Termly consent is resolved (prevents race condition)
+  function firePageView() {
+    var referrerData = {
+      'page_path': window.location.pathname,
+      'page_title': document.title,
+      'referrer': document.referrer,
+      'timestamp': new Date().toISOString(),
+      'userAgent': navigator.userAgent
+    };
+
+    // Add AI assistant channel if detected
+    var aiChannel = classifyTrafficSource();
+    if (aiChannel) {
+      referrerData['traffic_source'] = aiChannel;
+      console.log('[GA4] AI Assistant traffic detected');
+    }
+
+    console.log('[GA4] Page View Event:', referrerData);
+    console.log('[GA4] Referrer source:', document.referrer || '(direct)');
+
+    gtag('event', 'page_view', referrerData);
+  }
+
+  // Wait for Termly to update consent before firing page_view
+  // If Termly hasn't fired within 1.5s, fire anyway (user may have disabled cookies)
+  var pageViewTimeout = setTimeout(function() {
+    console.log('[GA4] Timeout waiting for Termly consent; firing page_view with default consent');
+    firePageView();
+  }, 1500);
+
+  // Listen for Termly consent resolution
+  window.addEventListener('consentStatusChange', function(e) {
+    clearTimeout(pageViewTimeout);
+    console.log('[GA4] Termly consent received, firing page_view');
+    firePageView();
+  });
+
+  // Fallback: if Termly never fires, fire on DOMContentLoaded
+  var pageViewFired = false;
+  document.addEventListener('DOMContentLoaded', function() {
+    if (pageViewTimeout) {
+      // Page view not yet fired, so fire it now
+      clearTimeout(pageViewTimeout);
+      console.log('[GA4] DOMContentLoaded reached; firing page_view');
+      firePageView();
+      pageViewFired = true;
+    }
+  });
+
+  // Wrapper to ensure consent events are queued properly
+  function fireConversionEvent(eventName, eventData) {
+    // If page_view already fired, send immediately; otherwise queue it
+    if (pageViewFired) {
+      console.log('[GA4] ' + eventName + ' Event (after page view):', eventData);
+      gtag('event', eventName, eventData);
+    } else {
+      // Queue event to fire after page_view
+      window.addEventListener('consentStatusChange', function queuedEventListener() {
+        console.log('[GA4] ' + eventName + ' Event (queued after consent):', eventData);
+        gtag('event', eventName, eventData);
+        window.removeEventListener('consentStatusChange', queuedEventListener);
+      });
+    }
+  }
 
   @if (Model.ViewItemModel != null)
   {
     <text>
-      gtag("event", "view_item", {
+      fireConversionEvent("view_item", {
         currency: "USD",
         value: @Model.ViewItemModel.Price,
         items: [
@@ -72,14 +179,14 @@
         ]
       };
       console.log('[GA4] Begin Checkout Event:', beginCheckoutEvent);
-      gtag("event", "begin_checkout", beginCheckoutEvent);
+      fireConversionEvent("begin_checkout", beginCheckoutEvent);
     </text>
   }
 
   @if (Model.ViewCartModel != null)
   {
     <text>
-      gtag("event", "view_cart", {
+      fireConversionEvent("view_cart", {
         currency: "USD",
         value: @Model.ViewCartModel.Value,
         items: [
@@ -131,7 +238,7 @@
         ]
       };
       console.log('[GA4] Purchase Event:', purchaseEvent);
-      gtag("event", "purchase", purchaseEvent);
+      fireConversionEvent("purchase", purchaseEvent);
     </text>
   }
 </script>
