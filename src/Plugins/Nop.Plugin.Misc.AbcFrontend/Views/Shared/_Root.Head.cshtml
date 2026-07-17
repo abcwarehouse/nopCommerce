@@ -284,62 +284,83 @@
 
     <!-- SearchSpring Suggest Integration (with error handling) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        (function initSearchSpring() {
             try {
-                const searchBox = document.querySelector('#small-searchterms')
-                    || document.querySelector('input[type="search"]')
-                    || document.querySelector('input[name="q"]');
-
-                if (!searchBox) {
-                    console.log('[SEARCHSPRING] No search input found');
-                    return;
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function initOnReady() {
+                        try {
+                            setupSearchInput();
+                        } catch (e) {
+                            console.error('[SEARCHSPRING] DOMContentLoaded setup error:', e);
+                        }
+                    });
+                } else {
+                    setupSearchInput();
                 }
 
-                console.log('[SEARCHSPRING] Search box found, initializing suggest');
+                function setupSearchInput() {
+                    var searchBox = document.querySelector('#small-searchterms')
+                        || document.querySelector('input[type="search"]')
+                        || document.querySelector('input[name="q"]');
+
+                    if (!searchBox) {
+                        console.log('[SEARCHSPRING] No search input found');
+                        // Don't return - just exit the function normally
+                    } else {
+                        console.log('[SEARCHSPRING] Search box found, initializing suggest');
+                        setupDebounceListener(searchBox);
+                    }
+                }
 
                 function debounce(func, wait) {
-                    let timeout;
-                    return function (...args) {
+                    var timeout;
+                    return function debounced() {
+                        var args = Array.prototype.slice.call(arguments);
                         clearTimeout(timeout);
-                        timeout = setTimeout(() => func.apply(this, args), wait);
+                        timeout = setTimeout(function() {
+                            func.apply(this, args);
+                        }, wait);
                     };
                 }
 
-                searchBox.addEventListener('input', debounce(async function () {
+                function setupDebounceListener(searchBox) {
                     try {
-                        const query = this.value.trim();
-                        if (query.length < 2) return;
+                        searchBox.addEventListener('input', debounce(function onInput() {
+                            try {
+                                var query = this.value.trim();
+                                if (query.length < 2) {
+                                    // Skip this query
+                                } else if (typeof window.ssUtils === 'undefined') {
+                                    console.log('[SEARCHSPRING] ssUtils not yet available');
+                                } else {
+                                    var userId = window.ssUtils.getCookie('ssShopperId');
+                                    var sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
 
-                        // Check if ssUtils is available
-                        if (typeof window.ssUtils === 'undefined') {
-                            console.log('[SEARCHSPRING] ssUtils not yet available');
-                            return;
-                        }
+                                    var suggestUrl = '/searchspring/suggest?q=' + encodeURIComponent(query);
+                                    if (userId) suggestUrl += '&userId=' + encodeURIComponent(userId);
+                                    if (sessionId) suggestUrl += '&sessionId=' + encodeURIComponent(sessionId);
 
-                        const userId = window.ssUtils.getCookie('ssShopperId');
-                        const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
-
-                        const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
-                            userId ? `&userId=${encodeURIComponent(userId)}` : ''
-                        }${
-                            sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
-                        }`;
-
-                        try {
-                            const response = await fetch(suggestUrl);
-                            const data = await response.json();
-                            console.log('[SEARCHSPRING] Suggest request successful');
-                        } catch (e) {
-                            console.error('[SEARCHSPRING] Suggest fetch error:', e);
-                        }
+                                    fetch(suggestUrl)
+                                        .then(function(response) { return response.json(); })
+                                        .then(function(data) {
+                                            console.log('[SEARCHSPRING] Suggest request successful');
+                                        })
+                                        .catch(function(e) {
+                                            console.error('[SEARCHSPRING] Suggest fetch error:', e);
+                                        });
+                                }
+                            } catch (e) {
+                                console.error('[SEARCHSPRING] Input handler error:', e);
+                            }
+                        }, 300));
                     } catch (e) {
-                        console.error('[SEARCHSPRING] Input handler error:', e);
+                        console.error('[SEARCHSPRING] Listener setup error:', e);
                     }
-                }, 300));
+                }
             } catch (e) {
-                console.error('[SEARCHSPRING] Initialization error:', e);
+                console.error('[SEARCHSPRING] Fatal initialization error:', e);
             }
-        });
+        })();
     </script>
 
     <!-- Global Error Handler (suppress third-party widget errors) -->
@@ -448,7 +469,7 @@
             'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
         });
         console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
-        console.log('[CONSENT MODE] Defaults set - waiting up to 500ms for Termly update');
+        console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
 
         // Listen for Termly consent changes
         window.addEventListener('consentStatusChange', function(e) {
