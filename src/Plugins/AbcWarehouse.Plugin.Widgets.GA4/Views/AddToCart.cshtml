@@ -1,27 +1,48 @@
 @model AbcWarehouse.Plugin.Widgets.GA4.Models.AddToCartModel
 
 <script>
-  $(function() {
-    var button = document.getElementById("@Model.ButtonId");
-    if (button === null) {
-      return;
-    }
-    button.addEventListener("click", function () {
-      gtag("event", "add_to_cart", {
-        currency: "USD",
-        value: @Model.Item.Price,
-        items: [
-          {
-            item_id: "@Model.Item.Sku",
-            item_name: "@Model.Item.Name",
-            index: 0,
-            item_brand: "@Model.Item.Brand",
-            item_category: "@Model.Item.Category",
-            price: @Model.Item.Price,
-            quantity: 1
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      var button = document.getElementById("@Model.ButtonId");
+      if (button === null) {
+        console.log('[GA4 ADD_TO_CART] Button not found: @Model.ButtonId');
+        return;
+      }
+
+      button.addEventListener("click", function () {
+        try {
+          var eventData = {
+            currency: "USD",
+            value: @Model.Item.Price,
+            items: [
+              {
+                item_id: "@Model.Item.Sku",
+                item_name: "@Model.Item.Name",
+                index: 0,
+                item_brand: "@Model.Item.Brand",
+                item_category: "@Model.Item.Category",
+                price: @Model.Item.Price,
+                quantity: 1
+              }
+            ]
+          };
+
+          // Use fireConversionEvent if available (waits for page_view), otherwise fire directly
+          if (typeof fireConversionEvent === 'function') {
+            console.log('[GA4 ADD_TO_CART] Using fireConversionEvent wrapper');
+            fireConversionEvent("add_to_cart", eventData);
+          } else {
+            console.log('[GA4 ADD_TO_CART] fireConversionEvent not available, firing directly');
+            gtag("event", "add_to_cart", eventData);
           }
-        ]
+        } catch(e) {
+          console.error('[GA4 ADD_TO_CART] Event error:', e);
+        }
       });
-    });
+
+      console.log('[GA4 ADD_TO_CART] Initialized for button: @Model.ButtonId');
+    } catch(e) {
+      console.error('[GA4 ADD_TO_CART] Initialization error:', e);
+    }
   });
 </script>

@@ -1,16 +1,20 @@
 @model AbcWarehouse.Plugin.Widgets.GA4.Models.GA4GeneralModel
 
 <script>
-  $(function() {
-        // grab the buttons from shipping screen
-        var existingAddressButtons = document.querySelectorAll('.select-shipping-address-button');
-        var newAddressButton = document.querySelectorAll('.new-address-next-step-button');
-        var buttons = Array.from(existingAddressButtons).concat(Array.from(newAddressButton));
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      // Grab the buttons from shipping screen
+      var existingAddressButtons = document.querySelectorAll('.select-shipping-address-button');
+      var newAddressButton = document.querySelectorAll('.new-address-next-step-button');
+      var buttons = Array.from(existingAddressButtons).concat(Array.from(newAddressButton));
 
-        // loop through the buttons and add an event listener to each
-        buttons.forEach(function(button) {
-          button.addEventListener('click', function() {
-            gtag("event", "add_shipping_info", {
+      console.log('[GA4 ADD_SHIPPING_INFO] Found ' + buttons.length + ' shipping buttons');
+
+      // Loop through the buttons and add an event listener to each
+      buttons.forEach(function(button, index) {
+        button.addEventListener('click', function() {
+          try {
+            var eventData = {
               currency: "USD",
               value: @Model.Value,
               items: [
@@ -30,8 +34,25 @@
                   </text>
                 }
               ]
-            });
-          });
+            };
+
+            // Use fireConversionEvent if available (waits for page_view), otherwise fire directly
+            if (typeof fireConversionEvent === 'function') {
+              console.log('[GA4 ADD_SHIPPING_INFO] Using fireConversionEvent wrapper');
+              fireConversionEvent("add_shipping_info", eventData);
+            } else {
+              console.log('[GA4 ADD_SHIPPING_INFO] fireConversionEvent not available, firing directly');
+              gtag("event", "add_shipping_info", eventData);
+            }
+          } catch(e) {
+            console.error('[GA4 ADD_SHIPPING_INFO] Event error:', e);
+          }
         });
       });
+
+      console.log('[GA4 ADD_SHIPPING_INFO] Initialized');
+    } catch(e) {
+      console.error('[GA4 ADD_SHIPPING_INFO] Initialization error:', e);
+    }
+  });
 </script>

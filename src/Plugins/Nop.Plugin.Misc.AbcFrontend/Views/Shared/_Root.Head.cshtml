@@ -375,6 +375,33 @@
         };
     </script>
 
+    <!-- GA4 Diagnostic Logger -->
+    <script>
+        window.ga4Diagnostics = {
+            consentDefaults: null,
+            consentUpdates: [],
+            pageViewFired: false,
+            termlyEventFired: false,
+            referrer: document.referrer || '(none)',
+            startTime: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+
+            log: function(msg) {
+                console.log('[GA4 DIAGNOSTICS]', msg);
+            },
+
+            logEvent: function(eventType, data) {
+                console.log('[GA4 DIAGNOSTICS] EVENT:', eventType, data);
+                if (!this.events) this.events = [];
+                this.events.push({ time: new Date().toISOString(), type: eventType, data: data });
+            }
+        };
+
+        ga4Diagnostics.log('Session started at ' + ga4Diagnostics.startTime);
+        ga4Diagnostics.log('Referrer: ' + ga4Diagnostics.referrer);
+        ga4Diagnostics.log('User Agent: ' + ga4Diagnostics.userAgent);
+    </script>
+
     <!-- Google Consent Mode v2 (must load BEFORE gtag.js and GTM) -->
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -382,6 +409,9 @@
 
         console.log('[CONSENT MODE] Initializing Consent Mode v2 defaults (denying all)');
         console.log('[REFERRAL] Initial referrer:', document.referrer || '(direct)');
+
+        ga4Diagnostics.log('Consent Mode defaults about to be set');
+        ga4Diagnostics.consentDefaults = { time: new Date().toISOString(), state: 'denied' };
 
         gtag('consent', 'default', {
             'ad_storage': 'denied',
@@ -394,8 +424,10 @@
 
         // Listen for Termly consent changes
         window.addEventListener('consentStatusChange', function(e) {
+            ga4Diagnostics.termlyEventFired = true;
             var consentStatus = e.detail || window.consentStatus;
             console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
+            ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
 
             var consentConfig = {
                 'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
@@ -404,8 +436,11 @@
                 'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
             };
 
+            ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
+
             console.log('[CONSENT MODE] Updating consent to:', consentConfig);
             console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
+            ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
             gtag('consent', 'update', consentConfig);
         });
     </script>

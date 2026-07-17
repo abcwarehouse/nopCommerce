@@ -133,6 +133,11 @@
   function firePageView() {
     console.log('[GA4 RACE CONDITION] firePageView() called at', new Date().toISOString());
 
+    if (typeof window.ga4Diagnostics !== 'undefined') {
+      window.ga4Diagnostics.pageViewFired = true;
+      window.ga4Diagnostics.log('Page view about to fire');
+    }
+
     var referrerData = {
       'page_path': window.location.pathname,
       'page_title': document.title,
@@ -149,14 +154,18 @@
       console.log('[GA4 REFERRAL FIX] ✅ EMAIL traffic properly tagged (referrer stripped by email client)');
       console.log('[GA4 EMAIL FIX] User Agent:', navigator.userAgent);
       console.log('[GA4 EMAIL FIX] WARNING: Ensure email links include utm_source=email&utm_medium=email for better tracking');
+      if (window.ga4Diagnostics) window.ga4Diagnostics.logEvent('page_view', 'email traffic');
     } else if (trafficChannel === 'ai_assistant') {
       referrerData['traffic_source'] = trafficChannel;
       console.log('[GA4 REFERRAL FIX] ✅ AI Assistant traffic properly tagged:', trafficChannel);
+      if (window.ga4Diagnostics) window.ga4Diagnostics.logEvent('page_view', 'ai_assistant traffic');
     } else {
       console.log('[GA4 REFERRAL FIX] Standard traffic - referrer will be preserved:', document.referrer || '(direct)');
+      if (window.ga4Diagnostics) window.ga4Diagnostics.logEvent('page_view', 'referrer: ' + (document.referrer || 'none'));
       // Log raw referrer for debugging
       if (!document.referrer) {
         console.log('[GA4 REFERRAL FIX] ⚠️ No referrer found - could be email, direct, or https->http');
+        if (window.ga4Diagnostics) window.ga4Diagnostics.log('⚠️ ISSUE: No referrer - this will show as Direct in GA4');
       }
     }
 
