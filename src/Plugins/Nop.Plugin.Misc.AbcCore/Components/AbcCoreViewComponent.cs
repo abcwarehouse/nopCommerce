@@ -30,15 +30,21 @@ namespace Nop.Plugin.Misc.AbcCore.Components
         private readonly CoreSettings _coreSettings;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly INotificationService _notificationService;
+        private readonly IWorkContext _workContext;
+        private readonly ICustomerService _customerService;
 
         public AbcCoreViewComponent(
             CoreSettings coreSettings,
             IGenericAttributeService genericAttributeService,
-            INotificationService notificationService
+            INotificationService notificationService,
+            IWorkContext workContext,
+            ICustomerService customerService
         ) {
             _coreSettings = coreSettings;
             _genericAttributeService = genericAttributeService;
             _notificationService = notificationService;
+            _workContext = workContext;
+            _customerService = customerService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData = null)
@@ -74,7 +80,8 @@ namespace Nop.Plugin.Misc.AbcCore.Components
                         Url.Action("Configure", "AbcCore")),
                         false);
             }
-            else if (widgetZone == PublicWidgetZones.Footer)
+            else if (widgetZone == PublicWidgetZones.Footer &&
+                await _customerService.IsAdminAsync(await _workContext.GetCurrentCustomerAsync()))
             {
                 string sha = File.ReadAllText("Plugins/Misc.AbcCore/sha.txt").Trim();
                 string branch = File.ReadAllText("Plugins/Misc.AbcCore/branch.txt").Trim();
