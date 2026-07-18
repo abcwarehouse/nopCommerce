@@ -3,7 +3,11 @@
     "allow": [
       "Bash(cp -r src/Plugins/NopAdvance.Core src/Presentation/Nop.Web/Plugins/NopAdvance.Core)",
       "Bash(cp -r src/Plugins/NopAdvance.DiscountRules.CartSubTotal src/Presentation/Nop.Web/Plugins/NopAdvance.DiscountRules.CartSubTotal)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "Bash(xargs grep -l \"GetWidgetZones\\\\|IWidgetPlugin\")",
+      "Bash(dotnet build *)",
+      "PowerShell(dotnet build *)",
+      "Skill(simplify)"
     ]
   }
 }
