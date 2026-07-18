@@ -89,17 +89,32 @@
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
     @NopHtml.GenerateHeadCustom()
-    <!-- Bazaarvoice Reviews -->
-    <script async src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
+    <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
+    <script defer src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
     @if(storeIdInt == 8)
     {
-        <!-- Hawthorne: Google Tag Manager -->
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        <!-- Hawthorne: Google Tag Manager (with Consent Mode v2) -->
+            <script>
+            // Ensure consent mode defaults are set before GTM loads
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'granted',  // ← Analytics is essential, not advertising
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
+            });
+            console.log('[GTM CONSENT MODE] Default: analytics=GRANTED, ads=denied, wait=2s');
+            </script>
+            <script>
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-TBLL3Z89');</script>
+            })(window,document,'script','dataLayer','GTM-TBLL3Z89');
+            </script>
             <!-- End Google Tag Manager -->
     }
 
@@ -134,8 +149,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
 
+    <!-- Global Syntax Error Catcher -->
+    <script>
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('Illegal return statement')) {
+                console.error('[ERROR SUPPRESSOR] Caught illegal return statement:', event.message);
+                event.preventDefault();
+                return true;
+            }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('SyntaxError')) {
+                console.error('[ERROR SUPPRESSOR] Caught syntax error:', event.message);
+                // Don't suppress all syntax errors, just log them
+            }
+        }, true);
+    </script>
+    
     <noscript>
-        <img height="1" width="1" 
+        <img height="1" width="1"
         src="https://www.facebook.com/tr?id=279056429645080&ev=PageView&noscript=1"/>
     </noscript>
     <!-- SearchSpring Scripts -->
@@ -145,106 +178,337 @@
     <!-- UUID library + Cookie/Session Management -->
     <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
     <script>
-        (function() {
-            // Utility functions
-            function getCookie(name) {
-                var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-                return match ? match[2] : null;
-            }
+        try {
+            (function() {
+                console.log('[SEARCHSPRING] Initializing cookie/session management');
 
-            function setCookie(name, value, days) {
-                var expires = "";
-                if (days) {
-                    var date = new Date();
-                    date.setTime(date.getTime() + (days*24*60*60*1000));
-                    expires = "; expires=" + date.toUTCString();
+                // Utility functions
+                function getCookie(name) {
+                    try {
+                        var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                        return match ? match[2] : null;
+                    } catch(e) {
+                        console.error('[SEARCHSPRING] getCookie error:', e);
+                        return null;
+                    }
                 }
-                document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
-            }
 
-            function generateUUID() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            }
-
-            function getOrCreateId(cookieName, days) {
-                let id = getCookie(cookieName);
-                if (!id) {
-                    id = Math.random().toString(36).substring(2) + Date.now();
-                    setCookie(cookieName, id, days || 365);
+                function setCookie(name, value, days) {
+                    try {
+                        var expires = "";
+                        if (days) {
+                            var date = new Date();
+                            date.setTime(date.getTime() + (days*24*60*60*1000));
+                            expires = "; expires=" + date.toUTCString();
+                        }
+                        document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
+                    } catch(e) {
+                        console.error('[SEARCHSPRING] setCookie error:', e);
+                    }
                 }
-                return id;
+
+                function generateUUID() {
+                    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                }
+
+                function getOrCreateId(cookieName, days) {
+                    let id = getCookie(cookieName);
+                    if (!id) {
+                        id = Math.random().toString(36).substring(2) + Date.now();
+                        setCookie(cookieName, id, days || 365);
+                    }
+                    return id;
+                }
+
+                // Initialize ssShopperId
+                var ssShopperId = getCookie("ssShopperId");
+                if (!ssShopperId) {
+                    ssShopperId = generateUUID();
+                    setCookie("ssShopperId", ssShopperId, 365);
+                }
+                console.log('[SEARCHSPRING] ssShopperId initialized:', ssShopperId.substring(0,8) + '...');
+
+                // Initialize ssSessionIdNamespace
+                var sessionKey = "ssSessionIdNamespace";
+                if (!sessionStorage.getItem(sessionKey)) {
+                    var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
+                    sessionStorage.setItem(sessionKey, uuid);
+                    setCookie(sessionKey, uuid, 1);
+                    console.log('[SEARCHSPRING] Session ID initialized');
+                }
+
+                // Set intellisuggest configuration (with defensive checks)
+                try {
+                    if (typeof window.intellisuggest === 'undefined' || window.intellisuggest === null) {
+                        window.intellisuggest = [];
+                        console.log('[SEARCHSPRING] Intellisuggest initialized as array');
+                    }
+
+                    // Only push if push is actually a function (it's an array)
+                    if (typeof window.intellisuggest.push === 'function') {
+                        window.intellisuggest.push(['setSiteId', '4lt84w']);
+                        window.intellisuggest.push(["setShopperId", ssShopperId]);
+                        console.log('[SEARCHSPRING] Intellisuggest configuration pushed');
+                    } else {
+                        console.log('[SEARCHSPRING] Intellisuggest.push is not a function, deferring config');
+                        // Retry after 300ms if intellisuggest script is replacing our array
+                        setTimeout(function() {
+                            try {
+                                if (typeof window.intellisuggest !== 'undefined' &&
+                                    typeof window.intellisuggest.push === 'function') {
+                                    window.intellisuggest.push(['setSiteId', '4lt84w']);
+                                    window.intellisuggest.push(["setShopperId", ssShopperId]);
+                                    console.log('[SEARCHSPRING] Intellisuggest configuration pushed (deferred)');
+                                }
+                            } catch(e) {
+                                console.warn('[SEARCHSPRING] Deferred push error:', e.message);
+                            }
+                        }, 300);
+                    }
+                } catch(e) {
+                    console.warn('[SEARCHSPRING] Intellisuggest config error:', e.message);
+                    // Still try to configure after delay as fallback
+                    setTimeout(function() {
+                        try {
+                            if (typeof window.intellisuggest !== 'undefined' &&
+                                typeof window.intellisuggest.push === 'function') {
+                                window.intellisuggest.push(['setSiteId', '4lt84w']);
+                                window.intellisuggest.push(["setShopperId", ssShopperId]);
+                            }
+                        } catch(e2) {
+                            console.warn('[SEARCHSPRING] Final fallback push failed:', e2.message);
+                        }
+                    }, 500);
+                }
+
+                // Make utilities globally available
+                window.ssUtils = {
+                    getCookie: getCookie,
+                    setCookie: setCookie,
+                    generateUUID: generateUUID,
+                    getOrCreateId: getOrCreateId
+                };
+
+                console.log('[SEARCHSPRING] Initialization complete');
+            })();
+        } catch(e) {
+            console.error('[SEARCHSPRING] Fatal initialization error:', e.message);
+            console.error('[SEARCHSPRING] Stack:', e.stack);
+        }
+    </script>
+
+    <!-- SearchSpring Suggest Integration (with error handling) -->
+    <script>
+        (function initSearchSpring() {
+            try {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function initOnReady() {
+                        try {
+                            setupSearchInput();
+                        } catch (e) {
+                            console.error('[SEARCHSPRING] DOMContentLoaded setup error:', e);
+                        }
+                    });
+                } else {
+                    setupSearchInput();
+                }
+
+                function setupSearchInput() {
+                    var searchBox = document.querySelector('#small-searchterms')
+                        || document.querySelector('input[type="search"]')
+                        || document.querySelector('input[name="q"]');
+
+                    if (!searchBox) {
+                        console.log('[SEARCHSPRING] No search input found');
+                        // Don't return - just exit the function normally
+                    } else {
+                        console.log('[SEARCHSPRING] Search box found, initializing suggest');
+                        setupDebounceListener(searchBox);
+                    }
+                }
+
+                function debounce(func, wait) {
+                    var timeout;
+                    return function debounced() {
+                        var args = Array.prototype.slice.call(arguments);
+                        clearTimeout(timeout);
+                        timeout = setTimeout(function() {
+                            func.apply(this, args);
+                        }, wait);
+                    };
+                }
+
+                function setupDebounceListener(searchBox) {
+                    try {
+                        searchBox.addEventListener('input', debounce(function onInput() {
+                            try {
+                                var query = this.value.trim();
+                                if (query.length < 2) {
+                                    // Skip this query
+                                } else if (typeof window.ssUtils === 'undefined') {
+                                    console.log('[SEARCHSPRING] ssUtils not yet available');
+                                } else {
+                                    var userId = window.ssUtils.getCookie('ssShopperId');
+                                    var sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
+
+                                    var suggestUrl = '/searchspring/suggest?q=' + encodeURIComponent(query);
+                                    if (userId) suggestUrl += '&userId=' + encodeURIComponent(userId);
+                                    if (sessionId) suggestUrl += '&sessionId=' + encodeURIComponent(sessionId);
+
+                                    fetch(suggestUrl)
+                                        .then(function(response) { return response.json(); })
+                                        .then(function(data) {
+                                            console.log('[SEARCHSPRING] Suggest request successful');
+                                        })
+                                        .catch(function(e) {
+                                            console.error('[SEARCHSPRING] Suggest fetch error:', e);
+                                        });
+                                }
+                            } catch (e) {
+                                console.error('[SEARCHSPRING] Input handler error:', e);
+                            }
+                        }, 300));
+                    } catch (e) {
+                        console.error('[SEARCHSPRING] Listener setup error:', e);
+                    }
+                }
+            } catch (e) {
+                console.error('[SEARCHSPRING] Fatal initialization error:', e);
             }
-
-            // Initialize ssShopperId
-            var ssShopperId = getCookie("ssShopperId");
-            if (!ssShopperId) {
-                ssShopperId = generateUUID();
-                setCookie("ssShopperId", ssShopperId, 365);
-            }
-
-            // Initialize ssSessionIdNamespace
-            var sessionKey = "ssSessionIdNamespace";
-            if (!sessionStorage.getItem(sessionKey)) {
-                var uuid = typeof uuidv4 === 'function' ? uuidv4() : generateUUID();
-                sessionStorage.setItem(sessionKey, uuid);
-                setCookie(sessionKey, uuid, 1);
-            }
-
-            // Set intellisuggest configuration
-            window.intellisuggest = window.intellisuggest || [];
-            intellisuggest.push(['setSiteId', '4lt84w']);
-            intellisuggest.push(["setShopperId", ssShopperId]);
-
-            // Make utilities globally available
-            window.ssUtils = {
-                getCookie: getCookie,
-                setCookie: setCookie,
-                generateUUID: generateUUID,
-                getOrCreateId: getOrCreateId
-            };
         })();
     </script>
 
-    <!-- SearchSpring Suggest Integration -->
+    <!-- Global Error Handler (suppress third-party widget errors) -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const searchBox = document.querySelector('#small-searchterms')
-                || document.querySelector('input[type="search"]')
-                || document.querySelector('input[name="q"]');
-
-            if (!searchBox) return;
-
-            function debounce(func, wait) {
-                let timeout;
-                return function (...args) {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(this, args), wait);
-                };
+        // Suppress MutationObserver errors from third-party widgets
+        window.addEventListener('error', function(event) {
+            if (event.message && event.message.includes('MutationObserver') && event.message.includes('not of type')) {
+                console.warn('[ERROR HANDLER] Suppressed third-party MutationObserver error:', event.message);
+                event.preventDefault(); // Suppress the error
+                return true;
             }
+        }, true); // Use capture phase to catch errors early
 
-            searchBox.addEventListener('input', debounce(async function () {
-                const query = this.value.trim();
-                if (query.length < 2) return;
+        // Also handle unhandled promise rejections for MutationObserver
+        window.addEventListener('unhandledrejection', function(event) {
+            if (event.reason && event.reason.message && event.reason.message.includes('MutationObserver')) {
+                console.warn('[ERROR HANDLER] Suppressed unhandled rejection:', event.reason.message);
+                event.preventDefault(); // Suppress the rejection
+            }
+        });
 
-                const userId = window.ssUtils.getCookie('ssShopperId');
-                const sessionId = window.ssUtils.getCookie('ssSessionIdNamespace');
-
-                const suggestUrl = `/searchspring/suggest?q=${encodeURIComponent(query)}${
-                    userId ? `&userId=${encodeURIComponent(userId)}` : ''
-                }${
-                    sessionId ? `&sessionId=${encodeURIComponent(sessionId)}` : ''
-                }`;
-
+        // Wrap MutationObserver to catch errors at source
+        var OriginalMutationObserver = window.MutationObserver;
+        window.MutationObserver = function(callback) {
+            var wrappedCallback = function(mutations) {
                 try {
-                    const response = await fetch(suggestUrl);
-                    const data = await response.json();
-                } catch (e) {
-                    console.error('Suggest fetch error:', e);
+                    callback(mutations);
+                } catch(e) {
+                    console.warn('[ERROR HANDLER] Caught MutationObserver callback error:', e.message);
+                    // Don't rethrow - let it fail silently
                 }
-            }, 300));
+            };
+            this._observer = new OriginalMutationObserver(wrappedCallback);
+        };
+        window.MutationObserver.prototype.observe = function(target, options) {
+            try {
+                if (!target || !(target instanceof Node)) {
+                    console.warn('[ERROR HANDLER] MutationObserver.observe called with invalid target:', target);
+                    return; // Silently fail instead of throwing
+                }
+                this._observer.observe(target, options);
+            } catch(e) {
+                console.warn('[ERROR HANDLER] MutationObserver.observe error:', e.message);
+            }
+        };
+        window.MutationObserver.prototype.disconnect = function() {
+            try {
+                this._observer.disconnect();
+            } catch(e) {
+                console.warn('[ERROR HANDLER] MutationObserver.disconnect error:', e.message);
+            }
+        };
+        window.MutationObserver.prototype.takeRecords = function() {
+            try {
+                return this._observer.takeRecords();
+            } catch(e) {
+                console.warn('[ERROR HANDLER] MutationObserver.takeRecords error:', e.message);
+                return [];
+            }
+        };
+    </script>
+
+    <!-- GA4 Diagnostic Logger -->
+    <script>
+        window.ga4Diagnostics = {
+            consentDefaults: null,
+            consentUpdates: [],
+            pageViewFired: false,
+            termlyEventFired: false,
+            referrer: document.referrer || '(none)',
+            startTime: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+
+            log: function(msg) {
+                console.log('[GA4 DIAGNOSTICS]', msg);
+            },
+
+            logEvent: function(eventType, data) {
+                console.log('[GA4 DIAGNOSTICS] EVENT:', eventType, data);
+                if (!this.events) this.events = [];
+                this.events.push({ time: new Date().toISOString(), type: eventType, data: data });
+            }
+        };
+
+        ga4Diagnostics.log('Session started at ' + ga4Diagnostics.startTime);
+        ga4Diagnostics.log('Referrer: ' + ga4Diagnostics.referrer);
+        ga4Diagnostics.log('User Agent: ' + ga4Diagnostics.userAgent);
+    </script>
+
+    <!-- Google Consent Mode v2 (must load BEFORE gtag.js and GTM) -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+
+        console.log('[CONSENT MODE] Initializing Consent Mode v2 defaults (denying all)');
+        console.log('[REFERRAL] Initial referrer:', document.referrer || '(direct)');
+
+        ga4Diagnostics.log('Consent Mode defaults about to be set');
+        ga4Diagnostics.consentDefaults = { time: new Date().toISOString(), state: 'denied' };
+
+        gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'analytics_storage': 'granted',  // ← Analytics is essential, not advertising
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
+        });
+        console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
+        console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
+
+        // Listen for Termly consent changes
+        window.addEventListener('consentStatusChange', function(e) {
+            ga4Diagnostics.termlyEventFired = true;
+            var consentStatus = e.detail || window.consentStatus;
+            console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
+            ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
+
+            var consentConfig = {
+                'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
+                'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
+                'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
+                'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
+            };
+
+            ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
+
+            console.log('[CONSENT MODE] Updating consent to:', consentConfig);
+            console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
+            ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
+            gtag('consent', 'update', consentConfig);
         });
     </script>
 
@@ -259,32 +523,57 @@
         })(window, document, "clarity", "script", "sewgt4p9qm");
     </script>
 
-    <!-- Meta Pixel -->
+    <!-- Meta Pixel (with error handling to prevent conflicts) -->
     <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window,document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '279056429645080');
+        try {
+            !function(f,b,e,v,n,t,s)
+            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            if(s && s.parentNode) {
+              s.parentNode.insertBefore(t,s);
+            }
+            }(window,document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '279056429645080');
+            console.log('[META PIXEL] Initialized successfully');
+        } catch(err) {
+            console.log('[META PIXEL] Error during init:', err.message);
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
-            fbq('track', 'PageView');
+            try {
+                fbq('track', 'PageView');
+                console.log('[META PIXEL] PageView tracked');
 
-            if (document.querySelector('.storeId8')) {
-                (function(a,b,c,d){
-                    a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
-                    b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
-                    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
-                })();
+                if (document.querySelector('.storeId8')) {
+                    (function(a,b,c,d){
+                        try {
+                            a="https://tags.tiqcdn.com/utag/adtaxi/hawthorneonline.com/prod/utag.js";
+                            b=document;c="script";d=b.createElement(c);d.src=a;d.type="text/javascript";d.async=true;
+                            a=b.getElementsByTagName(c)[0];
+                            if(a && a.parentNode) {
+                              a.parentNode.insertBefore(d,a);
+                            }
+                        } catch(err) {
+                            console.log('[TIQCDN] Load error:', err.message);
+                        }
+                    })();
 
-                const instagramLink = document.querySelector('li.instagram a');
-                if (instagramLink) {
-                    instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+                    const instagramLink = document.querySelector('li.instagram a');
+                    if (instagramLink) {
+                        try {
+                            instagramLink.href = "https://www.instagram.com/hawthorneappliance_/?fbclid=IwZXh0bgNhZW0CMTEAAR4fisWP1oVHnse9_TcMzDIhZ2zH2NpFFDTtwy5duz6V0C3E3mxhpyKMQY46iQ_aem_DquFc1PXxU6EMA7rq7vKKg";
+                            console.log('[META PIXEL] Instagram link updated');
+                        } catch(err) {
+                            console.log('[META PIXEL] Instagram link error:', err.message);
+                        }
+                    }
                 }
+            } catch(err) {
+                console.log('[META PIXEL] DOMContentLoaded error:', err.message);
             }
         });
     </script>

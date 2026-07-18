@@ -26,19 +26,60 @@
 </div>
 
 <script>
-    function updateZeroPrices() {
-        document.querySelectorAll('.price').forEach(el => {
-            if (el.textContent.trim() === '0.00') {
-                el.textContent = 'Call for price';
+    (function setupPriceObserver() {
+        try {
+            // Prevent duplicate observer setup
+            if (window.searchspringObserverSetup) {
+                console.log('[SEARCHSPRING] Observer already setup, skipping');
+                return;
             }
-        });
+            window.searchspringObserverSetup = true;
+
+        function updateZeroPrices() {
+            try {
+                document.querySelectorAll('.price').forEach(el => {
+                    if (el.textContent.trim() === '0.00') {
+                        el.textContent = 'Call for price';
+                    }
+                });
+            } catch(e) {
+                console.error('[SEARCHSPRING] updateZeroPrices error:', e);
+            }
+        }
+
+        function setupMutationObserver() {
+            try {
+                updateZeroPrices();
+
+                // Check if already set up globally
+                if (window.searchspringPriceObserver) {
+                    console.log('[SEARCHSPRING] Observer already exists, reusing');
+                    return;
+                }
+
+                var priceObserverInstance = new MutationObserver(updateZeroPrices);
+                var bodyTarget = document.body;
+                if (bodyTarget) {
+                    priceObserverInstance.observe(bodyTarget, { childList: true, subtree: true });
+                    console.log('[SEARCHSPRING] MutationObserver started on document.body');
+                    window.searchspringPriceObserver = priceObserverInstance;
+                }
+            } catch(e) {
+                console.error('[SEARCHSPRING] MutationObserver setup error:', e.message);
+            }
+        }
+
+        // Defer observer setup until DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupMutationObserver);
+        } else {
+            // DOM already loaded
+            setupMutationObserver();
+        }
+    } catch(e) {
+        console.error('[SEARCHSPRING] Zero price update error:', e.message);
     }
-
-    updateZeroPrices();
-
-    const observer = new MutationObserver(updateZeroPrices);
-    const observeTarget = document.body || document.documentElement;
-    if (observeTarget) observer.observe(observeTarget, { childList: true, subtree: true });
+    })();
 </script>
 
 <style>
@@ -88,44 +129,62 @@
 </style>
 
 <script>
-    const input = document.getElementById('searchInput');
-    const resultsContainer = document.getElementById('autocomplete-results');
-    const baseUrl = '@searchBaseUrl';
+    (function initSearchTracking() {
+        try {
+            const baseUrl = '@searchBaseUrl';
 
-    window.searchspringTracking = {
-        userId: null,
-        sessionId: null
-    };
-
-    let intellisuggestIsReady = false;
-
-    document.addEventListener('intellisuggest-ready', function () {
-        const trackingParams = window.intellisuggest?.getTrackingParams?.();
-        if (trackingParams?.userId && trackingParams?.sessionId) {
-            window.searchspringTracking.userId = trackingParams.userId;
-            window.searchspringTracking.sessionId = trackingParams.sessionId;
-            intellisuggestIsReady = true;
-            console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
-        } else {
-            console.warn("⚠️ Tracking params missing after intellisuggest-ready event.");
-        }
-    });
-
-    function debounce(func, delay) {
-        let timeout;
-        return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
+        window.searchspringTracking = {
+            userId: null,
+            sessionId: null
         };
-    }
 
-    const decodeHTML = (escapedStr) => {
-        const textarea = document.createElement('textarea');
-        textarea.innerHTML = escapedStr || '';
-        return textarea.value;
-    };
+        let intellisuggestIsReady = false;
 
-    input.addEventListener('input', debounce(async function () {
+        document.addEventListener('intellisuggest-ready', function () {
+            try {
+                const trackingParams = window.intellisuggest?.getTrackingParams?.();
+                if (trackingParams?.userId && trackingParams?.sessionId) {
+                    window.searchspringTracking.userId = trackingParams.userId;
+                    window.searchspringTracking.sessionId = trackingParams.sessionId;
+                    intellisuggestIsReady = true;
+                    console.log("✅ Searchspring tracking ready:", window.searchspringTracking);
+                } else {
+                    console.warn("⚠️ Tracking params missing after intellisuggest-ready event.");
+                }
+            } catch(e) {
+                console.error('[SEARCHSPRING] intellisuggest-ready error:', e);
+            }
+        });
+
+        function debounce(func, delay) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        const decodeHTML = (escapedStr) => {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = escapedStr || '';
+            return textarea.value;
+        };
+
+        // Wait for DOM and elements to exist
+        function initializeSearchInput() {
+            const input = document.getElementById('searchInput');
+            const resultsContainer = document.getElementById('autocomplete-results');
+            const searchForm = document.getElementById('searchForm');
+
+            if (!input || !resultsContainer || !searchForm) {
+                console.warn('[SEARCHSPRING] Required DOM elements not found, retrying...');
+                setTimeout(initializeSearchInput, 100);
+                return;
+            }
+
+            console.log('[SEARCHSPRING] All DOM elements found, initializing event listeners');
+
+            input.addEventListener('input', debounce(async function () {
         const query = input.value.trim();
         if (query.length < 2) {
             resultsContainer.innerHTML = '';
@@ -193,30 +252,43 @@
             resultsContainer.innerHTML = combinedHtml;
             resultsContainer.style.display = combinedHtml.trim() ? 'block' : 'none';
 
-        } catch (err) {
-            console.error("❌ Failed to fetch autocomplete/suggest:", err);
-            resultsContainer.style.display = 'none';
-        }
-    }, 500));
+            } catch (err) {
+                console.error("❌ [SEARCHSPRING] Failed to fetch autocomplete/suggest:", err);
+                resultsContainer.style.display = 'none';
+            }
+            }, 500));
 
-    document.getElementById('searchForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        const query = input.value.trim();
-        if (query) {
-            window.location.href = baseUrl + encodeURIComponent(query);
-        }
-    });
+            searchForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const query = input.value.trim();
+                if (query) {
+                    window.location.href = baseUrl + encodeURIComponent(query);
+                }
+            });
 
-    document.addEventListener('click', function (event) {
-        if (!event.target.closest('.search-container') && event.target !== input) {
-            resultsContainer.style.display = 'none';
-        }
-    });
+            document.addEventListener('click', function (event) {
+                if (!event.target.closest('.search-container') && event.target !== input) {
+                    resultsContainer.style.display = 'none';
+                }
+            });
 
-    input.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            resultsContainer.style.display = 'none';
-            input.blur();
+            input.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    resultsContainer.style.display = 'none';
+                    input.blur();
+                }
+            });
         }
-    });
+
+        // Initialize on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSearchInput);
+        } else {
+            initializeSearchInput();
+        }
+    } catch(e) {
+        console.error('[SEARCHSPRING] Fatal initialization error:', e.message);
+        console.error('[SEARCHSPRING] Stack:', e.stack);
+    }
+    })();  // ✅ Close the initSearchTracking IIFE
 </script>

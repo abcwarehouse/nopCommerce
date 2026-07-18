@@ -4,33 +4,388 @@
   var debugModeText = Model.IsDebugMode ? ", { 'debug_mode':true }" : string.Empty;
 }
 
-<!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) with Consent Mode v2 & AI Assistant Channel Grouping -->
 <script src="https://www.googletagmanager.com/gtag/js?id=@Model.GoogleTag"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+  console.log('[GA4 RACE CONDITION FIX] Starting initialization sequence');
+  console.log('[GA4] Script load time:', new Date().toISOString());
+
+  // Verify referrer policy allows sending referrer (critical for attribution)
+  var referrerPolicyMeta = document.querySelector('meta[name="referrer"]');
+  var referrerPolicy = referrerPolicyMeta ? referrerPolicyMeta.getAttribute('content') : 'not set';
+  console.log('[GA4 REFERRER POLICY] Current policy:', referrerPolicy);
+  if (referrerPolicy === 'no-referrer' || referrerPolicy === 'origin') {
+    console.warn('[GA4 REFERRER POLICY] ⚠️ WARNING: Referrer policy is too strict for GA4 attribution! Should be "strict-origin-when-cross-origin" or "unsafe-url"');
+  }
+
+  // Ensure consent mode defaults are set (if not already set by _Root.Head.cshtml)
+  if (!window.consentModeInitialized) {
+    console.log('[CONSENT MODE] Not yet initialized, setting defaults now');
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'analytics_storage': 'granted',  // ← CRITICAL: Analytics must be granted for referral tracking!
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied',
+      'wait_for_update': 2000  // ← Wait up to 2s for user consent preference
+    });
+    console.log('[CONSENT MODE] Defaults: analytics=GRANTED (required for GA4), ads=denied, wait=2s');
+    window.consentModeInitialized = true;
+  } else {
+    console.log('[CONSENT MODE] Already initialized by _Root.Head.cshtml');
+  }
+
+  // Warn if Termly might be denying analytics storage
+  if (typeof window.consentStatus !== 'undefined' && window.consentStatus.analytics_storage === false) {
+    console.warn('[GA4 CONSENT] ⚠️ WARNING: analytics_storage is DENIED - GA4 referral tracking will NOT work! Check Termly/consent settings.');
+  }
+
   gtag('js', new Date());
 
   console.log('[GA4] Initializing with tag: @Model.GoogleTag');
-  gtag('config','@Model.GoogleTag'@Html.Raw(@debugModeText));
+  console.log('[GA4] Referrer:', document.referrer || '(direct)');
+  console.log('[GA4] User Agent:', navigator.userAgent);
 
-  var referrerData = {
-    'page_path': window.location.pathname,
-    'page_title': document.title,
-    'referrer': document.referrer,
-    'timestamp': new Date().toISOString(),
-    'userAgent': navigator.userAgent
+  // Detect email traffic by checking user agent (email clients strip referrer)
+  function detectEmailTraffic() {
+    var userAgent = navigator.userAgent.toLowerCase();
+    var emailClientIndicators = [
+      'apple mail',
+      'outlook',
+      'thunderbird',
+      'gmail',
+      'yahoo mail',
+      'aol',
+      'mail app',
+      'ios mail',
+      'android mail',
+      'mobile safari.*mail',
+      'mailspring',
+      'the bat',
+      'evolution',
+      'mutt'
+    ];
+
+    console.log('[EMAIL DETECTION] Checking user agent for email client indicators');
+    for (var i = 0; i < emailClientIndicators.length; i++) {
+      if (userAgent.includes(emailClientIndicators[i])) {
+        console.log('[EMAIL DETECTION] ✅ Email client detected:', emailClientIndicators[i]);
+        return true;
+      }
+    }
+
+    // Check for common email app contexts
+    if (window.location.href.includes('utm_medium=email') ||
+        window.location.href.includes('utm_source=email')) {
+      console.log('[EMAIL DETECTION] ✅ Email UTM parameter detected in URL');
+      return true;
+    }
+
+    console.log('[EMAIL DETECTION] No email client detected (standard browser)');
+    return false;
+  }
+
+  // Detect traffic source early to set session-level source/medium (required for GA4 referral attribution post-May 2024)
+  function getSessionSource() {
+    var referrer = document.referrer.toLowerCase();
+    var userAgent = navigator.userAgent.toLowerCase();
+    var searchUrl = window.location.href.toLowerCase();
+    var urlParams = new URLSearchParams(window.location.search);
+
+    // Step 1: Check for click ID parameters (Google Ads, Facebook, Microsoft) — highest priority
+    var gclid = urlParams.get('gclid');
+    var fbclid = urlParams.get('fbclid');
+    var msclkid = urlParams.get('msclkid');
+    var ttclid = urlParams.get('ttclid');
+
+    if (gclid) {
+      console.log('[GA4 SESSION SOURCE] Google Ads detected (gclid)');
+      return { source: 'google', medium: 'cpc' };
+    }
+    if (fbclid) {
+      console.log('[GA4 SESSION SOURCE] Facebook Ads detected (fbclid)');
+      return { source: 'facebook', medium: 'cpc' };
+    }
+    if (msclkid) {
+      console.log('[GA4 SESSION SOURCE] Microsoft Ads detected (msclkid)');
+      return { source: 'bing', medium: 'cpc' };
+    }
+    if (ttclid) {
+      console.log('[GA4 SESSION SOURCE] TikTok Ads detected (ttclid)');
+      return { source: 'tiktok', medium: 'cpc' };
+    }
+
+    // Step 2: Check URL for UTM params (second priority)
+    var utmSource = urlParams.get('utm_source');
+    var utmMedium = urlParams.get('utm_medium');
+    var utmCampaign = urlParams.get('utm_campaign');
+    var utmContent = urlParams.get('utm_content');
+    var utmTerm = urlParams.get('utm_term');
+
+    if (utmSource || utmMedium) {
+      console.log('[GA4 SESSION SOURCE] UTM params found - source:', utmSource, 'medium:', utmMedium);
+      if (utmCampaign) console.log('[GA4 SESSION SOURCE] Campaign:', utmCampaign);
+      return {
+        source: utmSource || 'direct',
+        medium: utmMedium || 'organic',
+        campaign: utmCampaign,
+        content: utmContent,
+        term: utmTerm
+      };
+    }
+
+    // Step 3: Detect organic search engines (Google, Bing, DuckDuckGo, Yahoo, Baidu, Yandex)
+    var searchEngines = [
+      { domain: 'google.', source: 'google' },
+      { domain: 'bing.com', source: 'bing' },
+      { domain: 'duckduckgo.com', source: 'duckduckgo' },
+      { domain: 'search.yahoo.com', source: 'yahoo' },
+      { domain: 'baidu.com', source: 'baidu' },
+      { domain: 'yandex.', source: 'yandex' }
+    ];
+
+    for (var i = 0; i < searchEngines.length; i++) {
+      if (referrer.includes(searchEngines[i].domain)) {
+        console.log('[GA4 SESSION SOURCE] Organic search detected:', searchEngines[i].source);
+        return { source: searchEngines[i].source, medium: 'organic' };
+      }
+    }
+
+    // Step 4: Detect social media platforms
+    var socialPlatforms = [
+      { domain: 'facebook.com', source: 'facebook', medium: 'social' },
+      { domain: 'instagram.com', source: 'instagram', medium: 'social' },
+      { domain: 'twitter.com', source: 'twitter', medium: 'social' },
+      { domain: 'x.com', source: 'x', medium: 'social' },
+      { domain: 'linkedin.com', source: 'linkedin', medium: 'social' },
+      { domain: 'pinterest.com', source: 'pinterest', medium: 'social' },
+      { domain: 'reddit.com', source: 'reddit', medium: 'social' },
+      { domain: 'tiktok.com', source: 'tiktok', medium: 'social' },
+      { domain: 'youtube.com', source: 'youtube', medium: 'social' },
+      { domain: 'youtube.co', source: 'youtube', medium: 'social' },
+      { domain: 'threads.net', source: 'threads', medium: 'social' },
+      { domain: 'mastodon.', source: 'mastodon', medium: 'social' }
+    ];
+
+    for (var i = 0; i < socialPlatforms.length; i++) {
+      if (referrer.includes(socialPlatforms[i].domain)) {
+        console.log('[GA4 SESSION SOURCE] Social media detected:', socialPlatforms[i].source);
+        return { source: socialPlatforms[i].source, medium: socialPlatforms[i].medium };
+      }
+    }
+
+    // Step 5: Detect email traffic (referrer stripped by client)
+    if (!referrer && detectEmailTraffic()) {
+      console.log('[GA4 SESSION SOURCE] Email traffic detected (referrer stripped)');
+      return { source: 'email', medium: 'email' };
+    }
+
+    // Step 6: Detect AI Assistant traffic
+    var aiSources = ['openai.com', 'chatgpt.com', 'chat.openai.com', 'gemini.google.com', 'bard.google.com', 'claude.ai', 'copilot.microsoft.com', 'perplexity.ai'];
+    for (var i = 0; i < aiSources.length; i++) {
+      if (referrer.includes(aiSources[i])) {
+        console.log('[GA4 SESSION SOURCE] AI Assistant detected');
+        return { source: 'ai_assistant', medium: 'referral' };
+      }
+    }
+    if (userAgent.includes('ccbot') || userAgent.includes('chatgptbot')) {
+      console.log('[GA4 SESSION SOURCE] AI bot detected in user agent');
+      return { source: 'ai_assistant', medium: 'referral' };
+    }
+
+    // Step 7: Detect newsletter/marketing platforms (ConvertKit, Substack, Mailchimp, ActiveCampaign, etc.)
+    var marketingPlatforms = [
+      { domain: 'convertkit.com', source: 'convertkit', medium: 'email' },
+      { domain: 'substack.com', source: 'substack', medium: 'email' },
+      { domain: 'mailchimp.com', source: 'mailchimp', medium: 'email' },
+      { domain: 'activecampaign.com', source: 'activecampaign', medium: 'email' },
+      { domain: 'klaviyo.com', source: 'klaviyo', medium: 'email' },
+      { domain: 'drip.com', source: 'drip', medium: 'email' },
+      { domain: 'getresponse.com', source: 'getresponse', medium: 'email' }
+    ];
+
+    for (var i = 0; i < marketingPlatforms.length; i++) {
+      if (referrer.includes(marketingPlatforms[i].domain)) {
+        console.log('[GA4 SESSION SOURCE] Marketing platform detected:', marketingPlatforms[i].source);
+        return { source: marketingPlatforms[i].source, medium: marketingPlatforms[i].medium };
+      }
+    }
+
+    // Step 8: Handle standard referrer (extract domain and classify)
+    if (referrer) {
+      try {
+        var referrerUrl = new URL(document.referrer);
+        var referrerDomain = referrerUrl.hostname.replace('www.', '');
+        var isInternal = referrerDomain === window.location.hostname.replace('www.', '');
+
+        if (isInternal) {
+          console.log('[GA4 SESSION SOURCE] Internal referrer detected - treating as direct');
+          return { source: '(direct)', medium: '(direct)' };
+        } else {
+          console.log('[GA4 SESSION SOURCE] External referrer:', referrerDomain);
+          return { source: referrerDomain, medium: 'referral' };
+        }
+      } catch(e) {
+        console.log('[GA4 SESSION SOURCE] Could not parse referrer URL:', e.message);
+        return { source: 'direct', medium: 'direct' };
+      }
+    }
+
+    // Step 9: No referrer, no UTM params, no email = direct traffic (user typed URL or bookmarked)
+    console.log('[GA4 SESSION SOURCE] No referrer/UTM/email detected - classified as direct');
+    return { source: 'direct', medium: 'direct' };
+  }
+
+  // Enable event queueing to buffer events during consent race condition
+  var sessionSource = getSessionSource();
+  var ga4Config = {
+    'session_source': sessionSource.source,        // ← Required for GA4 referral attribution
+    'session_medium': sessionSource.medium,        // ← Required for GA4 referral attribution
+    'allow_google_signals': false,
+    'allow_ad_personalization_signals': false,
+    'cookie_flags': 'SameSite=Lax;secure',
+    'cookie_domain': 'auto'                        // ← Ensure cookies work across subdomains if applicable
   };
 
-  console.log('[GA4] Page View Event:', referrerData);
-  console.log('[GA4] Referrer source:', document.referrer || '(direct)');
+  // Add campaign parameters if detected
+  if (sessionSource.campaign) ga4Config['session_campaign'] = sessionSource.campaign;
+  if (sessionSource.content) ga4Config['session_content'] = sessionSource.content;
+  if (sessionSource.term) ga4Config['session_term'] = sessionSource.term;
 
-  gtag('event', 'page_view', referrerData);
+  @if (!string.IsNullOrEmpty(debugModeText))
+  {
+    <text>
+    ga4Config['debug_mode'] = true;
+    </text>
+  }
+  console.log('[GA4 CONFIG] Session source/medium:', sessionSource.source + '/' + sessionSource.medium);
+  if (sessionSource.campaign) console.log('[GA4 CONFIG] Campaign:', sessionSource.campaign);
+  gtag('config','@Model.GoogleTag', ga4Config);
+
+  // Detect email traffic by checking user agent (most email clients send a specific UA)
+  function detectEmailTraffic() {
+    var userAgent = navigator.userAgent.toLowerCase();
+
+    var emailClientIndicators = [
+      'apple mail',
+      'outlook',
+      'thunderbird',
+      'gmail',
+      'yahoo mail',
+      'aol',
+      'mail app',
+      'ios mail',
+      'android mail',
+      'mobile safari.*mail',
+      'mailspring',
+      'the bat',
+      'evolution',
+      'mutt'
+    ];
+
+    console.log('[EMAIL DETECTION] Checking user agent for email client indicators');
+    for (var i = 0; i < emailClientIndicators.length; i++) {
+      if (userAgent.includes(emailClientIndicators[i])) {
+        console.log('[EMAIL DETECTION] ✅ Email client detected:', emailClientIndicators[i]);
+        return true;
+      }
+    }
+
+    // Check for common email app contexts
+    if (window.location.href.includes('utm_medium=email') ||
+        window.location.href.includes('utm_source=email')) {
+      console.log('[EMAIL DETECTION] ✅ Email UTM parameter detected in URL');
+      return true;
+    }
+
+    console.log('[EMAIL DETECTION] No email client detected (standard browser)');
+    return false;
+  }
+
+
+  // Delay page_view until Termly consent is resolved (prevents race condition)
+  function firePageView() {
+    console.log('[GA4 RACE CONDITION] firePageView() called at', new Date().toISOString());
+
+    if (typeof window.ga4Diagnostics !== 'undefined') {
+      window.ga4Diagnostics.pageViewFired = true;
+      window.ga4Diagnostics.log('Page view about to fire');
+    }
+
+    var referrerData = {
+      'page_path': window.location.pathname,
+      'page_title': document.title
+    };
+
+    console.log('[GA4] Page View Event Data:', referrerData);
+    console.log('[GA4] Referral attribution handled at session level: ', sessionSource.source + '/' + sessionSource.medium);
+    console.log('[GA4 RACE CONDITION] Sending page_view with consent state AFTER Termly resolved');
+
+    gtag('event', 'page_view', referrerData);
+    console.log('[GA4 RACE CONDITION] ✅ Page view fired - referral attribution should now be correct');
+  }
+
+  // Wait for Termly to update consent before firing page_view
+  // If Termly hasn't fired within 1.5s, fire anyway (user may have disabled cookies)
+  console.log('[GA4 RACE CONDITION] Starting 1.5s timeout for Termly consent update...');
+  var pageViewTimeout = setTimeout(function() {
+    console.log('[GA4 RACE CONDITION] ⚠️ Timeout (1.5s) - Termly did not update consent in time');
+    console.log('[GA4 RACE CONDITION] Firing page_view with default/initial consent state');
+    firePageView();
+  }, 1500);
+
+  // Listen for Termly consent resolution
+  window.addEventListener('consentStatusChange', function(e) {
+    clearTimeout(pageViewTimeout);
+    console.log('[GA4 RACE CONDITION] ✅ Termly consent received before timeout');
+    console.log('[GA4 RACE CONDITION] Firing page_view with USER-ACCEPTED consent state');
+    firePageView();
+  });
+
+  // Fallback: if Termly never fires, fire on DOMContentLoaded
+  var pageViewFired = false;
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('[GA4 RACE CONDITION] DOMContentLoaded fired');
+    if (pageViewTimeout) {
+      // Page view not yet fired, so fire it now
+      clearTimeout(pageViewTimeout);
+      console.log('[GA4 RACE CONDITION] ℹ️ Page view not yet sent, DOMContentLoaded fallback triggering');
+      firePageView();
+      pageViewFired = true;
+    } else {
+      console.log('[GA4 RACE CONDITION] ✅ Page view already fired before DOMContentLoaded');
+      pageViewFired = true;
+    }
+  });
+
+  // Wrapper to ensure consent events are queued properly
+  function fireConversionEvent(eventName, eventData) {
+    console.log('[GA4 EVENT QUEUE] Processing ' + eventName + ' event');
+    // If page_view already fired, send immediately; otherwise queue it
+    if (pageViewFired) {
+      console.log('[GA4 EVENT QUEUE] ✅ Page view already sent - sending ' + eventName + ' immediately');
+      console.log('[GA4] ' + eventName + ' Event (after page view):', eventData);
+      gtag('event', eventName, eventData);
+      console.log('[GA4 EVENT QUEUE] ✅ ' + eventName + ' event sent');
+    } else {
+      // Queue event to fire after page_view
+      console.log('[GA4 EVENT QUEUE] ⏳ Page view not yet sent - queueing ' + eventName + ' until consent resolved');
+      window.addEventListener('consentStatusChange', function queuedEventListener() {
+        console.log('[GA4 EVENT QUEUE] ✅ Consent resolved - sending queued ' + eventName + ' event');
+        console.log('[GA4] ' + eventName + ' Event (queued after consent):', eventData);
+        gtag('event', eventName, eventData);
+        console.log('[GA4 EVENT QUEUE] ✅ Queued ' + eventName + ' event sent');
+        window.removeEventListener('consentStatusChange', queuedEventListener);
+      });
+    }
+  }
 
   @if (Model.ViewItemModel != null)
   {
     <text>
-      gtag("event", "view_item", {
+      fireConversionEvent("view_item", {
         currency: "USD",
         value: @Model.ViewItemModel.Price,
         items: [
@@ -72,14 +427,14 @@
         ]
       };
       console.log('[GA4] Begin Checkout Event:', beginCheckoutEvent);
-      gtag("event", "begin_checkout", beginCheckoutEvent);
+      fireConversionEvent("begin_checkout", beginCheckoutEvent);
     </text>
   }
 
   @if (Model.ViewCartModel != null)
   {
     <text>
-      gtag("event", "view_cart", {
+      fireConversionEvent("view_cart", {
         currency: "USD",
         value: @Model.ViewCartModel.Value,
         items: [
@@ -131,7 +486,7 @@
         ]
       };
       console.log('[GA4] Purchase Event:', purchaseEvent);
-      gtag("event", "purchase", purchaseEvent);
+      fireConversionEvent("purchase", purchaseEvent);
     </text>
   }
 </script>
