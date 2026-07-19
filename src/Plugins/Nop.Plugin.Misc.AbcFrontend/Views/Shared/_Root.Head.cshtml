@@ -119,12 +119,12 @@
                 function gtag(){window.dataLayer.push(arguments);}
                 gtag('consent', 'default', {
                     'ad_storage': 'denied',
-                    'analytics_storage': 'denied',  // ← Changed to 'denied' - let Termly decide
+                    'analytics_storage': 'granted',  // ← Allow analytics by default
                     'ad_user_data': 'denied',
                     'ad_personalization': 'denied',
                     'wait_for_update': 3000  // ← Increased to 3s to give Termly time to load
                 });
-                console.log('[GTM CONSENT MODE] Default: analytics=DENIED (waiting for Termly), ads=denied, wait=3s');
+                console.log('[GTM CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
 
                 // GTM initialization
                 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -534,12 +534,12 @@
 
             gtag('consent', 'default', {
                 'ad_storage': 'denied',
-                'analytics_storage': termlyReady ? (window.consentStatus?.analytics_storage ? 'granted' : 'denied') : 'denied',
+                'analytics_storage': 'granted',  // ← Allow analytics by default
                 'ad_user_data': 'denied',
                 'ad_personalization': 'denied',
                 'wait_for_update': 3000  // ← Increased timeout to 3s for Termly
             });
-            console.log('[CONSENT MODE] Default: analytics=' + (termlyReady ? 'per Termly' : 'DENIED (waiting)') + ', ads=denied, wait=3s');
+            console.log('[CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
             console.log('[CONSENT MODE] Defaults set - waiting up to 3000ms (3s) for Termly update');
 
             // Listen for Termly consent changes
