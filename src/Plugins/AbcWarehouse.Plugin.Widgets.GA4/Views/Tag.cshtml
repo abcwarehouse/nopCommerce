@@ -24,6 +24,34 @@
       return; // Exit - _Root.Head.cshtml must load first
     }
 
+    // Detect bots/crawlers and internal traffic - LABEL instead of exclude
+    function detectTrafficType() {
+      var userAgent = navigator.userAgent.toLowerCase();
+      var botPatterns = ['bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'slurp', 'googlebot', 'bingbot', 'yandexbot', 'ahrefsbot', 'semrushbot'];
+
+      for (var i = 0; i < botPatterns.length; i++) {
+        if (userAgent.includes(botPatterns[i])) {
+          console.log('[GA4 TRAFFIC TYPE] Bot detected:', botPatterns[i]);
+          return 'bot';
+        }
+      }
+
+      var hostname = window.location.hostname.toLowerCase();
+      var internalPatterns = ['localhost', '127.0.0.1', '192.168.', '10.0.', 'staging', 'dev.', 'test.'];
+
+      for (var i = 0; i < internalPatterns.length; i++) {
+        if (hostname.includes(internalPatterns[i])) {
+          console.log('[GA4 TRAFFIC TYPE] Internal traffic detected:', hostname);
+          return 'internal';
+        }
+      }
+
+      console.log('[GA4 TRAFFIC TYPE] Normal user traffic');
+      return 'user';
+    }
+
+    var trafficType = detectTrafficType();
+
   // Verify referrer policy allows sending referrer (critical for attribution)
   var referrerPolicyMeta = document.querySelector('meta[name="referrer"]');
   var referrerPolicy = referrerPolicyMeta ? referrerPolicyMeta.getAttribute('content') : 'not set';
@@ -38,6 +66,7 @@
   // Just verify the current state
   var termlyReady = typeof window.consentStatus !== 'undefined';
   console.log('[GA4 CONSENT] Termly pre-loaded:', termlyReady);
+  console.log('[GA4 TRACKING] All traffic will be tracked and labeled (user/bot/internal)');
 
   if (termlyReady) {
     console.log('[GA4 CONSENT] Termly consent active - analytics_storage:', window.consentStatus.analytics_storage);
@@ -47,7 +76,7 @@
 
   // Warn if Termly is denying analytics storage
   if (typeof window.consentStatus !== 'undefined' && window.consentStatus.analytics_storage === false) {
-    console.warn('[GA4 CONSENT] ⚠️ WARNING: analytics_storage is DENIED by Termly - GA4 will NOT track referral data. User must accept analytics in cookie banner.');
+    console.warn('[GA4 CONSENT] ⚠️ WARNING: analytics_storage is DENIED by Termly - GA4 will NOT track any data. User must accept analytics in cookie banner.');
   }
 
   gtag('js', new Date());
@@ -260,7 +289,8 @@
     'allow_google_signals': false,
     'allow_ad_personalization_signals': false,
     'cookie_flags': cookieFlags,
-    'cookie_domain': 'auto'
+    'cookie_domain': 'auto',
+    'traffic_type': trafficType  // ← Label: 'user', 'bot', or 'internal'
   };
 
   @if (!string.IsNullOrEmpty(debugModeText))
@@ -302,10 +332,12 @@
 
     var referrerData = {
       'page_path': window.location.pathname,
-      'page_title': document.title
+      'page_title': document.title,
+      'traffic_type': trafficType  // ← Include traffic type label
     };
 
     console.log('[GA4] Page View Event Data:', referrerData);
+    console.log('[GA4] Traffic Type:', trafficType);
     console.log('[GA4] Referral attribution handled at session level: ', sessionSource.source + '/' + sessionSource.medium);
     console.log('[GA4 RACE CONDITION] Sending page_view with consent state AFTER Termly resolved');
 

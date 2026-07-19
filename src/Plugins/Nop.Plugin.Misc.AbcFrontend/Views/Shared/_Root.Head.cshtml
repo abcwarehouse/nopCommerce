@@ -113,26 +113,24 @@
                 console.log('[GTM BOT DETECTION] Bot detected - GTM tracking disabled');
             } else if (isInternalTraffic()) {
                 console.log('[GTM INTERNAL TRAFFIC] Internal traffic detected - GTM tracking disabled');
-            } else {
-                // Ensure consent mode defaults are set before GTM loads
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){window.dataLayer.push(arguments);}
-                gtag('consent', 'default', {
-                    'ad_storage': 'denied',
-                    'analytics_storage': 'granted',  // ← Allow analytics by default
-                    'ad_user_data': 'denied',
-                    'ad_personalization': 'denied',
-                    'wait_for_update': 3000  // ← Increased to 3s to give Termly time to load
-                });
-                console.log('[GTM CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
+            // Ensure consent mode defaults are set before GTM loads
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+                'ad_storage': 'denied',
+                'analytics_storage': 'granted',  // ← Allow analytics by default
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied',
+                'wait_for_update': 3000  // ← Increased to 3s to give Termly time to load
+            });
+            console.log('[GTM CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
 
-                // GTM initialization
-                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','GTM-TBLL3Z89');
-            }
+            // GTM initialization
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-TBLL3Z89');
             </script>
             <!-- End Google Tag Manager -->
     }
@@ -499,71 +497,50 @@
             logEvent: function(event, data) { console.log('[GA4 DIAGNOSTICS] Event: ' + event, data); }
         };
 
-        // Detect bots/crawlers before initializing consent mode
-        function isBot() {
-            var userAgent = navigator.userAgent.toLowerCase();
-            var botPatterns = ['bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'slurp', 'googlebot', 'bingbot', 'yandexbot', 'ahrefsbot', 'semrushbot'];
-            return botPatterns.some(pattern => userAgent.includes(pattern));
-        }
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
 
-        function isInternalTraffic() {
-            var hostname = window.location.hostname.toLowerCase();
-            var internalPatterns = ['localhost', '127.0.0.1', '192.168.', '10.0.', 'staging', 'dev.', 'test.'];
-            return internalPatterns.some(pattern => hostname.includes(pattern));
-        }
+        console.log('[CONSENT MODE] Initializing Consent Mode v2');
+        console.log('[REFERRAL] Initial referrer:', document.referrer || '(direct)');
 
-        if (isBot()) {
-            console.log('[CONSENT MODE] Bot detected - consent tracking disabled');
-            ga4Diagnostics.log('Bot detected - exiting consent mode initialization');
-        } else if (isInternalTraffic()) {
-            console.log('[CONSENT MODE] Internal traffic detected - consent tracking disabled');
-            ga4Diagnostics.log('Internal traffic detected - exiting consent mode initialization');
-        } else {
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
+        ga4Diagnostics.log('Consent Mode defaults about to be set');
+        ga4Diagnostics.consentDefaults = { time: new Date().toISOString(), state: 'denied' };
 
-            console.log('[CONSENT MODE] Initializing Consent Mode v2');
-            console.log('[REFERRAL] Initial referrer:', document.referrer || '(direct)');
+        // Check if Termly has already loaded
+        var termlyReady = typeof window.consentStatus !== 'undefined';
+        console.log('[CONSENT MODE] Termly pre-loaded:', termlyReady);
 
-            ga4Diagnostics.log('Consent Mode defaults about to be set');
-            ga4Diagnostics.consentDefaults = { time: new Date().toISOString(), state: 'denied' };
+        gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'analytics_storage': 'granted',  // ← Allow analytics by default
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'wait_for_update': 3000  // ← Increased timeout to 3s for Termly
+        });
+        console.log('[CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
+        console.log('[CONSENT MODE] Defaults set - waiting up to 3000ms (3s) for Termly update');
 
-            // Check if Termly has already loaded
-            var termlyReady = typeof window.consentStatus !== 'undefined';
-            console.log('[CONSENT MODE] Termly pre-loaded:', termlyReady);
+        // Listen for Termly consent changes
+        window.addEventListener('consentStatusChange', function(e) {
+            ga4Diagnostics.termlyEventFired = true;
+            var consentStatus = e.detail || window.consentStatus;
+            console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
+            ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
 
-            gtag('consent', 'default', {
-                'ad_storage': 'denied',
-                'analytics_storage': 'granted',  // ← Allow analytics by default
-                'ad_user_data': 'denied',
-                'ad_personalization': 'denied',
-                'wait_for_update': 3000  // ← Increased timeout to 3s for Termly
-            });
-            console.log('[CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
-            console.log('[CONSENT MODE] Defaults set - waiting up to 3000ms (3s) for Termly update');
+            var consentConfig = {
+                'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
+                'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
+                'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
+                'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
+            };
 
-            // Listen for Termly consent changes
-            window.addEventListener('consentStatusChange', function(e) {
-                ga4Diagnostics.termlyEventFired = true;
-                var consentStatus = e.detail || window.consentStatus;
-                console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
-                ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
+            ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
 
-                var consentConfig = {
-                    'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
-                    'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
-                    'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
-                    'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
-                };
-
-                ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
-
-                console.log('[CONSENT MODE] Updating consent to:', consentConfig);
-                console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
-                ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
-                gtag('consent', 'update', consentConfig);
-            });
-        }
+            console.log('[CONSENT MODE] Updating consent to:', consentConfig);
+            console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
+            ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
+            gtag('consent', 'update', consentConfig);
+        });
     </script>
 
     <!-- Termly Cookie Banner (with error handling) -->
