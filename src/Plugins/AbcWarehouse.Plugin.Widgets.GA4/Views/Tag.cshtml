@@ -48,6 +48,29 @@
   console.log('[GA4] Referrer:', document.referrer || '(direct)');
   console.log('[GA4] User Agent:', navigator.userAgent);
 
+  // Detect traffic type (user, bot, or internal)
+  function detectTrafficType() {
+    var userAgent = navigator.userAgent.toLowerCase();
+    var botPatterns = ['bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'slurp', 'googlebot', 'bingbot', 'yandexbot', 'ahrefsbot', 'semrushbot'];
+    for (var i = 0; i < botPatterns.length; i++) {
+      if (userAgent.includes(botPatterns[i])) {
+        console.log('[GA4 TRAFFIC TYPE] Bot detected:', botPatterns[i]);
+        return 'bot';
+      }
+    }
+
+    var hostname = window.location.hostname.toLowerCase();
+    var internalPatterns = ['localhost', '127.0.0.1', '192.168.', '10.0.', 'staging', 'dev.', 'test.'];
+    for (var i = 0; i < internalPatterns.length; i++) {
+      if (hostname.includes(internalPatterns[i])) {
+        console.log('[GA4 TRAFFIC TYPE] Internal traffic detected:', internalPatterns[i]);
+        return 'internal';
+      }
+    }
+
+    return 'user';
+  }
+
   // Detect email traffic by checking user agent (email clients strip referrer)
   function detectEmailTraffic() {
     var userAgent = navigator.userAgent.toLowerCase();
@@ -240,9 +263,11 @@
 
   // Enable event queueing to buffer events during consent race condition
   var sessionSource = getSessionSource();
+  var trafficType = detectTrafficType();
   var ga4Config = {
     'session_source': sessionSource.source,        // ← Required for GA4 referral attribution
     'session_medium': sessionSource.medium,        // ← Required for GA4 referral attribution
+    'traffic_type': trafficType,                   // ← Label traffic as user/bot/internal
     'allow_google_signals': false,
     'allow_ad_personalization_signals': false,
     'cookie_flags': 'SameSite=Lax;secure',
@@ -316,11 +341,13 @@
 
     var referrerData = {
       'page_path': window.location.pathname,
-      'page_title': document.title
+      'page_title': document.title,
+      'traffic_type': trafficType                 // ← Include traffic classification in event
     };
 
     console.log('[GA4] Page View Event Data:', referrerData);
     console.log('[GA4] Referral attribution handled at session level: ', sessionSource.source + '/' + sessionSource.medium);
+    console.log('[GA4 TRAFFIC TYPE] ' + trafficType);
     console.log('[GA4 RACE CONDITION] Sending page_view with consent state AFTER Termly resolved');
 
     gtag('event', 'page_view', referrerData);
