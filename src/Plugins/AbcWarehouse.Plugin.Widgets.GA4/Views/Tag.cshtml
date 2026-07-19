@@ -7,21 +7,22 @@
 <!-- Google tag (gtag.js) with Consent Mode v2 & AI Assistant Channel Grouping -->
 <script src="https://www.googletagmanager.com/gtag/js?id=@Model.GoogleTag"></script>
 <script>
-  console.log('[GA4] Tag initialization starting');
-  console.log('[GA4] Script load time:', new Date().toISOString());
+  (function() {
+    console.log('[GA4] Tag initialization starting');
+    console.log('[GA4] Script load time:', new Date().toISOString());
 
-  // Check if bots/internal traffic was already filtered by _Root.Head.cshtml
-  // If ga4Diagnostics exists, consent mode was already initialized by _Root.Head.cshtml
-  if (typeof window.ga4Diagnostics === 'undefined') {
-    console.warn('[GA4] ga4Diagnostics not initialized - _Root.Head.cshtml may not have loaded');
-    return; // Exit - _Root.Head.cshtml must load first for consent mode
-  }
+    // Check if bots/internal traffic was already filtered by _Root.Head.cshtml
+    // If ga4Diagnostics exists, consent mode was already initialized by _Root.Head.cshtml
+    if (typeof window.ga4Diagnostics === 'undefined') {
+      console.warn('[GA4] ga4Diagnostics not initialized - _Root.Head.cshtml may not have loaded');
+      return; // Exit - _Root.Head.cshtml must load first for consent mode
+    }
 
-  // Ensure gtag is available (defined by _Root.Head.cshtml)
-  if (typeof gtag === 'undefined') {
-    console.warn('[GA4] gtag() function not available - _Root.Head.cshtml must load first');
-    return; // Exit - _Root.Head.cshtml must load first
-  }
+    // Ensure gtag is available (defined by _Root.Head.cshtml)
+    if (typeof gtag === 'undefined') {
+      console.warn('[GA4] gtag() function not available - _Root.Head.cshtml must load first');
+      return; // Exit - _Root.Head.cshtml must load first
+    }
 
   // Verify referrer policy allows sending referrer (critical for attribution)
   var referrerPolicyMeta = document.querySelector('meta[name="referrer"]');
@@ -492,4 +493,5 @@
       fireConversionEvent("purchase", purchaseEvent);
     </text>
   }
+  })(); // Close IIFE
 </script>
