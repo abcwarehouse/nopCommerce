@@ -96,23 +96,6 @@
     {
         <!-- Hawthorne: Google Tag Manager (with Consent Mode v2) -->
             <script>
-            // Detect bots/crawlers before initializing GTM
-            function isBot() {
-                var userAgent = navigator.userAgent.toLowerCase();
-                var botPatterns = ['bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'slurp', 'googlebot', 'bingbot', 'yandexbot', 'ahrefsbot', 'semrushbot'];
-                return botPatterns.some(pattern => userAgent.includes(pattern));
-            }
-
-            function isInternalTraffic() {
-                var hostname = window.location.hostname.toLowerCase();
-                var internalPatterns = ['localhost', '127.0.0.1', '192.168.', '10.0.', 'staging', 'dev.', 'test.'];
-                return internalPatterns.some(pattern => hostname.includes(pattern));
-            }
-
-            if (isBot()) {
-                console.log('[GTM BOT DETECTION] Bot detected - GTM tracking disabled');
-            } else if (isInternalTraffic()) {
-                console.log('[GTM INTERNAL TRAFFIC] Internal traffic detected - GTM tracking disabled');
             // Ensure consent mode defaults are set before GTM loads
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
