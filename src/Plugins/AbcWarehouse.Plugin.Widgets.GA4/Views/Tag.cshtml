@@ -7,39 +7,76 @@
 <!-- Google tag (gtag.js) with Consent Mode v2 & AI Assistant Channel Grouping -->
 <script src="https://www.googletagmanager.com/gtag/js?id=@Model.GoogleTag"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  (function() {
+    console.log('[GA4] Tag initialization starting');
+    console.log('[GA4] Script load time:', new Date().toISOString());
 
-  console.log('[GA4 RACE CONDITION FIX] Starting initialization sequence');
-  console.log('[GA4] Script load time:', new Date().toISOString());
+    // Check if bots/internal traffic was already filtered by _Root.Head.cshtml
+    // If ga4Diagnostics exists, consent mode was already initialized by _Root.Head.cshtml
+    if (typeof window.ga4Diagnostics === 'undefined') {
+      console.warn('[GA4] ga4Diagnostics not initialized - _Root.Head.cshtml may not have loaded');
+      return; // Exit - _Root.Head.cshtml must load first for consent mode
+    }
+
+    // Ensure gtag is available (defined by _Root.Head.cshtml)
+    if (typeof gtag === 'undefined') {
+      console.warn('[GA4] gtag() function not available - _Root.Head.cshtml must load first');
+      return; // Exit - _Root.Head.cshtml must load first
+    }
+
+    // Detect bots/crawlers and internal traffic - LABEL instead of exclude
+    function detectTrafficType() {
+      var userAgent = navigator.userAgent.toLowerCase();
+      var botPatterns = ['bot', 'crawler', 'spider', 'scraper', 'curl', 'wget', 'slurp', 'googlebot', 'bingbot', 'yandexbot', 'ahrefsbot', 'semrushbot'];
+
+      for (var i = 0; i < botPatterns.length; i++) {
+        if (userAgent.includes(botPatterns[i])) {
+          console.log('[GA4 TRAFFIC TYPE] Bot detected:', botPatterns[i]);
+          return 'bot';
+        }
+      }
+
+      var hostname = window.location.hostname.toLowerCase();
+      var internalPatterns = ['localhost', '127.0.0.1', '192.168.', '10.0.', 'staging', 'dev.', 'test.'];
+
+      for (var i = 0; i < internalPatterns.length; i++) {
+        if (hostname.includes(internalPatterns[i])) {
+          console.log('[GA4 TRAFFIC TYPE] Internal traffic detected:', hostname);
+          return 'internal';
+        }
+      }
+
+      console.log('[GA4 TRAFFIC TYPE] Normal user traffic');
+      return 'user';
+    }
+
+    var trafficType = detectTrafficType();
 
   // Verify referrer policy allows sending referrer (critical for attribution)
   var referrerPolicyMeta = document.querySelector('meta[name="referrer"]');
   var referrerPolicy = referrerPolicyMeta ? referrerPolicyMeta.getAttribute('content') : 'not set';
-  console.log('[GA4 REFERRER POLICY] Current policy:', referrerPolicy);
+  console.log('[GA4 REFERRER POLICY] Current policy:', referrerPolicy, '(controls HTTP Referrer header sent to GA4)');
   if (referrerPolicy === 'no-referrer' || referrerPolicy === 'origin') {
-    console.warn('[GA4 REFERRER POLICY] ⚠️ WARNING: Referrer policy is too strict for GA4 attribution! Should be "strict-origin-when-cross-origin" or "unsafe-url"');
+    console.warn('[GA4 REFERRER POLICY] ⚠️ CRITICAL: Referrer policy blocks HTTP Referrer header! GA4 cannot attribute traffic → will show as "unassigned". Use "strict-origin-when-cross-origin" or "unsafe-url"');
+  } else if (referrerPolicy === 'strict-origin-when-cross-origin' || referrerPolicy === 'unsafe-url') {
+    console.log('[GA4 REFERRER POLICY] ✅ Referrer policy allows GA4 attribution for cross-origin traffic');
   }
 
-  // Ensure consent mode defaults are set (if not already set by _Root.Head.cshtml)
-  if (!window.consentModeInitialized) {
-    console.log('[CONSENT MODE] Not yet initialized, setting defaults now');
-    gtag('consent', 'default', {
-      'ad_storage': 'denied',
-      'analytics_storage': 'granted',  // ← CRITICAL: Analytics must be granted for referral tracking!
-      'ad_user_data': 'denied',
-      'ad_personalization': 'denied',
-      'wait_for_update': 2000  // ← Wait up to 2s for user consent preference
-    });
-    console.log('[CONSENT MODE] Defaults: analytics=GRANTED (required for GA4), ads=denied, wait=2s');
-    window.consentModeInitialized = true;
+  // Consent mode was already initialized by _Root.Head.cshtml
+  // Just verify the current state
+  var termlyReady = typeof window.consentStatus !== 'undefined';
+  console.log('[GA4 CONSENT] Termly pre-loaded:', termlyReady);
+  console.log('[GA4 TRACKING] All traffic will be tracked and labeled (user/bot/internal)');
+
+  if (termlyReady) {
+    console.log('[GA4 CONSENT] Termly consent active - analytics_storage:', window.consentStatus.analytics_storage);
   } else {
-    console.log('[CONSENT MODE] Already initialized by _Root.Head.cshtml');
+    console.log('[GA4 CONSENT] Termly not yet loaded - using _Root.Head.cshtml defaults');
   }
 
-  // Warn if Termly might be denying analytics storage
+  // Warn if Termly is denying analytics storage
   if (typeof window.consentStatus !== 'undefined' && window.consentStatus.analytics_storage === false) {
-    console.warn('[GA4 CONSENT] ⚠️ WARNING: analytics_storage is DENIED - GA4 referral tracking will NOT work! Check Termly/consent settings.');
+    console.warn('[GA4 CONSENT] ⚠️ WARNING: analytics_storage is DENIED by Termly - GA4 will NOT track any data. User must accept analytics in cookie banner.');
   }
 
   gtag('js', new Date());
@@ -239,20 +276,22 @@
   }
 
   // Enable event queueing to buffer events during consent race condition
+  // Note: GA4 automatically detects source/medium from HTTP Referrer header and UTM parameters
+  // This is not something we can override - GA4 handles it internally on first pageview
   var sessionSource = getSessionSource();
+
+  // Set cookie flags based on protocol (secure flag requires HTTPS)
+  var isHttps = window.location.protocol === 'https:';
+  var cookieFlags = isHttps ? 'SameSite=Lax;secure' : 'SameSite=Lax';
+  console.log('[GA4 COOKIES] Protocol:', window.location.protocol, '| Cookie flags:', cookieFlags);
+
   var ga4Config = {
-    'session_source': sessionSource.source,        // ← Required for GA4 referral attribution
-    'session_medium': sessionSource.medium,        // ← Required for GA4 referral attribution
     'allow_google_signals': false,
     'allow_ad_personalization_signals': false,
-    'cookie_flags': 'SameSite=Lax;secure',
-    'cookie_domain': 'auto'                        // ← Ensure cookies work across subdomains if applicable
+    'cookie_flags': cookieFlags,
+    'cookie_domain': 'auto',
+    'traffic_type': trafficType  // ← Label: 'user', 'bot', or 'internal'
   };
-
-  // Add campaign parameters if detected
-  if (sessionSource.campaign) ga4Config['session_campaign'] = sessionSource.campaign;
-  if (sessionSource.content) ga4Config['session_content'] = sessionSource.content;
-  if (sessionSource.term) ga4Config['session_term'] = sessionSource.term;
 
   @if (!string.IsNullOrEmpty(debugModeText))
   {
@@ -260,52 +299,29 @@
     ga4Config['debug_mode'] = true;
     </text>
   }
-  console.log('[GA4 CONFIG] Session source/medium:', sessionSource.source + '/' + sessionSource.medium);
-  if (sessionSource.campaign) console.log('[GA4 CONFIG] Campaign:', sessionSource.campaign);
+  console.log('[GA4 CONFIG] GA4 will determine session source/medium from HTTP Referrer and UTM params');
+  console.log('[GA4 CONFIG] Detected (for logging): ' + sessionSource.source + '/' + sessionSource.medium);
   gtag('config','@Model.GoogleTag', ga4Config);
 
-  // Detect email traffic by checking user agent (most email clients send a specific UA)
-  function detectEmailTraffic() {
-    var userAgent = navigator.userAgent.toLowerCase();
+  // Delay page_view until Termly consent is resolved (prevents race condition)
+  var pageViewFired = false;
+  var pageViewTimeout = null;
 
-    var emailClientIndicators = [
-      'apple mail',
-      'outlook',
-      'thunderbird',
-      'gmail',
-      'yahoo mail',
-      'aol',
-      'mail app',
-      'ios mail',
-      'android mail',
-      'mobile safari.*mail',
-      'mailspring',
-      'the bat',
-      'evolution',
-      'mutt'
-    ];
-
-    console.log('[EMAIL DETECTION] Checking user agent for email client indicators');
-    for (var i = 0; i < emailClientIndicators.length; i++) {
-      if (userAgent.includes(emailClientIndicators[i])) {
-        console.log('[EMAIL DETECTION] ✅ Email client detected:', emailClientIndicators[i]);
-        return true;
-      }
+  function isAnalyticsGranted() {
+    // Check if analytics consent is granted
+    if (typeof window.consentStatus !== 'undefined') {
+      return window.consentStatus.analytics_storage !== false;
     }
-
-    // Check for common email app contexts
-    if (window.location.href.includes('utm_medium=email') ||
-        window.location.href.includes('utm_source=email')) {
-      console.log('[EMAIL DETECTION] ✅ Email UTM parameter detected in URL');
-      return true;
-    }
-
-    console.log('[EMAIL DETECTION] No email client detected (standard browser)');
-    return false;
+    // If Termly hasn't updated yet, check our last known state
+    return true; // Default to true if unknown (Termly will deny if needed)
   }
 
+  function shouldFirePageView() {
+    var analyticsGranted = isAnalyticsGranted();
+    console.log('[GA4 RACE CONDITION] Analytics consent check: ' + (analyticsGranted ? 'GRANTED' : 'DENIED'));
+    return analyticsGranted;
+  }
 
-  // Delay page_view until Termly consent is resolved (prevents race condition)
   function firePageView() {
     console.log('[GA4 RACE CONDITION] firePageView() called at', new Date().toISOString());
 
@@ -316,10 +332,12 @@
 
     var referrerData = {
       'page_path': window.location.pathname,
-      'page_title': document.title
+      'page_title': document.title,
+      'traffic_type': trafficType  // ← Include traffic type label
     };
 
     console.log('[GA4] Page View Event Data:', referrerData);
+    console.log('[GA4] Traffic Type:', trafficType);
     console.log('[GA4] Referral attribution handled at session level: ', sessionSource.source + '/' + sessionSource.medium);
     console.log('[GA4 RACE CONDITION] Sending page_view with consent state AFTER Termly resolved');
 
@@ -327,36 +345,54 @@
     console.log('[GA4 RACE CONDITION] ✅ Page view fired - referral attribution should now be correct');
   }
 
-  // Wait for Termly to update consent before firing page_view
-  // If Termly hasn't fired within 1.5s, fire anyway (user may have disabled cookies)
-  console.log('[GA4 RACE CONDITION] Starting 1.5s timeout for Termly consent update...');
-  var pageViewTimeout = setTimeout(function() {
-    console.log('[GA4 RACE CONDITION] ⚠️ Timeout (1.5s) - Termly did not update consent in time');
-    console.log('[GA4 RACE CONDITION] Firing page_view with default/initial consent state');
-    firePageView();
-  }, 1500);
-
-  // Listen for Termly consent resolution
-  window.addEventListener('consentStatusChange', function(e) {
-    clearTimeout(pageViewTimeout);
-    console.log('[GA4 RACE CONDITION] ✅ Termly consent received before timeout');
-    console.log('[GA4 RACE CONDITION] Firing page_view with USER-ACCEPTED consent state');
-    firePageView();
-  });
-
-  // Fallback: if Termly never fires, fire on DOMContentLoaded
-  var pageViewFired = false;
-  document.addEventListener('DOMContentLoaded', function() {
-    console.log('[GA4 RACE CONDITION] DOMContentLoaded fired');
-    if (pageViewTimeout) {
-      // Page view not yet fired, so fire it now
-      clearTimeout(pageViewTimeout);
-      console.log('[GA4 RACE CONDITION] ℹ️ Page view not yet sent, DOMContentLoaded fallback triggering');
+  // Wait up to 3s for Termly to load and determine user consent
+  console.log('[GA4 RACE CONDITION] Starting 3s timeout for Termly consent...');
+  pageViewTimeout = setTimeout(function() {
+    console.log('[GA4 RACE CONDITION] ⚠️ Timeout (3s) - Termly did not respond');
+    if (shouldFirePageView() && !pageViewFired) {
+      console.log('[GA4 RACE CONDITION] Firing page_view with timeout fallback');
       firePageView();
       pageViewFired = true;
     } else {
-      console.log('[GA4 RACE CONDITION] ✅ Page view already fired before DOMContentLoaded');
+      console.log('[GA4 RACE CONDITION] Analytics denied - NOT firing page_view');
+    }
+  }, 3000);
+
+  // Listen for Termly consent update (fires before user sees banner if already made choice)
+  // Note: _Root.Head.cshtml also listens to this event, but for different purposes (updating gtag consent)
+  // This listener only fires page_view when analytics is granted
+  var termlyConsentListener = function(e) {
+    console.log('[GA4] consentStatusChange event detected');
+    clearTimeout(pageViewTimeout);
+    if (shouldFirePageView() && !pageViewFired) {
+      console.log('[GA4 RACE CONDITION] ✅ Termly consent update received - analytics GRANTED');
+      console.log('[GA4 RACE CONDITION] Firing page_view with user consent');
+      firePageView();
       pageViewFired = true;
+    } else if (!pageViewFired) {
+      console.log('[GA4 RACE CONDITION] ✅ Termly consent update received - analytics DENIED');
+      console.log('[GA4 RACE CONDITION] NOT firing page_view - user denied analytics');
+    }
+  };
+
+  // Add listener only if it hasn't been added already (safety check)
+  if (!window.ga4PageViewListener) {
+    window.addEventListener('consentStatusChange', termlyConsentListener);
+    window.ga4PageViewListener = true;
+  }
+
+  // Fallback: fire on DOMContentLoaded if still not fired
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('[GA4 RACE CONDITION] DOMContentLoaded event fired');
+    if (!pageViewFired) {
+      clearTimeout(pageViewTimeout);
+      if (shouldFirePageView()) {
+        console.log('[GA4 RACE CONDITION] DOMContentLoaded: firing page_view');
+        firePageView();
+        pageViewFired = true;
+      } else {
+        console.log('[GA4 RACE CONDITION] DOMContentLoaded: analytics denied - NOT firing');
+      }
     }
   });
 
@@ -489,4 +525,5 @@
       fireConversionEvent("purchase", purchaseEvent);
     </text>
   }
+  })(); // Close IIFE
 </script>

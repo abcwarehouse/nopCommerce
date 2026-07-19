@@ -88,6 +88,26 @@
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
+    <!-- GA4 Diagnostics - MUST be first script in head -->
+    <script>
+    window.ga4Diagnostics = {
+        consentDefaults: null,
+        consentUpdates: [],
+        pageViewFired: false,
+        termlyEventFired: false,
+        referrer: document.referrer || '(none)',
+        startTime: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        log: function(msg) { console.log('[GA4 DIAGNOSTICS]', msg); },
+        logEvent: function(eventType, data) {
+            this[eventType] = this[eventType] || [];
+            this[eventType].push({ timestamp: new Date().toISOString(), data: data });
+            console.log('[GA4 EVENT: ' + eventType + ']', data);
+        }
+    };
+    console.log('[GA4 DIAGNOSTICS] Initialized at start of head');
+    </script>
+
     @NopHtml.GenerateHeadCustom()
     <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
     <script defer src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
@@ -101,14 +121,14 @@
             function gtag(){window.dataLayer.push(arguments);}
             gtag('consent', 'default', {
                 'ad_storage': 'denied',
-                'analytics_storage': 'granted',  // ← Analytics is essential, not advertising
+                'analytics_storage': 'granted',  // ← Allow analytics by default
                 'ad_user_data': 'denied',
                 'ad_personalization': 'denied',
-                'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
+                'wait_for_update': 3000  // ← Increased to 3s to give Termly time to load
             });
-            console.log('[GTM CONSENT MODE] Default: analytics=GRANTED, ads=denied, wait=2s');
-            </script>
-            <script>
+            console.log('[GTM CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
+
+            // GTM initialization
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -441,53 +461,40 @@
         };
     </script>
 
-    <!-- GA4 Diagnostic Logger -->
-    <script>
-        window.ga4Diagnostics = {
-            consentDefaults: null,
-            consentUpdates: [],
-            pageViewFired: false,
-            termlyEventFired: false,
-            referrer: document.referrer || '(none)',
-            startTime: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-
-            log: function(msg) {
-                console.log('[GA4 DIAGNOSTICS]', msg);
-            },
-
-            logEvent: function(eventType, data) {
-                console.log('[GA4 DIAGNOSTICS] EVENT:', eventType, data);
-                if (!this.events) this.events = [];
-                this.events.push({ time: new Date().toISOString(), type: eventType, data: data });
-            }
-        };
-
-        ga4Diagnostics.log('Session started at ' + ga4Diagnostics.startTime);
-        ga4Diagnostics.log('Referrer: ' + ga4Diagnostics.referrer);
-        ga4Diagnostics.log('User Agent: ' + ga4Diagnostics.userAgent);
-    </script>
-
     <!-- Google Consent Mode v2 (must load BEFORE gtag.js and GTM) -->
     <script>
+        // Initialize diagnostics object if it doesn't exist
+        window.ga4Diagnostics = window.ga4Diagnostics || {
+            consentDefaults: null,
+            consentUpdates: [],
+            termlyEventFired: false,
+            pageViewFired: false,
+            log: function(msg) { console.log('[GA4 DIAGNOSTICS] ' + msg); },
+            logEvent: function(event, data) { console.log('[GA4 DIAGNOSTICS] Event: ' + event, data); }
+        };
+
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
 
-        console.log('[CONSENT MODE] Initializing Consent Mode v2 defaults (denying all)');
+        console.log('[CONSENT MODE] Initializing Consent Mode v2');
         console.log('[REFERRAL] Initial referrer:', document.referrer || '(direct)');
 
         ga4Diagnostics.log('Consent Mode defaults about to be set');
         ga4Diagnostics.consentDefaults = { time: new Date().toISOString(), state: 'denied' };
 
+        // Check if Termly has already loaded
+        var termlyReady = typeof window.consentStatus !== 'undefined';
+        console.log('[CONSENT MODE] Termly pre-loaded:', termlyReady);
+
         gtag('consent', 'default', {
             'ad_storage': 'denied',
-            'analytics_storage': 'granted',  // ← Analytics is essential, not advertising
+            'analytics_storage': 'granted',  // ← Allow analytics by default
             'ad_user_data': 'denied',
             'ad_personalization': 'denied',
-            'wait_for_update': 2000  // ← Increased timeout from 500ms to 2s
+            'wait_for_update': 3000  // ← Increased timeout to 3s for Termly
         });
-        console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
-        console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
+        console.log('[CONSENT MODE] Default: analytics=GRANTED (default allow), ads=denied, wait=3s');
+        console.log('[CONSENT MODE] Defaults set - waiting up to 3000ms (3s) for Termly update');
 
         // Listen for Termly consent changes
         window.addEventListener('consentStatusChange', function(e) {
@@ -512,6 +519,22 @@
         });
     </script>
 
+    <!-- Termly Cookie Banner (with error handling) -->
+    <script>
+        (function() {
+            var termlyTimeout = setTimeout(function() {
+                console.warn('[TERMLY] Timeout (3s) - Termly did not load. Using default consent state.');
+                ga4Diagnostics.log('Termly timeout - proceeding with default consent');
+            }, 3000);
+
+            // Listen for Termly to load
+            window.addEventListener('termlyReady', function() {
+                clearTimeout(termlyTimeout);
+                console.log('[TERMLY] Termly banner loaded successfully');
+                ga4Diagnostics.log('Termly banner loaded');
+            });
+        })();
+    </script>
     <script src="https://app.termly.io/resource-blocker/f9d245d4-7857-44e6-8b17-dec72f573e67?autoBlock=on"></script>
 
     <!-- Microsoft Clarity (Analytics) -->
