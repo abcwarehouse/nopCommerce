@@ -88,6 +88,26 @@
 <!DOCTYPE html>
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
+    <!-- GA4 Diagnostics - MUST be first script in head -->
+    <script>
+    window.ga4Diagnostics = {
+        consentDefaults: null,
+        consentUpdates: [],
+        pageViewFired: false,
+        termlyEventFired: false,
+        referrer: document.referrer || '(none)',
+        startTime: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        log: function(msg) { console.log('[GA4 DIAGNOSTICS]', msg); },
+        logEvent: function(eventType, data) {
+            this[eventType] = this[eventType] || [];
+            this[eventType].push({ timestamp: new Date().toISOString(), data: data });
+            console.log('[GA4 EVENT: ' + eventType + ']', data);
+        }
+    };
+    console.log('[GA4 DIAGNOSTICS] Initialized at start of head');
+    </script>
+
     @NopHtml.GenerateHeadCustom()
     <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
     <script defer src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
@@ -439,33 +459,6 @@
                 return [];
             }
         };
-    </script>
-
-    <!-- GA4 Diagnostic Logger -->
-    <script>
-        window.ga4Diagnostics = {
-            consentDefaults: null,
-            consentUpdates: [],
-            pageViewFired: false,
-            termlyEventFired: false,
-            referrer: document.referrer || '(none)',
-            startTime: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-
-            log: function(msg) {
-                console.log('[GA4 DIAGNOSTICS]', msg);
-            },
-
-            logEvent: function(eventType, data) {
-                console.log('[GA4 DIAGNOSTICS] EVENT:', eventType, data);
-                if (!this.events) this.events = [];
-                this.events.push({ time: new Date().toISOString(), type: eventType, data: data });
-            }
-        };
-
-        ga4Diagnostics.log('Session started at ' + ga4Diagnostics.startTime);
-        ga4Diagnostics.log('Referrer: ' + ga4Diagnostics.referrer);
-        ga4Diagnostics.log('User Agent: ' + ga4Diagnostics.userAgent);
     </script>
 
     <!-- Google Consent Mode v2 (must load BEFORE gtag.js and GTM) -->
