@@ -110,6 +110,29 @@
     return false;
   }
 
+  // Session source caching - preserve original source through entire session
+  function getOrCreateSessionSource() {
+    var storedSource = sessionStorage.getItem('ga4_session_source');
+
+    // If we already have a session source stored, use it (prevents overwriting with internal navigation)
+    if (storedSource) {
+      var stored = JSON.parse(storedSource);
+      console.log('[GA4 SESSION CACHE] Using cached session source:', stored.source + '/' + stored.medium);
+      return stored;
+    }
+
+    // Calculate new session source
+    var source = getSessionSource();
+
+    // Only cache if it's not direct/direct (preserve first non-direct attribution)
+    if (source.source !== 'direct' && source.source !== '(direct)') {
+      sessionStorage.setItem('ga4_session_source', JSON.stringify(source));
+      console.log('[GA4 SESSION CACHE] Cached new session source:', source.source + '/' + source.medium);
+    }
+
+    return source;
+  }
+
   // Detect traffic source early to set session-level source/medium (required for GA4 referral attribution post-May 2024)
   function getSessionSource() {
     var referrer = document.referrer.toLowerCase();
@@ -262,7 +285,7 @@
   }
 
   // Enable event queueing to buffer events during consent race condition
-  var sessionSource = getSessionSource();
+  var sessionSource = getOrCreateSessionSource();
   var trafficType = detectTrafficType();
   var ga4Config = {
     'session_source': sessionSource.source,        // ← Required for GA4 referral attribution
