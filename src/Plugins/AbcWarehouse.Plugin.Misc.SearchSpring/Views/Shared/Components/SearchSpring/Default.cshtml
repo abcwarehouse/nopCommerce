@@ -8,8 +8,26 @@
 @inject INopHtmlHelper NopHtml
 
 @{
-    var storeUrl = webHelper.GetStoreLocation(); 
+    var storeUrl = webHelper.GetStoreLocation();
+
+    // Build search URL preserving current UTM and tracking parameters
+    var utmParams = new Dictionary<string, string>();
+
+    foreach (var key in new[] { "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term" })
+    {
+        var value = Context.Request.Query[key].ToString();
+        if (!string.IsNullOrEmpty(value))
+        {
+            utmParams[key] = value;
+        }
+    }
+
     var searchBaseUrl = $"{storeUrl}search/results?q=";
+    var utmSuffix = "";
+    if (utmParams.Any())
+    {
+        utmSuffix = "&" + string.Join("&", utmParams.Select(p => $"{p.Key}={System.Web.HttpUtility.UrlEncode(p.Value)}"));
+    }
 
     NopHtml.AddCssFileParts("~/Plugins/AbcWarehouse.Plugin.Misc.SearchSpring/styles/style.css");
 }
@@ -132,6 +150,7 @@
     (function initSearchTracking() {
         try {
             const baseUrl = '@searchBaseUrl';
+            const utmSuffix = '@utmSuffix';
 
         window.searchspringTracking = {
             userId: null,
@@ -238,7 +257,7 @@
                 if (suggestions.length > 0) {
                     suggestHTML += '<ul style="list-style:none; padding:0; margin:0;">';
                     suggestions.forEach(term => {
-                        suggestHTML += `<li class="suggestion-item"><a href="${baseUrl}${encodeURIComponent(term)}">${term}</a></li>`;
+                        suggestHTML += `<li class="suggestion-item"><a href="${baseUrl}${encodeURIComponent(term)}${utmSuffix}">${term}</a></li>`;
                     });
                     suggestHTML += '</ul>';
                 }
@@ -262,7 +281,7 @@
                 event.preventDefault();
                 const query = input.value.trim();
                 if (query) {
-                    window.location.href = baseUrl + encodeURIComponent(query);
+                    window.location.href = baseUrl + encodeURIComponent(query) + utmSuffix;
                 }
             });
 
