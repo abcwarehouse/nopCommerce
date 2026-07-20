@@ -39,55 +39,54 @@
 </div>
 
 <script asp-location="Footer">
-// Meta Pixel - Purchase Event (fired on order confirmation page)
-document.addEventListener('DOMContentLoaded', function() {
+// Meta Pixel - Purchase Event (fire immediately, don't wait for DOMContentLoaded)
+(function trackPurchase() {
     try {
         if (typeof fbq !== 'undefined') {
             var orderId = '@Model.OrderId';
             var orderNumber = '@Model.CustomOrderNumber';
+            var currency = 'USD';
 
-            // Fetch full order details for accurate purchase tracking
-            fetch('/api/order/@Model.OrderId')
-                .then(response => response.json())
-                .catch(err => {
-                    console.log('[META PIXEL] Could not fetch order details, using basic info');
-                    return null;
-                })
-                .then(orderData => {
-                    try {
-                        var contentIds = [];
-                        var totalValue = 0;
-                        var currency = 'USD';
+            // Try to get order total from page immediately (fallback if API fails)
+            var orderTotal = document.querySelector('[data-order-total]')?.textContent ||
+                           document.querySelector('.order-total')?.textContent ||
+                           '0';
+            var totalValue = parseFloat(orderTotal.replace(/[^0-9.-]+/g, '')) || 0;
 
+            // Track purchase with basic info immediately (don't wait for API)
+            fbq('track', 'Purchase', {
+                content_ids: [orderNumber],
+                content_name: 'Order ' + orderNumber,
+                content_type: 'product',
+                value: totalValue,
+                currency: currency,
+                order_id: orderId
+            });
+            console.log('[META PIXEL] Purchase tracked immediately for order:', orderNumber);
+
+            // Optionally fetch full order details asynchronously for enrichment
+            if (window.fetch) {
+                fetch('/api/order/@Model.OrderId')
+                    .then(response => response.json())
+                    .then(orderData => {
                         if (orderData && orderData.orderItems && Array.isArray(orderData.orderItems)) {
+                            var contentIds = [];
                             orderData.orderItems.forEach(item => {
                                 if (item.sku) contentIds.push(item.sku);
                             });
-                            totalValue = orderData.orderTotal || 0;
-                        } else {
-                            // Fallback: get order total from page if available
-                            var orderTotal = document.querySelector('[data-order-total]')?.textContent ||
-                                           document.querySelector('.order-total')?.textContent ||
-                                           '0';
-                            totalValue = parseFloat(orderTotal.replace(/[^0-9.-]+/g, '')) || 0;
+                            if (contentIds.length > 0) {
+                                console.log('[META PIXEL] Order items found:', contentIds.join(','));
+                            }
                         }
-
-                        fbq('track', 'Purchase', {
-                            content_ids: contentIds.length > 0 ? contentIds : [orderNumber],
-                            content_name: 'Order ' + orderNumber,
-                            content_type: 'product',
-                            value: totalValue,
-                            currency: currency,
-                            order_id: orderId
-                        });
-                        console.log('[META PIXEL] Purchase tracked for order:', orderNumber);
-                    } catch(err) {
-                        console.log('[META PIXEL] Purchase tracking error:', err.message);
-                    }
-                });
+                    })
+                    .catch(err => console.log('[META PIXEL] Could not fetch order details:', err.message));
+            }
+        } else {
+            // fbq not loaded yet, retry after 100ms
+            setTimeout(trackPurchase, 100);
         }
     } catch(err) {
-        console.log('[META PIXEL] Purchase setup error:', err.message);
+        console.log('[META PIXEL] Purchase tracking error:', err.message);
     }
-});
+})();
 </script>

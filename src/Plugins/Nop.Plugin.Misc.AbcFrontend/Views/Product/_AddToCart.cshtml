@@ -101,43 +101,49 @@
 }
 
 <script asp-location="Footer">
-// Meta Pixel - AddToCart Event (fired when item added to cart)
-document.addEventListener('DOMContentLoaded', function() {
+// Meta Pixel - AddToCart Event (fire immediately, don't wait for DOMContentLoaded)
+(function setupAddToCartTracking() {
     try {
-        if (typeof fbq !== 'undefined' && typeof AjaxCart !== 'undefined') {
-            var originalAddToCart = AjaxCart.addproducttocart_details;
-
-            AjaxCart.addproducttocart_details = function(url, formid) {
-                // Call original function
-                var result = originalAddToCart.call(this, url, formid);
-
-                // Track AddToCart after a brief delay to ensure item was added
-                setTimeout(function() {
-                    try {
-                        var productName = document.querySelector('h1')?.textContent || '@Model.Name' || 'Product';
-                        var productPrice = '@(Model.ProductPrice?.PriceValue?.ToString("0.00") ?? "0")' || '0';
-                        var productSku = '@Model.Sku' || 'unknown';
-                        var quantity = parseInt(document.querySelector('input[name*="quantity"]')?.value || '1');
-
-                        fbq('track', 'AddToCart', {
-                            content_ids: [productSku],
-                            content_name: productName,
-                            content_type: 'product',
-                            value: parseFloat(productPrice) * quantity,
-                            currency: 'USD',
-                            quantity: quantity
-                        });
-                        console.log('[META PIXEL] AddToCart tracked:', productName);
-                    } catch(err) {
-                        console.log('[META PIXEL] AddToCart tracking error:', err.message);
-                    }
-                }, 300);
-
-                return result;
-            };
+        if (typeof fbq === 'undefined' || typeof AjaxCart === 'undefined') {
+            // Dependencies not ready, retry after 100ms
+            setTimeout(setupAddToCartTracking, 100);
+            return;
         }
+
+        var originalAddToCart = AjaxCart.addproducttocart_details;
+        var productSku = '@Model.Sku' || 'unknown';
+
+        AjaxCart.addproducttocart_details = function(url, formid) {
+            // Call original function
+            var result = originalAddToCart.call(this, url, formid);
+
+            // Track AddToCart after a brief delay to ensure item was added
+            setTimeout(function() {
+                try {
+                    var productName = document.querySelector('h1')?.textContent || '@Model.Name' || 'Product';
+                    var productPrice = '@(Model.ProductPrice?.PriceValue?.ToString("0.00") ?? "0")' || '0';
+                    var quantity = parseInt(document.querySelector('input[name*="quantity"]')?.value || '1');
+
+                    fbq('track', 'AddToCart', {
+                        content_ids: [productSku],
+                        content_name: productName,
+                        content_type: 'product',
+                        value: parseFloat(productPrice) * quantity,
+                        currency: 'USD',
+                        quantity: quantity
+                    });
+                    console.log('[META PIXEL] AddToCart tracked:', productName);
+                } catch(err) {
+                    console.log('[META PIXEL] AddToCart tracking error:', err.message);
+                }
+            }, 300);
+
+            return result;
+        };
+
+        console.log('[META PIXEL] AddToCart tracking ready');
     } catch(err) {
         console.log('[META PIXEL] AddToCart setup error:', err.message);
     }
-});
+})();
 </script>

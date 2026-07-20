@@ -227,8 +227,8 @@
         }
     </script>
     <script asp-location="Footer">
-        // Meta Pixel - InitiateCheckout Event (fired when user lands on checkout page)
-        document.addEventListener('DOMContentLoaded', function() {
+        // Meta Pixel - InitiateCheckout Event (fire immediately, don't wait for DOMContentLoaded)
+        (function trackInitiateCheckout() {
             try {
                 if (typeof fbq !== 'undefined') {
                     // Get cart total from the page if available
@@ -246,10 +246,13 @@
                         currency: 'USD'
                     });
                     console.log('[META PIXEL] InitiateCheckout tracked - Cart Value:', cartValue);
+                } else {
+                    // fbq not loaded yet, retry after 100ms
+                    setTimeout(trackInitiateCheckout, 100);
                 }
             } catch(err) {
                 console.log('[META PIXEL] InitiateCheckout error:', err.message);
             }
-        });
+        })();
     </script>
 </div>

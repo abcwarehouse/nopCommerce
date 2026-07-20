@@ -552,14 +552,15 @@
     }
 })();
 
-// Meta Pixel - ViewContent Event (fired when product page loads)
-document.addEventListener('DOMContentLoaded', function() {
+// Meta Pixel - ViewContent Event (fire immediately, don't wait for DOMContentLoaded)
+(function trackViewContent() {
     try {
-        if (typeof fbq !== 'undefined') {
-            var productName = '@Model.Name' || 'Product';
-            var productPrice = '@(Model.ProductPrice?.PriceValue?.ToString("0.00") ?? "0")' || '0';
-            var productSku = '@Model.Sku' || 'unknown';
+        var productName = '@Model.Name' || 'Product';
+        var productPrice = '@(Model.ProductPrice?.PriceValue?.ToString("0.00") ?? "0")' || '0';
+        var productSku = '@Model.Sku' || 'unknown';
 
+        // Check if fbq is available, if not wait for it
+        if (typeof fbq !== 'undefined') {
             fbq('track', 'ViewContent', {
                 content_ids: [productSku],
                 content_name: productName,
@@ -567,10 +568,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 value: parseFloat(productPrice),
                 currency: 'USD'
             });
-            console.log('[META PIXEL] ViewContent tracked for:', productName);
+            console.log('[META PIXEL] ViewContent tracked immediately for:', productName);
+        } else {
+            // fbq not loaded yet, retry after 100ms
+            setTimeout(trackViewContent, 100);
         }
     } catch(err) {
         console.log('[META PIXEL] ViewContent error:', err.message);
     }
-});
+})();
 </script>
