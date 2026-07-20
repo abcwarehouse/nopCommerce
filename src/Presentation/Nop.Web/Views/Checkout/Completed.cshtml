@@ -37,3 +37,57 @@
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CheckoutCompletedBottom, additionalData = Model })
     </div>
 </div>
+
+<script asp-location="Footer">
+// Meta Pixel - Purchase Event (fired on order confirmation page)
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        if (typeof fbq !== 'undefined') {
+            var orderId = '@Model.OrderId';
+            var orderNumber = '@Model.CustomOrderNumber';
+
+            // Fetch full order details for accurate purchase tracking
+            fetch('/api/order/@Model.OrderId')
+                .then(response => response.json())
+                .catch(err => {
+                    console.log('[META PIXEL] Could not fetch order details, using basic info');
+                    return null;
+                })
+                .then(orderData => {
+                    try {
+                        var contentIds = [];
+                        var totalValue = 0;
+                        var currency = 'USD';
+
+                        if (orderData && orderData.orderItems && Array.isArray(orderData.orderItems)) {
+                            orderData.orderItems.forEach(item => {
+                                if (item.sku) contentIds.push(item.sku);
+                            });
+                            totalValue = orderData.orderTotal || 0;
+                        } else {
+                            // Fallback: get order total from page if available
+                            var orderTotal = document.querySelector('[data-order-total]')?.textContent ||
+                                           document.querySelector('.order-total')?.textContent ||
+                                           '0';
+                            totalValue = parseFloat(orderTotal.replace(/[^0-9.-]+/g, '')) || 0;
+                        }
+
+                        fbq('track', 'Purchase', {
+                            content_ids: contentIds.length > 0 ? contentIds : [orderNumber],
+                            content_name: 'Order ' + orderNumber,
+                            content_type: 'product',
+                            value: totalValue,
+                            currency: currency,
+                            order_id: orderId
+                        });
+                        console.log('[META PIXEL] Purchase tracked for order:', orderNumber);
+                    } catch(err) {
+                        console.log('[META PIXEL] Purchase tracking error:', err.message);
+                    }
+                });
+        }
+    } catch(err) {
+        console.log('[META PIXEL] Purchase setup error:', err.message);
+    }
+});
+</script>

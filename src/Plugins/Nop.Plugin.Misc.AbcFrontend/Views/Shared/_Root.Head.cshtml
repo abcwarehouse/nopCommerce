@@ -512,6 +512,40 @@
         });
     </script>
 
+    <!-- Early Referral Capture: Store referral data immediately, before Termly blocks anything -->
+    <script>
+        (function captureReferralEarly() {
+            try {
+                // Capture referral data BEFORE Termly loads, so we have it regardless of consent status
+                var referrer = document.referrer || '(direct)';
+                var now = new Date().toISOString();
+
+                // Store in sessionStorage so it persists even if Termly blocks resources
+                var referralData = {
+                    referrer: referrer,
+                    timestamp: now,
+                    userAgent: navigator.userAgent,
+                    originalUrl: window.location.href
+                };
+
+                try {
+                    sessionStorage.setItem('_referralCapture', JSON.stringify(referralData));
+                    console.log('[REFERRAL CAPTURE] Early referral captured and stored:', referrer);
+                } catch(e) {
+                    // sessionStorage might be blocked in private/incognito mode
+                    window._referralFallback = referralData;
+                    console.log('[REFERRAL CAPTURE] sessionStorage unavailable, using fallback:', referrer);
+                }
+
+                // Also set global flag so GA4 knows referral data was captured early
+                window._referralCapturedEarly = true;
+                console.log('[REFERRAL CAPTURE] Early capture complete - data available even if user never accepts consent');
+            } catch(err) {
+                console.error('[REFERRAL CAPTURE] Error in early referral capture:', err.message);
+            }
+        })();
+    </script>
+
     <script src="https://app.termly.io/resource-blocker/f9d245d4-7857-44e6-8b17-dec72f573e67?autoBlock=on"></script>
 
     <!-- Microsoft Clarity (Analytics) -->

@@ -116,9 +116,14 @@
 
     // If we already have a session source stored, use it (prevents overwriting with internal navigation)
     if (storedSource) {
-      var stored = JSON.parse(storedSource);
-      console.log('[GA4 SESSION CACHE] Using cached session source:', stored.source + '/' + stored.medium);
-      return stored;
+      try {
+        var stored = JSON.parse(storedSource);
+        console.log('[GA4 SESSION CACHE] Using cached session source:', stored.source + '/' + stored.medium);
+        return stored;
+      } catch(e) {
+        console.log('[GA4 SESSION CACHE] Error parsing cached source:', e.message);
+        sessionStorage.removeItem('ga4_session_source');
+      }
     }
 
     // Calculate new session source
@@ -126,8 +131,15 @@
 
     // Only cache if it's not direct/direct (preserve first non-direct attribution)
     if (source.source !== 'direct' && source.source !== '(direct)') {
-      sessionStorage.setItem('ga4_session_source', JSON.stringify(source));
-      console.log('[GA4 SESSION CACHE] Cached new session source:', source.source + '/' + source.medium);
+      try {
+        sessionStorage.setItem('ga4_session_source', JSON.stringify(source));
+        console.log('[GA4 SESSION CACHE] Cached new session source:', source.source + '/' + source.medium);
+      } catch(e) {
+        console.log('[GA4 SESSION CACHE] Error caching source:', e.message);
+      }
+    } else if (storedSource) {
+      // If current referrer is internal but we have a cached non-direct source, log that we're NOT overwriting
+      console.log('[GA4 SESSION CACHE] Current page has internal referrer, but keeping cached attribution:', source.source);
     }
 
     return source;
@@ -135,7 +147,22 @@
 
   // Detect traffic source early to set session-level source/medium (required for GA4 referral attribution post-May 2024)
   function getSessionSource() {
+    // Try to use early-captured referral data (captured before Termly loads)
     var referrer = document.referrer.toLowerCase();
+    if (!referrer && window._referralCapturedEarly) {
+      try {
+        var capturedData = sessionStorage.getItem('_referralCapture');
+        if (capturedData) {
+          var parsed = JSON.parse(capturedData);
+          referrer = parsed.referrer.toLowerCase();
+          console.log('[GA4 SESSION SOURCE] Using early-captured referral (from before Termly):', parsed.referrer);
+        }
+      } catch(e) {
+        // Fall back to document.referrer if parsing fails
+        console.log('[GA4 SESSION SOURCE] Early capture fallback error:', e.message);
+      }
+    }
+
     var userAgent = navigator.userAgent.toLowerCase();
     var searchUrl = window.location.href.toLowerCase();
     var urlParams = new URLSearchParams(window.location.search);
@@ -267,7 +294,8 @@
         var isInternal = referrerDomain === window.location.hostname.replace('www.', '');
 
         if (isInternal) {
-          console.log('[GA4 SESSION SOURCE] Internal referrer detected - treating as direct');
+          console.log('[GA4 SESSION SOURCE] Internal referrer detected (from:', referrerDomain + ') - this page should be using cache!');
+          console.log('[GA4 SESSION SOURCE] If cache is empty, this means no external referral was detected on first page load');
           return { source: '(direct)', medium: '(direct)' };
         } else {
           console.log('[GA4 SESSION SOURCE] External referrer:', referrerDomain);
@@ -282,6 +310,18 @@
     // Step 9: No referrer, no UTM params, no email = direct traffic (user typed URL or bookmarked)
     console.log('[GA4 SESSION SOURCE] No referrer/UTM/email detected - classified as direct');
     return { source: 'direct', medium: 'direct' };
+  }
+
+  // Diagnostic: Check if sessionStorage is working
+  try {
+    var cacheTest = sessionStorage.getItem('ga4_session_source');
+    if (cacheTest) {
+      console.log('[GA4 SESSION CACHE DIAGNOSTIC] Cache exists:', cacheTest.substring(0, 100) + '...');
+    } else {
+      console.log('[GA4 SESSION CACHE DIAGNOSTIC] Cache is EMPTY on this page load');
+    }
+  } catch(e) {
+    console.log('[GA4 SESSION CACHE DIAGNOSTIC] Cannot access sessionStorage:', e.message);
   }
 
   // Enable event queueing to buffer events during consent race condition
