@@ -556,18 +556,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     try {
         if (typeof fbq !== 'undefined') {
-            var productName = document.querySelector('h1')?.textContent || '@Model.Name' || 'Product';
-            var productPrice = '@Model.Price' || '0';
+            var productName = '@Model.Name' || 'Product';
+            var productPrice = '@(Model.ProductPrice?.PriceValue?.ToString("0.00") ?? "0")' || '0';
             var productSku = '@Model.Sku' || 'unknown';
-            var productCategory = '@string.Join(", ", Model.BreadcrumbCategoryBreadcrumb.Select(x => x.Name))' || 'Product';
 
             fbq('track', 'ViewContent', {
                 content_ids: [productSku],
                 content_name: productName,
                 content_type: 'product',
                 value: parseFloat(productPrice),
-                currency: 'USD',
-                content_category: productCategory
+                currency: 'USD'
             });
             console.log('[META PIXEL] ViewContent tracked for:', productName);
         }

@@ -114,8 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Track AddToCart after a brief delay to ensure item was added
                 setTimeout(function() {
                     try {
-                        var productName = document.querySelector('h1')?.textContent || 'Product';
-                        var productPrice = '@Model.Price' || '0';
+                        var productName = document.querySelector('h1')?.textContent || '@Model.Name' || 'Product';
+                        var productPrice = '@(Model.ProductPrice?.PriceValue?.ToString("0.00") ?? "0")' || '0';
                         var productSku = '@Model.Sku' || 'unknown';
                         var quantity = parseInt(document.querySelector('input[name*="quantity"]')?.value || '1');
 
