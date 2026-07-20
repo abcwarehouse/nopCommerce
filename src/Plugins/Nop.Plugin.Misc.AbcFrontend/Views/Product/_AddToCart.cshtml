@@ -121,7 +121,7 @@
             setTimeout(function() {
                 try {
                     var productName = document.querySelector('h1')?.textContent || '@Model.Name' || 'Product';
-                    var productPrice = '@(Model.ProductPrice != null ? Model.ProductPrice.PriceValue.ToString("0.00") : "0")' || '0';
+                    var productPrice = '@(Model.ProductPrice != null ? Model.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) : "0")' || '0';
                     var quantity = parseInt(document.querySelector('input[name*="quantity"]')?.value || '1');
 
                     fbq('track', 'AddToCart', {

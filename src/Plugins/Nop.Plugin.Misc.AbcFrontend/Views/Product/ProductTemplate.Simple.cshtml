@@ -556,7 +556,7 @@
 (function trackViewContent() {
     try {
         var productName = '@Model.Name' || 'Product';
-        var productPrice = '@(Model.ProductPrice != null ? Model.ProductPrice.PriceValue.ToString("0.00") : "0")' || '0';
+        var productPrice = '@(Model.ProductPrice != null ? Model.ProductPrice.PriceValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) : "0")' || '0';
         var productSku = '@Model.Sku' || 'unknown';
 
         // Check if fbq is available, if not wait for it
