@@ -54,7 +54,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             var results = await _searchSpringService.SearchAsync(term, sessionId: sessionId);
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
-                return Redirect(results.RedirectResponse);
+                return Redirect(AddUtmParametersToUrl(results.RedirectResponse));
 
             return Json(results);
         }
@@ -98,7 +98,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
 
             if (!string.IsNullOrEmpty(results.RedirectResponse))
             {
-                return Redirect(results.RedirectResponse); // performs 302 HTTP redirect
+                return Redirect(AddUtmParametersToUrl(results.RedirectResponse)); // performs 302 HTTP redirect
             }
 
             // If an ABC item number was provided and one response is given,
@@ -106,7 +106,7 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             if (results.Results.Count() == 1 && q.All(char.IsDigit))
             {
                 var productUrl = results.Results.First().ProductUrl;
-                return Redirect(productUrl);
+                return Redirect(AddUtmParametersToUrl(productUrl));
             }
 
             results.PageNumber = page;
@@ -152,6 +152,37 @@ namespace AbcWarehouse.Plugin.Misc.SearchSpring.Controllers
             if (Request.Cookies.TryGetValue("_ss_s", out var sessionId))
                 return sessionId;
             return null;
+        }
+
+        private string AddUtmParametersToUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return url;
+
+            try
+            {
+                var uriBuilder = new UriBuilder(url);
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+                // Extract UTM parameters from current request
+                foreach (var key in new[] { "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term" })
+                {
+                    var value = HttpContext.Request.Query[key].ToString();
+                    if (!string.IsNullOrEmpty(value) && !query.AllKeys.Contains(key))
+                    {
+                        query[key] = value;
+                    }
+                }
+
+                uriBuilder.Query = query.ToString();
+                return uriBuilder.ToString();
+            }
+            catch (Exception ex)
+            {
+                // If URL parsing fails, return original URL
+                _logger.Error($"Error adding UTM parameters to URL: {ex.Message}", ex);
+                return url;
+            }
         }
 
         [Route("searchspring/suggest")]
