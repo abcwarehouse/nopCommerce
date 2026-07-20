@@ -7,7 +7,11 @@
       "Bash(xargs grep -l \"GetWidgetZones\\\\|IWidgetPlugin\")",
       "Bash(dotnet build *)",
       "PowerShell(dotnet build *)",
-      "Skill(simplify)"
+      "Skill(simplify)",
+      "Bash(git checkout *)",
+      "Bash(cd /d C:\\\\abcwarehouse\\\\nop48\\\\nopCommerce)",
+      "Bash(findstr /r /s \"Redirect.*Results\\\\|window.open\\\\|location.replace\" src\\\\Plugins\\\\*.*.SearchSpring\\\\*)",
+      "Bash(gh pr *)"
     ]
   }
 }
