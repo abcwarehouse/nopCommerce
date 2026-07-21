@@ -512,7 +512,86 @@
             console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
             ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
             gtag('consent', 'update', consentConfig);
+
+            // Mark user as opted_out if they declined analytics
+            if (consentConfig.analytics_storage === 'denied') {
+                console.log('[CONSENT MODE] User declined analytics - marking as opted_out');
+                gtag('event', 'user_opted_out', {
+                    'opted_out_category': 'analytics_storage',
+                    'opt_out_source': 'termly_banner',
+                    'timestamp': new Date().toISOString()
+                });
+                console.log('[CONSENT MODE] GA4 opted_out event sent');
+            }
         });
+    </script>
+
+    <!-- Bot Detection for GA4 (marks direct referral sessions where user leaves in <500ms with zero interaction) -->
+    <script>
+        (function initBotDetection() {
+            try {
+                var pageLoadStart = performance.now();
+                var botDetected = false;
+                var hasUserInteraction = false;
+                var isDirect = !document.referrer || document.referrer === '';
+
+                console.log('[BOT DETECTION] Initialized - Direct traffic: ' + isDirect + ', tracking page exit timing + user interaction');
+
+                // Only proceed with bot detection for direct traffic
+                if (!isDirect) {
+                    console.log('[BOT DETECTION] External referrer detected (' + document.referrer + ') - bot detection disabled to avoid false positives from email/social redirects');
+                    return;
+                }
+
+                // Track any user interaction (mouse, keyboard, scroll, touch)
+                var interactionEvents = ['mousemove', 'mousedown', 'click', 'keydown', 'scroll', 'touchstart', 'touchmove'];
+                interactionEvents.forEach(function(event) {
+                    document.addEventListener(event, function() {
+                        hasUserInteraction = true;
+                        console.log('[BOT DETECTION] User interaction detected: ' + event);
+                    }, { once: true }); // Only listen once to mark interaction
+                });
+
+                function checkAndReportBot() {
+                    if (botDetected) return; // Only report once
+
+                    var elapsedMs = performance.now() - pageLoadStart;
+
+                    // Only mark as bot if: page exit in <500ms AND zero user interaction (direct traffic only)
+                    if (elapsedMs < 500 && !hasUserInteraction) {
+                        botDetected = true;
+                        console.log('[BOT DETECTION] Suspicious activity detected - DIRECT traffic exit at ' + elapsedMs.toFixed(0) + 'ms with ZERO interaction');
+
+                        // Send GA4 event marking as suspicious traffic
+                        if (typeof gtag === 'function') {
+                            gtag('event', 'suspicious_traffic', {
+                                'traffic_quality': 'bot_suspected',
+                                'exit_timing_ms': Math.round(elapsedMs),
+                                'page_url': window.location.pathname,
+                                'user_interaction': 'none',
+                                'traffic_source': 'direct'
+                            });
+                            console.log('[BOT DETECTION] GA4 event sent - traffic marked as suspicious');
+                        }
+                    }
+                }
+
+                // Listen for page unload/navigation
+                window.addEventListener('beforeunload', checkAndReportBot, true);
+                window.addEventListener('unload', checkAndReportBot, true);
+
+                // Also check on visibility change (tab closed or switched)
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        checkAndReportBot();
+                    }
+                });
+
+                console.log('[BOT DETECTION] Event listeners attached - will only flag DIRECT exits <500ms with ZERO user interaction');
+            } catch(err) {
+                console.error('[BOT DETECTION] Initialization error:', err.message);
+            }
+        })();
     </script>
 
     <!-- Early Referral Capture -->
