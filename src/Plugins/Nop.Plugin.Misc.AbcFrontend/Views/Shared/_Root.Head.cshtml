@@ -493,6 +493,7 @@
         console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
 
         // Listen for Termly consent changes using Termly's API (event: 'consent')
+        var termlyInitialEventFired = false;
         if (window.Termly && typeof window.Termly.on === 'function') {
             window.Termly.on('consent', function(consentStatus) {
                 ga4Diagnostics.termlyEventFired = true;
@@ -516,9 +517,15 @@
                 ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
                 gtag('consent', 'update', consentConfig);
 
-                // Mark user as opted_out if they declined analytics
-                if (consentConfig.analytics_storage === 'denied') {
-                    console.log('[CONSENT MODE] User declined analytics - marking as opted_out');
+                // Only mark as opted_out if user ACTIVELY declined (not on initial page load)
+                // Initial event has consentState === null or only 'essential' category
+                var isInitialLoad = consentStatus?.consentState === null || (consentStatus?.categories?.length === 1 && consentStatus?.categories[0] === 'essential');
+
+                if (!termlyInitialEventFired) {
+                    termlyInitialEventFired = true;
+                    console.log('[CONSENT MODE] Initial Termly event (banner not yet interacted with) - skipping opted_out tracking');
+                } else if (consentConfig.analytics_storage === 'denied' && !isInitialLoad) {
+                    console.log('[CONSENT MODE] User actively declined analytics - marking as opted_out');
                     gtag('event', 'user_opted_out', {
                         'opted_out_category': 'analytics_storage',
                         'opt_out_source': 'termly_banner',
