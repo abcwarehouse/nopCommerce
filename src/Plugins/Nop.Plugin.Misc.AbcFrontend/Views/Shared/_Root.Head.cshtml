@@ -515,6 +515,12 @@
                 // Map Termly consent properties to GA4 consent mode properties
                 // Termly uses: analytics, advertising, performance, social_networking, unclassified, essential
                 // GA4 uses: analytics_storage, ad_storage, ad_user_data, ad_personalization
+
+                // Debug: Log the consentState structure to see what values are available
+                console.log('[CONSENT MODE] DEBUG - consentState object:', consentStatus?.consentState);
+                console.log('[CONSENT MODE] DEBUG - Top-level analytics:', consentStatus?.analytics);
+                console.log('[CONSENT MODE] DEBUG - consentState.analytics:', consentStatus?.consentState?.analytics);
+
                 var consentConfig = {
                     'ad_storage': consentStatus?.advertising ? 'granted' : 'denied',
                     'analytics_storage': consentStatus?.analytics ? 'granted' : 'denied',
