@@ -499,11 +499,14 @@
                 console.log('[CONSENT MODE] Termly consent event detected:', consentStatus);
                 ga4Diagnostics.logEvent('consent', consentStatus);
 
+                // Map Termly consent properties to GA4 consent mode properties
+                // Termly uses: analytics, advertising, performance, social_networking, unclassified, essential
+                // GA4 uses: analytics_storage, ad_storage, ad_user_data, ad_personalization
                 var consentConfig = {
-                    'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
-                    'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
-                    'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
-                    'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
+                    'ad_storage': consentStatus?.advertising ? 'granted' : 'denied',
+                    'analytics_storage': consentStatus?.analytics ? 'granted' : 'denied',
+                    'ad_user_data': consentStatus?.advertising ? 'granted' : 'denied',
+                    'ad_personalization': consentStatus?.advertising ? 'granted' : 'denied'
                 };
 
                 ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
