@@ -492,38 +492,42 @@
         console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
         console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
 
-        // Listen for Termly consent changes
-        window.addEventListener('consentStatusChange', function(e) {
-            ga4Diagnostics.termlyEventFired = true;
-            var consentStatus = e.detail || window.consentStatus;
-            console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
-            ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
+        // Listen for Termly consent changes using Termly's API
+        if (window.Termly && typeof window.Termly.on === 'function') {
+            window.Termly.on('consentStatusChange', function(consentStatus) {
+                ga4Diagnostics.termlyEventFired = true;
+                console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
+                ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
 
-            var consentConfig = {
-                'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
-                'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
-                'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
-                'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
-            };
+                var consentConfig = {
+                    'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
+                    'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
+                    'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
+                    'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
+                };
 
-            ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
+                ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
 
-            console.log('[CONSENT MODE] Updating consent to:', consentConfig);
-            console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
-            ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
-            gtag('consent', 'update', consentConfig);
+                console.log('[CONSENT MODE] Updating consent to:', consentConfig);
+                console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
+                ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
+                gtag('consent', 'update', consentConfig);
 
-            // Mark user as opted_out if they declined analytics
-            if (consentConfig.analytics_storage === 'denied') {
-                console.log('[CONSENT MODE] User declined analytics - marking as opted_out');
-                gtag('event', 'user_opted_out', {
-                    'opted_out_category': 'analytics_storage',
-                    'opt_out_source': 'termly_banner',
-                    'timestamp': new Date().toISOString()
-                });
-                console.log('[CONSENT MODE] GA4 opted_out event sent');
-            }
-        });
+                // Mark user as opted_out if they declined analytics
+                if (consentConfig.analytics_storage === 'denied') {
+                    console.log('[CONSENT MODE] User declined analytics - marking as opted_out');
+                    gtag('event', 'user_opted_out', {
+                        'opted_out_category': 'analytics_storage',
+                        'opt_out_source': 'termly_banner',
+                        'timestamp': new Date().toISOString()
+                    });
+                    console.log('[CONSENT MODE] GA4 opted_out event sent');
+                }
+            });
+            console.log('[CONSENT MODE] Termly event listener attached via Termly.on()');
+        } else {
+            console.log('[CONSENT MODE] Termly not available or does not have .on() method');
+        }
     </script>
 
     <!-- Bot Detection for GA4 (marks direct referral sessions where user leaves in <500ms with zero interaction) -->
