@@ -513,19 +513,15 @@
 
                 // User has made a choice - update consent accordingly
                 // Map Termly consent properties to GA4 consent mode properties
-                // Termly uses: analytics, advertising, performance, social_networking, unclassified, essential
+                // Termly stores consent values inside consentState object:
+                // consentStatus.consentState = {analytics, advertising, performance, social_networking, unclassified, essential, ...}
                 // GA4 uses: analytics_storage, ad_storage, ad_user_data, ad_personalization
 
-                // Debug: Log the consentState structure to see what values are available
-                console.log('[CONSENT MODE] DEBUG - consentState object:', consentStatus?.consentState);
-                console.log('[CONSENT MODE] DEBUG - Top-level analytics:', consentStatus?.analytics);
-                console.log('[CONSENT MODE] DEBUG - consentState.analytics:', consentStatus?.consentState?.analytics);
-
                 var consentConfig = {
-                    'ad_storage': consentStatus?.advertising ? 'granted' : 'denied',
-                    'analytics_storage': consentStatus?.analytics ? 'granted' : 'denied',
-                    'ad_user_data': consentStatus?.advertising ? 'granted' : 'denied',
-                    'ad_personalization': consentStatus?.advertising ? 'granted' : 'denied'
+                    'ad_storage': consentStatus?.consentState?.advertising ? 'granted' : 'denied',
+                    'analytics_storage': consentStatus?.consentState?.analytics ? 'granted' : 'denied',
+                    'ad_user_data': consentStatus?.consentState?.advertising ? 'granted' : 'denied',
+                    'ad_personalization': consentStatus?.consentState?.advertising ? 'granted' : 'denied'
                 };
 
                 ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
