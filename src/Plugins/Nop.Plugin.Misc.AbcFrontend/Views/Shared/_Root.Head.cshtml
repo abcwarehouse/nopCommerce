@@ -500,6 +500,18 @@
                 console.log('[CONSENT MODE] Termly consent event detected:', consentStatus);
                 ga4Diagnostics.logEvent('consent', consentStatus);
 
+                // Skip consent update if user hasn't made a choice yet (consentState === null)
+                var isInitialLoad = consentStatus?.consentState === null || (consentStatus?.categories?.length === 1 && consentStatus?.categories[0] === 'essential');
+
+                if (isInitialLoad) {
+                    console.log('[CONSENT MODE] Initial Termly event (user has not interacted with banner yet) - keeping defaults, skipping consent update');
+                    if (!termlyInitialEventFired) {
+                        termlyInitialEventFired = true;
+                    }
+                    return; // Don't update consent or send opted_out event yet
+                }
+
+                // User has made a choice - update consent accordingly
                 // Map Termly consent properties to GA4 consent mode properties
                 // Termly uses: analytics, advertising, performance, social_networking, unclassified, essential
                 // GA4 uses: analytics_storage, ad_storage, ad_user_data, ad_personalization
@@ -512,19 +524,13 @@
 
                 ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
 
-                console.log('[CONSENT MODE] Updating consent to:', consentConfig);
+                console.log('[CONSENT MODE] User made a choice - updating consent to:', consentConfig);
                 console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
                 ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
                 gtag('consent', 'update', consentConfig);
 
-                // Only mark as opted_out if user ACTIVELY declined (not on initial page load)
-                // Initial event has consentState === null or only 'essential' category
-                var isInitialLoad = consentStatus?.consentState === null || (consentStatus?.categories?.length === 1 && consentStatus?.categories[0] === 'essential');
-
-                if (!termlyInitialEventFired) {
-                    termlyInitialEventFired = true;
-                    console.log('[CONSENT MODE] Initial Termly event (banner not yet interacted with) - skipping opted_out tracking');
-                } else if (consentConfig.analytics_storage === 'denied' && !isInitialLoad) {
+                // Mark as opted_out only if user actively declined
+                if (consentConfig.analytics_storage === 'denied') {
                     console.log('[CONSENT MODE] User actively declined analytics - marking as opted_out');
                     gtag('event', 'user_opted_out', {
                         'opted_out_category': 'analytics_storage',
