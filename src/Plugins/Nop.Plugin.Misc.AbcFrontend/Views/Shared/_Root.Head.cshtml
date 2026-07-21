@@ -492,12 +492,12 @@
         console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
         console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
 
-        // Listen for Termly consent changes using Termly's API
+        // Listen for Termly consent changes using Termly's API (event: 'consent')
         if (window.Termly && typeof window.Termly.on === 'function') {
-            window.Termly.on('consentStatusChange', function(consentStatus) {
+            window.Termly.on('consent', function(consentStatus) {
                 ga4Diagnostics.termlyEventFired = true;
-                console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
-                ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
+                console.log('[CONSENT MODE] Termly consent event detected:', consentStatus);
+                ga4Diagnostics.logEvent('consent', consentStatus);
 
                 var consentConfig = {
                     'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
@@ -524,7 +524,7 @@
                     console.log('[CONSENT MODE] GA4 opted_out event sent');
                 }
             });
-            console.log('[CONSENT MODE] Termly event listener attached via Termly.on()');
+            console.log('[CONSENT MODE] Termly event listener attached via Termly.on("consent")');
         } else {
             console.log('[CONSENT MODE] Termly not available or does not have .on() method');
         }
