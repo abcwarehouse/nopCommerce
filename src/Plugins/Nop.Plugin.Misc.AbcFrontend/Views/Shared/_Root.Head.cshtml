@@ -494,6 +494,15 @@
 
         // Listen for Termly consent changes using Termly's API (event: 'consent')
         var termlyInitialEventFired = false;
+        var userOptedOutEventSent = false;
+
+        // Check if opted_out event was already sent in this session
+        try {
+            userOptedOutEventSent = sessionStorage.getItem('ga4_user_opted_out_sent') === 'true';
+        } catch (e) {
+            // sessionStorage might be blocked in private/incognito mode
+        }
+
         if (window.Termly && typeof window.Termly.on === 'function') {
             window.Termly.on('consent', function(consentStatus) {
                 ga4Diagnostics.termlyEventFired = true;
@@ -527,16 +536,26 @@
 
                 ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
 
-                // IMPORTANT: Send opted_out event BEFORE denying consent
+                // IMPORTANT: Send opted_out event BEFORE denying consent, but ONLY ONCE per session
                 // If we deny analytics consent first, GA4 might refuse to send the event
-                if (consentConfig.analytics_storage === 'denied') {
-                    console.log('[CONSENT MODE] User actively declined analytics - sending opted_out event BEFORE consent update');
+                if (consentConfig.analytics_storage === 'denied' && !userOptedOutEventSent) {
+                    userOptedOutEventSent = true;
+                    console.log('[CONSENT MODE] User actively declined analytics - sending opted_out event BEFORE consent update (first time this session)');
                     gtag('event', 'user_opted_out', {
                         'opted_out_category': 'analytics_storage',
                         'opt_out_source': 'termly_banner',
                         'timestamp': new Date().toISOString()
                     });
                     console.log('[CONSENT MODE] GA4 opted_out event sent (before consent denial)');
+
+                    // Mark that we've sent this event in this session
+                    try {
+                        sessionStorage.setItem('ga4_user_opted_out_sent', 'true');
+                    } catch (e) {
+                        // sessionStorage might be blocked, but we still have the variable
+                    }
+                } else if (consentConfig.analytics_storage === 'denied' && userOptedOutEventSent) {
+                    console.log('[CONSENT MODE] User is declined, but opted_out event already sent this session - skipping');
                 }
 
                 console.log('[CONSENT MODE] User made a choice - updating consent to:', consentConfig);
