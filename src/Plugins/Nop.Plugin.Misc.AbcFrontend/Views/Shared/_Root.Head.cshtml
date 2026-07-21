@@ -501,7 +501,8 @@
                 ga4Diagnostics.logEvent('consent', consentStatus);
 
                 // Skip consent update if user hasn't made a choice yet (consentState === null)
-                var isInitialLoad = consentStatus?.consentState === null || (consentStatus?.categories?.length === 1 && consentStatus?.categories[0] === 'essential');
+                // If consentState is not null, user has actively made a choice (accept or decline)
+                var isInitialLoad = consentStatus?.consentState === null;
 
                 if (isInitialLoad) {
                     console.log('[CONSENT MODE] Initial Termly event (user has not interacted with banner yet) - keeping defaults, skipping consent update');
@@ -526,21 +527,22 @@
 
                 ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
 
-                console.log('[CONSENT MODE] User made a choice - updating consent to:', consentConfig);
-                console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
-                ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
-                gtag('consent', 'update', consentConfig);
-
-                // Mark as opted_out only if user actively declined
+                // IMPORTANT: Send opted_out event BEFORE denying consent
+                // If we deny analytics consent first, GA4 might refuse to send the event
                 if (consentConfig.analytics_storage === 'denied') {
-                    console.log('[CONSENT MODE] User actively declined analytics - marking as opted_out');
+                    console.log('[CONSENT MODE] User actively declined analytics - sending opted_out event BEFORE consent update');
                     gtag('event', 'user_opted_out', {
                         'opted_out_category': 'analytics_storage',
                         'opt_out_source': 'termly_banner',
                         'timestamp': new Date().toISOString()
                     });
-                    console.log('[CONSENT MODE] GA4 opted_out event sent');
+                    console.log('[CONSENT MODE] GA4 opted_out event sent (before consent denial)');
                 }
+
+                console.log('[CONSENT MODE] User made a choice - updating consent to:', consentConfig);
+                console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
+                ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
+                gtag('consent', 'update', consentConfig);
             });
             console.log('[CONSENT MODE] Termly event listener attached via Termly.on("consent")');
         } else {
