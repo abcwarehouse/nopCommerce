@@ -92,6 +92,8 @@
     <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
     <script defer src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
+    <script defer src="https://app.termly.io/resource-blocker/f9d245d4-7857-44e6-8b17-dec72f573e67?autoBlock=on"></script>
+
     @if(storeIdInt == 8)
     {
         <!-- Hawthorne: Google Tag Manager (with Consent Mode v2) -->
@@ -491,6 +493,7 @@
         });
         console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
         console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
+        console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
 
         // Listen for Termly consent changes using Termly's API (event: 'consent')
         var termlyInitialEventFired = false;
@@ -600,26 +603,30 @@
 
                     var elapsedMs = performance.now() - pageLoadStart;
 
-                    // Only mark as bot if: page exit in <500ms AND zero user interaction (direct traffic only)
-                    if (elapsedMs < 500 && !hasUserInteraction) {
+                    // Only mark as bot if: direct traffic + ZERO user interaction + confirmed bounce (page exit)
+                    // This avoids false positives from slow-loading pages where users interact after initial load
+                    if (!hasUserInteraction) {
                         botDetected = true;
-                        console.log('[BOT DETECTION] Suspicious activity detected - DIRECT traffic exit at ' + elapsedMs.toFixed(0) + 'ms with ZERO interaction');
+                        console.log('[BOT DETECTION] Suspicious activity detected - DIRECT traffic bouncing after ' + elapsedMs.toFixed(0) + 'ms with ZERO interaction');
 
                         // Send GA4 event marking as suspicious traffic
                         if (typeof gtag === 'function') {
                             gtag('event', 'suspicious_traffic', {
                                 'traffic_quality': 'bot_suspected',
-                                'exit_timing_ms': Math.round(elapsedMs),
+                                'session_duration_ms': Math.round(elapsedMs),
                                 'page_url': window.location.pathname,
                                 'user_interaction': 'none',
-                                'traffic_source': 'direct'
+                                'traffic_source': 'direct',
+                                'detection_type': 'zero_interaction_bounce'
                             });
-                            console.log('[BOT DETECTION] GA4 event sent - traffic marked as suspicious');
+                            console.log('[BOT DETECTION] GA4 event sent - traffic marked as suspicious (zero interaction bounce)');
                         }
+                    } else {
+                        console.log('[BOT DETECTION] User had interaction during session - not flagging as bot');
                     }
                 }
 
-                // Listen for page unload/navigation
+                // Listen for page unload/navigation (confirmed bounce point)
                 window.addEventListener('beforeunload', checkAndReportBot, true);
                 window.addEventListener('unload', checkAndReportBot, true);
 
@@ -630,7 +637,7 @@
                     }
                 });
 
-                console.log('[BOT DETECTION] Event listeners attached - will only flag DIRECT exits <500ms with ZERO user interaction');
+                console.log('[BOT DETECTION] Event listeners attached - will flag DIRECT traffic with ZERO user interaction on page exit/bounce');
             } catch(err) {
                 console.error('[BOT DETECTION] Initialization error:', err.message);
             }
