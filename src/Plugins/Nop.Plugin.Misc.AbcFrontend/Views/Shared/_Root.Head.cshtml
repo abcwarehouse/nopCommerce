@@ -89,7 +89,8 @@
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@NopHtml.GeneratePageCssClasses()">
 <head>
     @NopHtml.GenerateHeadCustom()
-    <script defer referrerpolicy="no-referrer-when-downgrade" src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script> 
+    <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
+    <script src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
     @if(storeIdInt == 8)
     {
