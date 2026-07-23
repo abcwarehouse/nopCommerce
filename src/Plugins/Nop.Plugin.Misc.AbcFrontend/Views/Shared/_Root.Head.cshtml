@@ -177,9 +177,6 @@
     <script defer src="https://cdn.searchspring.io/script.js"></script>
     <script async src="https://cdn.searchspring.net/intellisuggest/is.min.js"></script>
 
-    <!-- Cart Slideout (critical for add-to-cart) -->
-    <script defer src="~/Plugins/Widgets.CartSlideout/scripts/cart-slideout.js"></script>
-
     <!-- UUID library + Cookie/Session Management -->
     <script defer src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js"></script>
     <script>
@@ -565,6 +562,10 @@
                 console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
                 ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
                 gtag('consent', 'update', consentConfig);
+
+                // Notify GA4 Tag.cshtml listeners that consent has been resolved (required for queued events like purchase)
+                window.dispatchEvent(new Event('consentStatusChange'));
+                console.log('[CONSENT MODE] Dispatched consentStatusChange event for GA4 listeners');
             });
             console.log('[CONSENT MODE] Termly event listener attached via Termly.on("consent")');
         } else {
