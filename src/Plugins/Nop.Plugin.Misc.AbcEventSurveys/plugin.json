@@ -1,0 +1,11 @@
+{
+  "Group": "Misc",
+  "FriendlyName": "ABC Warehouse Event Surveys",
+  "SystemName": "Misc.AbcEventSurveys",
+  "Version": "1.0",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "ABC Warehouse",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.AbcEventSurveys.dll",
+  "Description": "Auto-generates public sign-up/survey pages per event (in place of SurveyMonkey), collecting entrant info against a unique event identifier and exporting results to Excel or XML."
+}

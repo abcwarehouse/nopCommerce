@@ -7,7 +7,12 @@
       "Bash(xargs grep -l \"GetWidgetZones\\\\|IWidgetPlugin\")",
       "Bash(dotnet build *)",
       "PowerShell(dotnet build *)",
-      "Skill(simplify)"
+      "Skill(simplify)",
+      "Read(//c/Users/drobinson/Downloads/**)",
+      "Bash(dotnet sln *)",
+      "Bash(dotnet *)",
+      "Bash(python3 -c \"import uuid; print\\(str\\(uuid.uuid4\\(\\)\\).upper\\(\\)\\)\")",
+      "Bash(powershell -Command \"[guid]::NewGuid\\(\\).ToString\\(\\).ToUpper\\(\\)\")"
     ]
   }
 }

@@ -1,0 +1,201 @@
+@model SurveyPageModel
+
+@{
+    Layout = "_ColumnsOne";
+    NopHtml.AddTitleParts(Model.Header1 ?? "Event Survey");
+}
+
+<style>
+    .survey-page {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 16px 60px;
+    }
+
+    .survey-header1 {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .survey-header2 {
+        text-align: center;
+        font-size: 1.25rem;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .survey-description {
+        margin-bottom: 24px;
+        line-height: 1.5;
+    }
+
+    .survey-page .form-group {
+        margin-bottom: 16px;
+    }
+
+    .survey-page label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .survey-page .required-field::after {
+        content: " *";
+        color: red;
+    }
+
+    .survey-page input[type="text"],
+    .survey-page input[type="email"],
+    .survey-page input[type="tel"] {
+        width: 100%;
+        max-width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+
+    .survey-terms {
+        margin: 24px 0;
+        padding: 16px;
+        border: 1px solid #ddd;
+        background: #f9f9f9;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        max-height: 220px;
+        overflow-y: auto;
+    }
+
+    .survey-consent-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 16px 0;
+    }
+
+    .survey-consent-row input[type="checkbox"] {
+        margin-top: 4px;
+    }
+
+    .survey-submit {
+        padding: 10px 28px;
+        font-weight: bold;
+    }
+
+    .field-validation-error {
+        color: #b00020;
+        font-size: 0.85rem;
+        display: block;
+        margin-top: 4px;
+    }
+
+    .survey-closed,
+    .survey-thankyou {
+        text-align: center;
+        padding: 60px 16px;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="survey-page">
+    @if (Model.Submitted)
+    {
+        <div class="survey-thankyou">
+            <h1>Thank You!</h1>
+            <p>Your entry has been received. Good luck!</p>
+        </div>
+    }
+    else if (Model.EventClosed)
+    {
+        <div class="survey-closed">
+            <h1>This survey isn't currently accepting entries.</h1>
+            <p>Please check back later or see an ABC Warehouse associate for details.</p>
+        </div>
+    }
+    else
+    {
+        @if (!string.IsNullOrWhiteSpace(Model.Header1))
+        {
+            <div class="survey-header1">@Model.Header1</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Header2))
+        {
+            <div class="survey-header2">@Model.Header2</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <div class="survey-description">@Model.Description</div>
+        }
+
+        <form asp-controller="Survey" asp-action="Index" asp-route-code="@Model.Code" method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <div class="form-group">
+                <label asp-for="FirstName" class="required-field"></label>
+                <nop-editor asp-for="FirstName" />
+                <span asp-validation-for="FirstName"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="LastName" class="required-field"></label>
+                <nop-editor asp-for="LastName" />
+                <span asp-validation-for="LastName"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="required-field"></label>
+                <nop-editor asp-for="Email" />
+                <span asp-validation-for="Email"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Phone" class="required-field"></label>
+                <nop-editor asp-for="Phone" />
+                <span asp-validation-for="Phone"></span>
+            </div>
+
+            @for (var i = 0; i < Model.CustomFields.Count; i++)
+            {
+                <div class="form-group">
+                    <label class="@(Model.CustomFields[i].IsRequired ? "required-field" : "")">@Model.CustomFields[i].Name</label>
+                    <input type="hidden" asp-for="CustomFields[i].Id" />
+                    <input type="hidden" asp-for="CustomFields[i].Name" />
+                    <input type="hidden" asp-for="CustomFields[i].IsRequired" />
+                    <input type="text" asp-for="CustomFields[i].Value" />
+                    <span asp-validation-for="CustomFields[i].Value"></span>
+                </div>
+            }
+
+            <div class="survey-terms">
+                <strong>Terms and Conditions:</strong> Terms and conditions apply. See an ABC Warehouse associate for
+                complete rules. Must be 18 years of age or older to enter. No purchase necessary. Limit one entry per
+                person. Duplicate entries will be disqualified. Winners will be selected at random from all eligible
+                entries received. Odds of winning depend on the total number of eligible entries received. Employees
+                of ABC Warehouse, its affiliates, and their immediate family members are not eligible to participate.
+                Winners are responsible for all applicable taxes. If a selected winner cannot be contacted, the prize
+                may be forfeited and awarded to an alternate winner. Promotion ends July 27, 2026, at 11:59 PM ET.
+                <br /><br />
+                By submitting this entry, you consent to receive marketing emails and promotional SMS text messages
+                from ABC Warehouse. Consent is not a condition of purchase. Message and data rates may apply. Message
+                frequency varies. Reply STOP to unsubscribe from SMS messages at any time or click the unsubscribe
+                link in marketing emails.
+            </div>
+
+            <div class="survey-consent-row">
+                <input type="checkbox" asp-for="ConsentMarketing" id="ConsentMarketing" />
+                <label for="ConsentMarketing" style="font-weight: normal; margin: 0;">
+                    I have read and agree to the Terms and Conditions above.
+                </label>
+            </div>
+            <span asp-validation-for="ConsentMarketing"></span>
+
+            <input type="hidden" asp-for="SurveyEventId" />
+            <input type="hidden" asp-for="Code" />
+            <input type="hidden" asp-for="Header1" />
+            <input type="hidden" asp-for="Header2" />
+            <input type="hidden" asp-for="Description" />
+
+            <button type="submit" class="survey-submit btn bg-blue">Submit Entry</button>
+        </form>
+    }
+</div>
