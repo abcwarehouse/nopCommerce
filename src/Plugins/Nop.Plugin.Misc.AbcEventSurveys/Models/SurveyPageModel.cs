@@ -14,6 +14,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         public string Code { get; set; }
 
         public string Header1 { get; set; }
+        public int PictureId { get; set; }
         public string Header2 { get; set; }
         public string Description { get; set; }
 
@@ -39,7 +40,10 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         [Display(Name = "Phone Number")]
         public string Phone { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "You must agree to the Terms and Conditions to enter.")]
+        // Deliberately no [Range(typeof(bool), ...)] here: jQuery's unobtrusive "range" validator
+        // treats the value as a number (parseFloat("true") => NaN), so it fails client-side
+        // regardless of whether the box is checked. Enforced manually server-side instead
+        // (see SurveyController.Index POST).
         public bool ConsentMarketing { get; set; }
 
         public IList<SurveyCustomFieldInputModel> CustomFields { get; set; }

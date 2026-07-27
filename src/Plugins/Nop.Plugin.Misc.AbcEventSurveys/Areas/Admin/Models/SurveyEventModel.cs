@@ -20,6 +20,10 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Models
         [Display(Name = "Header 1")]
         public string Header1 { get; set; }
 
+        [Display(Name = "Picture (shown below Header 1)")]
+        [UIHint("Picture")]
+        public int PictureId { get; set; }
+
         [Display(Name = "Header 2")]
         public string Header2 { get; set; }
 

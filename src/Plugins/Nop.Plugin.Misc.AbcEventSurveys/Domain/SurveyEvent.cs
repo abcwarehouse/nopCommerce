@@ -27,6 +27,11 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         public string Header1 { get; set; }
 
         /// <summary>
+        /// Optional picture displayed just below Header1 on the public survey page. 0 = none.
+        /// </summary>
+        public int PictureId { get; set; }
+
+        /// <summary>
         /// Secondary header text displayed below Header1.
         /// </summary>
         public string Header2 { get; set; }

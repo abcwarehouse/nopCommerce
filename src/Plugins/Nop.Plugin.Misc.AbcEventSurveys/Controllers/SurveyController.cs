@@ -48,11 +48,18 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 }
             }
 
+            if (!postedModel.ConsentMarketing)
+            {
+                ModelState.AddModelError(nameof(SurveyPageModel.ConsentMarketing),
+                    "You must agree to the Terms and Conditions to enter.");
+            }
+
             if (!ModelState.IsValid)
             {
                 postedModel.SurveyEventId = surveyEvent.Id;
                 postedModel.Code = surveyEvent.Code;
                 postedModel.Header1 = surveyEvent.Header1;
+                postedModel.PictureId = surveyEvent.PictureId;
                 postedModel.Header2 = surveyEvent.Header2;
                 postedModel.Description = surveyEvent.Description;
                 postedModel.CustomFields = customFields.Select((field, i) => new SurveyCustomFieldInputModel
@@ -104,6 +111,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
             model.SurveyEventId = surveyEvent.Id;
             model.Code = surveyEvent.Code;
             model.Header1 = surveyEvent.Header1;
+            model.PictureId = surveyEvent.PictureId;
             model.Header2 = surveyEvent.Header2;
             model.Description = surveyEvent.Description;
 

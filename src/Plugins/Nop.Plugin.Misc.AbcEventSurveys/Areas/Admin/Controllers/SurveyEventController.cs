@@ -67,6 +67,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 Name = model.Name,
                 Code = code,
                 Header1 = model.Header1,
+                PictureId = model.PictureId,
                 Header2 = model.Header2,
                 Description = model.Description,
                 IsActive = model.IsActive,
@@ -94,6 +95,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 Name = surveyEvent.Name,
                 Code = surveyEvent.Code,
                 Header1 = surveyEvent.Header1,
+                PictureId = surveyEvent.PictureId,
                 Header2 = surveyEvent.Header2,
                 Description = surveyEvent.Description,
                 IsActive = surveyEvent.IsActive,
@@ -132,6 +134,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
             surveyEvent.Name = model.Name;
             surveyEvent.Code = !string.IsNullOrWhiteSpace(model.Code) ? model.Code : surveyEvent.Code;
             surveyEvent.Header1 = model.Header1;
+            surveyEvent.PictureId = model.PictureId;
             surveyEvent.Header2 = model.Header2;
             surveyEvent.Description = model.Description;
             surveyEvent.IsActive = model.IsActive;
