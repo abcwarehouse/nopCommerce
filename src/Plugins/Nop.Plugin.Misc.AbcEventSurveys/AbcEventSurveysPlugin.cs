@@ -1,4 +1,5 @@
 using Nop.Core;
+using Nop.Services.Common;
 using Nop.Services.Events;
 using Nop.Services.Plugins;
 using Nop.Web.Framework.Events;
