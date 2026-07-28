@@ -42,6 +42,30 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         public string Description { get; set; }
 
         /// <summary>
+        /// Custom Terms and Conditions text shown above the consent checkbox. Null/empty falls
+        /// back to the standard ABC Warehouse sweepstakes boilerplate.
+        /// </summary>
+        public string TermsAndConditions { get; set; }
+
+        /// <summary>
+        /// Header shown on the thank-you screen after a successful submission. Null/empty falls
+        /// back to "Thank You!".
+        /// </summary>
+        public string ThankYouHeader { get; set; }
+
+        /// <summary>
+        /// Description shown on the thank-you screen after a successful submission. Null/empty
+        /// falls back to the standard "Your entry has been received" message.
+        /// </summary>
+        public string ThankYouDescription { get; set; }
+
+        /// <summary>
+        /// Where to send the visitor after the thank-you screen is shown. Null/empty redirects
+        /// to the site homepage.
+        /// </summary>
+        public string RedirectUrl { get; set; }
+
+        /// <summary>
         /// Whether the page is currently reachable by the public.
         /// </summary>
         public bool IsActive { get; set; }

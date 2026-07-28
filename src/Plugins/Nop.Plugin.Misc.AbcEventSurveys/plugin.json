@@ -2,7 +2,7 @@
   "Group": "Misc",
   "FriendlyName": "ABC Warehouse Event Surveys",
   "SystemName": "Misc.AbcEventSurveys",
-  "Version": "1.1",
+  "Version": "1.2",
   "SupportedVersions": [ "4.80" ],
   "Author": "neckbeard",
   "DisplayOrder": 1,

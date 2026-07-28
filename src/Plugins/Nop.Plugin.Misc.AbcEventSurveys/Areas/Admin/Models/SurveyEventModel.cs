@@ -30,6 +30,18 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Models
         [Display(Name = "Description")]
         public string Description { get; set; }
 
+        [Display(Name = "Terms and Conditions")]
+        public string TermsAndConditions { get; set; }
+
+        [Display(Name = "Thank You Header")]
+        public string ThankYouHeader { get; set; }
+
+        [Display(Name = "Thank You Description")]
+        public string ThankYouDescription { get; set; }
+
+        [Display(Name = "Redirect URL (after thank you)")]
+        public string RedirectUrl { get; set; }
+
         [Display(Name = "Active")]
         public bool IsActive { get; set; }
 

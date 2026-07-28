@@ -17,6 +17,10 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         public int PictureId { get; set; }
         public string Header2 { get; set; }
         public string Description { get; set; }
+        public string TermsAndConditions { get; set; }
+        public string ThankYouHeader { get; set; }
+        public string ThankYouDescription { get; set; }
+        public string RedirectUrl { get; set; }
 
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(400)]

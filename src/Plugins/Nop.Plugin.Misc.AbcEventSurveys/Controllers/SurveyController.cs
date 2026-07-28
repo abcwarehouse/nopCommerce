@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Nop.Plugin.Misc.AbcEventSurveys.Domain;
 using Nop.Plugin.Misc.AbcEventSurveys.Models;
@@ -62,6 +63,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 postedModel.PictureId = surveyEvent.PictureId;
                 postedModel.Header2 = surveyEvent.Header2;
                 postedModel.Description = surveyEvent.Description;
+                postedModel.TermsAndConditions = surveyEvent.TermsAndConditions;
                 postedModel.CustomFields = customFields.Select((field, i) => new SurveyCustomFieldInputModel
                 {
                     Id = field.Id,
@@ -79,7 +81,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 FirstName = postedModel.FirstName,
                 LastName = postedModel.LastName,
                 Email = postedModel.Email,
-                Phone = postedModel.Phone,
+                Phone = CleanPhoneNumber(postedModel.Phone),
                 ConsentMarketing = postedModel.ConsentMarketing,
                 CreatedOnUtc = DateTime.UtcNow,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
@@ -94,6 +96,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             var thankYouModel = await BuildPageModelAsync(surveyEvent);
             thankYouModel.Submitted = true;
+            thankYouModel.RedirectUrl = !string.IsNullOrWhiteSpace(surveyEvent.RedirectUrl)
+                ? surveyEvent.RedirectUrl
+                : Url.Content("~/");
 
             return View("~/Plugins/Misc.AbcEventSurveys/Views/Survey/Index.cshtml", thankYouModel);
         }
@@ -114,6 +119,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
             model.PictureId = surveyEvent.PictureId;
             model.Header2 = surveyEvent.Header2;
             model.Description = surveyEvent.Description;
+            model.TermsAndConditions = surveyEvent.TermsAndConditions;
+            model.ThankYouHeader = surveyEvent.ThankYouHeader;
+            model.ThankYouDescription = surveyEvent.ThankYouDescription;
 
             var customFields = await _surveyEventService.GetCustomFieldsByEventIdAsync(surveyEvent.Id);
             model.CustomFields = customFields.Select(field => new SurveyCustomFieldInputModel
@@ -124,6 +132,18 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
             }).ToList();
 
             return model;
+        }
+
+        /// <summary>
+        /// Strips formatting characters entered in the phone field so only digits (and a
+        /// possible leading "+") are stored, e.g. "(586) 123-4567" -> "5861234567".
+        /// </summary>
+        private static string CleanPhoneNumber(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone))
+                return phone;
+
+            return Regex.Replace(phone, @"[-()\s]", string.Empty);
         }
     }
 }

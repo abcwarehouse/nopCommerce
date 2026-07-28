@@ -12,7 +12,9 @@
       "Bash(dotnet sln *)",
       "Bash(dotnet *)",
       "Bash(python3 -c \"import uuid; print\\(str\\(uuid.uuid4\\(\\)\\).upper\\(\\)\\)\")",
-      "Bash(powershell -Command \"[guid]::NewGuid\\(\\).ToString\\(\\).ToUpper\\(\\)\")"
+      "Bash(powershell -Command \"[guid]::NewGuid\\(\\).ToString\\(\\).ToUpper\\(\\)\")",
+      "Bash(git -C \".\" status --short)",
+      "Bash(git -C \".\" diff --stat)"
     ]
   }
 }
