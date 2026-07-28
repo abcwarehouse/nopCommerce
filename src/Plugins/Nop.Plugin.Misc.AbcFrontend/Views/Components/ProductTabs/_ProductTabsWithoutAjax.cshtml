@@ -63,8 +63,10 @@
         }
     </ul>
 </div>
+@* CNet content disabled - was causing 30-60s page load delays (duplicate script loading + timeout)
 @if (!string.IsNullOrEmpty(itemNumber) && manufacturer != null)
 {
+    <!-- COMMENTED OUT: CNet Content Script
     <script type="text/javascript" async="" src="https://cdn.cnetcontent.com/jsc/h.js"></script>
     <script type="text/javascript">
         var ccs_cc_args = ccs_cc_args || [];
@@ -83,7 +85,9 @@
             var n = document.getElementsByTagName('script')[0]; n.parentNode.insertBefore(sc, n);
         })();
     </script>
+    -->
 }
+*@
 <div class="productTabs-body">
     @foreach (var tabInfo in Model.Tabs)
     {
@@ -127,3 +131,17 @@
         <div data-bv-show="reviews" data-bv-product-id="@Model.ProductModel.Id"></div>
     </div>
 </div>
+
+<script src="//scontent.webcollage.net/api/v2/product-content"></script>
+<script>Webcollage.loadContent('abcw', '@Model.ProductModel.Sku', { autoPlayAndStop: true });</script>
+
+<!-- OmniTag -->
+<script type="text/javascript">
+    (function (se, ll, p, oin, ts) {
+        oin = se.createElement(ll); oin.type = 'text/java' + ll;
+        oin.async = true; oin.src = p + Math.floor(Date.now() / 86400000);
+        ts = se.getElementsByTagName(ll)[0]; ts.parentNode.insertBefore(oin, ts);
+    }
+   (document, 'script', '//a.sellpoint.net/c/4765/sp.js?cv='));
+</script>
+<script type="text/javascript"> var SPWORLD = SPWORLD || []; SPWORLD.push('@Model.ProductModel.Sku'); </script> 
