@@ -764,6 +764,36 @@
             }
         });
     </script>
+
+    <!-- Suppress ShopLocal sale_circular events on /sale-ad page (race condition fix) -->
+    <script>
+        (function() {
+            // Only on sale-ad page
+            if (window.location.pathname === '/sale-ad' || window.location.pathname.includes('Fusion')) {
+                console.log('[SHOPLCAL FIX] Wrapping gtag to suppress sale_circular events');
+
+                // Wait for gtag to be available
+                function wrapGtag() {
+                    if (typeof window.gtag !== 'function') {
+                        setTimeout(wrapGtag, 50);
+                        return;
+                    }
+
+                    const originalGtag = window.gtag;
+                    window.gtag = function() {
+                        const args = Array.from(arguments);
+                        if (args[0] === 'event' && args[1] === 'sale_circular') {
+                            console.log('[SHOPLCAL FIX] ✅ Suppressed sale_circular event');
+                            return;
+                        }
+                        return originalGtag.apply(this, arguments);
+                    };
+                }
+
+                wrapGtag();
+            }
+        })();
+    </script>
 </head>
 
 @inject ICategoryService categoryService
