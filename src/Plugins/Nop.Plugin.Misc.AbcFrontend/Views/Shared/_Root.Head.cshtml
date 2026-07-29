@@ -765,34 +765,47 @@
         });
     </script>
 
-    <!-- Suppress ShopLocal sale_circular events on /sale-ad page (race condition fix) -->
+    <!-- Delay ShopLocal sale_circular events on /sale-ad page until GA4 is ready (race condition fix) -->
     <script>
-        (function() {
-            // Only on sale-ad page
-            if (window.location.pathname === '/sale-ad' || window.location.pathname.includes('Fusion')) {
-                console.log('[SHOPLCAL FIX] Wrapping gtag to suppress sale_circular events');
+        if (window.location.pathname === '/sale-ad' || window.location.pathname.includes('Fusion')) {
+            console.log('[SHOPLCAL FIX] Installing dataLayer queue for sale_circular events');
 
-                // Wait for gtag to be available
-                function wrapGtag() {
-                    if (typeof window.gtag !== 'function') {
-                        setTimeout(wrapGtag, 50);
-                        return;
-                    }
+            window.dataLayer = window.dataLayer || [];
+            const originalPush = window.dataLayer.push;
+            const queuedSaleCircularEvents = [];
+            let flushTimeout;
 
-                    const originalGtag = window.gtag;
-                    window.gtag = function() {
-                        const args = Array.from(arguments);
-                        if (args[0] === 'event' && args[1] === 'sale_circular') {
-                            console.log('[SHOPLCAL FIX] ✅ Suppressed sale_circular event');
-                            return;
-                        }
-                        return originalGtag.apply(this, arguments);
-                    };
+            function flushQueuedEvents() {
+                if (queuedSaleCircularEvents.length > 0) {
+                    console.log('[SHOPLCAL FIX] Flushing ' + queuedSaleCircularEvents.length + ' queued events');
+                    queuedSaleCircularEvents.forEach(function(event) {
+                        originalPush.call(window.dataLayer, event);
+                    });
+                    queuedSaleCircularEvents.length = 0;
+                }
+            }
+
+            window.dataLayer.push = function() {
+                const args = Array.from(arguments);
+
+                // Queue sale_circular events, let others through immediately
+                if (args[0] && args[0].event === 'sale_circular') {
+                    console.log('[SHOPLCAL FIX] Queued sale_circular event');
+                    queuedSaleCircularEvents.push(args[0]);
+                    return;
                 }
 
-                wrapGtag();
-            }
-        })();
+                return originalPush.apply(this, arguments);
+            };
+
+            // If user navigates away, flush queued events before leaving
+            window.addEventListener('beforeunload', flushQueuedEvents);
+
+            // After GA4 initializes (2 seconds), flush queued events
+            flushTimeout = setTimeout(flushQueuedEvents, 2000);
+
+            console.log('[SHOPLCAL FIX] Ready - queued events will flush on page exit or after 2s');
+        }
     </script>
 </head>
 
