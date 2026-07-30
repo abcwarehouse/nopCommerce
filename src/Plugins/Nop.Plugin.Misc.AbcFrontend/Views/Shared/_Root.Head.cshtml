@@ -768,43 +768,76 @@
     <!-- Delay ShopLocal sale_circular events on /sale-ad page until GA4 is ready (race condition fix) -->
     <script>
         if (window.location.pathname === '/sale-ad' || window.location.pathname.includes('Fusion')) {
-            console.log('[SHOPLCAL FIX] Installing dataLayer queue for sale_circular events');
+            console.log('[SHOPLCAL FIX] 🚀 INITIALIZING - Page path:', window.location.pathname);
 
             window.dataLayer = window.dataLayer || [];
             const originalPush = window.dataLayer.push;
             const queuedSaleCircularEvents = [];
-            let flushTimeout;
+            let ga4Ready = false;
+            const initTime = performance.now();
+
+            function getTimestamp() {
+                return '(' + (performance.now() - initTime).toFixed(0) + 'ms)';
+            }
 
             function flushQueuedEvents() {
                 if (queuedSaleCircularEvents.length > 0) {
-                    console.log('[SHOPLCAL FIX] Flushing ' + queuedSaleCircularEvents.length + ' queued events');
-                    queuedSaleCircularEvents.forEach(function(event) {
+                    console.log('[SHOPLCAL FIX] ✅ FLUSHING', getTimestamp(), '- Sending ' + queuedSaleCircularEvents.length + ' queued sale_circular events');
+                    queuedSaleCircularEvents.forEach(function(event, index) {
+                        console.log('[SHOPLCAL FIX]   └─ Event ' + (index + 1) + ':', event);
                         originalPush.call(window.dataLayer, event);
                     });
                     queuedSaleCircularEvents.length = 0;
+                } else {
+                    console.log('[SHOPLCAL FIX] ✅ FLUSH CALLED', getTimestamp(), '- No queued events to flush');
                 }
             }
 
             window.dataLayer.push = function() {
                 const args = Array.from(arguments);
+                const eventType = args[0]?.event || 'unknown';
 
-                // Queue sale_circular events, let others through immediately
+                // Queue sale_circular events until GA4 is ready, let others through immediately
                 if (args[0] && args[0].event === 'sale_circular') {
-                    console.log('[SHOPLCAL FIX] Queued sale_circular event');
-                    queuedSaleCircularEvents.push(args[0]);
-                    return;
+                    if (!ga4Ready) {
+                        console.log('[SHOPLCAL FIX] 📦 QUEUED', getTimestamp(), '- sale_circular event queued (GA4 not ready yet, queue size:', queuedSaleCircularEvents.length + 1, ')');
+                        console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
+                        queuedSaleCircularEvents.push(args[0]);
+                        return;
+                    } else {
+                        console.log('[SHOPLCAL FIX] ⏭️  SENT IMMEDIATELY', getTimestamp(), '- sale_circular event sent (GA4 already ready)');
+                        console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
+                    }
                 }
 
                 return originalPush.apply(this, arguments);
             };
 
-            // If user navigates away, flush queued events before leaving
-            window.addEventListener('beforeunload', flushQueuedEvents);
+            // Wait for GA4 consent to be resolved (dispatched from consent mode handler above)
+            window.addEventListener('consentStatusChange', function() {
+                ga4Ready = true;
+                console.log('[SHOPLCAL FIX] 🎯 GA4 READY VIA CONSENT', getTimestamp(), '- consentStatusChange event fired, GA4 is ready');
+                flushQueuedEvents();
+            });
 
-            // After GA4 initializes (2 seconds), flush queued events
-            flushTimeout = setTimeout(flushQueuedEvents, 2000);
+            // Hard timeout: if consent event doesn't fire within 5 seconds, mark GA4 as ready anyway
+            setTimeout(function() {
+                if (!ga4Ready) {
+                    ga4Ready = true;
+                    console.log('[SHOPLCAL FIX] ⏰ GA4 READY VIA TIMEOUT', getTimestamp(), '- 5s hard timeout reached, flushing anyway');
+                    flushQueuedEvents();
+                } else {
+                    console.log('[SHOPLCAL FIX] ⏰ TIMEOUT CHECK', getTimestamp(), '- 5s timeout reached but GA4 already ready (consent fired first)');
+                }
+            }, 5000);
 
-            console.log('[SHOPLCAL FIX] Ready - queued events will flush on page exit or after 2s');
+            // If user navigates away before GA4 is ready, flush queued events before leaving
+            window.addEventListener('beforeunload', function() {
+                console.log('[SHOPLCAL FIX] 🚪 PAGE UNLOAD', getTimestamp(), '- User leaving page, flushing any remaining events');
+                flushQueuedEvents();
+            });
+
+            console.log('[SHOPLCAL FIX] ✔️  INITIALIZED', getTimestamp(), '- Waiting for sale_circular events. GA4 will be ready when: (1) consentStatusChange fires OR (2) 5s timeout');
         }
     </script>
 </head>
