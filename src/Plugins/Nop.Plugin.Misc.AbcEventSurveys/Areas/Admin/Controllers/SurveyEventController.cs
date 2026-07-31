@@ -73,7 +73,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 TermsAndConditions = model.TermsAndConditions,
                 ThankYouHeader = model.ThankYouHeader,
                 ThankYouDescription = model.ThankYouDescription,
-                RedirectUrl = model.RedirectUrl,
                 IsActive = model.IsActive,
                 StartDateUtc = model.StartDateUtc,
                 EndDateUtc = model.EndDateUtc,
@@ -105,7 +104,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 TermsAndConditions = surveyEvent.TermsAndConditions,
                 ThankYouHeader = surveyEvent.ThankYouHeader,
                 ThankYouDescription = surveyEvent.ThankYouDescription,
-                RedirectUrl = surveyEvent.RedirectUrl,
                 IsActive = surveyEvent.IsActive,
                 StartDateUtc = surveyEvent.StartDateUtc,
                 EndDateUtc = surveyEvent.EndDateUtc,
@@ -148,7 +146,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
             surveyEvent.TermsAndConditions = model.TermsAndConditions;
             surveyEvent.ThankYouHeader = model.ThankYouHeader;
             surveyEvent.ThankYouDescription = model.ThankYouDescription;
-            surveyEvent.RedirectUrl = model.RedirectUrl;
             surveyEvent.IsActive = model.IsActive;
             surveyEvent.StartDateUtc = model.StartDateUtc;
             surveyEvent.EndDateUtc = model.EndDateUtc;

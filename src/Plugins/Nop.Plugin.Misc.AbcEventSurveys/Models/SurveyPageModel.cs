@@ -20,7 +20,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         public string TermsAndConditions { get; set; }
         public string ThankYouHeader { get; set; }
         public string ThankYouDescription { get; set; }
-        public string RedirectUrl { get; set; }
 
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(400)]

@@ -60,12 +60,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         public string ThankYouDescription { get; set; }
 
         /// <summary>
-        /// Where to send the visitor after the thank-you screen is shown. Null/empty redirects
-        /// to the site homepage.
-        /// </summary>
-        public string RedirectUrl { get; set; }
-
-        /// <summary>
         /// Whether the page is currently reachable by the public.
         /// </summary>
         public bool IsActive { get; set; }

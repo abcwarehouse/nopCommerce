@@ -96,9 +96,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             var thankYouModel = await BuildPageModelAsync(surveyEvent);
             thankYouModel.Submitted = true;
-            thankYouModel.RedirectUrl = !string.IsNullOrWhiteSpace(surveyEvent.RedirectUrl)
-                ? surveyEvent.RedirectUrl
-                : Url.Content("~/");
 
             return View("~/Plugins/Misc.AbcEventSurveys/Views/Survey/Index.cshtml", thankYouModel);
         }

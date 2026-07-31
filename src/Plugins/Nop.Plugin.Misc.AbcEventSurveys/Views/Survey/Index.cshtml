@@ -193,7 +193,7 @@
 <div class="survey-page">
     @if (Model.Submitted)
     {
-        <div class="survey-thankyou" id="surveyThankYou" data-redirect-url="@Model.RedirectUrl">
+        <div class="survey-thankyou">
             <div class="survey-thankyou-icon">
                 <svg viewBox="0 0 52 52">
                     <circle cx="26" cy="26" r="25" />
@@ -203,18 +203,6 @@
             <h1>@(string.IsNullOrWhiteSpace(Model.ThankYouHeader) ? "Thank You!" : Model.ThankYouHeader)</h1>
             <p>@(string.IsNullOrWhiteSpace(Model.ThankYouDescription) ? "Your entry has been received. Good luck!" : Model.ThankYouDescription)</p>
         </div>
-
-        <script>
-            (function () {
-                var el = document.getElementById('surveyThankYou');
-                var url = el && el.getAttribute('data-redirect-url');
-                if (url) {
-                    setTimeout(function () {
-                        window.location.href = url;
-                    }, 4000);
-                }
-            })();
-        </script>
     }
     else if (Model.EventClosed)
     {
