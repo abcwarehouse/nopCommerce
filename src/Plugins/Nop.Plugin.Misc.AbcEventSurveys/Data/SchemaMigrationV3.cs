@@ -13,7 +13,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Data
                 .AddColumn(nameof(SurveyEvent.TermsAndConditions)).AsString(int.MaxValue).Nullable()
                 .AddColumn(nameof(SurveyEvent.ThankYouHeader)).AsString(400).Nullable()
                 .AddColumn(nameof(SurveyEvent.ThankYouDescription)).AsString(int.MaxValue).Nullable()
-                .AddColumn(nameof(SurveyEvent.RedirectUrl)).AsString(400).Nullable();
+                // RedirectUrl was removed from SurveyEvent in SchemaMigrationV4 - kept as a string
+                // literal here (rather than nameof) since the property no longer exists to reference.
+                .AddColumn("RedirectUrl").AsString(400).Nullable();
         }
     }
 }

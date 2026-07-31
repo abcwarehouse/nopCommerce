@@ -9,13 +9,14 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Data
     {
         public override void Up()
         {
-            Delete.Column(nameof(SurveyEvent.RedirectUrl)).FromTable(nameof(SurveyEvent));
+            // RedirectUrl no longer exists on SurveyEvent, so it's referenced by string literal here.
+            Delete.Column("RedirectUrl").FromTable(nameof(SurveyEvent));
         }
 
         public override void Down()
         {
             Alter.Table(nameof(SurveyEvent))
-                .AddColumn(nameof(SurveyEvent.RedirectUrl)).AsString(400).Nullable();
+                .AddColumn("RedirectUrl").AsString(400).Nullable();
         }
     }
 }
