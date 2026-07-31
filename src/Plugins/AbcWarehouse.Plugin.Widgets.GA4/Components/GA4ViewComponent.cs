@@ -168,21 +168,25 @@ namespace AbcWarehouse.Plugin.Widgets.GA4.Components
 
             if (IsPurchase())
             {
-                var orderId = Convert.ToInt32(Url.ActionContext.RouteData.Values["orderId"]);
-                var order = await _orderService.GetOrderByIdAsync(orderId);
-                var orderItems = await _orderService.GetOrderItemsAsync(orderId);
-                var ga4OrderItems = await GetGA4OrderItemsFromOrderItems(orderItems);
-                var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
-                var address = (await _customerService.GetAddressesByCustomerIdAsync(order.CustomerId)).FirstOrDefault();
-
-                model.PurchaseModel = new PurchaseModel()
+                var orderIdObj = Url.ActionContext.RouteData.Values["orderId"];
+                if (orderIdObj != null && int.TryParse(orderIdObj.ToString(), out int orderId))
                 {
-                    OrderId = order.Id.ToString(),
-                    Value = order.OrderTotal,
-                    Shipping = order.OrderShippingExclTax,
-                    Tax = order.OrderTax,
-                    OrderItems = ga4OrderItems
-                };
+                    var order = await _orderService.GetOrderByIdAsync(orderId);
+                    if (order != null)
+                    {
+                        var orderItems = await _orderService.GetOrderItemsAsync(orderId);
+                        var ga4OrderItems = await GetGA4OrderItemsFromOrderItems(orderItems);
+
+                        model.PurchaseModel = new PurchaseModel()
+                        {
+                            OrderId = order.Id.ToString(),
+                            Value = order.OrderTotal,
+                            Shipping = order.OrderShippingExclTax,
+                            Tax = order.OrderTax,
+                            OrderItems = ga4OrderItems
+                        };
+                    }
+                }
             }
 
             if (IsViewCart())

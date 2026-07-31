@@ -92,6 +92,8 @@
     <!-- Bazaarvoice Reviews (deferred to prevent conflicts) -->
     <script defer src="https://apps.bazaarvoice.com/deployments/abcwarehouse/main_site/production/en_US/bv.js"></script>
 
+    <script defer src="https://app.termly.io/resource-blocker/f9d245d4-7857-44e6-8b17-dec72f573e67?autoBlock=on"></script>
+
     @if(storeIdInt == 8)
     {
         <!-- Hawthorne: Google Tag Manager (with Consent Mode v2) -->
@@ -488,31 +490,196 @@
         });
         console.log('[CONSENT MODE] Default: analytics=GRANTED (essential), ads=denied, wait=2s');
         console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
+        console.log('[CONSENT MODE] Defaults set - waiting up to 2000ms (2s) for Termly update');
 
-        // Listen for Termly consent changes
-        window.addEventListener('consentStatusChange', function(e) {
-            ga4Diagnostics.termlyEventFired = true;
-            var consentStatus = e.detail || window.consentStatus;
-            console.log('[CONSENT MODE] Termly consent change detected:', consentStatus);
-            ga4Diagnostics.logEvent('consentStatusChange', consentStatus);
+        // Listen for Termly consent changes using Termly's API (event: 'consent')
+        var termlyInitialEventFired = false;
+        var userOptedOutEventSent = false;
 
-            var consentConfig = {
-                'ad_storage': consentStatus?.ad_storage ? 'granted' : 'denied',
-                'analytics_storage': consentStatus?.analytics_storage ? 'granted' : 'denied',
-                'ad_user_data': consentStatus?.ad_user_data ? 'granted' : 'denied',
-                'ad_personalization': consentStatus?.ad_personalization ? 'granted' : 'denied'
-            };
+        // Check if opted_out event was already sent in this session
+        try {
+            userOptedOutEventSent = sessionStorage.getItem('ga4_user_opted_out_sent') === 'true';
+        } catch (e) {
+            // sessionStorage might be blocked in private/incognito mode
+        }
 
-            ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
+        if (window.Termly && typeof window.Termly.on === 'function') {
+            window.Termly.on('consent', function(consentStatus) {
+                ga4Diagnostics.termlyEventFired = true;
+                console.log('[CONSENT MODE] Termly consent event detected:', consentStatus);
+                ga4Diagnostics.logEvent('consent', consentStatus);
 
-            console.log('[CONSENT MODE] Updating consent to:', consentConfig);
-            console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
-            ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
-            gtag('consent', 'update', consentConfig);
-        });
+                // Skip consent update if user hasn't made a choice yet (consentState === null)
+                // If consentState is not null, user has actively made a choice (accept or decline)
+                var isInitialLoad = consentStatus?.consentState === null;
+
+                if (isInitialLoad) {
+                    console.log('[CONSENT MODE] Initial Termly event (user has not interacted with banner yet) - keeping defaults, skipping consent update');
+                    if (!termlyInitialEventFired) {
+                        termlyInitialEventFired = true;
+                    }
+                    return; // Don't update consent or send opted_out event yet
+                }
+
+                // User has made a choice - update consent accordingly
+                // Map Termly consent properties to GA4 consent mode properties
+                // Termly stores consent values inside consentState object:
+                // consentStatus.consentState = {analytics, advertising, performance, social_networking, unclassified, essential, ...}
+                // GA4 uses: analytics_storage, ad_storage, ad_user_data, ad_personalization
+
+                var consentConfig = {
+                    'ad_storage': consentStatus?.consentState?.advertising ? 'granted' : 'denied',
+                    'analytics_storage': consentStatus?.consentState?.analytics ? 'granted' : 'denied',
+                    'ad_user_data': consentStatus?.consentState?.advertising ? 'granted' : 'denied',
+                    'ad_personalization': consentStatus?.consentState?.advertising ? 'granted' : 'denied'
+                };
+
+                ga4Diagnostics.consentUpdates.push({ time: new Date().toISOString(), state: consentConfig });
+
+                // IMPORTANT: Send opted_out event BEFORE denying consent, but ONLY ONCE per session
+                // If we deny analytics consent first, GA4 might refuse to send the event
+                if (consentConfig.analytics_storage === 'denied' && !userOptedOutEventSent) {
+                    userOptedOutEventSent = true;
+                    console.log('[CONSENT MODE] User actively declined analytics - sending opted_out event BEFORE consent update (first time this session)');
+                    gtag('event', 'user_opted_out', {
+                        'opted_out_category': 'analytics_storage',
+                        'opt_out_source': 'termly_banner',
+                        'timestamp': new Date().toISOString()
+                    });
+                    console.log('[CONSENT MODE] GA4 opted_out event sent (before consent denial)');
+
+                    // Mark that we've sent this event in this session
+                    try {
+                        sessionStorage.setItem('ga4_user_opted_out_sent', 'true');
+                    } catch (e) {
+                        // sessionStorage might be blocked, but we still have the variable
+                    }
+                } else if (consentConfig.analytics_storage === 'denied' && userOptedOutEventSent) {
+                    console.log('[CONSENT MODE] User is declined, but opted_out event already sent this session - skipping');
+                }
+
+                console.log('[CONSENT MODE] User made a choice - updating consent to:', consentConfig);
+                console.log('[REFERRAL] Referral data now protected with consent state:', consentConfig.analytics_storage);
+                ga4Diagnostics.log('Consent updated: analytics=' + consentConfig.analytics_storage + ', ad=' + consentConfig.ad_storage);
+                gtag('consent', 'update', consentConfig);
+
+                // Notify GA4 Tag.cshtml listeners that consent has been resolved (required for queued events like purchase)
+                window.dispatchEvent(new Event('consentStatusChange'));
+                console.log('[CONSENT MODE] Dispatched consentStatusChange event for GA4 listeners');
+            });
+            console.log('[CONSENT MODE] Termly event listener attached via Termly.on("consent")');
+        } else {
+            console.log('[CONSENT MODE] Termly not available or does not have .on() method');
+        }
     </script>
 
-    <script src="https://app.termly.io/resource-blocker/f9d245d4-7857-44e6-8b17-dec72f573e67?autoBlock=on"></script>
+    <!-- Bot Detection for GA4 (marks direct referral sessions where user leaves in <500ms with zero interaction) -->
+    <script>
+        (function initBotDetection() {
+            try {
+                var pageLoadStart = performance.now();
+                var botDetected = false;
+                var hasUserInteraction = false;
+                var isDirect = !document.referrer || document.referrer === '';
+
+                console.log('[BOT DETECTION] Initialized - Direct traffic: ' + isDirect + ', tracking page exit timing + user interaction');
+
+                // Only proceed with bot detection for direct traffic
+                if (!isDirect) {
+                    console.log('[BOT DETECTION] External referrer detected (' + document.referrer + ') - bot detection disabled to avoid false positives from email/social redirects');
+                    return;
+                }
+
+                // Track any user interaction (mouse, keyboard, scroll, touch)
+                var interactionEvents = ['mousemove', 'mousedown', 'click', 'keydown', 'scroll', 'touchstart', 'touchmove'];
+                interactionEvents.forEach(function(event) {
+                    document.addEventListener(event, function() {
+                        hasUserInteraction = true;
+                        console.log('[BOT DETECTION] User interaction detected: ' + event);
+                    }, { once: true }); // Only listen once to mark interaction
+                });
+
+                function checkAndReportBot() {
+                    if (botDetected) return; // Only report once
+
+                    var elapsedMs = performance.now() - pageLoadStart;
+
+                    // Only mark as bot if: direct traffic + ZERO user interaction + confirmed bounce (page exit)
+                    // This avoids false positives from slow-loading pages where users interact after initial load
+                    if (!hasUserInteraction) {
+                        botDetected = true;
+                        console.log('[BOT DETECTION] Suspicious activity detected - DIRECT traffic bouncing after ' + elapsedMs.toFixed(0) + 'ms with ZERO interaction');
+
+                        // Send GA4 event marking as suspicious traffic
+                        if (typeof gtag === 'function') {
+                            gtag('event', 'suspicious_traffic', {
+                                'traffic_quality': 'bot_suspected',
+                                'session_duration_ms': Math.round(elapsedMs),
+                                'page_url': window.location.pathname,
+                                'user_interaction': 'none',
+                                'traffic_source': 'direct',
+                                'detection_type': 'zero_interaction_bounce'
+                            });
+                            console.log('[BOT DETECTION] GA4 event sent - traffic marked as suspicious (zero interaction bounce)');
+                        }
+                    } else {
+                        console.log('[BOT DETECTION] User had interaction during session - not flagging as bot');
+                    }
+                }
+
+                // Listen for page unload/navigation (confirmed bounce point)
+                window.addEventListener('beforeunload', checkAndReportBot, true);
+                window.addEventListener('unload', checkAndReportBot, true);
+
+                // Also check on visibility change (tab closed or switched)
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        checkAndReportBot();
+                    }
+                });
+
+                console.log('[BOT DETECTION] Event listeners attached - will flag DIRECT traffic with ZERO user interaction on page exit/bounce');
+            } catch(err) {
+                console.error('[BOT DETECTION] Initialization error:', err.message);
+            }
+        })();
+    </script>
+
+    <!-- Early Referral Capture -->
+    <script>
+        (function captureReferralEarly() {
+            try {
+                // Capture referral data BEFORE Termly loads, so we have it regardless of consent status
+                var referrer = document.referrer || '(direct)';
+                var now = new Date().toISOString();
+
+                // Store in sessionStorage so it persists even if Termly blocks resources
+                var referralData = {
+                    referrer: referrer,
+                    timestamp: now,
+                    userAgent: navigator.userAgent,
+                    originalUrl: window.location.href
+                };
+
+                try {
+                    sessionStorage.setItem('_referralCapture', JSON.stringify(referralData));
+                    console.log('[REFERRAL CAPTURE] Early referral captured and stored:', referrer);
+                } catch(e) {
+                    // sessionStorage might be blocked in private/incognito mode
+                    window._referralFallback = referralData;
+                    console.log('[REFERRAL CAPTURE] sessionStorage unavailable, using fallback:', referrer);
+                }
+
+                // Also set global flag so GA4 knows referral data was captured early
+                window._referralCapturedEarly = true;
+                console.log('[REFERRAL CAPTURE] Early capture complete - data available even if user never accepts consent');
+            } catch(err) {
+                console.error('[REFERRAL CAPTURE] Error in early referral capture:', err.message);
+            }
+        })();
+    </script>
+
+    <script defer src="https://app.termly.io/resource-blocker/f9d245d4-7857-44e6-8b17-dec72f573e67?autoBlock=on"></script>
 
     <!-- Microsoft Clarity (Analytics) -->
     <script type="text/javascript">
@@ -596,6 +763,82 @@
                 });
             }
         });
+    </script>
+
+    <!-- Delay ShopLocal sale_circular events on /sale-ad page until GA4 is ready (race condition fix) -->
+    <script>
+        if (window.location.pathname === '/sale-ad' || window.location.pathname.includes('Fusion')) {
+            console.log('[SHOPLCAL FIX] 🚀 INITIALIZING - Page path:', window.location.pathname);
+
+            window.dataLayer = window.dataLayer || [];
+            const originalPush = window.dataLayer.push;
+            const queuedSaleCircularEvents = [];
+            let ga4Ready = false;
+            const initTime = performance.now();
+
+            function getTimestamp() {
+                return '(' + (performance.now() - initTime).toFixed(0) + 'ms)';
+            }
+
+            function flushQueuedEvents() {
+                if (queuedSaleCircularEvents.length > 0) {
+                    console.log('[SHOPLCAL FIX] ✅ FLUSHING', getTimestamp(), '- Sending ' + queuedSaleCircularEvents.length + ' queued sale_circular events');
+                    queuedSaleCircularEvents.forEach(function(event, index) {
+                        console.log('[SHOPLCAL FIX]   └─ Event ' + (index + 1) + ':', event);
+                        originalPush.call(window.dataLayer, event);
+                    });
+                    queuedSaleCircularEvents.length = 0;
+                } else {
+                    console.log('[SHOPLCAL FIX] ✅ FLUSH CALLED', getTimestamp(), '- No queued events to flush');
+                }
+            }
+
+            window.dataLayer.push = function() {
+                const args = Array.from(arguments);
+                const eventType = args[0]?.event || 'unknown';
+
+                // Queue sale_circular events until GA4 is ready, let others through immediately
+                if (args[0] && args[0].event === 'sale_circular') {
+                    if (!ga4Ready) {
+                        console.log('[SHOPLCAL FIX] 📦 QUEUED', getTimestamp(), '- sale_circular event queued (GA4 not ready yet, queue size:', queuedSaleCircularEvents.length + 1, ')');
+                        console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
+                        queuedSaleCircularEvents.push(args[0]);
+                        return;
+                    } else {
+                        console.log('[SHOPLCAL FIX] ⏭️  SENT IMMEDIATELY', getTimestamp(), '- sale_circular event sent (GA4 already ready)');
+                        console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
+                    }
+                }
+
+                return originalPush.apply(this, arguments);
+            };
+
+            // Wait for GA4 consent to be resolved (dispatched from consent mode handler above)
+            window.addEventListener('consentStatusChange', function() {
+                ga4Ready = true;
+                console.log('[SHOPLCAL FIX] 🎯 GA4 READY VIA CONSENT', getTimestamp(), '- consentStatusChange event fired, GA4 is ready');
+                flushQueuedEvents();
+            });
+
+            // Hard timeout: if consent event doesn't fire within 5 seconds, mark GA4 as ready anyway
+            setTimeout(function() {
+                if (!ga4Ready) {
+                    ga4Ready = true;
+                    console.log('[SHOPLCAL FIX] ⏰ GA4 READY VIA TIMEOUT', getTimestamp(), '- 5s hard timeout reached, flushing anyway');
+                    flushQueuedEvents();
+                } else {
+                    console.log('[SHOPLCAL FIX] ⏰ TIMEOUT CHECK', getTimestamp(), '- 5s timeout reached but GA4 already ready (consent fired first)');
+                }
+            }, 5000);
+
+            // If user navigates away before GA4 is ready, flush queued events before leaving
+            window.addEventListener('beforeunload', function() {
+                console.log('[SHOPLCAL FIX] 🚪 PAGE UNLOAD', getTimestamp(), '- User leaving page, flushing any remaining events');
+                flushQueuedEvents();
+            });
+
+            console.log('[SHOPLCAL FIX] ✔️  INITIALIZED', getTimestamp(), '- Waiting for sale_circular events. GA4 will be ready when: (1) consentStatusChange fires OR (2) 5s timeout');
+        }
     </script>
 </head>
 

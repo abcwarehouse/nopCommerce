@@ -428,29 +428,62 @@ document.addEventListener("DOMContentLoaded", function () {
         return filters.join('&');
     }
     
+    function buildUrlWithParams(query, page, lat, lng, sort, additionalFilters) {
+        // Get ALL current URL parameters to preserve UTM/tracking params
+        const currentParams = new URLSearchParams(window.location.search);
+        const newParams = new URLSearchParams();
+
+        // Add core search parameters
+        newParams.set('q', query);
+        newParams.set('page', page);
+        if (lat) newParams.set('lat', lat);
+        if (lng) newParams.set('lng', lng);
+        if (sort) newParams.set('sort', sort);
+
+        // Preserve ALL existing parameters except those we're replacing
+        const coresToReplace = ['q', 'page', 'lat', 'lng', 'sort', 'filter'];
+        for (const [key, value] of currentParams.entries()) {
+            if (!coresToReplace.some(core => key.startsWith(core))) {
+                newParams.append(key, value);
+            }
+        }
+
+        // Add filter parameters (parse additionalFilters string back into params)
+        if (additionalFilters) {
+            const filterPairs = additionalFilters.split('&');
+            for (const pair of filterPairs) {
+                if (pair) {
+                    const [key, value] = pair.split('=');
+                    newParams.append(decodeURIComponent(key), decodeURIComponent(value));
+                }
+            }
+        }
+
+        const url = `/search/results?${newParams.toString()}`;
+        console.log('[SEARCHSPRING] Built URL preserving UTM params:', url);
+        return url;
+    }
+
     function runGeoSearchWithFilters(query, page = 1, sort = null, additionalFilters = '') {
         console.log("=== runGeoSearchWithFilters called ===");
         console.log("Query:", query);
         console.log("Page:", page);
         console.log("Sort:", sort);
         console.log("Filters:", additionalFilters);
-        
+
         if (navigator.geolocation) {
             console.log("Requesting geolocation...");
-            
+
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    
+
                     console.log("✓ Got coordinates!");
                     console.log("Lat:", lat);
                     console.log("Lng:", lng);
-                    
-                    let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}&lat=${lat}&lng=${lng}`;
-                    if (sort) url += `&sort=${encodeURIComponent(sort)}`;
-                    if (additionalFilters) url += `&${additionalFilters}`;
-                    
+
+                    const url = buildUrlWithParams(query, page, lat, lng, sort, additionalFilters);
                     console.log("Redirecting to:", url);
                     window.location.href = url;
                 },
@@ -461,10 +494,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     sessionStorage.setItem('geoDeclined', 'true');
 
-                    let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}`;
-                    if (sort) url += `&sort=${encodeURIComponent(sort)}`;
-                    if (additionalFilters) url += `&${additionalFilters}`;
-
+                    const url = buildUrlWithParams(query, page, null, null, sort, additionalFilters);
                     console.log("Fallback redirect to:", url);
                     window.location.href = url;
                 },
@@ -476,11 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
             );
         } else {
             console.error("Browser doesn't support geolocation");
-            // Browser doesn't support geolocation
-            let url = `/search/results?q=${encodeURIComponent(query)}&page=${page}`;
-            if (sort) url += `&sort=${encodeURIComponent(sort)}`;
-            if (additionalFilters) url += `&${additionalFilters}`;
-            
+            const url = buildUrlWithParams(query, page, null, null, sort, additionalFilters);
             console.log("No geolocation redirect to:", url);
             window.location.href = url;
         }

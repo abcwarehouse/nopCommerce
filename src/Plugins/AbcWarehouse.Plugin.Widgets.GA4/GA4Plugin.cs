@@ -34,6 +34,7 @@ namespace AbcWarehouse.Plugin.Widgets.GA4
             return Task.FromResult<IList<string>>(new List<string>
             {
                 PublicWidgetZones.CheckoutShippingAddressBottom,
+                PublicWidgetZones.CheckoutCompletedTop,
                 PublicWidgetZones.HeadHtmlTag,
                 PublicWidgetZones.ProductDetailsAddInfo,
                 CustomPublicWidgetZones.ProductBoxAfter
