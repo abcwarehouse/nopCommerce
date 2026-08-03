@@ -772,6 +772,7 @@
 
             window.dataLayer = window.dataLayer || [];
             const originalPush = window.dataLayer.push;
+            const originalGtag = window.gtag;
             const queuedSaleCircularEvents = [];
             let ga4Ready = false;
             const initTime = performance.now();
@@ -793,6 +794,7 @@
                 }
             }
 
+            // Wrap dataLayer.push to intercept events
             window.dataLayer.push = function() {
                 const args = Array.from(arguments);
                 const eventType = args[0]?.event || 'unknown';
@@ -800,18 +802,40 @@
                 // Queue sale_circular events until GA4 is ready, let others through immediately
                 if (args[0] && args[0].event === 'sale_circular') {
                     if (!ga4Ready) {
-                        console.log('[SHOPLCAL FIX] 📦 QUEUED', getTimestamp(), '- sale_circular event queued (GA4 not ready yet, queue size:', queuedSaleCircularEvents.length + 1, ')');
+                        console.log('[SHOPLCAL FIX] 📦 QUEUED (via dataLayer.push)', getTimestamp(), '- sale_circular event queued (GA4 not ready yet, queue size:', queuedSaleCircularEvents.length + 1, ')');
                         console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
                         queuedSaleCircularEvents.push(args[0]);
                         return;
                     } else {
-                        console.log('[SHOPLCAL FIX] ⏭️  SENT IMMEDIATELY', getTimestamp(), '- sale_circular event sent (GA4 already ready)');
+                        console.log('[SHOPLCAL FIX] ⏭️  SENT IMMEDIATELY (via dataLayer.push)', getTimestamp(), '- sale_circular event sent (GA4 already ready)');
                         console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
                     }
                 }
 
                 return originalPush.apply(this, arguments);
             };
+
+            // Also wrap gtag() function to intercept events sent directly via gtag()
+            if (typeof originalGtag === 'function') {
+                window.gtag = function() {
+                    const args = Array.from(arguments);
+
+                    // Detect sale_circular events: gtag('event', 'sale_circular', {...})
+                    if (args[0] === 'event' && args[1] === 'sale_circular') {
+                        if (!ga4Ready) {
+                            console.log('[SHOPLCAL FIX] 📦 QUEUED (via gtag function)', getTimestamp(), '- sale_circular event queued (GA4 not ready yet, queue size:', queuedSaleCircularEvents.length + 1, ')');
+                            console.log('[SHOPLCAL FIX]   └─ Event data:', args[2]);
+                            queuedSaleCircularEvents.push({ event: 'sale_circular', ...args[2] });
+                            return;
+                        } else {
+                            console.log('[SHOPLCAL FIX] ⏭️  SENT IMMEDIATELY (via gtag function)', getTimestamp(), '- sale_circular event sent (GA4 already ready)');
+                            console.log('[SHOPLCAL FIX]   └─ Event data:', args[2]);
+                        }
+                    }
+
+                    return originalGtag.apply(this, arguments);
+                };
+            }
 
             // Wait for GA4 consent to be resolved (dispatched from consent mode handler above)
             window.addEventListener('consentStatusChange', function() {
@@ -837,7 +861,7 @@
                 flushQueuedEvents();
             });
 
-            console.log('[SHOPLCAL FIX] ✔️  INITIALIZED', getTimestamp(), '- Waiting for sale_circular events. GA4 will be ready when: (1) consentStatusChange fires OR (2) 5s timeout');
+            console.log('[SHOPLCAL FIX] ✔️  INITIALIZED', getTimestamp(), '- Waiting for sale_circular events via dataLayer.push() OR gtag() function. GA4 will be ready when: (1) consentStatusChange fires OR (2) 5s timeout');
         }
     </script>
 </head>
