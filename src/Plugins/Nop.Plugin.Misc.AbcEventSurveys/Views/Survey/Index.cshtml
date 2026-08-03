@@ -102,8 +102,19 @@
     }
 
     .survey-submit {
-        padding: 10px 28px;
+        border: none;
+        background-color: #f74258;
+        color: #fff;
+        padding: 15px 30px;
+        font-size: 14px;
         font-weight: bold;
+        text-transform: uppercase;
+        outline: 1px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .survey-submit:hover {
+        outline-color: #f74258;
     }
 
     .field-validation-error {
@@ -310,7 +321,7 @@
             <input type="hidden" asp-for="Header2" />
             <input type="hidden" asp-for="Description" />
 
-            <button type="submit" class="survey-submit btn bg-blue">Submit Entry</button>
+            <button type="submit" class="survey-submit">Submit Entry</button>
         </form>
     }
 </div>
