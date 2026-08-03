@@ -203,6 +203,8 @@
             <h1>@(string.IsNullOrWhiteSpace(Model.ThankYouHeader) ? "Thank You!" : Model.ThankYouHeader)</h1>
             <p>@(string.IsNullOrWhiteSpace(Model.ThankYouDescription) ? "Your entry has been received. Good luck!" : Model.ThankYouDescription)</p>
         </div>
+
+        @await Component.InvokeAsync("Widget", new { widgetZone = "SurveyThankYou" })
     }
     else if (Model.EventClosed)
     {
