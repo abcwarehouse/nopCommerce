@@ -89,51 +89,6 @@
     </div>
 </div>
 
-@section AsidePageTitle
-{
-    <div class="page-title">
-        <h1>Deals</h1>
-    </div>
-}
-
-<!-- Sidebar Filters - Only show on this page -->
-@section left
-{
-    <div class="deals-filters-sidebar">
-        @if (Model.AvailablePromoFilters.Count > 1)
-        {
-            <div class="filter-block">
-                <h4>Filter by Promo</h4>
-                <div class="filter-options">
-                    @foreach (var option in Model.AvailablePromoFilters)
-                    {
-                        <div class="filter-option">
-                            <input type="radio" id="promo_@option.Value" name="promo-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
-                            <label for="promo_@option.Value">@option.Text</label>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
-
-        @if (Model.AvailableCategoryFilters.Count > 1)
-        {
-            <div class="filter-block">
-                <h4>Filter by Category</h4>
-                <div class="filter-options">
-                    @foreach (var option in Model.AvailableCategoryFilters)
-                    {
-                        <div class="filter-option">
-                            <input type="radio" id="category_@option.Value" name="category-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
-                            <label for="category_@option.Value">@option.Text</label>
-                        </div>
-                    }
-                </div>
-            </div>
-        }
-    </div>
-}
-
 <script type="text/javascript">
     function applyFilters() {
         var promoRadios = document.getElementsByName('promo-filter');
@@ -306,3 +261,45 @@
         }
     }
 </style>
+
+@section AsidePageTitle {
+    <div class="page-title">
+        <h1>Deals</h1>
+    </div>
+}
+
+@section left {
+    <div class="deals-filters-sidebar">
+        @if (Model.AvailablePromoFilters.Count > 1)
+        {
+            <div class="filter-block">
+                <h4>Filter by Promo</h4>
+                <div class="filter-options">
+                    @foreach (var option in Model.AvailablePromoFilters)
+                    {
+                        <div class="filter-option">
+                            <input type="radio" id="promo_@option.Value" name="promo-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
+                            <label for="promo_@option.Value">@option.Text</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.AvailableCategoryFilters.Count > 1)
+        {
+            <div class="filter-block">
+                <h4>Filter by Category</h4>
+                <div class="filter-options">
+                    @foreach (var option in Model.AvailableCategoryFilters)
+                    {
+                        <div class="filter-option">
+                            <input type="radio" id="category_@option.Value" name="category-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
+                            <label for="category_@option.Value">@option.Text</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
