@@ -30,57 +30,31 @@
 }
 
 <div class="page deals-page">
+    <!-- Banner Section -->
+    <div class="deals-banner-placeholder">
+        <div class="deals-banner-content">
+            <p>Promotional Banner Space</p>
+        </div>
+    </div>
+
     <div class="page-body">
-        @if (Model.Products.Count > 0)
+        <!-- Sorting Section (Main Content Area) -->
+        @if (Model.Products.Count > 0 && Model.AllowProductSorting)
         {
-            <div class="product-filters-and-sorting">
-                <div class="filters-section">
-                    <h3>Filters</h3>
-
-                    @if (Model.AvailablePromoFilters.Count > 1)
-                    {
-                        <div class="filter-group">
-                            <label>Filter by Promo:</label>
-                            <select id="promo-filter" onchange="applyFilters()">
-                                @foreach (var option in Model.AvailablePromoFilters)
-                                {
-                                    <option value="@option.Value" selected="@option.Selected">@option.Text</option>
-                                }
-                            </select>
-                        </div>
-                    }
-
-                    @if (Model.AvailableCategoryFilters.Count > 1)
-                    {
-                        <div class="filter-group">
-                            <label>Filter by Category:</label>
-                            <select id="category-filter" onchange="applyFilters()">
-                                @foreach (var option in Model.AvailableCategoryFilters)
-                                {
-                                    <option value="@option.Value" selected="@option.Selected">@option.Text</option>
-                                }
-                            </select>
-                        </div>
-                    }
-                </div>
-
-                <div class="sorting-section">
-                    @if (Model.AllowProductSorting)
-                    {
-                        <div class="product-sorting">
-                            <label>@T("Catalog.OrderBy")</label>
-                            <select id="products-orderby" onchange="applySorting(this.value);">
-                                @foreach (var option in Model.AvailableSortOptions)
-                                {
-                                    <option value="@option.Value" selected="@option.Selected">@option.Text</option>
-                                }
-                            </select>
-                        </div>
-                    }
+            <div class="deals-sorting-section">
+                <div class="product-sorting">
+                    <label>@T("Catalog.OrderBy")</label>
+                    <select id="products-orderby" onchange="applySorting(this.value);">
+                        @foreach (var option in Model.AvailableSortOptions)
+                        {
+                            <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                        }
+                    </select>
                 </div>
             </div>
         }
 
+        <!-- Products Grid -->
         @if (Model.Products.Count > 0)
         {
             <div class="product-grid">
@@ -101,6 +75,7 @@
             </div>
         }
 
+        <!-- Pagination -->
         @{
             var pager = Html.Pager(Model).QueryParam("pagenumber");
         }
@@ -117,14 +92,69 @@
 @section AsidePageTitle
 {
     <div class="page-title">
-        <h1>@T("Deals")</h1>
+        <h1>Deals</h1>
+    </div>
+}
+
+<!-- Sidebar Filters - Only show on this page -->
+@section left
+{
+    <div class="deals-filters-sidebar">
+        @if (Model.AvailablePromoFilters.Count > 1)
+        {
+            <div class="filter-block">
+                <h4>Filter by Promo</h4>
+                <div class="filter-options">
+                    @foreach (var option in Model.AvailablePromoFilters)
+                    {
+                        <div class="filter-option">
+                            <input type="radio" id="promo_@option.Value" name="promo-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
+                            <label for="promo_@option.Value">@option.Text</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.AvailableCategoryFilters.Count > 1)
+        {
+            <div class="filter-block">
+                <h4>Filter by Category</h4>
+                <div class="filter-options">
+                    @foreach (var option in Model.AvailableCategoryFilters)
+                    {
+                        <div class="filter-option">
+                            <input type="radio" id="category_@option.Value" name="category-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
+                            <label for="category_@option.Value">@option.Text</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
 }
 
 <script type="text/javascript">
     function applyFilters() {
-        var promo = document.getElementById('promo-filter')?.value || '';
-        var category = document.getElementById('category-filter')?.value || '';
+        var promoRadios = document.getElementsByName('promo-filter');
+        var categoryRadios = document.getElementsByName('category-filter');
+
+        var promo = '';
+        var category = '';
+
+        for (var i = 0; i < promoRadios.length; i++) {
+            if (promoRadios[i].checked) {
+                promo = promoRadios[i].value;
+                break;
+            }
+        }
+
+        for (var i = 0; i < categoryRadios.length; i++) {
+            if (categoryRadios[i].checked) {
+                category = categoryRadios[i].value;
+                break;
+            }
+        }
 
         var url = '/deals';
         var params = [];
@@ -159,54 +189,94 @@
 </script>
 
 <style type="text/css">
-    .deals-page .product-filters-and-sorting {
-        display: flex;
-        gap: 20px;
+    /* Banner Placeholder */
+    .deals-page .deals-banner-placeholder {
+        width: 100%;
+        height: 250px;
+        background: #f0f0f0;
+        border: 2px dashed #ccc;
         margin-bottom: 30px;
-        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .deals-page .filters-section {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .deals-page .filters-section h3 {
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
-
-    .deals-page .filter-group {
-        margin-bottom: 15px;
-    }
-
-    .deals-page .filter-group label {
-        display: block;
-        margin-bottom: 5px;
+    .deals-page .deals-banner-content {
+        text-align: center;
+        color: #999;
+        font-size: 16px;
         font-weight: 500;
     }
 
-    .deals-page .filter-group select {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+    /* Sidebar Filters - Only visible on deals page due to @section left */
+    .deals-filters-sidebar {
+        margin-bottom: 30px;
+    }
+
+    .deals-filters-sidebar .filter-block {
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .deals-filters-sidebar .filter-block:last-child {
+        border-bottom: none;
+    }
+
+    .deals-filters-sidebar .filter-block h4 {
+        margin-bottom: 15px;
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .deals-filters-sidebar .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .deals-filters-sidebar .filter-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"] {
         cursor: pointer;
     }
 
-    .deals-page .sorting-section {
-        flex: 1;
-        min-width: 200px;
+    .deals-filters-sidebar .filter-option label {
+        cursor: pointer;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"]:hover + label {
+        color: #0066cc;
+    }
+
+    /* Sorting Section */
+    .deals-page .deals-sorting-section {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .deals-page .product-sorting {
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
 
     .deals-page .product-sorting label {
-        display: block;
-        margin-bottom: 5px;
+        margin: 0;
         font-weight: 500;
+        white-space: nowrap;
     }
 
     .deals-page .product-sorting select {
-        width: 100%;
+        min-width: 200px;
         padding: 8px;
         border: 1px solid #ddd;
         border-radius: 4px;
@@ -222,13 +292,17 @@
 
 <style type="text/css">
     @@media (max-width: 768px) {
-        .deals-page .product-filters-and-sorting {
-            flex-direction: column;
+        .deals-page .deals-banner-placeholder {
+            height: 200px;
         }
 
-        .deals-page .filters-section,
-        .deals-page .sorting-section {
-            width: 100%;
+        .deals-page .product-sorting {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .deals-page .product-sorting select {
+            min-width: 100%;
         }
     }
 </style>
