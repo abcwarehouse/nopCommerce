@@ -19,6 +19,10 @@ namespace Nop.Plugin.Misc.AbcPromos.Infrastructure
                             "rebates-and-promos",
                             new { controller = "CustomCatalog", action = "PromoListingPage" });
 
+            endpointRouteBuilder.MapControllerRoute("Deals",
+                            "deals",
+                            new { controller = "CustomCatalog", action = "Deals" });
+
             endpointRouteBuilder.MapControllerRoute("PromoListings",
                             "promos/{promoSlug}",
                             new { controller = "CustomCatalog", action = "Promo" });

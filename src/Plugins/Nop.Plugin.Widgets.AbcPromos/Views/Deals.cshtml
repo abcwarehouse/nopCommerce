@@ -1,0 +1,232 @@
+@model DealsPageModel
+
+@using Nop.Core.Domain.Common
+@using Nop.Core.Domain.Seo
+@using Nop.Plugin.Misc.AbcCore.Services
+@using Microsoft.AspNetCore.Mvc.ViewComponents
+@using Nop.Web.Framework.Infrastructure
+@using Nop.Web.Extensions
+@using Nop.Plugin.Misc.AbcPromos.Models
+@using Nop.Plugin.Misc.AbcCore.Infrastructure
+@using Nop.Core.Infrastructure;
+@using Nop.Web.Models.Catalog;
+@using Nop.Services.Catalog;
+@using Nop.Web.Framework.UI;
+
+@inject Nop.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject CommonSettings commonSettings
+@inject IViewComponentSelector viewComponentSelector
+@inject INopHtmlHelper NopHtml
+
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    NopHtml.AddTitleParts("Deals");
+
+    //page class
+    NopHtml.AppendPageCssClassParts("html-deals-page");
+}
+
+<div class="page deals-page">
+    <div class="page-body">
+        @if (Model.Products.Count > 0)
+        {
+            <div class="product-filters-and-sorting">
+                <div class="filters-section">
+                    <h3>Filters</h3>
+
+                    @if (Model.AvailablePromoFilters.Count > 1)
+                    {
+                        <div class="filter-group">
+                            <label>Filter by Promo:</label>
+                            <select id="promo-filter" onchange="applyFilters()">
+                                @foreach (var option in Model.AvailablePromoFilters)
+                                {
+                                    <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    }
+
+                    @if (Model.AvailableCategoryFilters.Count > 1)
+                    {
+                        <div class="filter-group">
+                            <label>Filter by Category:</label>
+                            <select id="category-filter" onchange="applyFilters()">
+                                @foreach (var option in Model.AvailableCategoryFilters)
+                                {
+                                    <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
+
+                <div class="sorting-section">
+                    @if (Model.AllowProductSorting)
+                    {
+                        <div class="product-sorting">
+                            <label>@T("Catalog.OrderBy")</label>
+                            <select id="products-orderby" onchange="applySorting(this.value);">
+                                @foreach (var option in Model.AvailableSortOptions)
+                                {
+                                    <option value="@option.Value" selected="@option.Selected">@option.Text</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.Products.Count > 0)
+        {
+            <div class="product-grid">
+                <div class="item-grid">
+                    @foreach (var product in Model.Products)
+                    {
+                        <div class="item-box">
+                            @Html.Partial("_ProductBox", product)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="no-results">
+                <p>@T("Search.NothingFound")</p>
+            </div>
+        }
+
+        @{
+            var pager = Html.Pager(Model).QueryParam("pagenumber");
+        }
+        @if (!(await pager.IsEmpty()))
+        {
+            <div class="pager">
+                @pager
+            </div>
+        }
+        @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
+    </div>
+</div>
+
+@section AsidePageTitle
+{
+    <div class="page-title">
+        <h1>@T("Deals")</h1>
+    </div>
+}
+
+<script type="text/javascript">
+    function applyFilters() {
+        var promo = document.getElementById('promo-filter')?.value || '';
+        var category = document.getElementById('category-filter')?.value || '';
+
+        var url = '/deals';
+        var params = [];
+
+        if (promo) params.push('promo=' + encodeURIComponent(promo));
+        if (category) params.push('category=' + encodeURIComponent(category));
+
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
+        window.location.href = url;
+    }
+
+    function applySorting(value) {
+        var url = window.location.href.split('?')[0];
+        var params = new URLSearchParams(window.location.search);
+
+        if (value) {
+            params.set('orderby', value);
+        } else {
+            params.delete('orderby');
+        }
+
+        var queryString = params.toString();
+        if (queryString) {
+            url += '?' + queryString;
+        }
+
+        window.location.href = url;
+    }
+</script>
+
+<style>
+    .deals-page .product-filters-and-sorting {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .deals-page .filters-section {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .deals-page .filters-section h3 {
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .deals-page .filter-group {
+        margin-bottom: 15px;
+    }
+
+    .deals-page .filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .deals-page .filter-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .deals-page .sorting-section {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .deals-page .product-sorting label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .deals-page .product-sorting select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .deals-page .no-results {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+
+    @media (max-width: 768px) {
+        .deals-page .product-filters-and-sorting {
+            flex-direction: column;
+        }
+
+        .deals-page .filters-section,
+        .deals-page .sorting-section {
+            width: 100%;
+        }
+    }
+</style>
