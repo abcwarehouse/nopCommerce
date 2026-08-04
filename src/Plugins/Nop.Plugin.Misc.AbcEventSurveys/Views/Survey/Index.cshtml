@@ -293,13 +293,15 @@
                 }
                 else
                 {
+                    var endDateText = Model.EndDateUtc.HasValue ? Model.EndDateUtc.Value.ToString("MMMM d, yyyy") : null;
+
                     <text><strong>Terms and Conditions:</strong> Terms and conditions apply. See an ABC Warehouse associate for
                     complete rules. Must be 18 years of age or older to enter. No purchase necessary. Limit one entry per
                     person. Duplicate entries will be disqualified. Winners will be selected at random from all eligible
                     entries received. Odds of winning depend on the total number of eligible entries received. Employees
                     of ABC Warehouse, its affiliates, and their immediate family members are not eligible to participate.
                     Winners are responsible for all applicable taxes. If a selected winner cannot be contacted, the prize
-                    may be forfeited and awarded to an alternate winner. Promotion ends July 27, 2026, at 11:59 PM ET.
+                    may be forfeited and awarded to an alternate winner.@(endDateText != null ? $" Promotion ends {endDateText}." : "")
                     <br /><br />
                     By submitting this entry, you consent to receive marketing emails and promotional SMS text messages
                     from ABC Warehouse. Consent is not a condition of purchase. Message and data rates may apply. Message

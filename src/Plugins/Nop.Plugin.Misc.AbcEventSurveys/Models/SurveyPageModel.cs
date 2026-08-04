@@ -21,6 +21,12 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         public string ThankYouHeader { get; set; }
         public string ThankYouDescription { get; set; }
 
+        /// <summary>
+        /// The event's configured end date, used to fill in the "Promotion ends {date}" line
+        /// of the default Terms and Conditions text.
+        /// </summary>
+        public DateTime? EndDateUtc { get; set; }
+
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(400)]
         [Display(Name = "First Name")]

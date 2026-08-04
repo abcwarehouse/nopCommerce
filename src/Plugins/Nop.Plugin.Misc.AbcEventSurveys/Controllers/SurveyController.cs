@@ -64,6 +64,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 postedModel.Header2 = surveyEvent.Header2;
                 postedModel.Description = surveyEvent.Description;
                 postedModel.TermsAndConditions = surveyEvent.TermsAndConditions;
+                postedModel.EndDateUtc = surveyEvent.EndDateUtc;
                 postedModel.CustomFields = customFields.Select((field, i) => new SurveyCustomFieldInputModel
                 {
                     Id = field.Id,
@@ -119,6 +120,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
             model.TermsAndConditions = surveyEvent.TermsAndConditions;
             model.ThankYouHeader = surveyEvent.ThankYouHeader;
             model.ThankYouDescription = surveyEvent.ThankYouDescription;
+            model.EndDateUtc = surveyEvent.EndDateUtc;
 
             var customFields = await _surveyEventService.GetCustomFieldsByEventIdAsync(surveyEvent.Id);
             model.CustomFields = customFields.Select(field => new SurveyCustomFieldInputModel
