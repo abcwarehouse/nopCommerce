@@ -54,7 +54,17 @@
                     </text>
                 }
 
-                window.location.href = `@Url.RouteUrl("ProductSearch")?${new URLSearchParams(formData).toString()}`;
+                // Preserve UTM parameters from current URL
+                var currentParams = new URLSearchParams(window.location.search);
+                var formParams = new URLSearchParams(formData);
+
+                for (const [key, value] of currentParams.entries()) {
+                    if (key.startsWith('utm_') && !formParams.has(key)) {
+                        formParams.append(key, value);
+                    }
+                }
+
+                window.location.href = `@Url.RouteUrl("ProductSearch")?${formParams.toString()}`;
             });
         </script>
 
@@ -98,7 +108,19 @@
                             //display link to search page
                             if (showLinkToResultSearch) {
                                 searchText = document.getElementById("@searchBoxId").value;
-                                $(".ui-autocomplete").append("<li class=\"ui-menu-item\" role=\"presentation\"><a href=\"/search?q=" + searchText + "\">@T("Search.SearchBox.SearchPageLink")</a></li>");
+                                // Preserve UTM parameters in autocomplete link
+                                var currentParams = new URLSearchParams(window.location.search);
+                                var utmParams = [];
+                                for (const [key, value] of currentParams.entries()) {
+                                    if (key.startsWith('utm_')) {
+                                        utmParams.push(key + "=" + encodeURIComponent(value));
+                                    }
+                                }
+                                var searchLink = "/search?q=" + encodeURIComponent(searchText);
+                                if (utmParams.length > 0) {
+                                    searchLink += "&" + utmParams.join("&");
+                                }
+                                $(".ui-autocomplete").append("<li class=\"ui-menu-item\" role=\"presentation\"><a href=\"" + searchLink + "\">@T("Search.SearchBox.SearchPageLink")</a></li>");
                             }
                         }
                     })
