@@ -54,22 +54,40 @@
             </div>
         }
 
-        <!-- Products Grid Grouped by Brand -->
+        <!-- Products Grid -->
         @if (Model.Products.Count > 0)
         {
-            @foreach (var brandGroup in Model.ProductsByBrand.OrderBy(g => g.Key))
+            @if (Model.SelectedCategoryId.HasValue)
             {
-                <div class="brand-section">
-                    <h2 class="brand-header">@brandGroup.Key.ToUpper()</h2>
-                    <div class="product-grid">
-                        <div class="item-grid">
-                            @foreach (var product in brandGroup.Value)
-                            {
-                                <div class="item-box">
-                                    @Html.Partial("_ProductBox", product)
-                                </div>
-                            }
+                <!-- Show products grouped by brand when filtering by category -->
+                @foreach (var brandGroup in Model.ProductsByBrand.OrderBy(g => g.Key))
+                {
+                    <div class="brand-section">
+                        <h2 class="brand-header">@brandGroup.Key.ToUpper()</h2>
+                        <div class="product-grid">
+                            <div class="item-grid">
+                                @foreach (var product in brandGroup.Value)
+                                {
+                                    <div class="item-box">
+                                        @Html.Partial("_ProductBox", product)
+                                    </div>
+                                }
+                            </div>
                         </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Show all products without brand headers when no category filter -->
+                <div class="product-grid">
+                    <div class="item-grid">
+                        @foreach (var product in Model.Products)
+                        {
+                            <div class="item-box">
+                                @Html.Partial("_ProductBox", product)
+                            </div>
+                        }
                     </div>
                 </div>
             }
@@ -171,7 +189,25 @@
 
     /* Sidebar Filters */
     .deals-filters-sidebar {
+        background: white;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
         margin-bottom: 30px;
+    }
+
+    .deals-filters-sidebar .page-title {
+        margin-top: 0;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .deals-filters-sidebar .page-title h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
     }
 
     .deals-filters-sidebar .filter-block {
@@ -182,6 +218,8 @@
 
     .deals-filters-sidebar .filter-block:last-child {
         border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
     }
 
     .deals-filters-sidebar .filter-block h4 {
@@ -189,6 +227,7 @@
         font-weight: bold;
         font-size: 14px;
         text-transform: uppercase;
+        color: #333;
     }
 
     .deals-filters-sidebar .filter-options {
