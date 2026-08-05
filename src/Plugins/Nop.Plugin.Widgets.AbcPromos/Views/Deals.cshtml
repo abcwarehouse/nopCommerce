@@ -607,13 +607,15 @@
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
+        z-index: 999;
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none;
     }
 
     .mobile-filter-overlay.active {
         opacity: 1;
+        pointer-events: auto;
     }
 
     @@media (max-width: 768px) {
@@ -633,6 +635,11 @@
             height: 200px;
         }
 
+        .deals-page .deals-sorting-section {
+            position: relative;
+            z-index: 1;
+        }
+
         .deals-page .product-sorting {
             flex-direction: column;
             align-items: stretch;
@@ -640,6 +647,13 @@
 
         .deals-page .product-sorting select {
             min-width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .deals-page .pager {
+            position: relative;
+            z-index: 1;
         }
     }
 </style>

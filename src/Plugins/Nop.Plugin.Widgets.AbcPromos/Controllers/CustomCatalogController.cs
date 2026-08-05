@@ -267,13 +267,21 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             }
             model.AvailablePromoFilters = promoSelectItems;
 
-            // Prepare category filters
+            // Prepare category filters (excluding brand and size related categories)
             var categorySelectItems = new List<SelectListItem>
             {
                 new SelectListItem { Text = "All Categories", Value = "", Selected = !selectedCategoryId.HasValue }
             };
             foreach (var category in parentCategories.Values.OrderBy(c => c.Name))
             {
+                var categoryNameLower = category.Name.ToLower();
+                // Skip brand and size related categories
+                if (categoryNameLower.Contains("brand") || categoryNameLower.Contains("size") ||
+                    categoryNameLower.Contains("shop by brand") || categoryNameLower.Contains("shop by size"))
+                {
+                    continue;
+                }
+
                 categorySelectItems.Add(new SelectListItem
                 {
                     Text = category.Name,
