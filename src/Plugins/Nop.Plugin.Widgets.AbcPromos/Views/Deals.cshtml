@@ -38,6 +38,11 @@
     </div>
 
     <div class="page-body">
+        <!-- Mobile Filter Button -->
+        <button id="mobile-filter-btn" class="mobile-filter-button" onclick="openMobileFilters()">
+            <i class="fas fa-filter"></i> Filters
+        </button>
+
         <!-- Sorting Section (Main Content Area) -->
         @if (Model.Products.Count > 0 && Model.AllowProductSorting)
         {
@@ -111,9 +116,68 @@
         }
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
     </div>
+
+    <!-- Mobile Filter Drawer -->
+    <div id="mobile-filter-drawer" class="mobile-filter-drawer">
+        <div class="mobile-filter-header">
+            <h3>Filters</h3>
+            <button class="close-btn" onclick="closeMobileFilters()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="mobile-filter-content">
+            @if (Model.AvailablePromoFilters.Count > 1)
+            {
+                <div class="filter-block">
+                    <h4>Filter by Promo</h4>
+                    <div class="filter-options">
+                        @foreach (var option in Model.AvailablePromoFilters)
+                        {
+                            <div class="filter-option">
+                                <input type="radio" id="mobile_promo_@option.Value" name="promo-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
+                                <label for="mobile_promo_@option.Value">@option.Text</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Model.AvailableCategoryFilters.Count > 1)
+            {
+                <div class="filter-block">
+                    <h4>Filter by Category</h4>
+                    <div class="filter-options">
+                        @foreach (var option in Model.AvailableCategoryFilters)
+                        {
+                            <div class="filter-option">
+                                <input type="radio" id="mobile_category_@option.Value" name="category-filter" value="@option.Value" @(option.Selected ? "checked" : "") onchange="applyFilters()" />
+                                <label for="mobile_category_@option.Value">@option.Text</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Mobile Filter Overlay -->
+    <div id="mobile-filter-overlay" class="mobile-filter-overlay" onclick="closeMobileFilters()"></div>
 </div>
 
 <script type="text/javascript">
+    function openMobileFilters() {
+        document.getElementById('mobile-filter-drawer').classList.add('active');
+        document.getElementById('mobile-filter-overlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileFilters() {
+        document.getElementById('mobile-filter-drawer').classList.remove('active');
+        document.getElementById('mobile-filter-overlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
     function applyFilters() {
         var promoRadios = document.getElementsByName('promo-filter');
         var categoryRadios = document.getElementsByName('category-filter');
@@ -363,7 +427,137 @@
 </style>
 
 <style type="text/css">
+    /* Mobile Filter Button */
+    .mobile-filter-button {
+        display: none;
+        width: 100%;
+        padding: 12px 16px;
+        margin-bottom: 15px;
+        background: #d32f2f;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-filter-button:hover {
+        background: #c62828;
+    }
+
+    .mobile-filter-button i {
+        margin-right: 6px;
+    }
+
+    /* Mobile Filter Drawer */
+    .mobile-filter-drawer {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 85%;
+        max-width: 400px;
+        height: 100vh;
+        background: white;
+        z-index: 1001;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+    }
+
+    .mobile-filter-drawer.active {
+        transform: translateX(0);
+    }
+
+    .mobile-filter-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid #e0e0e0;
+        position: sticky;
+        top: 0;
+        background: white;
+    }
+
+    .mobile-filter-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .mobile-filter-header .close-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: #333;
+        padding: 4px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-filter-content {
+        padding: 16px;
+    }
+
+    .mobile-filter-drawer .filter-block {
+        margin-bottom: 24px;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .mobile-filter-drawer .filter-block:last-child {
+        margin-bottom: 0;
+    }
+
+    .mobile-filter-drawer .filter-block h4 {
+        margin: 0 0 12px 0;
+        font-size: 13px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #333;
+    }
+
+    /* Mobile Filter Overlay */
+    .mobile-filter-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-filter-overlay.active {
+        opacity: 1;
+    }
+
     @@media (max-width: 768px) {
+        .mobile-filter-button {
+            display: flex;
+        }
+
+        .mobile-filter-drawer {
+            display: block;
+        }
+
+        .mobile-filter-overlay {
+            display: block;
+        }
+
         .deals-page .deals-banner-placeholder {
             height: 200px;
         }
