@@ -54,19 +54,25 @@
             </div>
         }
 
-        <!-- Products Grid -->
+        <!-- Products Grid Grouped by Brand -->
         @if (Model.Products.Count > 0)
         {
-            <div class="product-grid">
-                <div class="item-grid">
-                    @foreach (var product in Model.Products)
-                    {
-                        <div class="item-box">
-                            @Html.Partial("_ProductBox", product)
+            @foreach (var brandGroup in Model.ProductsByBrand.OrderBy(g => g.Key))
+            {
+                <div class="brand-section">
+                    <h2 class="brand-header">@brandGroup.Key.ToUpper()</h2>
+                    <div class="product-grid">
+                        <div class="item-grid">
+                            @foreach (var product in brandGroup.Value)
+                            {
+                                <div class="item-box">
+                                    @Html.Partial("_ProductBox", product)
+                                </div>
+                            }
                         </div>
-                    }
+                    </div>
                 </div>
-            </div>
+            }
         }
         else
         {
@@ -194,21 +200,68 @@
     .deals-filters-sidebar .filter-option {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
     }
 
     .deals-filters-sidebar .filter-option input[type="radio"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #d32f2f;
+        border-radius: 50%;
         cursor: pointer;
+        background: white;
+        position: relative;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"]:hover {
+        border-color: #c62828;
+        box-shadow: 0 0 6px rgba(211, 47, 47, 0.3);
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"]:checked {
+        background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+        border-color: #b71c1c;
+        box-shadow: 0 0 8px rgba(211, 47, 47, 0.5);
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"]:checked::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"]:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.2);
     }
 
     .deals-filters-sidebar .filter-option label {
         cursor: pointer;
         margin: 0;
         font-size: 14px;
+        user-select: none;
+        transition: color 0.2s ease;
     }
 
     .deals-filters-sidebar .filter-option input[type="radio"]:hover + label {
-        color: #0066cc;
+        color: #d32f2f;
+        font-weight: 500;
+    }
+
+    .deals-filters-sidebar .filter-option input[type="radio"]:checked + label {
+        color: #d32f2f;
+        font-weight: 600;
     }
 
     /* Sorting Section */
@@ -232,10 +285,35 @@
 
     .deals-page .product-sorting select {
         min-width: 200px;
-        padding: 8px;
+        padding: 4px;
         border: 1px solid #ddd;
         border-radius: 4px;
         cursor: pointer;
+    }
+
+    /* Brand Sections */
+    .deals-page .brand-section {
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .deals-page .brand-section:last-child {
+        border-bottom: none;
+    }
+
+    .deals-page .brand-header {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        margin-top: 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        color: #333;
+    }
+
+    .deals-page .product-grid {
+        margin-bottom: 0;
     }
 
     .deals-page .no-results {

@@ -203,12 +203,42 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             // Paginate
             var filteredDealsProducts = dealsProducts.Skip(command.PageIndex * 20).Take(20).ToList();
 
+            // Group products by brand/manufacturer
+            var productsByBrand = new Dictionary<string, List<Product>>();
+            foreach (var product in filteredDealsProducts)
+            {
+                // Get the manufacturer from the promo(s) this product belongs to
+                var manufacturerId = productPromoMap.ContainsKey(product.Id) && productPromoMap[product.Id].Any()
+                    ? productPromoMap[product.Id].First().ManufacturerId
+                    : null;
+
+                var manufacturer = manufacturerId.HasValue
+                    ? await _manufacturerService.GetManufacturerByIdAsync(manufacturerId.Value)
+                    : null;
+
+                var brandName = manufacturer?.Name ?? "Multiple Brands";
+
+                if (!productsByBrand.ContainsKey(brandName))
+                {
+                    productsByBrand[brandName] = new List<Product>();
+                }
+
+                productsByBrand[brandName].Add(product);
+            }
+
             var model = new DealsPageModel
             {
                 Products = (await _productModelFactory.PrepareProductOverviewModelsAsync(filteredDealsProducts)).ToList(),
                 SelectedPromoId = selectedPromoId,
                 SelectedCategoryId = selectedCategoryId
             };
+
+            // Populate ProductsByBrand with ProductOverviewModels
+            foreach (var brandGroup in productsByBrand.OrderBy(g => g.Key))
+            {
+                var brandProducts = await _productModelFactory.PrepareProductOverviewModelsAsync(brandGroup.Value);
+                model.ProductsByBrand[brandGroup.Key] = brandProducts.ToList();
+            }
 
             var pagedList = new PagedList<Product>(
                 filteredDealsProducts,
@@ -230,7 +260,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
             {
                 promoSelectItems.Add(new SelectListItem
                 {
-                    Text = promo.Name,
+                    Text = promo.Description,
                     Value = promo.Id.ToString(),
                     Selected = selectedPromoId == promo.Id
                 });

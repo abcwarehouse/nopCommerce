@@ -9,6 +9,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Models
     public record DealsPageModel : BasePageableModel
     {
         public IList<ProductOverviewModel> Products { get; set; }
+        public IDictionary<string, IList<ProductOverviewModel>> ProductsByBrand { get; set; }
         public int? OrderBy { get; set; }
         public bool AllowProductSorting { get; set; }
         public IList<SelectListItem> AvailableSortOptions { get; set; }
@@ -22,6 +23,7 @@ namespace Nop.Plugin.Misc.AbcPromos.Models
             AvailableSortOptions = new List<SelectListItem>();
             AvailablePromoFilters = new List<SelectListItem>();
             AvailableCategoryFilters = new List<SelectListItem>();
+            ProductsByBrand = new Dictionary<string, IList<ProductOverviewModel>>();
         }
     }
 }
