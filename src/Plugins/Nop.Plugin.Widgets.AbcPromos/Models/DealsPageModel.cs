@@ -17,6 +17,8 @@ namespace Nop.Plugin.Misc.AbcPromos.Models
         public IList<SelectListItem> AvailableCategoryFilters { get; set; }
         public int? SelectedPromoId { get; set; }
         public int? SelectedCategoryId { get; set; }
+        public string SelectedPromoBannerUrl { get; set; }
+        public string SelectedPromoFormUrl { get; set; }
 
         public DealsPageModel()
         {

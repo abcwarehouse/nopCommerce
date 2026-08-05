@@ -31,11 +31,29 @@
 
 <div class="page deals-page">
     <!-- Banner Section -->
-    <div class="deals-banner-placeholder">
-        <div class="deals-banner-content">
-            <p>Promotional Banner Space</p>
+    @if (!string.IsNullOrEmpty(Model.SelectedPromoBannerUrl))
+    {
+        <div class="deals-banner-image">
+            @if (!string.IsNullOrEmpty(Model.SelectedPromoFormUrl))
+            {
+                <a href="@Model.SelectedPromoFormUrl" target="_blank">
+                    <img src="@Model.SelectedPromoBannerUrl" alt="Promo Banner" width="100%" />
+                </a>
+            }
+            else
+            {
+                <img src="@Model.SelectedPromoBannerUrl" alt="Promo Banner" width="100%" />
+            }
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="deals-banner-placeholder">
+            <div class="deals-banner-content">
+                <p>Promotional Banner Space</p>
+            </div>
+        </div>
+    }
 
     <div class="page-body">
         <!-- Mobile Filter Button -->
@@ -232,6 +250,34 @@
 </script>
 
 <style type="text/css">
+    /* Banner Section */
+    .deals-page .deals-banner-image {
+        width: 100%;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .deals-page .deals-banner-image a {
+        width: 100%;
+        display: block;
+    }
+
+    .deals-page .deals-banner-image img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .deals-page .deals-banner-image a:hover img {
+        transform: scale(1.02);
+    }
+
     /* Banner Placeholder */
     .deals-page .deals-banner-placeholder {
         width: 100%;

@@ -233,6 +233,17 @@ namespace Nop.Plugin.Misc.AbcPromos.Controllers
                 SelectedCategoryId = selectedCategoryId
             };
 
+            // Get selected promo banner and form URLs
+            if (selectedPromoId.HasValue)
+            {
+                var selectedPromo = storePromos.FirstOrDefault(p => p.Id == selectedPromoId.Value);
+                if (selectedPromo != null)
+                {
+                    model.SelectedPromoBannerUrl = await selectedPromo.GetPromoBannerUrlAsync();
+                    model.SelectedPromoFormUrl = selectedPromo.GetPdfPath();
+                }
+            }
+
             // Populate ProductsByBrand with ProductOverviewModels
             foreach (var brandGroup in productsByBrand.OrderBy(g => g.Key))
             {
