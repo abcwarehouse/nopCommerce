@@ -65,10 +65,16 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         public bool IsActive { get; set; }
 
         /// <summary>
-        /// Optional window during which the page accepts entries even if IsActive is true.
-        /// Null means no restriction on that end.
+        /// No longer surfaced in the admin UI or enforced by IsEventOpen - retained on the entity/DB
+        /// schema only so existing data isn't lost. Do not wire this back up without also restoring
+        /// the corresponding admin fields.
         /// </summary>
         public DateTime? StartDateUtc { get; set; }
+
+        /// <summary>
+        /// Optional end of the entry window. Also used to fill in the "Promotion ends {date}" line
+        /// of the default Terms and Conditions text on the public survey page.
+        /// </summary>
         public DateTime? EndDateUtc { get; set; }
 
         public DateTime CreatedOnUtc { get; set; }

@@ -137,35 +137,13 @@
         animation: surveyThankYouFadeIn 0.5s ease-out;
     }
 
-    .survey-thankyou-icon {
-        width: 72px;
-        height: 72px;
-        margin: 0 auto 16px;
-    }
-
-    .survey-thankyou-icon svg {
+    .survey-thankyou-image {
         width: 100%;
-        height: 100%;
-    }
-
-    .survey-thankyou-icon circle {
-        fill: none;
-        stroke: #2e7d32;
-        stroke-width: 3;
-        stroke-dasharray: 158;
-        stroke-dashoffset: 158;
-        animation: surveyCheckCircle 0.6s ease-out forwards;
-    }
-
-    .survey-thankyou-icon path {
-        fill: none;
-        stroke: #2e7d32;
-        stroke-width: 4;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-dasharray: 48;
-        stroke-dashoffset: 48;
-        animation: surveyCheckMark 0.4s 0.5s ease-out forwards;
+        max-width: 480px;
+        aspect-ratio: 1200 / 756;
+        object-fit: contain;
+        margin: 0 auto 16px;
+        display: block;
     }
 
     @@keyframes surveyThankYouFadeIn {
@@ -180,26 +158,18 @@
         }
     }
 
-    @@keyframes surveyCheckCircle {
-        to {
-            stroke-dashoffset: 0;
-        }
-    }
-
-    @@keyframes surveyCheckMark {
-        to {
-            stroke-dashoffset: 0;
-        }
-    }
-
     .survey-picture {
         text-align: center;
         margin-bottom: 16px;
     }
 
     .survey-picture img {
+        display: block;
+        width: 100%;
         max-width: 100%;
-        height: auto;
+        aspect-ratio: 1200 / 756;
+        object-fit: cover;
+        margin: 0 auto;
     }
 </style>
 
@@ -207,12 +177,7 @@
     @if (Model.Submitted)
     {
         <div class="survey-thankyou">
-            <div class="survey-thankyou-icon">
-                <svg viewBox="0 0 52 52">
-                    <circle cx="26" cy="26" r="25" />
-                    <path d="M14 27l7.5 7.5L38 17" />
-                </svg>
-            </div>
+            <img class="survey-thankyou-image" src="/images/thankyou1.jpg" alt="Thank You" />
             <h1>@(string.IsNullOrWhiteSpace(Model.ThankYouHeader) ? "Thank You!" : Model.ThankYouHeader)</h1>
             <p>@(string.IsNullOrWhiteSpace(Model.ThankYouDescription) ? "Your entry has been received. Good luck!" : Model.ThankYouDescription)</p>
         </div>

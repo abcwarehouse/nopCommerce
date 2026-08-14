@@ -42,10 +42,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Models
         [Display(Name = "Active")]
         public bool IsActive { get; set; }
 
-        [Display(Name = "Start Date")]
-        [UIHint("DateTimeNullable")]
-        public DateTime? StartDateUtc { get; set; }
-
         [Display(Name = "End Date")]
         [UIHint("DateTimeNullable")]
         public DateTime? EndDateUtc { get; set; }

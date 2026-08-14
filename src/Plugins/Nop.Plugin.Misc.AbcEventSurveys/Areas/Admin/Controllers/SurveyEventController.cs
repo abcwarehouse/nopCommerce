@@ -37,7 +37,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                     Name = surveyEvent.Name,
                     Code = surveyEvent.Code,
                     IsActive = surveyEvent.IsActive,
-                    StartDateUtc = surveyEvent.StartDateUtc,
                     EndDateUtc = surveyEvent.EndDateUtc,
                     ResponseCount = await _surveyEventService.GetResponseCountByEventIdAsync(surveyEvent.Id)
                 }));
@@ -74,7 +73,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 ThankYouHeader = model.ThankYouHeader,
                 ThankYouDescription = model.ThankYouDescription,
                 IsActive = model.IsActive,
-                StartDateUtc = model.StartDateUtc,
                 EndDateUtc = model.EndDateUtc,
                 CreatedOnUtc = DateTime.UtcNow
             };
@@ -105,7 +103,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 ThankYouHeader = surveyEvent.ThankYouHeader,
                 ThankYouDescription = surveyEvent.ThankYouDescription,
                 IsActive = surveyEvent.IsActive,
-                StartDateUtc = surveyEvent.StartDateUtc,
                 EndDateUtc = surveyEvent.EndDateUtc,
                 PublicUrl = Url.RouteUrl("Plugin.Misc.AbcEventSurveys.Survey", new { code = surveyEvent.Code }, Request.Scheme),
                 CustomFields = customFields.Select(f => new SurveyCustomFieldModel
@@ -147,7 +144,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
             surveyEvent.ThankYouHeader = model.ThankYouHeader;
             surveyEvent.ThankYouDescription = model.ThankYouDescription;
             surveyEvent.IsActive = model.IsActive;
-            surveyEvent.StartDateUtc = model.StartDateUtc;
             surveyEvent.EndDateUtc = model.EndDateUtc;
 
             await _surveyEventService.UpdateEventAsync(surveyEvent);

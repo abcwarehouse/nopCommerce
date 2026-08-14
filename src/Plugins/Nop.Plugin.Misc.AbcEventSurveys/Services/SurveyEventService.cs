@@ -51,9 +51,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
 
             var now = DateTime.UtcNow;
 
-            if (surveyEvent.StartDateUtc.HasValue && now < surveyEvent.StartDateUtc.Value)
-                return false;
-
             if (surveyEvent.EndDateUtc.HasValue && now > surveyEvent.EndDateUtc.Value)
                 return false;
 
