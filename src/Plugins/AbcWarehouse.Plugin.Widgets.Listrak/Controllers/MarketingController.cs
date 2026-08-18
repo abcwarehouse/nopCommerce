@@ -23,7 +23,7 @@ public class MarketingController : ControllerBase
             if (!Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
                 return BadRequest(new { message = "Invalid phone number." });
 
-            var response = await _listrakService.SubscribePhoneNumberAsync(request.PhoneNumber);
+            var response = await _listrakService.SubscribePhoneNumberAsync(request.PhoneNumber, request.FirstName, request.LastName);
 
             if (response.IsSuccessStatusCode)
             {
@@ -76,4 +76,10 @@ public class MarketingSmsModel
 {
     public string EmailAddress { get; set; }
     public string PhoneNumber { get; set; }
+
+    /// <summary>Optional - not sent by the footer signup form, only by callers that collect a name.</summary>
+    public string FirstName { get; set; }
+
+    /// <summary>Optional - not sent by the footer signup form, only by callers that collect a name.</summary>
+    public string LastName { get; set; }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nop.Plugin.Misc.AbcEventSurveys.Domain;
 using Nop.Plugin.Misc.AbcEventSurveys.Models;
 using Nop.Plugin.Misc.AbcEventSurveys.Services;
+using Nop.Services.Logging;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 
@@ -11,10 +12,14 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
     public class SurveyController : BasePluginController
     {
         private readonly ISurveyEventService _surveyEventService;
+        private readonly IListrakService _listrakService;
+        private readonly ILogger _logger;
 
-        public SurveyController(ISurveyEventService surveyEventService)
+        public SurveyController(ISurveyEventService surveyEventService, IListrakService listrakService, ILogger logger)
         {
             _surveyEventService = surveyEventService;
+            _listrakService = listrakService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -95,6 +100,11 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             await _surveyEventService.InsertResponseAsync(response, customValues);
 
+            if (response.ConsentMarketing && !string.IsNullOrWhiteSpace(response.Phone))
+            {
+                await TrySubscribeToListrakSmsAsync(response.Phone, response.FirstName, response.LastName);
+            }
+
             var thankYouModel = await BuildPageModelAsync(surveyEvent);
             thankYouModel.Submitted = true;
 
@@ -143,6 +153,44 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 return phone;
 
             return Regex.Replace(phone, @"[-()\s]", string.Empty);
+        }
+
+        /// <summary>
+        /// Adds the entrant to Listrak's SMS phone list. This is best-effort: entering the
+        /// survey must always succeed even if Listrak is unreachable or the number is already
+        /// on the list (which Listrak reports as an HTTP 400 - that's an expected outcome here,
+        /// not a signup failure, so it's only logged, never surfaced to the entrant).
+        /// </summary>
+        private async Task TrySubscribeToListrakSmsAsync(string phone, string firstName, string lastName)
+        {
+            var digitsOnly = Regex.Replace(phone ?? string.Empty, @"\D", string.Empty);
+
+            // Listrak expects a bare 10-digit number; drop a leading US country code if present.
+            if (digitsOnly.Length == 11 && digitsOnly.StartsWith("1"))
+            {
+                digitsOnly = digitsOnly[1..];
+            }
+
+            if (digitsOnly.Length != 10)
+            {
+                await _logger.InformationAsync($"Widgets.Listrak: skipped SMS subscribe for event survey entrant - '{phone}' isn't a 10-digit number.");
+                return;
+            }
+
+            try
+            {
+                var listrakResponse = await _listrakService.SubscribePhoneNumberAsync(digitsOnly, firstName, lastName);
+
+                if (!listrakResponse.IsSuccessStatusCode)
+                {
+                    var content = await listrakResponse.Content.ReadAsStringAsync();
+                    await _logger.InformationAsync($"Widgets.Listrak: SMS subscribe returned {(int)listrakResponse.StatusCode} for event survey entrant (e.g. already subscribed) - {content}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _logger.ErrorAsync("Widgets.Listrak: SMS subscribe failed for event survey entrant.", ex);
+            }
         }
     }
 }

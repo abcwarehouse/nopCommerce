@@ -10,20 +10,25 @@ using AbcWarehouse.Plugin.Widgets.Listrak.Models;
 public class ListrakService : IListrakService
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ListrakSettings _settings;
 
-    public ListrakService(IHttpClientFactory httpClientFactory)
+    public ListrakService(IHttpClientFactory httpClientFactory, ListrakSettings settings)
     {
         _httpClientFactory = httpClientFactory;
+        _settings = settings;
     }
 
     public async Task<string> GetTokenAsync()
     {
+        if (string.IsNullOrEmpty(_settings.ClientId) || string.IsNullOrEmpty(_settings.ClientSecret))
+            throw new Exception("Widgets.Listrak: ClientId/ClientSecret are not configured. Set them in Admin > Widgets.Listrak > Configure.");
+
         var request = new HttpRequestMessage(HttpMethod.Post, "https://auth.listrak.com/OAuth2/Token")
         {
             Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                { "client_id", "ao1xkc57sz7t1dw1qawh" },
-                { "client_secret", "rDpBSv2PMMrpo2Nso0AAyFqiag1U395bYV4ltx1vhIE" },
+                { "client_id", _settings.ClientId },
+                { "client_secret", _settings.ClientSecret },
                 { "grant_type", "client_credentials" }
             })
         };
@@ -39,17 +44,19 @@ public class ListrakService : IListrakService
         return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
     }
 
-    public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber)
+    public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber, string firstName = null, string lastName = null)
     {
         var token = await GetTokenAsync();
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var listrakData = new
+        var listrakData = new PhoneListContactModel
         {
             ShortCodeId = "1026",
             PhoneNumber = phoneNumber,
-            PhoneListId = "151"
+            PhoneListId = "151",
+            FirstName = firstName,
+            LastName = lastName
         };
 
         return await client.PostAsJsonAsync(

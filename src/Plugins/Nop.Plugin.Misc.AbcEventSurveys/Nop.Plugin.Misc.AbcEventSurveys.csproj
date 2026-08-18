@@ -61,6 +61,8 @@
     <ProjectReference Include="..\..\Libraries\Nop.Core\Nop.Core.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Services\Nop.Services.csproj" />
     <ProjectReference Include="..\..\Libraries\Nop.Data\Nop.Data.csproj" />
+    <!-- Reuses IListrakService to add SMS survey entrants to the Listrak phone list -->
+    <ProjectReference Include="..\AbcWarehouse.Plugin.Widgets.Listrak\AbcWarehouse.Plugin.Widgets.Listrak.csproj" />
     <ClearPluginAssemblies Include="$(MSBuildProjectDirectory)\..\..\Build\ClearPluginAssemblies.proj" />
   </ItemGroup>
 
