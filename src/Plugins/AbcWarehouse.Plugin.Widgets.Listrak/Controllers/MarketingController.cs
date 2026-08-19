@@ -2,6 +2,7 @@ using System;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AbcWarehouse.Plugin.Widgets.Listrak.Models;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -23,7 +24,7 @@ public class MarketingController : ControllerBase
             if (!Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
                 return BadRequest(new { message = "Invalid phone number." });
 
-            var response = await _listrakService.SubscribePhoneNumberAsync(request.PhoneNumber, request.FirstName, request.LastName);
+            var response = await _listrakService.SubscribeOrEnrichPhoneNumberAsync(request.PhoneNumber, request.FirstName, request.LastName);
 
             if (response.IsSuccessStatusCode)
             {
@@ -42,12 +43,13 @@ public class MarketingController : ControllerBase
         }
     }
 
+    private static readonly JsonSerializerOptions CaseInsensitiveJson = new() { PropertyNameCaseInsensitive = true };
+
     private string GetFriendlyErrorMessage(string apiResponse)
     {
         try
         {
-            var errorResponse = JsonSerializer.Deserialize<ListrakErrorResponse>(apiResponse,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var errorResponse = JsonSerializer.Deserialize<ListrakApiErrorResponse>(apiResponse, CaseInsensitiveJson);
 
             return errorResponse?.Error switch
             {
@@ -62,13 +64,6 @@ public class MarketingController : ControllerBase
         {
             return "Unable to subscribe. Please try again later.";
         }
-    }
-
-    private class ListrakErrorResponse
-    {
-        public int Status { get; set; }
-        public string Error { get; set; }
-        public string Message { get; set; }
     }
 }
 

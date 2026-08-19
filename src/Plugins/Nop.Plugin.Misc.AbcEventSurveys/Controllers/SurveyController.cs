@@ -179,7 +179,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             try
             {
-                var listrakResponse = await _listrakService.SubscribePhoneNumberAsync(digitsOnly, firstName, lastName);
+                var listrakResponse = await _listrakService.SubscribeOrEnrichPhoneNumberAsync(digitsOnly, firstName, lastName);
 
                 if (!listrakResponse.IsSuccessStatusCode)
                 {
