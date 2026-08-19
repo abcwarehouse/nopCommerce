@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using AbcWarehouse.Plugin.Widgets.Listrak;
 using AbcWarehouse.Plugin.Widgets.Listrak.Models;
+using SystemJsonSerializer = System.Text.Json.JsonSerializer;
 
 public class ListrakService : IListrakService
 {
@@ -85,7 +86,7 @@ public class ListrakService : IListrakService
         try
         {
             var content = await subscribeResponse.Content.ReadAsStringAsync();
-            var error = JsonSerializer.Deserialize<ListrakApiErrorResponse>(content, CaseInsensitiveJson);
+            var error = SystemJsonSerializer.Deserialize<ListrakApiErrorResponse>(content, CaseInsensitiveJson);
 
             if (error?.Error != "ERROR_PHONE_NUMBER_FOUND")
                 return subscribeResponse; // some other failure (invalid/blocked/opted-out) - nothing more to do here
@@ -141,7 +142,7 @@ public class ListrakService : IListrakService
             return null;
 
         var content = await response.Content.ReadAsStringAsync();
-        var wrapper = JsonSerializer.Deserialize<GetContactResponse>(content, CaseInsensitiveJson);
+        var wrapper = SystemJsonSerializer.Deserialize<GetContactResponse>(content, CaseInsensitiveJson);
 
         return wrapper?.Data;
     }
