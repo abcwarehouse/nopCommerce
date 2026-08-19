@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using AbcWarehouse.Plugin.Widgets.Listrak;
 using AbcWarehouse.Plugin.Widgets.Listrak.Models;
 
 public class ListrakService : IListrakService
