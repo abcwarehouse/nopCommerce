@@ -195,12 +195,22 @@ public class ListrakService : IListrakService
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var response = await client.GetAsync($"https://api.listrak.com/sms/v1/ShortCode/{ShortCodeId}/Contact/{phoneNumber}");
-
-        if (response.StatusCode == HttpStatusCode.NotFound || !response.IsSuccessStatusCode)
-            return null;
-
+        var url = $"https://api.listrak.com/sms/v1/ShortCode/{ShortCodeId}/Contact/{phoneNumber}";
+        var response = await client.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            await _logger.InformationAsync($"Widgets.Listrak: Get Contact 404 for {phoneNumber} at {url} - {content}");
+            return null;
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            await _logger.ErrorAsync($"Widgets.Listrak: Get Contact failed for {phoneNumber} - {(int)response.StatusCode} {url} - {content}");
+            return null;
+        }
+
         var wrapper = SystemJsonSerializer.Deserialize<GetContactResponse>(content, CaseInsensitiveJson);
 
         return wrapper?.Data;
