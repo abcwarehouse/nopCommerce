@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using AbcWarehouse.Plugin.Widgets.Listrak;
 using AbcWarehouse.Plugin.Widgets.Listrak.Models;
+using Nop.Services.Logging;
 using SystemJsonSerializer = System.Text.Json.JsonSerializer;
 
 public class ListrakService : IListrakService
@@ -34,11 +36,13 @@ public class ListrakService : IListrakService
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ListrakSettings _settings;
+    private readonly ILogger _logger;
 
-    public ListrakService(IHttpClientFactory httpClientFactory, ListrakSettings settings)
+    public ListrakService(IHttpClientFactory httpClientFactory, ListrakSettings settings, ILogger logger)
     {
         _httpClientFactory = httpClientFactory;
         _settings = settings;
+        _logger = logger;
     }
 
     public async Task<string> GetTokenAsync()
@@ -105,11 +109,19 @@ public class ListrakService : IListrakService
             var error = SystemJsonSerializer.Deserialize<ListrakApiErrorResponse>(content, CaseInsensitiveJson);
 
             if (error?.Error == null || !EnrichableErrorCodes.Contains(error.Error))
-                return subscribeResponse; // no existing contact to enrich (e.g. invalid phone format)
+            {
+                await _logger.InformationAsync(
+                    $"Widgets.Listrak: enrichment skipped for {phoneNumber} - subscribe error '{error?.Error}' doesn't indicate an existing contact.");
+                return subscribeResponse;
+            }
 
             var existing = await GetContactAsync(phoneNumber);
             if (existing == null)
+            {
+                await _logger.InformationAsync(
+                    $"Widgets.Listrak: enrichment skipped for {phoneNumber} - Get Contact returned no contact despite subscribe error '{error.Error}'.");
                 return subscribeResponse;
+            }
 
             var needsUpdate = false;
 
@@ -131,18 +143,43 @@ public class ListrakService : IListrakService
                 needsUpdate = true;
             }
 
-            if (needsUpdate)
+            if (!needsUpdate)
             {
-                // Echo every other field back exactly as Listrak returned it so this update can
-                // only ever fill in missing name/email - it can't clear/replace birthday, postal
-                // code, opt-out status, or segmentation data.
-                existing.PhoneNumber = phoneNumber;
-                await UpdateContactAsync(existing);
+                await _logger.InformationAsync(
+                    $"Widgets.Listrak: enrichment for {phoneNumber} found nothing to fill in - existing contact already has FirstName/LastName/EmailAddress populated.");
+                return subscribeResponse;
+            }
+
+            // Echo every other field back exactly as Listrak returned it so this update can
+            // only ever fill in missing name/email - it can't clear/replace birthday, postal
+            // code, opt-out status, or segmentation data.
+            existing.PhoneNumber = phoneNumber;
+            var updateResponse = await UpdateContactAsync(existing);
+
+            if (updateResponse.IsSuccessStatusCode)
+            {
+                var filledFields = new[]
+                {
+                    existing.FirstName == firstName && !string.IsNullOrWhiteSpace(firstName) ? "FirstName" : null,
+                    existing.LastName == lastName && !string.IsNullOrWhiteSpace(lastName) ? "LastName" : null,
+                    existing.EmailAddress == emailAddress && !string.IsNullOrWhiteSpace(emailAddress) ? "EmailAddress" : null
+                }.Where(f => f != null);
+
+                await _logger.InformationAsync(
+                    $"Widgets.Listrak: enrichment updated contact {phoneNumber} - filled in: {string.Join(", ", filledFields)}.");
+            }
+            else
+            {
+                var updateContent = await updateResponse.Content.ReadAsStringAsync();
+                await _logger.ErrorAsync(
+                    $"Widgets.Listrak: enrichment Update Contact failed for {phoneNumber} - {(int)updateResponse.StatusCode} {updateContent}");
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Enrichment is best-effort; the original subscribe response below is still what matters.
+            // Enrichment is best-effort; the original subscribe response below is still what
+            // matters to the caller. But log it - this used to fail completely silently.
+            await _logger.ErrorAsync($"Widgets.Listrak: enrichment threw for {phoneNumber}.", ex);
         }
 
         return subscribeResponse;
