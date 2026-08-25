@@ -4,6 +4,7 @@ using Nop.Plugin.Misc.AbcEventSurveys.Domain;
 using Nop.Plugin.Misc.AbcEventSurveys.Services;
 using Nop.Web.Areas.Admin.Controllers;
 using Nop.Web.Framework.Models.Extensions;
+using Nop.Web.Framework.Mvc;
 
 namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
 {
@@ -252,6 +253,18 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 }));
 
             return Json(model);
+        }
+
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> DeleteResponse(int id)
+        {
+            var response = await _surveyEventService.GetResponseByIdAsync(id)
+                ?? throw new ArgumentException("No survey response found with the specified id", nameof(id));
+
+            await _surveyEventService.DeleteResponseAsync(response);
+
+            return new NullJsonResult();
         }
 
         public async Task<IActionResult> ExportXlsx(int id)

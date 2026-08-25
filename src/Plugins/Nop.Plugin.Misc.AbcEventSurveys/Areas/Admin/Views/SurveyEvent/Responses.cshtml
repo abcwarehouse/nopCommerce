@@ -42,6 +42,7 @@
                         Name = "surveyresponses-grid",
                         UrlRead = new DataUrl("Responses", "SurveyEvent",
                             new RouteValueDictionary { ["surveyEventId"] = Model.SurveyEventId }),
+                        UrlDelete = new DataUrl("DeleteResponse", "SurveyEvent", null),
                         Length = Model.PageSize,
                         LengthMenu = Model.AvailablePageSizes,
                         ColumnCollection = new List<ColumnProperty>
@@ -83,6 +84,13 @@
                                 Title = "Submitted (UTC)",
                                 Width = "130",
                                 Render = new RenderDate() { Format = "MM/DD/YYYY HH:mm" }
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.Id))
+                            {
+                                Title = "Delete",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonRemove("Delete")
                             }
                         }
                     })

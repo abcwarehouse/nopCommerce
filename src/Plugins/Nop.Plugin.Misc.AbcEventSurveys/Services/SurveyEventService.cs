@@ -152,10 +152,24 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
                 query.Where(r => r.SurveyEventId == surveyEventId).OrderByDescending(r => r.CreatedOnUtc));
         }
 
+        public async Task<SurveyResponse> GetResponseByIdAsync(int id)
+        {
+            return await _surveyResponseRepository.GetByIdAsync(id);
+        }
+
         public async Task<int> GetResponseCountByEventIdAsync(int surveyEventId)
         {
             var responses = await GetResponsesByEventIdAsync(surveyEventId);
             return responses.Count;
+        }
+
+        public async Task<bool> HasResponseWithPhoneAsync(int surveyEventId, string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone))
+                return false;
+
+            return await _surveyResponseRepository.Table.AnyAsync(r =>
+                r.SurveyEventId == surveyEventId && r.Phone == phone);
         }
 
         public async Task<IList<SurveyResponseCustomValue>> GetCustomValuesByResponseIdAsync(int surveyResponseId)
@@ -198,6 +212,13 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
             {
                 await _surveyResponseCustomValueRepository.InsertAsync(value);
             }
+        }
+
+        public async Task DeleteResponseAsync(SurveyResponse response)
+        {
+            // SurveyResponseCustomValue.SurveyResponseId cascade-deletes at the DB level
+            // (see SchemaMigration) - no explicit cleanup needed here.
+            await _surveyResponseRepository.DeleteAsync(response);
         }
     }
 }

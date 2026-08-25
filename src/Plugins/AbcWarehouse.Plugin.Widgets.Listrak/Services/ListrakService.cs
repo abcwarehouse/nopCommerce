@@ -17,6 +17,21 @@ public class ListrakService : IListrakService
 
     private static readonly JsonSerializerOptions CaseInsensitiveJson = new() { PropertyNameCaseInsensitive = true };
 
+    /// <summary>
+    /// Subscribe-attempt error codes that mean a contact record already exists for this phone
+    /// number on this sender code, so it's worth looking it up and filling in missing fields.
+    /// Deliberately includes opted-out/blocked, not just "found" - Listrak keeps the contact
+    /// record (name, email, etc.) even after someone texts STOP or is blocked, so those contacts
+    /// can still be enriched even though they won't be re-subscribed to SMS.
+    /// ERROR_INVALID_PHONE_NUMBER is excluded - there's no real contact behind a malformed number.
+    /// </summary>
+    private static readonly HashSet<string> EnrichableErrorCodes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "ERROR_PHONE_NUMBER_FOUND",
+        "ERROR_PHONE_NUMBER_OPTED_OUT",
+        "ERROR_PHONE_NUMBER_BLOCKED"
+    };
+
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ListrakSettings _settings;
 
@@ -89,8 +104,8 @@ public class ListrakService : IListrakService
             var content = await subscribeResponse.Content.ReadAsStringAsync();
             var error = SystemJsonSerializer.Deserialize<ListrakApiErrorResponse>(content, CaseInsensitiveJson);
 
-            if (error?.Error != "ERROR_PHONE_NUMBER_FOUND")
-                return subscribeResponse; // some other failure (invalid/blocked/opted-out) - nothing more to do here
+            if (error?.Error == null || !EnrichableErrorCodes.Contains(error.Error))
+                return subscribeResponse; // no existing contact to enrich (e.g. invalid phone format)
 
             var existing = await GetContactAsync(phoneNumber);
             if (existing == null)

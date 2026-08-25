@@ -30,7 +30,17 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
         Task DeleteCustomFieldAsync(SurveyCustomField customField);
 
         Task<IList<SurveyResponse>> GetResponsesByEventIdAsync(int surveyEventId);
+        Task<SurveyResponse> GetResponseByIdAsync(int id);
         Task<int> GetResponseCountByEventIdAsync(int surveyEventId);
+
+        /// <summary>
+        /// True if this event already has a response recorded for this phone number. Used to
+        /// enforce "one entry per person per promotion" - matched on phone number only, scoped to
+        /// this event, so the same person can still enter a different event later.
+        /// </summary>
+        /// <param name="phone">Must already be cleaned/normalized the same way stored responses are
+        /// (see SurveyController.CleanPhoneNumber) so the comparison is apples-to-apples.</param>
+        Task<bool> HasResponseWithPhoneAsync(int surveyEventId, string phone);
         Task<IList<SurveyResponseCustomValue>> GetCustomValuesByResponseIdAsync(int surveyResponseId);
         Task<IDictionary<int, IList<SurveyResponseCustomValue>>> GetCustomValuesByEventIdAsync(int surveyEventId);
 
@@ -39,5 +49,12 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
         /// (keyed by SurveyCustomFieldId).
         /// </summary>
         Task InsertResponseAsync(SurveyResponse response, IDictionary<int, string> customFieldValues);
+
+        /// <summary>
+        /// Deletes a single response (and its custom field answers, which cascade-delete at the
+        /// DB level - see SchemaMigration). This only removes the local record; it doesn't touch
+        /// any Listrak contact that was created/enriched from it.
+        /// </summary>
+        Task DeleteResponseAsync(SurveyResponse response);
     }
 }

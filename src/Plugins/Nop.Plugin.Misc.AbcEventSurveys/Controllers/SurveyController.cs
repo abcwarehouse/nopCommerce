@@ -60,6 +60,17 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                     "You must agree to the Terms and Conditions to enter.");
             }
 
+            var cleanedPhone = CleanPhoneNumber(postedModel.Phone);
+
+            // One entry per person per event, matched on phone number only (see the T&Cs:
+            // "Limit one entry per person. Duplicate entries will be disqualified."). Scoped to
+            // this event, so the same person can still enter a different event later.
+            if (await _surveyEventService.HasResponseWithPhoneAsync(surveyEvent.Id, cleanedPhone))
+            {
+                ModelState.AddModelError(nameof(SurveyPageModel.Phone),
+                    "This phone number has already entered this promotion. Limit one entry per person.");
+            }
+
             if (!ModelState.IsValid)
             {
                 postedModel.SurveyEventId = surveyEvent.Id;
@@ -87,7 +98,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 FirstName = postedModel.FirstName,
                 LastName = postedModel.LastName,
                 Email = postedModel.Email,
-                Phone = CleanPhoneNumber(postedModel.Phone),
+                Phone = cleanedPhone,
                 ConsentMarketing = postedModel.ConsentMarketing,
                 CreatedOnUtc = DateTime.UtcNow,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
