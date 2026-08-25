@@ -24,7 +24,7 @@ public class MarketingController : ControllerBase
             if (!Regex.IsMatch(request.PhoneNumber, @"^\d{10}$"))
                 return BadRequest(new { message = "Invalid phone number." });
 
-            var response = await _listrakService.SubscribeOrEnrichPhoneNumberAsync(request.PhoneNumber, request.FirstName, request.LastName);
+            var response = await _listrakService.SubscribeOrEnrichPhoneNumberAsync(request.PhoneNumber, request.FirstName, request.LastName, request.EmailAddress);
 
             if (response.IsSuccessStatusCode)
             {

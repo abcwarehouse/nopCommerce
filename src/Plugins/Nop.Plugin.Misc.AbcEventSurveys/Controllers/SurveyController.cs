@@ -102,7 +102,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             if (response.ConsentMarketing && !string.IsNullOrWhiteSpace(response.Phone))
             {
-                await TrySubscribeToListrakSmsAsync(response.Phone, response.FirstName, response.LastName);
+                await TrySubscribeToListrakSmsAsync(response.Phone, response.FirstName, response.LastName, response.Email);
             }
 
             var thankYouModel = await BuildPageModelAsync(surveyEvent);
@@ -161,7 +161,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
         /// on the list (which Listrak reports as an HTTP 400 - that's an expected outcome here,
         /// not a signup failure, so it's only logged, never surfaced to the entrant).
         /// </summary>
-        private async Task TrySubscribeToListrakSmsAsync(string phone, string firstName, string lastName)
+        private async Task TrySubscribeToListrakSmsAsync(string phone, string firstName, string lastName, string email)
         {
             var digitsOnly = Regex.Replace(phone ?? string.Empty, @"\D", string.Empty);
 
@@ -179,7 +179,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             try
             {
-                var listrakResponse = await _listrakService.SubscribeOrEnrichPhoneNumberAsync(digitsOnly, firstName, lastName);
+                var listrakResponse = await _listrakService.SubscribeOrEnrichPhoneNumberAsync(digitsOnly, firstName, lastName, email);
 
                 if (!listrakResponse.IsSuccessStatusCode)
                 {

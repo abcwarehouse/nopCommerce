@@ -52,7 +52,7 @@ public class ListrakService : IListrakService
         return tokenResponse?.AccessToken ?? throw new Exception("Access token is null.");
     }
 
-    public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber, string firstName = null, string lastName = null)
+    public async Task<HttpResponseMessage> SubscribePhoneNumberAsync(string phoneNumber, string firstName = null, string lastName = null, string emailAddress = null)
     {
         var token = await GetTokenAsync();
         var client = _httpClientFactory.CreateClient();
@@ -64,7 +64,8 @@ public class ListrakService : IListrakService
             PhoneNumber = phoneNumber,
             PhoneListId = "151",
             FirstName = firstName,
-            LastName = lastName
+            LastName = lastName,
+            EmailAddress = emailAddress
         };
 
         return await client.PostAsJsonAsync(
@@ -73,14 +74,14 @@ public class ListrakService : IListrakService
         );
     }
 
-    public async Task<HttpResponseMessage> SubscribeOrEnrichPhoneNumberAsync(string phoneNumber, string firstName = null, string lastName = null)
+    public async Task<HttpResponseMessage> SubscribeOrEnrichPhoneNumberAsync(string phoneNumber, string firstName = null, string lastName = null, string emailAddress = null)
     {
-        var subscribeResponse = await SubscribePhoneNumberAsync(phoneNumber, firstName, lastName);
+        var subscribeResponse = await SubscribePhoneNumberAsync(phoneNumber, firstName, lastName, emailAddress);
 
         if (subscribeResponse.IsSuccessStatusCode)
             return subscribeResponse;
 
-        if (string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(lastName))
+        if (string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(lastName) && string.IsNullOrWhiteSpace(emailAddress))
             return subscribeResponse; // nothing to enrich with, and no point spending an extra API call
 
         try
@@ -109,10 +110,16 @@ public class ListrakService : IListrakService
                 needsUpdate = true;
             }
 
+            if (string.IsNullOrWhiteSpace(existing.EmailAddress) && !string.IsNullOrWhiteSpace(emailAddress))
+            {
+                existing.EmailAddress = emailAddress;
+                needsUpdate = true;
+            }
+
             if (needsUpdate)
             {
                 // Echo every other field back exactly as Listrak returned it so this update can
-                // only ever add a missing name - it can't clear/replace email, birthday, postal
+                // only ever fill in missing name/email - it can't clear/replace birthday, postal
                 // code, opt-out status, or segmentation data.
                 existing.PhoneNumber = phoneNumber;
                 await UpdateContactAsync(existing);
