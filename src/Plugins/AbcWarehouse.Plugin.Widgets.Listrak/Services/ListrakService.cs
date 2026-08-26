@@ -196,6 +196,22 @@ public class ListrakService : IListrakService
     }
 
     /// <summary>
+    /// Formats a bare 10-digit US number with a leading country code and no "+" (e.g.
+    /// "8102808690" -> "18102808690"). Per Listrak Support, this is the format Get/Update Contact
+    /// expect in the URL path - confirmed different from the PhoneList Subscribe endpoint's JSON
+    /// body, which this integration has always sent as bare 10 digits and which still works
+    /// unchanged (see SubscribePhoneNumberAsync - not touched by this helper).
+    /// </summary>
+    private static string ToContactApiPhoneFormat(string phoneNumber)
+    {
+        if (string.IsNullOrWhiteSpace(phoneNumber))
+            return phoneNumber;
+
+        var digits = phoneNumber.TrimStart('+');
+        return digits.Length == 10 ? $"1{digits}" : digits;
+    }
+
+    /// <summary>
     /// Looks up a contact by phone number. This resource isn't list-scoped - it returns null on a
     /// 404 (no such contact for this sender code) or any other non-success response.
     /// </summary>
@@ -205,7 +221,7 @@ public class ListrakService : IListrakService
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var url = $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact/{phoneNumber}";
+        var url = $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact/{ToContactApiPhoneFormat(phoneNumber)}";
         var response = await client.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
 
@@ -231,6 +247,9 @@ public class ListrakService : IListrakService
         var token = await GetTokenAsync();
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Keep the body's PhoneNumber consistent with the URL's format - see ToContactApiPhoneFormat.
+        contact.PhoneNumber = ToContactApiPhoneFormat(contact.PhoneNumber);
 
         return await client.PutAsJsonAsync(
             $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact/{contact.PhoneNumber}",
