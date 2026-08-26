@@ -41,13 +41,22 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
             var model = new ConfigModel
             {
                 ActiveStoreScopeConfiguration = storeScope,
-                MerchantId = settings.MerchantId
+                MerchantId = settings.MerchantId,
+                ClientId = settings.ClientId,
+                ClientSecret = settings.ClientSecret,
+                SenderCodeId = settings.SenderCodeId
             };
 
             if (storeScope > 0)
             {
                 model.MerchantId_OverrideForStore =
                     await _settingService.SettingExistsAsync(settings, x => x.MerchantId, storeScope);
+                model.ClientId_OverrideForStore =
+                    await _settingService.SettingExistsAsync(settings, x => x.ClientId, storeScope);
+                model.ClientSecret_OverrideForStore =
+                    await _settingService.SettingExistsAsync(settings, x => x.ClientSecret, storeScope);
+                model.SenderCodeId_OverrideForStore =
+                    await _settingService.SettingExistsAsync(settings, x => x.SenderCodeId, storeScope);
             }
 
             return View("~/Plugins/Widgets.Listrak/Views/Configure.cshtml", model);
@@ -58,15 +67,28 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
         {
             //load settings for a chosen store scope
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var existingSettings = await _settingService.LoadSettingAsync<ListrakSettings>(storeScope);
+
             var settings = new ListrakSettings()
             {
-                MerchantId = model.MerchantId
+                MerchantId = model.MerchantId,
+                ClientId = model.ClientId,
+                // ClientSecret is a [DataType(DataType.Password)] field, which ASP.NET Core's
+                // default editor template always renders blank on page load regardless of the
+                // saved value (a deliberate convention - don't echo secrets into HTML). Treat a
+                // blank submission as "leave it unchanged" rather than wiping out the real
+                // secret every time this form is saved for any other reason.
+                ClientSecret = string.IsNullOrEmpty(model.ClientSecret) ? existingSettings.ClientSecret : model.ClientSecret,
+                SenderCodeId = model.SenderCodeId
             };
 
             /* We do not clear cache after each setting update.
-             * This behavior can increase performance because cached settings will not be cleared 
+             * This behavior can increase performance because cached settings will not be cleared
              * and loaded from database after each update */
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.MerchantId, model.MerchantId_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.ClientId, model.ClientId_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.ClientSecret, model.ClientSecret_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.SenderCodeId, model.SenderCodeId_OverrideForStore, storeScope, false);
 
             //now clear settings cache
             await _settingService.ClearCacheAsync();

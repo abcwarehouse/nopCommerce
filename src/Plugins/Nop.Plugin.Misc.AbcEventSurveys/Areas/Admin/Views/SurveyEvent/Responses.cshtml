@@ -1,0 +1,101 @@
+@model SurveyResponseSearchModel
+
+@using Microsoft.AspNetCore.Routing
+
+@inject INopHtmlHelper NopHtml
+
+@{
+    ViewBag.PageTitle = "Survey Responses";
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.EventSurveys");
+
+    Layout = "_AdminLayout";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Responses - @Model.SurveyEventName
+        <small>(@Model.SurveyEventCode)</small>
+    </h1>
+    <div class="pull-right">
+        <a asp-action="ExportXlsx" asp-route-id="@Model.SurveyEventId" class="btn btn-success">
+            <i class="far fa-file-excel"></i>
+            Export to Excel (.xlsx)
+        </a>
+        <a asp-action="ExportXml" asp-route-id="@Model.SurveyEventId" class="btn btn-success">
+            <i class="far fa-file-code"></i>
+            Export to XML
+        </a>
+        <a asp-action="Edit" asp-route-id="@Model.SurveyEventId" class="btn btn-default">
+            <i class="fas fa-arrow-circle-left"></i>
+            Back to event
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "surveyresponses-grid",
+                        UrlRead = new DataUrl("Responses", "SurveyEvent",
+                            new RouteValueDictionary { ["surveyEventId"] = Model.SurveyEventId }),
+                        UrlDelete = new DataUrl("DeleteResponse", "SurveyEvent", null),
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(SurveyResponseModel.FirstName))
+                            {
+                                Title = "First Name",
+                                Width = "100"
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.LastName))
+                            {
+                                Title = "Last Name",
+                                Width = "100"
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.Email))
+                            {
+                                Title = "Email",
+                                Width = "180"
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.Phone))
+                            {
+                                Title = "Phone",
+                                Width = "100"
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.ConsentMarketing))
+                            {
+                                Title = "Consent",
+                                Width = "70",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.AdditionalInfo))
+                            {
+                                Title = "Custom Fields",
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.CreatedOnUtc))
+                            {
+                                Title = "Submitted (UTC)",
+                                Width = "130",
+                                Render = new RenderDate() { Format = "MM/DD/YYYY HH:mm" }
+                            },
+                            new ColumnProperty(nameof(SurveyResponseModel.Id))
+                            {
+                                Title = "Delete",
+                                Width = "80",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonRemove("Delete")
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+@model SurveyEventSearchModel
+
+@inject INopHtmlHelper NopHtml
+
+@{
+    ViewBag.PageTitle = "Event Surveys";
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.EventSurveys");
+
+    Layout = "_AdminLayout";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Event Surveys
+    </h1>
+    <div class="pull-right">
+        <a asp-action="Create" class="btn bg-blue">
+            <i class="fas fa-plus-square"></i>
+            Create New Event
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>
+                        Each event below has its own public sign-up page at
+                        <code>/survey/{code}</code>. Responses are stamped with that event's
+                        code so results can always be sorted/exported per event.
+                    </p>
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "surveyevents-grid",
+                        UrlRead = new DataUrl("List", "SurveyEvent", null),
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(SurveyEventModel.Name))
+                            {
+                                Title = "Name",
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(SurveyEventModel.Code))
+                            {
+                                Title = "Code",
+                                Width = "150"
+                            },
+                            new ColumnProperty(nameof(SurveyEventModel.IsActive))
+                            {
+                                Title = "Active",
+                                Width = "70",
+                                ClassName = NopColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(SurveyEventModel.EndDateUtc))
+                            {
+                                Title = "End Date",
+                                Width = "100",
+                                Render = new RenderDate() { Format = "MM/DD/YYYY" }
+                            },
+                            new ColumnProperty(nameof(SurveyEventModel.ResponseCount))
+                            {
+                                Title = "Responses",
+                                Width = "80"
+                            },
+                            new ColumnProperty(nameof(SurveyEventModel.Id))
+                            {
+                                Title = "Manage",
+                                Width = "100",
+                                ClassName = NopColumnClassDefaults.Button,
+                                Render = new RenderButtonView(new DataUrl("~/Admin/SurveyEvent/Edit/"))
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
