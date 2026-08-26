@@ -67,11 +67,18 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
         {
             //load settings for a chosen store scope
             var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var existingSettings = await _settingService.LoadSettingAsync<ListrakSettings>(storeScope);
+
             var settings = new ListrakSettings()
             {
                 MerchantId = model.MerchantId,
                 ClientId = model.ClientId,
-                ClientSecret = model.ClientSecret,
+                // ClientSecret is a [DataType(DataType.Password)] field, which ASP.NET Core's
+                // default editor template always renders blank on page load regardless of the
+                // saved value (a deliberate convention - don't echo secrets into HTML). Treat a
+                // blank submission as "leave it unchanged" rather than wiping out the real
+                // secret every time this form is saved for any other reason.
+                ClientSecret = string.IsNullOrEmpty(model.ClientSecret) ? existingSettings.ClientSecret : model.ClientSecret,
                 SenderCodeId = model.SenderCodeId
             };
 

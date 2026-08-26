@@ -111,7 +111,11 @@ public class ListrakService : IListrakService
             return subscribeResponse; // nothing to enrich with, and no point spending an extra API call
 
         if (string.IsNullOrEmpty(_settings.SenderCodeId))
-            return subscribeResponse; // Contact API sender code isn't configured yet - see ListrakSettings.SenderCodeId
+        {
+            await _logger.InformationAsync(
+                $"Widgets.Listrak: enrichment skipped for {phoneNumber} - SenderCodeId isn't configured (Admin > Widgets.Listrak > Configure).");
+            return subscribeResponse;
+        }
 
         try
         {
