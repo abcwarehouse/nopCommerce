@@ -43,7 +43,8 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
                 ActiveStoreScopeConfiguration = storeScope,
                 MerchantId = settings.MerchantId,
                 ClientId = settings.ClientId,
-                ClientSecret = settings.ClientSecret
+                ClientSecret = settings.ClientSecret,
+                SenderCodeId = settings.SenderCodeId
             };
 
             if (storeScope > 0)
@@ -54,6 +55,8 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
                     await _settingService.SettingExistsAsync(settings, x => x.ClientId, storeScope);
                 model.ClientSecret_OverrideForStore =
                     await _settingService.SettingExistsAsync(settings, x => x.ClientSecret, storeScope);
+                model.SenderCodeId_OverrideForStore =
+                    await _settingService.SettingExistsAsync(settings, x => x.SenderCodeId, storeScope);
             }
 
             return View("~/Plugins/Widgets.Listrak/Views/Configure.cshtml", model);
@@ -68,7 +71,8 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
             {
                 MerchantId = model.MerchantId,
                 ClientId = model.ClientId,
-                ClientSecret = model.ClientSecret
+                ClientSecret = model.ClientSecret,
+                SenderCodeId = model.SenderCodeId
             };
 
             /* We do not clear cache after each setting update.
@@ -77,6 +81,7 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Controllers
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.MerchantId, model.MerchantId_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.ClientId, model.ClientId_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.ClientSecret, model.ClientSecret_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, x => x.SenderCodeId, model.SenderCodeId_OverrideForStore, storeScope, false);
 
             //now clear settings cache
             await _settingService.ClearCacheAsync();

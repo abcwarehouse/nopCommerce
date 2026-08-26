@@ -78,6 +78,8 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak
                     [ListrakLocales.ClientIdHint] = "The OAuth2 client_id used to authenticate against Listrak's SMS API.",
                     [ListrakLocales.ClientSecret] = "Client Secret",
                     [ListrakLocales.ClientSecretHint] = "The OAuth2 client_secret used to authenticate against Listrak's SMS API.",
+                    [ListrakLocales.SenderCodeId] = "Sender Code ID",
+                    [ListrakLocales.SenderCodeIdHint] = "Used by Listrak's Contact API to fill in a missing name/email on an already-subscribed contact. This is NOT the same ID as Merchant ID - get it from Listrak's dashboard/account team. Leave blank to skip that enrichment step entirely.",
                 });
         }
 

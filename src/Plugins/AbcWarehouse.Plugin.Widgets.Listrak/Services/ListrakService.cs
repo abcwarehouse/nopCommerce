@@ -15,6 +15,13 @@ using SystemJsonSerializer = System.Text.Json.JsonSerializer;
 
 public class ListrakService : IListrakService
 {
+    /// <summary>
+    /// ShortCodeId used for the PhoneList Subscribe/Create Contact endpoint only
+    /// (/ShortCode/{ShortCodeId}/PhoneList/{PhoneListId}/Contact). Despite the similar name, this
+    /// is NOT the same ID as ListrakSettings.SenderCodeId, which the separate Contact Get/Update
+    /// endpoints require - confirmed by a live 404 (ERROR_UNABLE_TO_LOCATE_RESOURCE) when this
+    /// value was reused there. Don't consolidate the two without confirming with Listrak first.
+    /// </summary>
     private const string ShortCodeId = "1026";
 
     private static readonly JsonSerializerOptions CaseInsensitiveJson = new() { PropertyNameCaseInsensitive = true };
@@ -102,6 +109,9 @@ public class ListrakService : IListrakService
 
         if (string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(lastName) && string.IsNullOrWhiteSpace(emailAddress))
             return subscribeResponse; // nothing to enrich with, and no point spending an extra API call
+
+        if (string.IsNullOrEmpty(_settings.SenderCodeId))
+            return subscribeResponse; // Contact API sender code isn't configured yet - see ListrakSettings.SenderCodeId
 
         try
         {
@@ -195,7 +205,7 @@ public class ListrakService : IListrakService
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var url = $"https://api.listrak.com/sms/v1/ShortCode/{ShortCodeId}/Contact/{phoneNumber}";
+        var url = $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact/{phoneNumber}";
         var response = await client.GetAsync(url);
         var content = await response.Content.ReadAsStringAsync();
 
@@ -223,7 +233,7 @@ public class ListrakService : IListrakService
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         return await client.PutAsJsonAsync(
-            $"https://api.listrak.com/sms/v1/ShortCode/{ShortCodeId}/Contact/{contact.PhoneNumber}",
+            $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact/{contact.PhoneNumber}",
             contact
         );
     }

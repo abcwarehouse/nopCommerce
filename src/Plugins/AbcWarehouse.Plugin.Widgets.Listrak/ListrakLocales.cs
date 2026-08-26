@@ -15,5 +15,9 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak
         public const string ClientSecret = Base + "ClientSecret";
 
         public const string ClientSecretHint = ClientSecret + ".Hint";
+
+        public const string SenderCodeId = Base + "SenderCodeId";
+
+        public const string SenderCodeIdHint = SenderCodeId + ".Hint";
     }
 }

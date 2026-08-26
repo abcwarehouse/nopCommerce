@@ -22,5 +22,12 @@ namespace AbcWarehouse.Plugin.Widgets.Listrak.Models
         [NopResourceDisplayName(ListrakLocales.ClientSecret)]
         public string ClientSecret { get; set; }
         public bool ClientSecret_OverrideForStore { get; set; }
+
+        // Deliberately not [Required]: enrichment (filling in a missing name/email on an
+        // already-subscribed contact) is skipped gracefully while this is blank, rather than the
+        // whole Configure form being unsavable until the right ID is tracked down.
+        [NopResourceDisplayName(ListrakLocales.SenderCodeId)]
+        public string SenderCodeId { get; set; }
+        public bool SenderCodeId_OverrideForStore { get; set; }
     }
 }
