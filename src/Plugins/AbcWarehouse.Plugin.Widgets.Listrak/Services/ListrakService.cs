@@ -252,11 +252,14 @@ public class ListrakService : IListrakService
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        // Keep the body's PhoneNumber consistent with the URL's format - see ToContactApiPhoneFormat.
+        // Unlike Get Contact, Update Contact does NOT take the phone number as a URL path segment
+        // - confirmed by Listrak Support (that's what the earlier 405 ERROR_UNSUPPORTED_METHOD
+        // was: PUT .../Contact/{phoneNumber} isn't a route this endpoint recognizes). The phone
+        // number is identified purely via the "phoneNumber" field in the request body.
         contact.PhoneNumber = ToContactApiPhoneFormat(contact.PhoneNumber);
 
         return await client.PutAsJsonAsync(
-            $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact/{contact.PhoneNumber}",
+            $"https://api.listrak.com/sms/v1/ShortCode/{_settings.SenderCodeId}/Contact",
             contact
         );
     }
