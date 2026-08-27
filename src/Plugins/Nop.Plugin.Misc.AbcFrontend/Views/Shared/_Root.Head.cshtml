@@ -765,81 +765,6 @@
         });
     </script>
 
-    <!-- Delay ShopLocal sale_circular events on /sale-ad page until GA4 is ready (race condition fix) -->
-    <script>
-        if (window.location.pathname === '/sale-ad' || window.location.pathname.includes('Fusion')) {
-            console.log('[SHOPLCAL FIX] 🚀 INITIALIZING - Page path:', window.location.pathname);
-
-            window.dataLayer = window.dataLayer || [];
-            const originalPush = window.dataLayer.push;
-            const queuedSaleCircularEvents = [];
-            let ga4Ready = false;
-            const initTime = performance.now();
-
-            function getTimestamp() {
-                return '(' + (performance.now() - initTime).toFixed(0) + 'ms)';
-            }
-
-            function flushQueuedEvents() {
-                if (queuedSaleCircularEvents.length > 0) {
-                    console.log('[SHOPLCAL FIX] ✅ FLUSHING', getTimestamp(), '- Sending ' + queuedSaleCircularEvents.length + ' queued sale_circular events');
-                    queuedSaleCircularEvents.forEach(function(event, index) {
-                        console.log('[SHOPLCAL FIX]   └─ Event ' + (index + 1) + ':', event);
-                        originalPush.call(window.dataLayer, event);
-                    });
-                    queuedSaleCircularEvents.length = 0;
-                } else {
-                    console.log('[SHOPLCAL FIX] ✅ FLUSH CALLED', getTimestamp(), '- No queued events to flush');
-                }
-            }
-
-            window.dataLayer.push = function() {
-                const args = Array.from(arguments);
-                const eventType = args[0]?.event || 'unknown';
-
-                // Queue sale_circular events until GA4 is ready, let others through immediately
-                if (args[0] && args[0].event === 'sale_circular') {
-                    if (!ga4Ready) {
-                        console.log('[SHOPLCAL FIX] 📦 QUEUED', getTimestamp(), '- sale_circular event queued (GA4 not ready yet, queue size:', queuedSaleCircularEvents.length + 1, ')');
-                        console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
-                        queuedSaleCircularEvents.push(args[0]);
-                        return;
-                    } else {
-                        console.log('[SHOPLCAL FIX] ⏭️  SENT IMMEDIATELY', getTimestamp(), '- sale_circular event sent (GA4 already ready)');
-                        console.log('[SHOPLCAL FIX]   └─ Event data:', args[0]);
-                    }
-                }
-
-                return originalPush.apply(this, arguments);
-            };
-
-            // Wait for GA4 consent to be resolved (dispatched from consent mode handler above)
-            window.addEventListener('consentStatusChange', function() {
-                ga4Ready = true;
-                console.log('[SHOPLCAL FIX] 🎯 GA4 READY VIA CONSENT', getTimestamp(), '- consentStatusChange event fired, GA4 is ready');
-                flushQueuedEvents();
-            });
-
-            // Hard timeout: if consent event doesn't fire within 5 seconds, mark GA4 as ready anyway
-            setTimeout(function() {
-                if (!ga4Ready) {
-                    ga4Ready = true;
-                    console.log('[SHOPLCAL FIX] ⏰ GA4 READY VIA TIMEOUT', getTimestamp(), '- 5s hard timeout reached, flushing anyway');
-                    flushQueuedEvents();
-                } else {
-                    console.log('[SHOPLCAL FIX] ⏰ TIMEOUT CHECK', getTimestamp(), '- 5s timeout reached but GA4 already ready (consent fired first)');
-                }
-            }, 5000);
-
-            // If user navigates away before GA4 is ready, flush queued events before leaving
-            window.addEventListener('beforeunload', function() {
-                console.log('[SHOPLCAL FIX] 🚪 PAGE UNLOAD', getTimestamp(), '- User leaving page, flushing any remaining events');
-                flushQueuedEvents();
-            });
-
-            console.log('[SHOPLCAL FIX] ✔️  INITIALIZED', getTimestamp(), '- Waiting for sale_circular events. GA4 will be ready when: (1) consentStatusChange fires OR (2) 5s timeout');
-        }
-    </script>
 </head>
 
 @inject ICategoryService categoryService
@@ -1036,8 +961,140 @@
     @RenderBody()
     <div id="goToTop"></div>
     @NopHtml.GenerateScripts(ResourceLocation.Footer)
-    @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)   
+    @NopHtml.GenerateInlineScripts(ResourceLocation.Footer)
     @Html.Raw(commonSettings.FooterCustomHtml)
+
+    <!-- Delay Fusion sale_circular events until GA4 session is established -->
+    <script>
+        (function() {
+            try {
+                let ga4SessionReady = false;
+                let gtagWrapped = false;
+                let lastGtagFunction = null;
+                const initTime = performance.now();
+                const queuedEvents = [];
+                const MAX_QUEUE_TIME = 2000; // Max 2 seconds to wait for GA4
+                let queueTimeoutId = null;
+                let checkIntervalId = null;
+
+                function log(msg) {
+                    console.log('[FUSION FIX]', msg);
+                }
+
+                function getMs() {
+                    return '(' + (performance.now() - initTime).toFixed(0) + 'ms)';
+                }
+
+                function hasGA4Session() {
+                    try {
+                        // Check for _ga cookie with session ID (format: GA1.2.xxxxxxxx.yyyyyyyy)
+                        const gaCookie = document.cookie.split('; ').find(c => c.startsWith('_ga='));
+                        if (gaCookie) {
+                            const parts = gaCookie.split('=')[1].split('.');
+                            // GA4 session established if we have 4+ parts and session ID is not empty/undefined
+                            return parts.length >= 4 && parts[3] !== undefined && parts[3] !== '';
+                        }
+                    } catch (e) {
+                        // Fallback: if cookie check fails, assume ready after 500ms
+                        return performance.now() - initTime > 500;
+                    }
+                    return false;
+                }
+
+                function wrapGtag() {
+                    try {
+                        // Only wrap once; prevent nested wrappers
+                        if (!gtagWrapped && typeof window.gtag === 'function' && window.gtag !== lastGtagFunction) {
+                            lastGtagFunction = window.gtag;
+                            const originalGtag = window.gtag;
+
+                            window.gtag = function() {
+                                const args = Array.from(arguments);
+
+                                // Queue ONLY sale_circular events until GA4 is ready
+                                if (args[0] === 'event' && args[1] === 'sale_circular' && !ga4SessionReady) {
+                                    log('📦 Queued sale_circular', getMs(), '- waiting for GA4 session');
+                                    queuedEvents.push(Array.from(arguments));
+                                    return;
+                                }
+
+                                return originalGtag.apply(this, arguments);
+                            };
+
+                            log('✔️ gtag wrapped successfully', getMs());
+                            gtagWrapped = true;
+                            // Set up the max timeout to flush even if GA4 isn't ready
+                            clearTimeout(queueTimeoutId);
+                            queueTimeoutId = setTimeout(checkGA4Ready, MAX_QUEUE_TIME);
+                            return true;
+                        }
+                    } catch (e) {
+                        log('❌ Error wrapping gtag:', e.message);
+                    }
+                    return false;
+                }
+
+                function flushQueuedEvents() {
+                    if (queuedEvents.length > 0) {
+                        if (!lastGtagFunction) {
+                            log('❌ Cannot flush: gtag was never wrapped');
+                            return;
+                        }
+                        log('🚀 Flushing ' + queuedEvents.length + ' queued events', getMs());
+                        const eventsToFlush = queuedEvents.splice(0); // Copy and clear
+                        eventsToFlush.forEach(function(args) {
+                            try {
+                                lastGtagFunction.apply(window, args);
+                                log('   ↳ Sent: ' + args[1]);
+                            } catch (e) {
+                                log('   ↳ Error sending event: ' + e.message);
+                            }
+                        });
+                    } else {
+                        log('ℹ️ No queued events to flush');
+                    }
+                }
+
+                function checkGA4Ready() {
+                    // Check if GA4 session is established
+                    if (!ga4SessionReady && hasGA4Session()) {
+                        ga4SessionReady = true;
+                        log('✅ GA4 session detected', getMs());
+                        clearTimeout(queueTimeoutId);
+                        clearInterval(checkIntervalId);
+                        flushQueuedEvents();
+                    }
+                }
+
+                // Initialize
+                log('🔧 Initializing (pathname: ' + window.location.pathname + ')');
+
+                // Try to wrap gtag immediately and at intervals (in case it loads async)
+                if (!wrapGtag()) log('ℹ️ gtag not yet available, retrying...');
+                setTimeout(function() { if (!wrapGtag()) log('ℹ️ gtag still not available, retrying...'); }, 50);
+                setTimeout(function() { if (!wrapGtag()) log('ℹ️ gtag still not available, retrying...'); }, 100);
+                setTimeout(function() { if (!wrapGtag()) log('⚠️ gtag not available after 200ms, giving up on wrap'); }, 200);
+
+                // Poll for GA4 session establishment every 100ms
+                checkIntervalId = setInterval(checkGA4Ready, 100);
+
+                // Hard timeout after MAX_QUEUE_TIME: flush any remaining events and cleanup
+                setTimeout(function() {
+                    if (!ga4SessionReady) {
+                        log('⏱️ GA4 readiness timeout, flushing queued events anyway', getMs());
+                        ga4SessionReady = true;
+                        flushQueuedEvents();
+                    }
+                    clearInterval(checkIntervalId);
+                    clearTimeout(queueTimeoutId);
+                    log('✓ Cleanup complete');
+                }, MAX_QUEUE_TIME + 100);
+
+            } catch (e) {
+                console.log('[FUSION FIX] FATAL ERROR:', e.message);
+            }
+        })();
+    </script>
     @* ===== DEFERRED SCRIPTS (moved from head for performance) ===== *@
 </body>
 </html>
