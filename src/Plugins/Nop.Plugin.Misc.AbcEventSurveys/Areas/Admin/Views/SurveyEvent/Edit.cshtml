@@ -1,0 +1,234 @@
+@model SurveyEventModel
+
+@inject INopHtmlHelper NopHtml
+
+@{
+    ViewBag.PageTitle = "Edit Event Survey";
+    NopHtml.SetActiveMenuItemSystemName("ABCWarehouse.EventSurveys");
+
+    Layout = "_AdminLayout";
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">Edit Event Survey</h1>
+    <div class="pull-right">
+        <a asp-action="Responses" asp-route-id="@Model.Id" class="btn btn-info">
+            <i class="fas fa-table"></i>
+            View Responses (@Model.ResponseCount)
+        </a>
+        <a asp-action="List" class="btn btn-default">
+            <i class="fas fa-arrow-circle-left"></i>
+            Back to list
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    @if (!string.IsNullOrEmpty(Model.PublicUrl))
+    {
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <strong>Public sign-up page:</strong>
+                    <a href="@Model.PublicUrl" target="_blank">@Model.PublicUrl</a>
+                </div>
+            </div>
+        </div>
+    }
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly"></div>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">Event Details</div>
+                <div class="panel-body">
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Name" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="Name" />
+                            <span asp-validation-for="Name"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Code" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="Code" />
+                            <small class="form-text text-muted">
+                                Changing this changes the public URL - existing links/QR codes
+                                using the old code will stop working.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Header1" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="Header1" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="PictureId" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="PictureId" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Header2" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="Header2" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="Description" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-textarea asp-for="Description" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="TermsAndConditions" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-textarea asp-for="TermsAndConditions" />
+                            <small class="form-text text-muted">
+                                Leave blank to use the standard ABC Warehouse sweepstakes Terms and Conditions.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="ThankYouHeader" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="ThankYouHeader" />
+                            <small class="form-text text-muted">Leave blank to use "Thank You!".</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="ThankYouDescription" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-textarea asp-for="ThankYouDescription" />
+                            <small class="form-text text-muted">Leave blank to use the default "entry received" message.</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="IsActive" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="IsActive" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <nop-label asp-for="EndDateUtc" />
+                        </div>
+                        <div class="col-md-9">
+                            <nop-editor asp-for="EndDateUtc" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-9 offset-md-3">
+                            <button type="submit" class="btn bg-blue">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">Custom Fields</div>
+            <div class="panel-body">
+                <p class="text-muted">
+                    Extra text fields shown on this event's survey page, in addition to
+                    First Name, Last Name, Email, and Phone.
+                </p>
+
+                @if (Model.CustomFields.Any())
+                {
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Field Label</th>
+                                <th>Required</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var field in Model.CustomFields)
+                            {
+                                <tr>
+                                    <td>@field.Name</td>
+                                    <td>@(field.IsRequired ? "Yes" : "No")</td>
+                                    <td>
+                                        <form asp-action="DeleteCustomField" method="post"
+                                              onsubmit="return confirm('Remove this field? Past responses keep their answers, but the field will no longer appear on the form.');">
+                                            <input type="hidden" name="id" value="@field.Id" />
+                                            <input type="hidden" name="surveyEventId" value="@Model.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="far fa-trash-can"></i>
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p><em>No custom fields yet.</em></p>
+                }
+
+                <form asp-action="AddCustomField" method="post" class="form-inline">
+                    <input type="hidden" name="surveyEventId" value="@Model.Id" />
+                    <div class="form-group mr-2">
+                        <label class="mr-2" for="newFieldName">New field label</label>
+                        <input type="text" id="newFieldName" name="name" class="form-control" required placeholder="e.g. T-Shirt Size" />
+                    </div>
+                    <div class="form-group mr-2">
+                        <label class="mr-2" for="newFieldRequired">
+                            <input type="checkbox" id="newFieldRequired" name="isRequired" value="true" />
+                            Required
+                        </label>
+                    </div>
+                    <button type="submit" class="btn bg-blue">
+                        <i class="fas fa-plus-square"></i>
+                        Add Field
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post"
+                      onsubmit="return confirm('Delete this event and ALL of its responses? This cannot be undone.');">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="far fa-trash-can"></i>
+                        Delete This Event
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
