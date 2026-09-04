@@ -320,7 +320,7 @@
                                 @Html.Raw(abcShortDescription)
                             </div>
                         }
-                        @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                        @if (!string.IsNullOrEmpty(Model.ShortDescription) && string.IsNullOrEmpty(abcShortDescription))
                         {
                             <div class="short-description">
                                 @Html.Raw(Model.ShortDescription)
