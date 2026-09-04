@@ -6,7 +6,6 @@
 @{ await Html.RenderPartialAsync("_Notifications"); }
 @{ await Html.RenderPartialAsync("_JavaScriptDisabledWarning"); }
 <div class="master-wrapper-page">
-    @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
     @{ await Html.RenderPartialAsync("_Header"); }
     <script asp-location="Footer">
         var localized_data = {
@@ -14,11 +13,10 @@
         };
         AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
     </script>
-    <div class="header-menu">
-        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+    <div id="main" role="main">
+        @await RenderSectionAsync("Breadcrumb", false)
+        @RenderBody()
     </div>
-    @await RenderSectionAsync("Breadcrumb", false)
-    @RenderBody()
     @await Component.InvokeAsync(typeof(FooterViewComponent))
 </div>
 @await Component.InvokeAsync(typeof(EuCookieLawViewComponent))
