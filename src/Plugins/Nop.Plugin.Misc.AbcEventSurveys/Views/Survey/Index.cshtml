@@ -178,7 +178,7 @@
         <div class="survey-thankyou">
             <img class="survey-thankyou-image" src="/images/thankyou1.jpg" alt="Thank You" />
             <h1>@(string.IsNullOrWhiteSpace(Model.ThankYouHeader) ? "Thank You!" : Model.ThankYouHeader)</h1>
-            <p>@(string.IsNullOrWhiteSpace(Model.ThankYouDescription) ? "Your entry has been received. Good luck!" : Model.ThankYouDescription)</p>
+            <div>@Html.Raw(string.IsNullOrWhiteSpace(Model.ThankYouDescription) ? "Your entry has been received. Good luck!" : Model.ThankYouDescription)</div>
         </div>
 
         @await Component.InvokeAsync("Widget", new { widgetZone = "SurveyThankYou" })
@@ -208,7 +208,7 @@
         }
         @if (!string.IsNullOrWhiteSpace(Model.Description))
         {
-            <div class="survey-description">@Model.Description</div>
+            <div class="survey-description">@Html.Raw(Model.Description)</div>
         }
 
         <form asp-controller="Survey" asp-action="Index" asp-route-code="@Model.Code" method="post">
@@ -253,7 +253,7 @@
             <div class="survey-terms">
                 @if (!string.IsNullOrWhiteSpace(Model.TermsAndConditions))
                 {
-                    <div class="survey-terms-custom">@Model.TermsAndConditions</div>
+                    <div class="survey-terms-custom">@Html.Raw(Model.TermsAndConditions)</div>
                 }
                 else
                 {
