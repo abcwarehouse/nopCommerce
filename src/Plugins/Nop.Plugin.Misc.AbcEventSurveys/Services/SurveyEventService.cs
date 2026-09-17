@@ -163,13 +163,15 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
             return responses.Count;
         }
 
-        public async Task<bool> HasResponseWithPhoneAsync(int surveyEventId, string phone)
+        public async Task<bool> HasRecentResponseWithEmailAsync(string email, DateTime sinceUtc)
         {
-            if (string.IsNullOrWhiteSpace(phone))
+            if (string.IsNullOrWhiteSpace(email))
                 return false;
 
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+
             return await _surveyResponseRepository.Table.AnyAsync(r =>
-                r.SurveyEventId == surveyEventId && r.Phone == phone);
+                r.Email.ToLower() == normalizedEmail && r.CreatedOnUtc >= sinceUtc);
         }
 
         public async Task<IList<SurveyResponseCustomValue>> GetCustomValuesByResponseIdAsync(int surveyResponseId)

@@ -247,6 +247,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                         Email = response.Email,
                         Phone = response.Phone,
                         ConsentMarketing = response.ConsentMarketing,
+                        ConsentSms = response.ConsentSms,
                         CreatedOnUtc = response.CreatedOnUtc,
                         AdditionalInfo = additionalInfo
                     };

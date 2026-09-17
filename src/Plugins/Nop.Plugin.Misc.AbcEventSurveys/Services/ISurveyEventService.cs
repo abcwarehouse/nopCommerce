@@ -34,13 +34,11 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
         Task<int> GetResponseCountByEventIdAsync(int surveyEventId);
 
         /// <summary>
-        /// True if this event already has a response recorded for this phone number. Used to
-        /// enforce "one entry per person per promotion" - matched on phone number only, scoped to
-        /// this event, so the same person can still enter a different event later.
+        /// True if this email address has submitted a response (to any event, not just this one)
+        /// at or after <paramref name="sinceUtc"/>. Used to enforce a rolling submission-frequency
+        /// limit per email address (see SurveyController) - matched case-insensitively.
         /// </summary>
-        /// <param name="phone">Must already be cleaned/normalized the same way stored responses are
-        /// (see SurveyController.CleanPhoneNumber) so the comparison is apples-to-apples.</param>
-        Task<bool> HasResponseWithPhoneAsync(int surveyEventId, string phone);
+        Task<bool> HasRecentResponseWithEmailAsync(string email, DateTime sinceUtc);
         Task<IList<SurveyResponseCustomValue>> GetCustomValuesByResponseIdAsync(int surveyResponseId);
         Task<IDictionary<int, IList<SurveyResponseCustomValue>>> GetCustomValuesByEventIdAsync(int surveyEventId);
 

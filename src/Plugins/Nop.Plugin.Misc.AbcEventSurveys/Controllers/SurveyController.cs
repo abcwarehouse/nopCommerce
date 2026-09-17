@@ -62,13 +62,13 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             var cleanedPhone = CleanPhoneNumber(postedModel.Phone);
 
-            // One entry per person per event, matched on phone number only (see the T&Cs:
-            // "Limit one entry per person. Duplicate entries will be disqualified."). Scoped to
-            // this event, so the same person can still enter a different event later.
-            if (await _surveyEventService.HasResponseWithPhoneAsync(surveyEvent.Id, cleanedPhone))
+            // Matched on email address, across all events (not scoped to just this one) - the same
+            // email can enter again, but not more than once every 24 hours (see the T&Cs: "Limit one
+            // entry per person. Duplicate entries will be disqualified.").
+            if (await _surveyEventService.HasRecentResponseWithEmailAsync(postedModel.Email, DateTime.UtcNow.AddHours(-24)))
             {
-                ModelState.AddModelError(nameof(SurveyPageModel.Phone),
-                    "This phone number has already entered this promotion. Limit one entry per person.");
+                ModelState.AddModelError(nameof(SurveyPageModel.Email),
+                    "This email address has already entered within the last 24 hours. Please try again later.");
             }
 
             if (!ModelState.IsValid)
@@ -98,8 +98,10 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 FirstName = postedModel.FirstName,
                 LastName = postedModel.LastName,
                 Email = postedModel.Email,
-                Phone = cleanedPhone,
+                // Phone is optional; the column is non-null, so store empty string rather than null.
+                Phone = cleanedPhone ?? string.Empty,
                 ConsentMarketing = postedModel.ConsentMarketing,
+                ConsentSms = postedModel.ConsentSms,
                 CreatedOnUtc = DateTime.UtcNow,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
             };
@@ -111,7 +113,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             await _surveyEventService.InsertResponseAsync(response, customValues);
 
-            if (response.ConsentMarketing && !string.IsNullOrWhiteSpace(response.Phone))
+            if (response.ConsentSms && !string.IsNullOrWhiteSpace(response.Phone))
             {
                 await TrySubscribeToListrakSmsAsync(response.Phone, response.FirstName, response.LastName, response.Email);
             }

@@ -20,6 +20,12 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         /// </summary>
         public bool ConsentMarketing { get; set; }
 
+        /// <summary>
+        /// Whether the entrant separately opted in to SMS text messages ("Yes, I'd like to
+        /// receive text messages from ABC Warehouse"). Gates the Listrak SMS subscribe call.
+        /// </summary>
+        public bool ConsentSms { get; set; }
+
         public DateTime CreatedOnUtc { get; set; }
 
         public string IpAddress { get; set; }
