@@ -43,7 +43,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         [Display(Name = "Email Address")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Phone number is required.")]
         [Phone(ErrorMessage = "Please enter a valid phone number.")]
         [DataType(DataType.PhoneNumber)]
         [Display(Name = "Phone Number")]
@@ -54,6 +53,13 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         // regardless of whether the box is checked. Enforced manually server-side instead
         // (see SurveyController.Index POST).
         public bool ConsentMarketing { get; set; }
+
+        /// <summary>
+        /// Opt-in specifically for SMS marketing texts (separate from <see cref="ConsentMarketing"/>,
+        /// which is the required "I agree to the Terms and Conditions" checkbox). Optional - not
+        /// required to submit the form.
+        /// </summary>
+        public bool ConsentSms { get; set; }
 
         public IList<SurveyCustomFieldInputModel> CustomFields { get; set; }
 

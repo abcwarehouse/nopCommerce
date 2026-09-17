@@ -170,6 +170,10 @@
         height: auto;
         margin: 0 auto;
     }
+
+    .newsletter-signup {
+        display: none;
+    }
 </style>
 
 <div class="survey-page">
@@ -233,10 +237,18 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Phone" class="required-field"></label>
+                <label asp-for="Phone"></label>
                 <nop-editor asp-for="Phone" />
                 <span asp-validation-for="Phone"></span>
             </div>
+
+            <div class="survey-consent-row">
+                <input type="checkbox" asp-for="ConsentSms" id="ConsentSms" />
+                <label for="ConsentSms" style="font-weight: normal; margin: 0;">
+                    Yes, I'd like to receive text messages from ABC Warehouse. (See consent language below.) Required if a phone number is entered above.
+                </label>
+            </div>
+            <span asp-validation-for="ConsentSms"></span>
 
             @for (var i = 0; i < Model.CustomFields.Count; i++)
             {
@@ -293,3 +305,20 @@
         </form>
     }
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var phoneInput = document.getElementById("Phone");
+        var smsCheckbox = document.getElementById("ConsentSms");
+
+        if (!phoneInput || !smsCheckbox)
+            return;
+
+        var toggleSmsRequired = function () {
+            smsCheckbox.required = phoneInput.value.trim().length > 0;
+        };
+
+        phoneInput.addEventListener("input", toggleSmsRequired);
+        toggleSmsRequired();
+    });
+</script>

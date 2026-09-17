@@ -9,6 +9,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public bool ConsentMarketing { get; set; }
+        public bool ConsentSms { get; set; }
         public DateTime CreatedOnUtc { get; set; }
 
         /// <summary>

@@ -29,6 +29,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
             worksheet.Cell(1, col++).Value = "Email";
             worksheet.Cell(1, col++).Value = "Phone";
             worksheet.Cell(1, col++).Value = "Marketing Consent";
+            worksheet.Cell(1, col++).Value = "SMS Consent";
             worksheet.Cell(1, col++).Value = "Submitted (UTC)";
 
             var customFieldStartCol = col;
@@ -47,6 +48,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
                 worksheet.Cell(row, col++).Value = response.Email;
                 worksheet.Cell(row, col++).Value = response.Phone;
                 worksheet.Cell(row, col++).Value = response.ConsentMarketing ? "Yes" : "No";
+                worksheet.Cell(row, col++).Value = response.ConsentSms ? "Yes" : "No";
                 worksheet.Cell(row, col++).Value = response.CreatedOnUtc.ToString("yyyy-MM-dd HH:mm:ss");
 
                 valuesByResponseId.TryGetValue(response.Id, out var responseValues);
@@ -93,6 +95,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
                     new XElement("Email", response.Email),
                     new XElement("Phone", response.Phone),
                     new XElement("MarketingConsent", response.ConsentMarketing),
+                    new XElement("SmsConsent", response.ConsentSms),
                     new XElement("SubmittedOnUtc", response.CreatedOnUtc.ToString("O")),
                     new XElement("CustomFields", customFieldElements));
             });
