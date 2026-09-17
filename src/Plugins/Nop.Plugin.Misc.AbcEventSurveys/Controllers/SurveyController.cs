@@ -62,6 +62,12 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
 
             var cleanedPhone = CleanPhoneNumber(postedModel.Phone);
 
+            if (!string.IsNullOrWhiteSpace(cleanedPhone) && !postedModel.ConsentSms)
+            {
+                ModelState.AddModelError(nameof(SurveyPageModel.ConsentSms),
+                    "Please check the box to consent to text messages, or remove your phone number.");
+            }
+
             // Matched on email address, across all events (not scoped to just this one) - the same
             // email can enter again, but not more than once every 24 hours (see the T&Cs: "Limit one
             // entry per person. Duplicate entries will be disqualified.").
