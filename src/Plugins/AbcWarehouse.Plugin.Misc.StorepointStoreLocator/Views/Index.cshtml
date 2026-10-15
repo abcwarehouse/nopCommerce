@@ -45,63 +45,55 @@
 </style>
 
 @{
-    // JSON-LD structured data for Organization
-    var organizationSchema = new
-    {
-        @@context = "https://schema.org",
-        @@type = "Organization",
-        name = "ABC Warehouse",
-        url = "https://www.abcwarehouse.com",
-        logo = "https://www.abcwarehouse.com/images/logo.png",
-        description = "ABC Warehouse sells appliances, TVs, mattresses, furniture and electronics across Michigan, Ohio & Indiana",
-        areaServed = new[] { "Michigan", "Ohio", "Indiana" },
-        numberOfLocations = storepointLocations?.Count() ?? 0,
-        sameAs = new[]
-        {
-            "https://www.facebook.com/abcwarehouse",
-            "https://www.youtube.com/abcwarehouse"
-        }
-    };
-
-    // JSON-LD structured data for ItemList (store list)
-    var storeItems = storepointLocations?.Select((location, index) => new
-    {
-        @@type = "LocalBusiness",
-        name = location.Name,
-        address = new
-        {
-            @@type = "PostalAddress",
-            streetAddress = location.StreetAddress,
-            addressLocality = location.City,
-            addressRegion = location.State,
-            postalCode = location.PostalCode,
-            addressCountry = "US"
-        },
-        telephone = location.Phone
-    }).ToList();
+    // JSON-LD structured data - simplified to avoid @ escaping issues
+    string organizationJson = "{" +
+        "\"@context\":\"https://schema.org\"," +
+        "\"@type\":\"Organization\"," +
+        "\"name\":\"ABC Warehouse\"," +
+        "\"url\":\"https://www.abcwarehouse.com\"," +
+        "\"description\":\"ABC Warehouse sells appliances, TVs, mattresses, furniture and electronics across Michigan, Ohio & Indiana\"," +
+        "\"areaServed\":[\"Michigan\",\"Ohio\",\"Indiana\"]," +
+        "\"numberOfLocations\":" + (storepointLocations?.Count() ?? 0) + "," +
+        "\"sameAs\":[\"https://www.facebook.com/abcwarehouse\",\"https://www.youtube.com/abcwarehouse\"]" +
+        "}";
 }
 
 <script type="application/ld+json">
-@Html.Raw(JsonSerializer.Serialize(organizationSchema))
+@Html.Raw(organizationJson)
 </script>
 
-@if (storeItems?.Count > 0)
+@if (storepointLocations != null && storepointLocations.Any())
 {
-    var itemListSchema = new
+    var locations = storepointLocations.ToList();
+    var itemElements = new System.Collections.Generic.List<string>();
+
+    foreach (var loc in locations)
     {
-        @@context = "https://schema.org",
-        @@type = "ItemList",
-        numberOfItems = storeItems.Count,
-        itemListElement = storeItems.Select((item, index) => new
-        {
-            @@type = "ListItem",
-            position = index + 1,
-            item = item
-        }).ToList()
-    };
+        var item = "{" +
+            "\"@type\":\"LocalBusiness\"," +
+            "\"name\":\"" + (loc.Name ?? "").Replace("\"", "\\\"") + "\"," +
+            "\"address\":{" +
+                "\"@type\":\"PostalAddress\"," +
+                "\"streetAddress\":\"" + (loc.StreetAddress ?? "").Replace("\"", "\\\"") + "\"," +
+                "\"addressLocality\":\"" + (loc.City ?? "").Replace("\"", "\\\"") + "\"," +
+                "\"addressRegion\":\"" + (loc.State ?? "").Replace("\"", "\\\"") + "\"," +
+                "\"postalCode\":\"" + (loc.PostalCode ?? "").Replace("\"", "\\\"") + "\"," +
+                "\"addressCountry\":\"US\"" +
+            "}," +
+            "\"telephone\":\"" + (loc.Phone ?? "").Replace("\"", "\\\"") + "\"" +
+            "}";
+        itemElements.Add(item);
+    }
+
+    var itemListJson = "{" +
+        "\"@context\":\"https://schema.org\"," +
+        "\"@type\":\"ItemList\"," +
+        "\"numberOfItems\":" + locations.Count + "," +
+        "\"itemListElement\":[" + string.Join(",", itemElements) + "]" +
+        "}";
 
     <script type="application/ld+json">
-    @Html.Raw(JsonSerializer.Serialize(itemListSchema))
+    @Html.Raw(itemListJson)
     </script>
 }
 
