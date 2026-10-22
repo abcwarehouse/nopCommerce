@@ -22,5 +22,9 @@ namespace Nop.Plugin.Misc.AbcCore.Models
         public Shop Shop;
 
         public string ShopUrl;
+
+        // miles from the customer's entered zip code, when known
+        [XmlIgnore]
+        public double? DistanceMiles;
     }
 }

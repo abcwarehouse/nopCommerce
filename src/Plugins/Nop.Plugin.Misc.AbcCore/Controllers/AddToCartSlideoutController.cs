@@ -23,6 +23,7 @@ using Nop.Plugin.Misc.AbcCore.Mattresses;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Nop.Plugin.Misc.AbcCore.Components;
+using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Misc.AbcCore.Controllers
 {
@@ -154,11 +155,6 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             });
         }
 
-        private double Distance(double lat1, double lng1, double lat2, double lng2)
-        {
-            return Math.Pow(Math.Pow(lat1 - lat2, 2) + Math.Pow(lng1 - lng2, 2), 0.5);
-        }
-
         private async Task<CartSlideoutInfo> GetSlideoutInfoAsync(
             Product product,
             ShoppingCartItem sci,
@@ -209,10 +205,21 @@ namespace Nop.Plugin.Misc.AbcCore.Controllers
             }
             else
             {
+                // geocoder returns (0, 0) when the zip isn't found
+                var hasCoords = coords.lat != 0 || coords.lng != 0;
+                foreach (var stock in stockResponse.ProductStocks)
+                {
+                    stock.DistanceMiles = stock.Shop.DistanceInMilesFrom(coords.lat, coords.lng);
+                }
+
                 stockResponse.ProductStocks = stockResponse.ProductStocks
-                    .Select(s => s)
-                    .OrderBy(s => Distance(Double.Parse(s.Shop.Latitude), Double.Parse(s.Shop.Longitude), coords.lat, coords.lng))
+                    .OrderBy(s => s.DistanceMiles)
                     .Take(5).ToList();
+
+                if (!hasCoords)
+                {
+                    stockResponse.ProductStocks.ForEach(s => s.DistanceMiles = null);
+                }
             }
 
             var availableCount = stockResponse.ProductStocks.Count(s => s.Available);

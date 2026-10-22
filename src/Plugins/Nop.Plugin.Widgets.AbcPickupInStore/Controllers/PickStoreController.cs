@@ -21,6 +21,7 @@ using Nop.Core.Domain.Orders;
 using SevenSpikes.Nop.Plugins.StoreLocator.Domain.Shops;
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.AbcCore;
+using Nop.Plugin.Misc.AbcCore.Extensions;
 
 namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
 {
@@ -149,9 +150,13 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
             StockResponse stockResponse = await _backendStockService.GetApiStockAsync(productId);
             if (stockResponse != null)
             {
+                foreach (var stock in stockResponse.ProductStocks)
+                {
+                    stock.DistanceMiles = stock.Shop.DistanceInMilesFrom(lat, lng);
+                }
+
                 stockResponse.ProductStocks = stockResponse.ProductStocks
-                    .Select(s => s)
-                    .OrderBy(s => Distance(Double.Parse(s.Shop.Latitude), Double.Parse(s.Shop.Longitude), lat, lng))
+                    .OrderBy(s => s.DistanceMiles)
                     .Take(5).ToList();
             }
             else
@@ -191,11 +196,6 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore.Views.PickupInStore
                     .Select(ps => ps).ToList();
             }
             return PartialView("~/Plugins/Widgets.AbcPickupInStore/Views/_ClearanceStoreStock.cshtml", stockResponse);
-        }
-
-        private double Distance(double lat1, double lng1, double lat2, double lng2)
-        {
-            return Math.Pow(Math.Pow(lat1 - lat2, 2) + Math.Pow(lng1 - lng2, 2), 0.5);
         }
     }
 }
