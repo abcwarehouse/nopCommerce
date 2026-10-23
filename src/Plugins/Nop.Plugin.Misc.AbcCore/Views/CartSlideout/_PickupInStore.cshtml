@@ -8,6 +8,10 @@
     <div style="margin: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
         <div style="margin-right: 1rem">
             <h3>@item.Shop.Name</h3>
+            @if (item.DistanceMiles.HasValue)
+            {
+                <p class="pickup-store-distance"><strong>@item.DistanceMiles.Value.ToString("0.0") miles away</strong></p>
+            }
             @Html.Raw(@item.Shop.ShortDescription)
         </div>
         <div >

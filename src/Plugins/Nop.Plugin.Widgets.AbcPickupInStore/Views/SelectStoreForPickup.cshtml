@@ -64,6 +64,10 @@
                     <td class="store-col-1">
                         <div class="store-col-block">
                             <span class="accented-text shop-name">@productStock.Shop.Name</span>
+                            @if (productStock.DistanceMiles.HasValue)
+                            {
+                                <div class="shop-distance"><strong>@productStock.DistanceMiles.Value.ToString("0.0") miles away</strong></div>
+                            }
                             <div class="shop-description">
                                 @Html.Raw(productStock.Shop.ShortDescription)
                             </div>
