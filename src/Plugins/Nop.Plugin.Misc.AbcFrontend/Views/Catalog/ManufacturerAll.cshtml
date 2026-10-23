@@ -24,19 +24,19 @@
         "HOTPOINT","JBL","KITCHENAID","LG","LG SIGNATURE","MAYTAG",
         "NATUZZI","PROFILE","SAMSUNG","SEALY","SERTA RESTOKRAFT MATT INC",
         "SIMMONS BEAUTYREST","SCOTT LIVING","SPEED QUEEN","SUNBRITE TV",
-        "TCL","TEMPUR-PEDIC","VIZIO","WHIRLPOOL"
+        "TCL","TEMPUR-PEDIC","WHIRLPOOL"
     };
 
     var orderedList = Model.Where(it => allowedManufacturers.Contains(it.Name.ToUpper())).OrderBy(it => it.SeName);
     var trueOrderedList = Model.OrderBy(it => it.SeName);
-    
+
 
     // old code
     @* var orderedList = Model.OrderBy(it => it.SeName); *@
 }
 
 
-    
+
 
 @* custom style *@
 <style>
@@ -128,7 +128,7 @@ h2.explore {
                                 <a href="@Url.RouteUrl("Manufacturer", new {SeName = item.SeName})" title="@item.PictureModel.Title">
                                     @if (viewComponentSelector.SelectComponent("LazyLoadImage") != null)
                                     {
-                                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[] 
+                                        @await Component.InvokeAsync("LazyLoadImage", new(string Key, string Value)[]
                                         {
                                             ("src", item.PictureModel.ImageUrl),
                                             ("alt", item.PictureModel.AlternateText),
