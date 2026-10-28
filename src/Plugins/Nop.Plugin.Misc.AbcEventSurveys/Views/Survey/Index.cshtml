@@ -300,6 +300,9 @@
             <input type="hidden" asp-for="PictureId" />
             <input type="hidden" asp-for="Header2" />
             <input type="hidden" asp-for="Description" />
+            <input type="hidden" asp-for="TrafficSource" />
+            <input type="hidden" asp-for="TrafficMedium" />
+            <input type="hidden" asp-for="TrafficCampaign" />
 
             <button type="submit" class="survey-submit">Submit Entry</button>
         </form>
@@ -320,5 +323,66 @@
 
         phoneInput.addEventListener("input", toggleSmsRequired);
         toggleSmsRequired();
+    });
+
+    // Traffic attribution. Priority:
+    //   1. UTM params on this survey URL - so tagged links from a popup, QR code or email
+    //      (e.g. ?utm_source=site&utm_medium=popup) win over whatever the session started from
+    //   2. The session source the GA4 tag cached on the visitor's landing page
+    //      (sessionStorage 'ga4_session_source', see Widgets.GA4/Views/Tag.cshtml)
+    //   3. An external referrer on this page, else direct
+    document.addEventListener("DOMContentLoaded", function () {
+        var sourceInput = document.getElementById("TrafficSource");
+        var mediumInput = document.getElementById("TrafficMedium");
+        var campaignInput = document.getElementById("TrafficCampaign");
+
+        // already filled when the form is redisplayed after a validation error
+        if (!sourceInput || !mediumInput || !campaignInput || sourceInput.value)
+            return;
+
+        var getTrafficSource = function () {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get("utm_source") || params.get("utm_medium")) {
+                return {
+                    source: params.get("utm_source") || "(not set)",
+                    medium: params.get("utm_medium") || "(not set)",
+                    campaign: params.get("utm_campaign")
+                };
+            }
+
+            try {
+                var cached = sessionStorage.getItem("ga4_session_source");
+                if (cached) {
+                    var parsed = JSON.parse(cached);
+                    if (parsed && parsed.source)
+                        return parsed;
+                }
+            } catch (e) {
+                // sessionStorage blocked or bad JSON - fall through to referrer
+            }
+
+            if (document.referrer) {
+                try {
+                    var host = new URL(document.referrer).hostname.replace(/^www\./, "");
+                    if (host !== window.location.hostname.replace(/^www\./, "")) {
+                        var searchEngines = ["google.", "bing.com", "duckduckgo.com", "search.yahoo.com"];
+                        for (var i = 0; i < searchEngines.length; i++) {
+                            if (host.indexOf(searchEngines[i]) !== -1)
+                                return { source: host, medium: "organic" };
+                        }
+                        return { source: host, medium: "referral" };
+                    }
+                } catch (e) {
+                    // unparseable referrer - treat as direct
+                }
+            }
+
+            return { source: "direct", medium: "direct" };
+        };
+
+        var traffic = getTrafficSource();
+        sourceInput.value = traffic.source || "";
+        mediumInput.value = traffic.medium || "";
+        campaignInput.value = traffic.campaign || "";
     });
 </script>

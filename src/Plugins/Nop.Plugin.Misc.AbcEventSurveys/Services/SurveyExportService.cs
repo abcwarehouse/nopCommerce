@@ -31,6 +31,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
             worksheet.Cell(1, col++).Value = "Marketing Consent";
             worksheet.Cell(1, col++).Value = "SMS Consent";
             worksheet.Cell(1, col++).Value = "Submitted (UTC)";
+            worksheet.Cell(1, col++).Value = "Traffic Source";
+            worksheet.Cell(1, col++).Value = "Traffic Medium";
+            worksheet.Cell(1, col++).Value = "Traffic Campaign";
 
             var customFieldStartCol = col;
             foreach (var field in customFields)
@@ -50,6 +53,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
                 worksheet.Cell(row, col++).Value = response.ConsentMarketing ? "Yes" : "No";
                 worksheet.Cell(row, col++).Value = response.ConsentSms ? "Yes" : "No";
                 worksheet.Cell(row, col++).Value = response.CreatedOnUtc.ToString("yyyy-MM-dd HH:mm:ss");
+                worksheet.Cell(row, col++).Value = response.TrafficSource ?? string.Empty;
+                worksheet.Cell(row, col++).Value = response.TrafficMedium ?? string.Empty;
+                worksheet.Cell(row, col++).Value = response.TrafficCampaign ?? string.Empty;
 
                 valuesByResponseId.TryGetValue(response.Id, out var responseValues);
 
@@ -97,6 +103,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Services
                     new XElement("MarketingConsent", response.ConsentMarketing),
                     new XElement("SmsConsent", response.ConsentSms),
                     new XElement("SubmittedOnUtc", response.CreatedOnUtc.ToString("O")),
+                    new XElement("TrafficSource", response.TrafficSource ?? string.Empty),
+                    new XElement("TrafficMedium", response.TrafficMedium ?? string.Empty),
+                    new XElement("TrafficCampaign", response.TrafficCampaign ?? string.Empty),
                     new XElement("CustomFields", customFieldElements));
             });
 

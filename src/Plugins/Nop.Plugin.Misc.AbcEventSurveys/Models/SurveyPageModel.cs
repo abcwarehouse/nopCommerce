@@ -64,6 +64,14 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         public IList<SurveyCustomFieldInputModel> CustomFields { get; set; }
 
         /// <summary>
+        /// Traffic attribution, filled into hidden inputs client-side from the GA4 tag's cached
+        /// session source (falling back to the page's own UTM params / referrer).
+        /// </summary>
+        public string TrafficSource { get; set; }
+        public string TrafficMedium { get; set; }
+        public string TrafficCampaign { get; set; }
+
+        /// <summary>
         /// Set after a successful submission so the view can swap the form for a thank-you message.
         /// </summary>
         public bool Submitted { get; set; }

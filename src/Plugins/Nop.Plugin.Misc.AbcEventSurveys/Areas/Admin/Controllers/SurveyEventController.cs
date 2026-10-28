@@ -249,6 +249,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                         ConsentMarketing = response.ConsentMarketing,
                         ConsentSms = response.ConsentSms,
                         CreatedOnUtc = response.CreatedOnUtc,
+                        TrafficSource = FormatTrafficSource(response),
                         AdditionalInfo = additionalInfo
                     };
                 }));
@@ -291,5 +292,20 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// "source / medium (campaign)" for the responses grid; empty for responses submitted
+        /// before traffic attribution was tracked.
+        /// </summary>
+        private static string FormatTrafficSource(SurveyResponse response)
+        {
+            if (string.IsNullOrWhiteSpace(response.TrafficSource) && string.IsNullOrWhiteSpace(response.TrafficMedium))
+                return string.Empty;
+
+            var formatted = $"{response.TrafficSource} / {response.TrafficMedium}";
+            return string.IsNullOrWhiteSpace(response.TrafficCampaign)
+                ? formatted
+                : $"{formatted} ({response.TrafficCampaign})";
+        }
     }
 }

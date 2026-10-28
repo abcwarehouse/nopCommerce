@@ -13,6 +13,11 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Models
         public DateTime CreatedOnUtc { get; set; }
 
         /// <summary>
+        /// Traffic attribution flattened as "source / medium (campaign)".
+        /// </summary>
+        public string TrafficSource { get; set; }
+
+        /// <summary>
         /// All custom field answers for this response, flattened as "Field: value; Field2: value2".
         /// </summary>
         public string AdditionalInfo { get; set; }
