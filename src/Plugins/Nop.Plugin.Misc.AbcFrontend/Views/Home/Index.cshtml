@@ -13,38 +13,7 @@
 @* ABC: custom *@
 @inject INopHtmlHelper NopHtml
 
-@{
-    Layout = "_ColumnsOne";
-
-    var homepageTitle = await localizationService.GetLocalizedAsync(await storeContext.GetCurrentStoreAsync(), s => s.HomepageTitle);
-
-    //title
-    if (!string.IsNullOrEmpty(homepageTitle))
-    {
-        NopHtml.AddTitleParts(homepageTitle);
-    }
-
-    var homepageDescription = await localizationService.GetLocalizedAsync(await storeContext.GetCurrentStoreAsync(), s => s.HomepageDescription);
-
-    //meta
-    if (!string.IsNullOrEmpty(homepageDescription))
-    {
-        NopHtml.AddMetaDescriptionParts(homepageDescription);
-    }
-
-    //page class
-    NopHtml.AppendPageCssClassParts("html-home-page");
-
-    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
-    bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
-
-    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
-    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
-    var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) &&
-                        actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
-}
-
-<!-- Black Friday Video Modal -->
+<!-- Black Friday Video Modal - MUST BE FIRST -->
 <div id="blackfridayVideoModal">
     <video id="blackfridayVideo" autoplay muted playsinline>
         <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
@@ -62,22 +31,23 @@
     width: 100vw !important;
     height: 100vh !important;
     background: #000 !important;
-    z-index: 999999 !important;
+    z-index: 2147483647 !important;
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
     display: none !important;
+    overflow: hidden !important;
 }
 
 #blackfridayVideo {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
+    width: 100vw !important;
+    height: 100vh !important;
     object-fit: contain !important;
     background: #000 !important;
-    z-index: 999999 !important;
+    z-index: 2147483647 !important;
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -162,6 +132,37 @@
     }
 })();
 </script>
+
+@{
+    Layout = "_ColumnsOne";
+
+    var homepageTitle = await localizationService.GetLocalizedAsync(await storeContext.GetCurrentStoreAsync(), s => s.HomepageTitle);
+
+    //title
+    if (!string.IsNullOrEmpty(homepageTitle))
+    {
+        NopHtml.AddTitleParts(homepageTitle);
+    }
+
+    var homepageDescription = await localizationService.GetLocalizedAsync(await storeContext.GetCurrentStoreAsync(), s => s.HomepageDescription);
+
+    //meta
+    if (!string.IsNullOrEmpty(homepageDescription))
+    {
+        NopHtml.AddMetaDescriptionParts(homepageDescription);
+    }
+
+    //page class
+    NopHtml.AppendPageCssClassParts("html-home-page");
+
+    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+    bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
+
+    var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
+    var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
+    var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) &&
+                        actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
+}
 
 @{
     if (storeId == 8) // Hawthorne Store
