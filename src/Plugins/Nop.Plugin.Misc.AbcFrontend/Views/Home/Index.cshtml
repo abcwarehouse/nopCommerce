@@ -14,14 +14,24 @@
 @inject INopHtmlHelper NopHtml
 
 <!-- Black Friday Video Modal - MUST BE FIRST -->
-<div id="blackfridayVideoModal">
+<!-- Desktop Version -->
+<div id="blackfridayVideoModal" class="bf-desktop">
     <video id="blackfridayVideo" autoplay muted playsinline>
         <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
 
+<!-- Mobile Version -->
+<div id="blackfridayVideoModalMobile" class="bf-mobile">
+    <video id="blackfridayVideoMobile" autoplay muted playsinline>
+        <source src="https://www.abcwarehouse.com/videos/BFwebpage_mobile.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
 <style>
+/* Desktop Video Modal */
 #blackfridayVideoModal {
     position: fixed !important;
     top: 0 !important;
@@ -52,6 +62,56 @@
     padding: 0 !important;
 }
 
+/* Mobile Video Modal */
+#blackfridayVideoModalMobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: none !important;
+    overflow: hidden !important;
+}
+
+#blackfridayVideoMobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: contain !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Show/Hide based on device */
+@media (max-width: 768px) {
+    #blackfridayVideoModal.bf-desktop {
+        display: none !important;
+    }
+    #blackfridayVideoModalMobile.bf-mobile {
+        display: inherit;
+    }
+}
+
+@media (min-width: 769px) {
+    #blackfridayVideoModal.bf-desktop {
+        display: inherit;
+    }
+    #blackfridayVideoModalMobile.bf-mobile {
+        display: none !important;
+    }
+}
+
 /* Hide header, nav, and all page content when video is playing */
 body.bf-video-playing header,
 body.bf-video-playing nav,
@@ -71,14 +131,31 @@ body.bf-video-playing .page-body > *:not(#blackfridayVideoModal) {
 
 <script>
 (function() {
-    const VIDEO_MODAL_ID = 'blackfridayVideoModal';
-    const VIDEO_ELEMENT_ID = 'blackfridayVideo';
+    const DESKTOP_MODAL_ID = 'blackfridayVideoModal';
+    const DESKTOP_VIDEO_ID = 'blackfridayVideo';
+    const MOBILE_MODAL_ID = 'blackfridayVideoModalMobile';
+    const MOBILE_VIDEO_ID = 'blackfridayVideoMobile';
     const STORAGE_KEY = 'bf_video_shown_2026';
     const EXPIRY_DAYS = 1;
+    const MOBILE_BREAKPOINT = 768;
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BREAKPOINT;
+    }
+
+    function getActiveModal() {
+        return isMobile() ? MOBILE_MODAL_ID : DESKTOP_MODAL_ID;
+    }
+
+    function getActiveVideoId() {
+        return isMobile() ? MOBILE_VIDEO_ID : DESKTOP_VIDEO_ID;
+    }
 
     function initBlackFridayVideo() {
-        const modal = document.getElementById(VIDEO_MODAL_ID);
-        const video = document.getElementById(VIDEO_ELEMENT_ID);
+        const modalId = getActiveModal();
+        const videoId = getActiveVideoId();
+        const modal = document.getElementById(modalId);
+        const video = document.getElementById(videoId);
 
         if (!modal || !video) {
             console.error('Black Friday video elements not found');
