@@ -1,0 +1,119 @@
+<!-- Black Friday Video Modal - Add to home page -->
+<div id="blackfridayVideoModal" style="display: none;">
+    <video id="blackfridayVideo"
+           style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background: #000; z-index: 9999;"
+           autoplay
+           muted
+           playsinline>
+        <source src="/videos/BlackFriday_Popup-graphic.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<style>
+#blackfridayVideoModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 9999;
+}
+</style>
+
+<script>
+(function() {
+    // Configuration
+    const VIDEO_MODAL_ID = 'blackfridayVideoModal';
+    const VIDEO_ELEMENT_ID = 'blackfridayVideo';
+    const STORAGE_KEY = 'bf_video_shown_2024'; // Change year as needed
+    const EXPIRY_DAYS = 1; // Hide for 1 day after viewing
+
+    function initBlackFridayVideo() {
+        const modal = document.getElementById(VIDEO_MODAL_ID);
+        const video = document.getElementById(VIDEO_ELEMENT_ID);
+
+        if (!modal || !video) {
+            console.error('Black Friday video elements not found');
+            return;
+        }
+
+        // Check if video has already been shown
+        if (hasVideoBeenShown()) {
+            modal.style.display = 'none';
+            return;
+        }
+
+        // Show the modal
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+
+        // Auto-play and close when finished
+        video.addEventListener('ended', function() {
+            closeVideoModal(modal, video);
+        });
+
+        // Optional: Close on click (uncomment if desired)
+        // modal.addEventListener('click', function() {
+        //     closeVideoModal(modal, video);
+        // });
+
+        // Optional: Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeVideoModal(modal, video);
+            }
+        });
+    }
+
+    function closeVideoModal(modal, video) {
+        // Stop video playback
+        video.pause();
+
+        // Hide modal
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
+
+        // Mark as shown
+        markVideoAsShown();
+    }
+
+    function hasVideoBeenShown() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+
+        if (!stored) {
+            return false;
+        }
+
+        try {
+            const data = JSON.parse(stored);
+            const expiryTime = new Date(data.expiryTime).getTime();
+            const now = new Date().getTime();
+
+            return now < expiryTime;
+        } catch (e) {
+            console.error('Error parsing video storage data:', e);
+            return false;
+        }
+    }
+
+    function markVideoAsShown() {
+        const expiryTime = new Date();
+        expiryTime.setDate(expiryTime.getDate() + EXPIRY_DAYS);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            shown: true,
+            shownTime: new Date().toISOString(),
+            expiryTime: expiryTime.toISOString()
+        }));
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBlackFridayVideo);
+    } else {
+        initBlackFridayVideo();
+    }
+})();
+</script>

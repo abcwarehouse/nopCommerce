@@ -42,7 +42,113 @@
     var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
     var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) &&
                         actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
+}
 
+<!-- Black Friday Video Modal -->
+<div id="blackfridayVideoModal" style="display: none;">
+    <video id="blackfridayVideo"
+           style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background: #000; z-index: 9999;"
+           autoplay
+           muted
+           playsinline>
+        <source src="/images/videos/black-friday-2024.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<style>
+#blackfridayVideoModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 9999;
+}
+</style>
+
+<script>
+(function() {
+    const VIDEO_MODAL_ID = 'blackfridayVideoModal';
+    const VIDEO_ELEMENT_ID = 'blackfridayVideo';
+    const STORAGE_KEY = 'bf_video_shown_2024';
+    const EXPIRY_DAYS = 1;
+
+    function initBlackFridayVideo() {
+        const modal = document.getElementById(VIDEO_MODAL_ID);
+        const video = document.getElementById(VIDEO_ELEMENT_ID);
+
+        if (!modal || !video) {
+            console.error('Black Friday video elements not found');
+            return;
+        }
+
+        if (hasVideoBeenShown()) {
+            modal.style.display = 'none';
+            return;
+        }
+
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        video.addEventListener('ended', function() {
+            closeVideoModal(modal, video);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeVideoModal(modal, video);
+            }
+        });
+    }
+
+    function closeVideoModal(modal, video) {
+        video.pause();
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        markVideoAsShown();
+    }
+
+    function hasVideoBeenShown() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+
+        if (!stored) {
+            return false;
+        }
+
+        try {
+            const data = JSON.parse(stored);
+            const expiryTime = new Date(data.expiryTime).getTime();
+            const now = new Date().getTime();
+
+            return now < expiryTime;
+        } catch (e) {
+            console.error('Error parsing video storage data:', e);
+            return false;
+        }
+    }
+
+    function markVideoAsShown() {
+        const expiryTime = new Date();
+        expiryTime.setDate(expiryTime.getDate() + EXPIRY_DAYS);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            shown: true,
+            shownTime: new Date().toISOString(),
+            expiryTime: expiryTime.toISOString()
+        }));
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBlackFridayVideo);
+    } else {
+        initBlackFridayVideo();
+    }
+})();
+</script>
+
+@{
     if (storeId == 8) // Hawthorne Store
     {
         NopHtml.AppendPageCssClassParts("html-home-page hawthorne-home-content");
