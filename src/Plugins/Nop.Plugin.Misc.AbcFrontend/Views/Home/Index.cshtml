@@ -100,11 +100,11 @@
         }
 
         if (hasVideoBeenShown()) {
-            modal.style.display = 'none';
+            modal.style.setProperty('display', 'none', 'important');
             return;
         }
 
-        modal.style.display = 'block';
+        modal.style.setProperty('display', 'block', 'important');
         document.body.style.overflow = 'hidden';
 
         video.addEventListener('ended', function() {
@@ -120,7 +120,7 @@
 
     function closeVideoModal(modal, video) {
         video.pause();
-        modal.style.display = 'none';
+        modal.style.setProperty('display', 'none', 'important');
         document.body.style.overflow = 'auto';
         markVideoAsShown();
     }
