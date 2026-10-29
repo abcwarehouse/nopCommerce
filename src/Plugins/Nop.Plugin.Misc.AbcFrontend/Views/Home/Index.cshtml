@@ -52,7 +52,7 @@
     padding: 0 !important;
 }
 
-/* Hide header, nav, and category menu when video is playing */
+/* Hide header, nav, and all page content when video is playing */
 body.bf-video-playing header,
 body.bf-video-playing nav,
 body.bf-video-playing .header,
@@ -61,7 +61,10 @@ body.bf-video-playing .two-columns-area-left,
 body.bf-video-playing .category-navigation-list-wrapper,
 body.bf-video-playing .category-navigation-list,
 body.bf-video-playing .page-title,
-body.bf-video-playing .page-body > * {
+body.bf-video-playing [id^="jcarousel"],
+body.bf-video-playing .jCarouselMainWrapper,
+body.bf-video-playing .nop-jcarousel,
+body.bf-video-playing .page-body > *:not(#blackfridayVideoModal) {
     display: none !important;
 }
 </style>
