@@ -40,10 +40,5 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         /// Channel the entrant arrived through (e.g. "organic", "email", "popup", "cpc", "direct").
         /// </summary>
         public string TrafficMedium { get; set; }
-
-        /// <summary>
-        /// The utm_campaign value, if the entrant arrived on a tagged link.
-        /// </summary>
-        public string TrafficCampaign { get; set; }
     }
 }

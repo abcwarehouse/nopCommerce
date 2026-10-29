@@ -34,6 +34,102 @@
                 </div>
             </div>
         </div>
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">Tracked Link &amp; QR Code Builder</div>
+                <div class="panel-body">
+                    <p class="text-muted">
+                        Build a link with UTM tags so each entry records where it came from (shown in the
+                        Traffic Source column of the responses). Use a separate link per channel - e.g. one
+                        for the email, one for the site popup, one QR code per store.
+                    </p>
+
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label class="col-form-label" for="utmMedium">Medium (channel type)</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select id="utmMedium" class="form-control">
+                                <option value="email">email - marketing emails</option>
+                                <option value="sms">sms - text messages</option>
+                                <option value="popup">popup - popups on abcwarehouse.com</option>
+                                <option value="qr">qr - printed QR codes (signs, flyers, receipts)</option>
+                                <option value="social">social - organic social posts</option>
+                                <option value="paid-social">paid-social - paid social ads</option>
+                                <option value="banner">banner - banners on abcwarehouse.com</option>
+                                <option value="print">print - mailers / newspaper inserts</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                How they got the link. Examples: <code>email</code>, <code>sms</code>,
+                                <code>popup</code>, <code>qr</code>.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label class="col-form-label" for="utmSource">Source (who sent them)</label>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" id="utmSource" class="form-control" list="utmSourceOptions" />
+                            <datalist id="utmSourceOptions">
+                                <option value="listrak"></option>
+                                <option value="site"></option>
+                                <option value="store"></option>
+                                <option value="facebook"></option>
+                                <option value="instagram"></option>
+                                <option value="tiktok"></option>
+                                <option value="flyer"></option>
+                                <option value="mailer"></option>
+                            </datalist>
+                            <small class="form-text text-muted">
+                                Who or where sent them. Examples: <code>listrak</code> (email/text),
+                                <code>site</code> (popup), <code>store</code> or <code>store-taylor</code> (QR code).
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label class="col-form-label" for="utmResult">Tracked link</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <input type="text" id="utmResult" class="form-control" readonly />
+                                <div class="input-group-append">
+                                    <button type="button" id="utmCopy" class="btn btn-default">
+                                        <i class="far fa-copy"></i>
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label class="col-form-label">QR code</label>
+                        </div>
+                        <div class="col-md-9">
+                            <canvas id="utmQrCanvas" style="width: 200px; height: 200px; border: 1px solid #ddd;"></canvas>
+                            <div class="mt-2">
+                                <button type="button" id="utmDownloadPng" class="btn btn-success">
+                                    <i class="fas fa-download"></i>
+                                    Download PNG
+                                </button>
+                                <button type="button" id="utmDownloadSvg" class="btn btn-default">
+                                    <i class="fas fa-download"></i>
+                                    Download SVG (for print)
+                                </button>
+                            </div>
+                            <small class="form-text text-muted">
+                                Scan it with your phone before printing to confirm it opens the tagged link.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 
     <form asp-action="Edit" method="post">
@@ -232,3 +328,151 @@
         </div>
     </div>
 </div>
+
+@if (!string.IsNullOrEmpty(Model.PublicUrl))
+{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var baseUrl = @Html.Raw(Json.Serialize(Model.PublicUrl));
+            var fileBaseName = @Html.Raw(Json.Serialize(Model.Code ?? "survey"));
+
+            var mediumSelect = document.getElementById("utmMedium");
+            var sourceInput = document.getElementById("utmSource");
+            var resultInput = document.getElementById("utmResult");
+            var canvas = document.getElementById("utmQrCanvas");
+
+            // Suggested source for each medium, used until the user types their own.
+            var defaultSourceByMedium = {
+                "email": "listrak",
+                "sms": "listrak",
+                "popup": "site",
+                "qr": "store",
+                "social": "facebook",
+                "paid-social": "facebook",
+                "banner": "site",
+                "print": "mailer"
+            };
+            var sourceEdited = false;
+
+            // lowercase, spaces -> hyphens, drop anything else, so values group consistently in reports
+            var clean = function (value) {
+                return (value || "").trim().toLowerCase()
+                    .replace(/\s+/g, "-")
+                    .replace(/[^a-z0-9\-_]/g, "");
+            };
+
+            var buildUrl = function () {
+                var params = new URLSearchParams();
+                params.set("utm_source", clean(sourceInput.value) || "(not-set)");
+                params.set("utm_medium", clean(mediumSelect.value));
+
+                return baseUrl + (baseUrl.indexOf("?") === -1 ? "?" : "&") + params.toString();
+            };
+
+            var buildQr = function (url) {
+                if (typeof qrcode === "undefined")
+                    return null;
+
+                var qr = qrcode(0, "M");
+                qr.addData(url);
+                qr.make();
+                return qr;
+            };
+
+            // Draws at a high resolution so the downloaded PNG prints sharply.
+            var drawQr = function (qr) {
+                var ctx = canvas.getContext("2d");
+                if (!qr) {
+                    canvas.width = canvas.height = 200;
+                    ctx.clearRect(0, 0, 200, 200);
+                    ctx.fillText("QR library failed to load", 10, 100);
+                    return;
+                }
+
+                var moduleCount = qr.getModuleCount();
+                var margin = 4;
+                var cellSize = 20;
+                var size = (moduleCount + margin * 2) * cellSize;
+
+                canvas.width = canvas.height = size;
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, size, size);
+                ctx.fillStyle = "#000000";
+
+                for (var row = 0; row < moduleCount; row++) {
+                    for (var col = 0; col < moduleCount; col++) {
+                        if (qr.isDark(row, col))
+                            ctx.fillRect((col + margin) * cellSize, (row + margin) * cellSize, cellSize, cellSize);
+                    }
+                }
+            };
+
+            var fileName = function (extension) {
+                return [fileBaseName, clean(sourceInput.value), clean(mediumSelect.value)]
+                    .filter(Boolean).join("-") + "." + extension;
+            };
+
+            var download = function (href, name) {
+                var link = document.createElement("a");
+                link.href = href;
+                link.download = name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            var update = function () {
+                var url = buildUrl();
+                resultInput.value = url;
+                drawQr(buildQr(url));
+            };
+
+            mediumSelect.addEventListener("change", function () {
+                if (!sourceEdited)
+                    sourceInput.value = defaultSourceByMedium[mediumSelect.value] || "";
+                update();
+            });
+            sourceInput.addEventListener("input", function () {
+                sourceEdited = sourceInput.value.length > 0;
+                update();
+            });
+
+            document.getElementById("utmCopy").addEventListener("click", function () {
+                var button = this;
+                var showCopied = function () {
+                    var original = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied';
+                    setTimeout(function () { button.innerHTML = original; }, 1500);
+                };
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(resultInput.value).then(showCopied);
+                } else {
+                    resultInput.select();
+                    document.execCommand("copy");
+                    showCopied();
+                }
+            });
+
+            document.getElementById("utmDownloadPng").addEventListener("click", function () {
+                download(canvas.toDataURL("image/png"), fileName("png"));
+            });
+
+            document.getElementById("utmDownloadSvg").addEventListener("click", function () {
+                var qr = buildQr(resultInput.value);
+                if (!qr)
+                    return;
+
+                var svg = qr.createSvgTag({ cellSize: 10, margin: 40, scalable: true });
+                var blob = new Blob([svg], { type: "image/svg+xml" });
+                var objectUrl = URL.createObjectURL(blob);
+                download(objectUrl, fileName("svg"));
+                setTimeout(function () { URL.revokeObjectURL(objectUrl); }, 1000);
+            });
+
+            sourceInput.value = defaultSourceByMedium[mediumSelect.value];
+            update();
+        });
+    </script>
+}

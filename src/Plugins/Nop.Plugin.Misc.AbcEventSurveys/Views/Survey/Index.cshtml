@@ -302,7 +302,6 @@
             <input type="hidden" asp-for="Description" />
             <input type="hidden" asp-for="TrafficSource" />
             <input type="hidden" asp-for="TrafficMedium" />
-            <input type="hidden" asp-for="TrafficCampaign" />
 
             <button type="submit" class="survey-submit">Submit Entry</button>
         </form>
@@ -334,10 +333,9 @@
     document.addEventListener("DOMContentLoaded", function () {
         var sourceInput = document.getElementById("TrafficSource");
         var mediumInput = document.getElementById("TrafficMedium");
-        var campaignInput = document.getElementById("TrafficCampaign");
 
         // already filled when the form is redisplayed after a validation error
-        if (!sourceInput || !mediumInput || !campaignInput || sourceInput.value)
+        if (!sourceInput || !mediumInput || sourceInput.value)
             return;
 
         var getTrafficSource = function () {
@@ -345,8 +343,7 @@
             if (params.get("utm_source") || params.get("utm_medium")) {
                 return {
                     source: params.get("utm_source") || "(not set)",
-                    medium: params.get("utm_medium") || "(not set)",
-                    campaign: params.get("utm_campaign")
+                    medium: params.get("utm_medium") || "(not set)"
                 };
             }
 
@@ -383,6 +380,5 @@
         var traffic = getTrafficSource();
         sourceInput.value = traffic.source || "";
         mediumInput.value = traffic.medium || "";
-        campaignInput.value = traffic.campaign || "";
     });
 </script>

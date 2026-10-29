@@ -69,7 +69,6 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Models
         /// </summary>
         public string TrafficSource { get; set; }
         public string TrafficMedium { get; set; }
-        public string TrafficCampaign { get; set; }
 
         /// <summary>
         /// Set after a successful submission so the view can swap the form for a thank-you message.

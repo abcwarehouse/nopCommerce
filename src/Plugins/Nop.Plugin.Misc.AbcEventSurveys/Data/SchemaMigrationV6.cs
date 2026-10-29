@@ -11,15 +11,13 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Data
         {
             Alter.Table(nameof(SurveyResponse))
                 .AddColumn(nameof(SurveyResponse.TrafficSource)).AsString(200).Nullable()
-                .AddColumn(nameof(SurveyResponse.TrafficMedium)).AsString(200).Nullable()
-                .AddColumn(nameof(SurveyResponse.TrafficCampaign)).AsString(200).Nullable();
+                .AddColumn(nameof(SurveyResponse.TrafficMedium)).AsString(200).Nullable();
         }
 
         public override void Down()
         {
             Delete.Column(nameof(SurveyResponse.TrafficSource))
                 .Column(nameof(SurveyResponse.TrafficMedium))
-                .Column(nameof(SurveyResponse.TrafficCampaign))
                 .FromTable(nameof(SurveyResponse));
         }
     }

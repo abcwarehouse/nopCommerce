@@ -111,8 +111,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 CreatedOnUtc = DateTime.UtcNow,
                 IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
                 TrafficSource = Truncate(postedModel.TrafficSource),
-                TrafficMedium = Truncate(postedModel.TrafficMedium),
-                TrafficCampaign = Truncate(postedModel.TrafficCampaign)
+                TrafficMedium = Truncate(postedModel.TrafficMedium)
             };
 
             var customValues = customFields
