@@ -13,6 +13,223 @@
 @* ABC: custom *@
 @inject INopHtmlHelper NopHtml
 
+<!-- Black Friday Video Modal - MUST BE FIRST -->
+<!-- Desktop Version -->
+<div id="blackfridayVideoModal" class="bf-desktop">
+    <video id="blackfridayVideo" autoplay muted playsinline>
+        <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<!-- Mobile Version -->
+<div id="blackfridayVideoModalMobile" class="bf-mobile">
+    <video id="blackfridayVideoMobile" autoplay muted playsinline>
+        <source src="https://www.abcwarehouse.com/videos/BFwebpage_mobile.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<style>
+/* Desktop Video Modal */
+#blackfridayVideoModal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: none !important;
+    overflow: hidden !important;
+}
+
+#blackfridayVideo {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    object-fit: cover !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Mobile Video Modal */
+#blackfridayVideoModalMobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    display: none !important;
+    overflow: hidden !important;
+}
+
+#blackfridayVideoMobile {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    object-fit: cover !important;
+    background: #000 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Show/Hide based on device */
+@@media (max-width: 768px) {
+    #blackfridayVideoModal.bf-desktop {
+        display: none !important;
+    }
+    #blackfridayVideoModalMobile.bf-mobile {
+        display: inherit;
+    }
+}
+
+@@media (min-width: 769px) {
+    #blackfridayVideoModal.bf-desktop {
+        display: inherit;
+    }
+    #blackfridayVideoModalMobile.bf-mobile {
+        display: none !important;
+    }
+}
+
+/* Hide header, nav, and all page content when video is playing */
+body.bf-video-playing header,
+body.bf-video-playing nav,
+body.bf-video-playing .header,
+body.bf-video-playing .navbar,
+body.bf-video-playing .two-columns-area-left,
+body.bf-video-playing .category-navigation-list-wrapper,
+body.bf-video-playing .category-navigation-list,
+body.bf-video-playing .page-title,
+body.bf-video-playing [id^="jcarousel"],
+body.bf-video-playing .jCarouselMainWrapper,
+body.bf-video-playing .nop-jcarousel,
+body.bf-video-playing .page-body > *:not(#blackfridayVideoModal) {
+    display: none !important;
+}
+</style>
+
+<script>
+(function() {
+    const DESKTOP_MODAL_ID = 'blackfridayVideoModal';
+    const DESKTOP_VIDEO_ID = 'blackfridayVideo';
+    const MOBILE_MODAL_ID = 'blackfridayVideoModalMobile';
+    const MOBILE_VIDEO_ID = 'blackfridayVideoMobile';
+    const STORAGE_KEY = 'bf_video_shown_2026';
+    const EXPIRY_DAYS = 1;
+    const MOBILE_BREAKPOINT = 768;
+
+    function isMobile() {
+        return window.innerWidth <= MOBILE_BREAKPOINT;
+    }
+
+    function getActiveModal() {
+        return isMobile() ? MOBILE_MODAL_ID : DESKTOP_MODAL_ID;
+    }
+
+    function getActiveVideoId() {
+        return isMobile() ? MOBILE_VIDEO_ID : DESKTOP_VIDEO_ID;
+    }
+
+    function initBlackFridayVideo() {
+        const modalId = getActiveModal();
+        const videoId = getActiveVideoId();
+        const modal = document.getElementById(modalId);
+        const video = document.getElementById(videoId);
+
+        if (!modal || !video) {
+            console.error('Black Friday video elements not found');
+            return;
+        }
+
+        if (hasVideoBeenShown()) {
+            modal.style.setProperty('display', 'none', 'important');
+            return;
+        }
+
+        modal.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('bf-video-playing');
+
+        video.addEventListener('ended', function() {
+            closeVideoModal(modal, video);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeVideoModal(modal, video);
+            }
+        });
+    }
+
+    function closeVideoModal(modal, video) {
+        video.pause();
+        modal.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = 'auto';
+        document.body.classList.remove('bf-video-playing');
+        markVideoAsShown();
+    }
+
+    function hasVideoBeenShown() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+
+        if (!stored) {
+            return false;
+        }
+
+        try {
+            const data = JSON.parse(stored);
+            const expiryTime = new Date(data.expiryTime).getTime();
+            const now = new Date().getTime();
+
+            return now < expiryTime;
+        } catch (e) {
+            console.error('Error parsing video storage data:', e);
+            return false;
+        }
+    }
+
+    function markVideoAsShown() {
+        const expiryTime = new Date();
+        expiryTime.setDate(expiryTime.getDate() + EXPIRY_DAYS);
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            shown: true,
+            shownTime: new Date().toISOString(),
+            expiryTime: expiryTime.toISOString()
+        }));
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBlackFridayVideo);
+    } else {
+        initBlackFridayVideo();
+    }
+})();
+</script>
+
 @{
     Layout = "_ColumnsOne";
 
@@ -42,7 +259,9 @@
     var actionName = Url.ActionContext.RouteData.Values["action"].ToString();
     var isHomePage = controllerName.Equals("home", StringComparison.InvariantCultureIgnoreCase) &&
                         actionName.Equals("index", StringComparison.InvariantCultureIgnoreCase);
+}
 
+@{
     if (storeId == 8) // Hawthorne Store
     {
         NopHtml.AppendPageCssClassParts("html-home-page hawthorne-home-content");
