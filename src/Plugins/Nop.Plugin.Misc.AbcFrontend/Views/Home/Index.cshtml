@@ -13,22 +13,31 @@
 @* ABC: custom *@
 @inject INopHtmlHelper NopHtml
 
-<!-- Black Friday Video Modal - MUST BE FIRST -->
-<!-- Desktop Version -->
-<div id="blackfridayVideoModal" class="bf-desktop">
-    <video id="blackfridayVideo" autoplay muted playsinline>
-        <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+@{
+    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
 
-<!-- Mobile Version -->
-<div id="blackfridayVideoModalMobile" class="bf-mobile">
-    <video id="blackfridayVideoMobile" autoplay muted playsinline>
-        <source src="https://www.abcwarehouse.com/videos/BFwebpage_mobile.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+    if (storeId == 3) // Hawthorne Store
+        {
+    <!-- Black Friday Video Modal - MUST BE FIRST -->
+    <!-- Desktop Version -->
+    <div id="blackfridayVideoModal" class="bf-desktop">
+        <video id="blackfridayVideo" autoplay muted playsinline>
+            <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button type="button" class="bf-close" aria-label="Close video">&times;</button>
+    </div>
+
+    <!-- Mobile Version -->
+    <div id="blackfridayVideoModalMobile" class="bf-mobile">
+        <video id="blackfridayVideoMobile" autoplay muted playsinline>
+            <source src="https://www.abcwarehouse.com/videos/BFwebpage_mobile.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <button type="button" class="bf-close" aria-label="Close video">&times;</button>
+    </div>
+    }
+}
 
 <style>
 /* Desktop Video Modal */
@@ -93,6 +102,25 @@
     z-index: 2147483647 !important;
     margin: 0 !important;
     padding: 0 !important;
+}
+
+/* Close button, always reachable even if the video never plays */
+.bf-close {
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 2147483647 !important;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 28px;
+    line-height: 44px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
 }
 
 /* Show/Hide based on device */
@@ -173,9 +201,34 @@ body.bf-video-playing .page-body > *:not(#blackfridayVideoModal) {
         document.body.style.overflow = 'hidden';
         document.body.classList.add('bf-video-playing');
 
+        modal.querySelector('.bf-close').addEventListener('click', function() {
+            closeVideoModal(modal, video);
+        });
+
         video.addEventListener('ended', function() {
             closeVideoModal(modal, video);
         });
+
+        // Close if the video can't load or decode (e.g. missing codec on older machines)
+        video.addEventListener('error', function() {
+            closeVideoModal(modal, video);
+        });
+
+        if (video.play) {
+            var playPromise = video.play();
+            if (playPromise && playPromise.catch) {
+                playPromise.catch(function() {
+                    closeVideoModal(modal, video);
+                });
+            }
+        }
+
+        // Fallback: video never started (stalled network or decoder)
+        setTimeout(function() {
+            if (video.currentTime === 0) {
+                closeVideoModal(modal, video);
+            }
+        }, 7000);
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -252,7 +305,6 @@ body.bf-video-playing .page-body > *:not(#blackfridayVideoModal) {
     //page class
     NopHtml.AppendPageCssClassParts("html-home-page");
 
-    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
 
     var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
