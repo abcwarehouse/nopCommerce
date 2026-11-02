@@ -38,7 +38,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                     Name = surveyEvent.Name,
                     Code = surveyEvent.Code,
                     IsActive = surveyEvent.IsActive,
-                    EndDateUtc = surveyEvent.EndDateUtc,
+                    EndDate = SurveyTimeZone.FromUtc(surveyEvent.EndDateUtc),
                     ResponseCount = await _surveyEventService.GetResponseCountByEventIdAsync(surveyEvent.Id)
                 }));
 
@@ -74,7 +74,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 ThankYouHeader = model.ThankYouHeader,
                 ThankYouDescription = model.ThankYouDescription,
                 IsActive = model.IsActive,
-                EndDateUtc = model.EndDateUtc,
+                EndDateUtc = SurveyTimeZone.ToUtc(model.EndDate),
                 CreatedOnUtc = DateTime.UtcNow
             };
 
@@ -104,7 +104,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                 ThankYouHeader = surveyEvent.ThankYouHeader,
                 ThankYouDescription = surveyEvent.ThankYouDescription,
                 IsActive = surveyEvent.IsActive,
-                EndDateUtc = surveyEvent.EndDateUtc,
+                EndDate = SurveyTimeZone.FromUtc(surveyEvent.EndDateUtc),
                 PublicUrl = Url.RouteUrl("Plugin.Misc.AbcEventSurveys.Survey", new { code = surveyEvent.Code }, Request.Scheme),
                 CustomFields = customFields.Select(f => new SurveyCustomFieldModel
                 {
@@ -145,7 +145,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
             surveyEvent.ThankYouHeader = model.ThankYouHeader;
             surveyEvent.ThankYouDescription = model.ThankYouDescription;
             surveyEvent.IsActive = model.IsActive;
-            surveyEvent.EndDateUtc = model.EndDateUtc;
+            surveyEvent.EndDateUtc = SurveyTimeZone.ToUtc(model.EndDate);
 
             await _surveyEventService.UpdateEventAsync(surveyEvent);
 
@@ -248,7 +248,7 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Controllers
                         Phone = response.Phone,
                         ConsentMarketing = response.ConsentMarketing,
                         ConsentSms = response.ConsentSms,
-                        CreatedOnUtc = response.CreatedOnUtc,
+                        SubmittedOn = SurveyTimeZone.FromUtc(response.CreatedOnUtc).ToString("MM/dd/yyyy h:mm tt"),
                         TrafficSource = FormatTrafficSource(response),
                         AdditionalInfo = additionalInfo
                     };

@@ -42,9 +42,12 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Areas.Admin.Models
         [Display(Name = "Active")]
         public bool IsActive { get; set; }
 
-        [Display(Name = "End Date")]
+        /// <summary>
+        /// In Detroit (Eastern) time - converted to/from SurveyEvent.EndDateUtc in the controller.
+        /// </summary>
+        [Display(Name = "End Date (ET)")]
         [UIHint("DateTimeNullable")]
-        public DateTime? EndDateUtc { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public int ResponseCount { get; set; }
 

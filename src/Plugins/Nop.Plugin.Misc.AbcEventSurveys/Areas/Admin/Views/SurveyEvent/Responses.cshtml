@@ -91,11 +91,10 @@
                                 Title = "Custom Fields",
                                 Width = "200"
                             },
-                            new ColumnProperty(nameof(SurveyResponseModel.CreatedOnUtc))
+                            new ColumnProperty(nameof(SurveyResponseModel.SubmittedOn))
                             {
-                                Title = "Submitted (UTC)",
-                                Width = "130",
-                                Render = new RenderDate() { Format = "MM/DD/YYYY HH:mm" }
+                                Title = "Submitted (ET)",
+                                Width = "130"
                             },
                             new ColumnProperty(nameof(SurveyResponseModel.Id))
                             {

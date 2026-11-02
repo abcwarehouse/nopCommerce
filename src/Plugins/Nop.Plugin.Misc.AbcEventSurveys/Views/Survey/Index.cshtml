@@ -269,7 +269,9 @@
                 }
                 else
                 {
-                    var endDateText = Model.EndDateUtc.HasValue ? Model.EndDateUtc.Value.ToString("MMMM d, yyyy") : null;
+                    var endDateText = Model.EndDateUtc.HasValue
+                        ? Nop.Plugin.Misc.AbcEventSurveys.Services.SurveyTimeZone.FromUtc(Model.EndDateUtc.Value).ToString("MMMM d, yyyy")
+                        : null;
 
                     <text><strong>Terms and Conditions:</strong> Terms and conditions apply. See an ABC Warehouse associate for
                     complete rules. Must be 18 years of age or older to enter. No purchase necessary. Limit one entry per
