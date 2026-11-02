@@ -13,22 +13,27 @@
 @* ABC: custom *@
 @inject INopHtmlHelper NopHtml
 
-<!-- Black Friday Video Modal - MUST BE FIRST -->
-<!-- Desktop Version -->
-<div id="blackfridayVideoModal" class="bf-desktop">
-    <video id="blackfridayVideo" autoplay muted playsinline>
-        <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+@{
+    if (storeId == 8) // Hawthorne Store
+        {
+    <!-- Black Friday Video Modal - MUST BE FIRST -->
+    <!-- Desktop Version -->
+    <div id="blackfridayVideoModal" class="bf-desktop">
+        <video id="blackfridayVideo" autoplay muted playsinline>
+            <source src="https://www.abcwarehouse.com/videos/BFwebpage_desktop.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
 
-<!-- Mobile Version -->
-<div id="blackfridayVideoModalMobile" class="bf-mobile">
-    <video id="blackfridayVideoMobile" autoplay muted playsinline>
-        <source src="https://www.abcwarehouse.com/videos/BFwebpage_mobile.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+    <!-- Mobile Version -->
+    <div id="blackfridayVideoModalMobile" class="bf-mobile">
+        <video id="blackfridayVideoMobile" autoplay muted playsinline>
+            <source src="https://www.abcwarehouse.com/videos/BFwebpage_mobile.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    }
+}
 
 <style>
 /* Desktop Video Modal */
