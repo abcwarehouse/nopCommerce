@@ -14,6 +14,8 @@
 @inject INopHtmlHelper NopHtml
 
 @{
+    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
+
     if (storeId == 8) // Hawthorne Store
         {
     <!-- Black Friday Video Modal - MUST BE FIRST -->
@@ -303,7 +305,6 @@ body.bf-video-playing .page-body > *:not(#blackfridayVideoModal) {
     //page class
     NopHtml.AppendPageCssClassParts("html-home-page");
 
-    int storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     bool defaultFeaturedProductsEnabled = await settingService.GetSettingByKeyAsync("pavilionthemesettings.EnableFeaturedProducts", false, storeId, true);
 
     var controllerName = Url.ActionContext.RouteData.Values["controller"].ToString();
