@@ -29,5 +29,16 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Domain
         public DateTime CreatedOnUtc { get; set; }
 
         public string IpAddress { get; set; }
+
+        /// <summary>
+        /// Where the entrant came to the site from (e.g. "google", "listrak", "site"), taken from
+        /// the session source the GA4 tag caches in the browser. See Views/Survey/Index.cshtml.
+        /// </summary>
+        public string TrafficSource { get; set; }
+
+        /// <summary>
+        /// Channel the entrant arrived through (e.g. "organic", "email", "popup", "cpc", "direct").
+        /// </summary>
+        public string TrafficMedium { get; set; }
     }
 }

@@ -109,7 +109,9 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 ConsentMarketing = postedModel.ConsentMarketing,
                 ConsentSms = postedModel.ConsentSms,
                 CreatedOnUtc = DateTime.UtcNow,
-                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString()
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                TrafficSource = Truncate(postedModel.TrafficSource),
+                TrafficMedium = Truncate(postedModel.TrafficMedium)
             };
 
             var customValues = customFields
@@ -172,6 +174,19 @@ namespace Nop.Plugin.Misc.AbcEventSurveys.Controllers
                 return phone;
 
             return Regex.Replace(phone, @"[-()\s]", string.Empty);
+        }
+
+        /// <summary>
+        /// Traffic values come from client-side hidden inputs, so trim them to fit the
+        /// 200-char columns rather than trusting the browser.
+        /// </summary>
+        private static string Truncate(string value, int maxLength = 200)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            value = value.Trim();
+            return value.Length > maxLength ? value[..maxLength] : value;
         }
 
         /// <summary>
