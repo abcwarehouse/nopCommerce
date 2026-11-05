@@ -9,9 +9,14 @@
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script>
 
+        function isStoreRequired() {
+            var reason = $('#Reason').val();
+            return reason == "Complaint" || reason == "Comment";
+        }
+
         $(document).ready(function () {
             $("#Reason").change(function () {
-                if ($(this).val() == "Complaint" || $(this).val() == "Comment")
+                if (isStoreRequired())
                     $("#storeDropDown").css("display", "block");
                 else
                     $("#storeDropDown").css("display", "none");
@@ -39,7 +44,12 @@
             }
             var reason = $('#Reason').val();
             var selectedStore = $('#SelectedStore').val();
-            if (!selectedStore.replace(/\s/g, '').length)
+            if (!isStoreRequired())
+            {
+                
+                selectedStore = "Website";
+            }
+            else if (!selectedStore.replace(/\s/g, '').length)
             {
                 alert('Please Select a Store');
                 return;
