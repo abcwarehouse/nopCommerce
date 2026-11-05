@@ -27,9 +27,9 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
 
         };
         private static readonly string[] BuyMoreBrands = {
-            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery", 
-            "FRIGIDAIRE PROFESSIONAL", "Whirlpool", "KitchenAid", "Maytag", "Amana",
-            "Electrolux", "Electrolux ICON", "Electrolux Professional", "Miele", "SAMSUNG APPLIANCES", "SHARP", "MIDEA AMERICA CORP"
+            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "SAMSUNG", "FRIGIDAIRE", "FRIGIDAIRE GALLERY",
+            "FRIGIDAIRE PROFESSIONAL", "WHIRLPOOL", "KITCHENAID", "MAYTAG", "AMANA",
+            "ELECTROLUX", "ELECTROLUX ICON", "ELECTROLUX PROFESSIONAL", "MIELE", "SAMSUNG APPLIANCES", "SHARP", "MIDEA AMERICA CORP"
 
 
         };
