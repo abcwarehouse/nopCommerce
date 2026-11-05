@@ -23,14 +23,18 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         private readonly IStoreContext _storeContext;
 
         private static readonly string[] LGBuyMoreBrands = { 
-            "LG SIGNATURE", "LG XBOOM", "LG", "LG APPLIANCES", 
+            "LG SIGNATURE", "LG XBOOM", "LG", "LG APPLIANCES", "LG STUDIO"
+
         };
         private static readonly string[] BuyMoreBrands = {
-            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery",
-            "Electrolux", "Electrolux ICON", "Electrolux Professional", "Miele",
+            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery", 
+            "FRIGIDAIRE PROFESSIONAL", "Whirlpool", "KitchenAid", "Maytag", "Amana",
+            "Electrolux", "Electrolux ICON", "Electrolux Professional", "Miele", "SAMSUNG APPLIANCES", "SHARP", "MIDEA AMERICA CORP"
+
+
         };
         private static readonly string[] ExcludedBrands = {
-            "LG SIGNATURE", "LG STUDIO", "LG XBOOM", "\"C\" BY GE", "GE CAFE", "GE MONOGRAM",
+            "LG SIGNATURE", "LG XBOOM", "\"C\" BY GE", "GE CAFE", "GE MONOGRAM",
             "GE PROFILE", "MONOGRAM", "MIELE", "DACOR", "JENN-AIR", "SUBZERO", "THERMADOR",
             "VIKING", "WOLF", "FULGOR", "SIGNATURE KITCHEN SUITE", "COVE", "BLUE STAR", "BOSCH"
         };
