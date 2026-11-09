@@ -91,7 +91,14 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", discountedPrice);
 
             if (BuyMoreBrands.Contains(manufacturer.Name))
-                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", discountedPrice);
+            {
+                // Over $596: $50 off. Otherwise: 5% off.
+                var isOver596 = product.Price > 596.00M;
+                var bmsmPrice = isOver596
+                    ? discountedPrice
+                    : await _priceCalculationService.RoundPriceAsync(product.Price * 0.95M);
+                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", (bmsmPrice, isOver596));
+            }
 
             if (ExcludedBrands.Contains(manufacturer.Name))
                 return Content("");
