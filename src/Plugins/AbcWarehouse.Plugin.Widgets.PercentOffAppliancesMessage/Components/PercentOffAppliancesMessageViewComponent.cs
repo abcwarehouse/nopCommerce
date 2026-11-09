@@ -29,7 +29,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         private static readonly string[] BuyMoreBrands = {
             "\"C\" BY GE", "GE CAFE", "GE PROFILE", "GE", "GE APPLIANCES", "FRIGIDAIRE", "FRIGIDAIRE GALLERY",
             "FRIGIDAIRE PROFESSIONAL", "WHIRLPOOL", "KITCHENAID", "MAYTAG", "SHARP APPLIANCES",
-            "ELECTROLUX", "ELECTROLUX ICON", "ELECTROLUX PROFESSIONAL", "MIELE", "SAMSUNG APPLIANCES", "SHARP", "MIDEA AMERICA CORP"
+            "ELECTROLUX", "ELECTROLUX ICON", "ELECTROLUX PROFESSIONAL", "MIELE", "SAMSUNG APPLIANCES", "MIDEA AMERICA CORP"
         };
         private static readonly string[] ExcludedBrands = {
             "LG SIGNATURE", "LG XBOOM", "GE MONOGRAM",
