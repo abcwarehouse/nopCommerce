@@ -1,4 +1,4 @@
-@model decimal
+@model (decimal Price, bool IsOver596)
 
 @inject INopHtmlHelper NopHtml
 
@@ -8,7 +8,7 @@
 
 <div id="percent-off-appliances-message" class="percent-off" style="font-weight: bold;">        
         @{
-            if(Model >= 596.00M)
+            if(Model.IsOver596)
             {
                 <div class="in-store-container">
                     <div class="left-in-store">
@@ -20,7 +20,7 @@
                     <div class="right-in-store">
                         <div class="right-store-text">
                             SAVE AN ADDITIONAL $50 OFF! <br />
-                            <span>PAY ONLY $@(Model)</span> <a href="/policies-information#5-percent-offer" target="_blank">
+                            <span>PAY ONLY $@(Model.Price)</span> <a href="/policies-information#savings" target="_blank">
                             <span class="learn-more-text">Learn More</span></a>
                             <i class="rebate-text">*After $50 mail in rebate</i>
                         </div>
@@ -39,8 +39,8 @@
                     </div>
                     <div class="right-in-store">
                         <div class="right-store-text">
-                            SAVE AN ADDITIONAL $50 OFF! <br />
-                            <span>PAY ONLY $@(Model)</span> <a href="/policies-information#10-percent-offer" target="_blank">
+                            SAVE AN ADDITIONAL 5% OFF! <br />
+                            <span>PAY ONLY $@(Model.Price)</span> <a href="/policies-information#savings" target="_blank">
                             <span class="learn-more-text">Learn More</span></a>
                         </div>
                     

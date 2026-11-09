@@ -23,14 +23,16 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         private readonly IStoreContext _storeContext;
 
         private static readonly string[] LGBuyMoreBrands = { 
-            "LG SIGNATURE", "LG XBOOM", "LG", "LG APPLIANCES", 
+            "LG SIGNATURE", "LG XBOOM", "LG", "LG APPLIANCES"
+
         };
         private static readonly string[] BuyMoreBrands = {
-            "\"C\" BY GE", "GE CAFE", "GE MONOGRAM", "GE PROFILE", "GE", "GE APPLIANCES", "Samsung", "FRIGIDAIRE", "Frigidaire Gallery",
-            "Electrolux", "Electrolux ICON", "Electrolux Professional", "Miele",
+            "\"C\" BY GE", "GE CAFE", "GE PROFILE", "GE", "GE APPLIANCES", "FRIGIDAIRE", "FRIGIDAIRE GALLERY",
+            "FRIGIDAIRE PROFESSIONAL", "WHIRLPOOL", "KITCHENAID", "MAYTAG", "SHARP APPLIANCES",
+            "ELECTROLUX", "ELECTROLUX ICON", "ELECTROLUX PROFESSIONAL", "MIELE", "SAMSUNG APPLIANCES", "MIDEA AMERICA CORP"
         };
         private static readonly string[] ExcludedBrands = {
-            "LG SIGNATURE", "LG STUDIO", "LG XBOOM", "\"C\" BY GE", "GE CAFE", "GE MONOGRAM",
+            "LG SIGNATURE", "LG XBOOM", "GE MONOGRAM",
             "GE PROFILE", "MONOGRAM", "MIELE", "DACOR", "JENN-AIR", "SUBZERO", "THERMADOR",
             "VIKING", "WOLF", "FULGOR", "SIGNATURE KITCHEN SUITE", "COVE", "BLUE STAR", "BOSCH"
         };
@@ -85,13 +87,20 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             var formattedDiscount = await GetFormattedDiscountedPriceAsync(product.Price);
             var discountedPrice = await _priceCalculationService.RoundPriceAsync(product.Price - 50.00M); // 5% off is now a flat $50 off
 
-            if (LGBuyMoreBrands.Contains(manufacturer.Name))
+            if (LGBuyMoreBrands.Contains(manufacturer.Name, StringComparer.OrdinalIgnoreCase))
                 return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", discountedPrice);
 
-            if (BuyMoreBrands.Contains(manufacturer.Name))
-                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", discountedPrice);
+            if (BuyMoreBrands.Contains(manufacturer.Name, StringComparer.OrdinalIgnoreCase))
+            {
+                // Over $596: $50 off. Otherwise: 5% off.
+                var isOver596 = product.Price > 596.00M;
+                var bmsmPrice = isOver596
+                    ? discountedPrice
+                    : await _priceCalculationService.RoundPriceAsync(product.Price * 0.95M);
+                return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", (bmsmPrice, isOver596));
+            }
 
-            if (ExcludedBrands.Contains(manufacturer.Name))
+            if (ExcludedBrands.Contains(manufacturer.Name, StringComparer.OrdinalIgnoreCase))
                 return Content("");
 
             // Default message
@@ -130,7 +139,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         /// </summary>
         private async Task<string> GetFormattedDiscountedPriceAsync(decimal originalPrice)
         {
-            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice - 50.00M); // 5% off is now a flat $50 off
+            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice * 0.95M);
             return await _priceFormatter.FormatPriceAsync(discounted);
         }
     }
