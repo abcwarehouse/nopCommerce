@@ -87,10 +87,10 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
             var formattedDiscount = await GetFormattedDiscountedPriceAsync(product.Price);
             var discountedPrice = await _priceCalculationService.RoundPriceAsync(product.Price - 50.00M); // 5% off is now a flat $50 off
 
-            if (LGBuyMoreBrands.Contains(manufacturer.Name))
+            if (LGBuyMoreBrands.Contains(manufacturer.Name, StringComparer.OrdinalIgnoreCase))
                 return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/LGBMSMMessage.cshtml", discountedPrice);
 
-            if (BuyMoreBrands.Contains(manufacturer.Name))
+            if (BuyMoreBrands.Contains(manufacturer.Name, StringComparer.OrdinalIgnoreCase))
             {
                 // Over $596: $50 off. Otherwise: 5% off.
                 var isOver596 = product.Price > 596.00M;
@@ -100,7 +100,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
                 return View("~/Plugins/Widgets.PercentOffAppliancesMessage/Views/BMSMMessage.cshtml", (bmsmPrice, isOver596));
             }
 
-            if (ExcludedBrands.Contains(manufacturer.Name))
+            if (ExcludedBrands.Contains(manufacturer.Name, StringComparer.OrdinalIgnoreCase))
                 return Content("");
 
             // Default message
