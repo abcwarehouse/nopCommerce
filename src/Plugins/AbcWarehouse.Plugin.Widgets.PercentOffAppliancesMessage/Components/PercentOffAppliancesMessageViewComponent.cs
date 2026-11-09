@@ -139,7 +139,7 @@ namespace AbcWarehouse.Plugin.Widgets.PercentOffAppliancesMessageViewComponent.C
         /// </summary>
         private async Task<string> GetFormattedDiscountedPriceAsync(decimal originalPrice)
         {
-            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice - 50.00M); // 5% off is now a flat $50 off
+            var discounted = await _priceCalculationService.RoundPriceAsync(originalPrice * 0.95M);
             return await _priceFormatter.FormatPriceAsync(discounted);
         }
     }
