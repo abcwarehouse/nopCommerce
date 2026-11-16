@@ -22,6 +22,5 @@ public class MarketingPixelsPlugin : BasePlugin, IWidgetPlugin
         return Task.FromResult<IList<string>>(new List<string>
         {
             PublicWidgetZones.HeadHtmlTag
-        });
-    }
+        });    }
 }
