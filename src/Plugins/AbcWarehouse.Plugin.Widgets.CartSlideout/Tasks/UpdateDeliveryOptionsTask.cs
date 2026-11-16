@@ -121,7 +121,7 @@ namespace AbcWarehouse.Plugin.Widgets.CartSlideout.Tasks
                                     "Required Accessories")).GetAwaiter().GetResult();
                             }
 
-                            var pickupPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Pickup In-Store Or Curbside ("));
+                            var pickupPav = deliveryOptionPavs.FirstOrDefault(pav => pav.Name.Contains("Pickup In-Store("));
                             if (pickupPav != null)
                             {
                                 System.Threading.Tasks.Task.Run(() => UpdateAccessoriesAsync(

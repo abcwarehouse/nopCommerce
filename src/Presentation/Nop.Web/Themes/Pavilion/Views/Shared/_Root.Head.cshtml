@@ -73,6 +73,41 @@
     @await Component.InvokeAsync("Widget", new { widgetZone = "head_html_tag_after_css_files_pavilion" })
     @NopHtml.GenerateCssFiles()
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeadHtmlTag })
+    @{
+        // Marketing pixels: each one renders only on its own page.
+        var pixelPath = (Context.Request.Path.Value ?? string.Empty).TrimEnd('/');
+        var isPixelHomePage = pixelPath.Length == 0;
+        var isPixelSaveMorePage = string.Equals(pixelPath, "/save-more-event", StringComparison.OrdinalIgnoreCase);
+    }
+    @if (isPixelHomePage)
+    {
+        <script>
+          (function(w, d, n){
+              if (w.MAI) return;
+              w.MAI = w.MAI || {emit: function() {(w.MAI.q = w.MAI.q || []).push(arguments);}};
+              var e = d.createElement(n); e.async = 1;
+              e.src = 'https://cdn.mgln.ai/pixel.min.js';
+              var s = d.getElementsByTagName(n)[0];
+              s.parentNode.insertBefore(e, s);
+          })(window, document, 'script');
+          MAI.emit('conf', '01a1cb99659d7454b86fb1d681029884');
+          MAI.emit('view');
+        </script>
+    }
+    @if (isPixelSaveMorePage)
+    {
+        <script>
+          (function(w, d, n){
+              if (w.MAI) return;
+              w.MAI = w.MAI || {emit: function() {(w.MAI.q = w.MAI.q || []).push(arguments);}};
+              var e = d.createElement(n); e.async = 1;
+              e.src = 'https://cdn.mgln.ai/pixel.min.js';
+              var s = d.getElementsByTagName(n)[0];
+              s.parentNode.insertBefore(e, s);
+          })(window, document, 'script');
+          MAI.emit('conf', '01a1cb99659d7454b86fb1d681029884');
+        </script>
+    }
     @NopHtml.GenerateCanonicalUrls()
     @await Component.InvokeAsync(typeof(NewsRssHeaderLinkViewComponent))
     @await Component.InvokeAsync(typeof(BlogRssHeaderLinkViewComponent))
