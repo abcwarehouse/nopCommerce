@@ -28,7 +28,7 @@ namespace Nop.Plugin.Widgets.AbcPickupInStore
         {
             return new PickupInStoreSettings()
             {
-                PickupInStoreText = "Pickup In-Store or Curbside"
+                PickupInStoreText = "Pickup In-Store"
             };
         }
     }
